@@ -83,7 +83,8 @@ class ViewAllDeparturesP5Controller @Inject() (
               departures,
               searchParam,
               currentPage,
-              paginationConfig.departuresNumberOfMovements
+              paginationConfig.departuresNumberOfMovements,
+              movements.totalCount
             )
 
             block(view(form, viewModel))

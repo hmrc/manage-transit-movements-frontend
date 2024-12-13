@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package viewModels.pagination
+package models
 
-import models.{FunctionalError, FunctionalErrors}
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 
-trait ErrorPaginationViewModel[A <: FunctionalError, B <: FunctionalErrors[A]] extends PaginationViewModel[A] {
+case class InvalidGuaranteeReason(
+  error: String,
+  furtherInformation: Option[String]
+) {
 
-  val functionalErrors: B
-
-  override val items: Seq[A] = functionalErrors.value
-
-  override val totalNumberOfItems: Int = items.length
-
-  def table(implicit messages: Messages): Table = functionalErrors.paginate(currentPage, numberOfItemsPerPage).toTable
+  def toTableRow: Seq[TableRow] = Seq(
+    TableRow(Text(error)),
+    TableRow(Text(furtherInformation.getOrElse("")))
+  )
 }

@@ -18,11 +18,11 @@ package services
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
-import generated.{FunctionalErrorType04, Number12, Number14}
+import generated.*
 import models.FunctionalError.{FunctionalErrorWithSection, FunctionalErrorWithoutSection}
 import models.FunctionalErrors.{FunctionalErrorsWithSection, FunctionalErrorsWithoutSection}
-import models.InvalidDataItem
-import models.referenceData.FunctionalErrorWithDesc
+import models.{GuaranteeReference, InvalidDataItem}
+import models.referenceData.{FunctionalErrorWithDesc, InvalidGuaranteeReason}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{reset, when}
 import play.api.inject.bind
@@ -165,6 +165,90 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
           .thenReturn(Future.successful(FunctionalErrorWithDesc("14", "bar")))
 
         val result = service.convertErrorsWithoutSection(input).futureValue
+
+        result mustBe expectedResult
+      }
+    }
+
+    "convertGuaranteeReferences" - {
+      "must convert a series of GuaranteeReferenceType08 values to a series of GuaranteeReference" in {
+        val input = Seq(
+          GuaranteeReferenceType08(
+            sequenceNumber = 1,
+            GRN = "GRN 1",
+            InvalidGuaranteeReason = Seq(
+              InvalidGuaranteeReasonType01(
+                sequenceNumber = 1,
+                code = "Code 1_1",
+                text = Some("Text 1_1")
+              ),
+              InvalidGuaranteeReasonType01(
+                sequenceNumber = 2,
+                code = "Code 1_2",
+                text = Some("Text 1_2")
+              )
+            )
+          ),
+          GuaranteeReferenceType08(
+            sequenceNumber = 2,
+            GRN = "GRN 2",
+            InvalidGuaranteeReason = Seq(
+              InvalidGuaranteeReasonType01(
+                sequenceNumber = 1,
+                code = "Code 2_1",
+                text = Some("Text 2_1")
+              ),
+              InvalidGuaranteeReasonType01(
+                sequenceNumber = 2,
+                code = "Code 2_2",
+                text = Some("Text 2_2")
+              )
+            )
+          )
+        )
+
+        val expectedResult = Seq(
+          GuaranteeReference(
+            grn = "GRN 1",
+            invalidGuarantees = Seq(
+              models.InvalidGuaranteeReason(
+                error = "Code 1_1 - Description 1_1",
+                furtherInformation = Some("Text 1_1")
+              ),
+              models.InvalidGuaranteeReason(
+                error = "Code 1_2 - Description 1_2",
+                furtherInformation = Some("Text 1_2")
+              )
+            )
+          ),
+          GuaranteeReference(
+            grn = "GRN 2",
+            invalidGuarantees = Seq(
+              models.InvalidGuaranteeReason(
+                error = "Code 2_1 - Description 2_1",
+                furtherInformation = Some("Text 2_1")
+              ),
+              models.InvalidGuaranteeReason(
+                error = "Code 2_2 - Description 2_2",
+                furtherInformation = Some("Text 2_2")
+              )
+            )
+          )
+        )
+
+        when(mockReferenceDataService.getInvalidGuaranteeReason(eqTo("Code 1_1"))(any(), any()))
+          .thenReturn(Future.successful(InvalidGuaranteeReason("Code 1_1", "Description 1_1")))
+
+        when(mockReferenceDataService.getInvalidGuaranteeReason(eqTo("Code 1_2"))(any(), any()))
+          .thenReturn(Future.successful(InvalidGuaranteeReason("Code 1_2", "Description 1_2")))
+
+        when(mockReferenceDataService.getInvalidGuaranteeReason(eqTo("Code 2_1"))(any(), any()))
+          .thenReturn(Future.successful(InvalidGuaranteeReason("Code 2_1", "Description 2_1")))
+
+        when(mockReferenceDataService.getInvalidGuaranteeReason(eqTo("Code 2_2"))(any(), any()))
+          .thenReturn(Future.successful(InvalidGuaranteeReason("Code 2_2", "Description 2_2")))
+
+        val result = service.convertGuaranteeReferences(input).futureValue
 
         result mustBe expectedResult
       }

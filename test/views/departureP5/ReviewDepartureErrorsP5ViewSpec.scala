@@ -35,7 +35,7 @@ class ReviewDepartureErrorsP5ViewSpec
   override val viewModel: ReviewDepartureErrorsP5ViewModel =
     arbitraryReviewDepartureErrorsP5ViewModel.arbitrary.sample.value
 
-  override val table: Table = viewModel.table
+  override val tables: Seq[Table] = Seq(viewModel.table)
 
   override def buildViewModel(
     totalNumberOfItems: Int,
@@ -81,7 +81,7 @@ class ReviewDepartureErrorsP5ViewSpec
 
   behave like pageWithPagination()
 
-  behave like pageWithTable()
+  behave like pageWithTables()
 
   behave like pageWithSpecificContent("paragraph-1", viewModel.paragraph1)
 

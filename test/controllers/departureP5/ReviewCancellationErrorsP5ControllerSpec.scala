@@ -76,7 +76,8 @@ class ReviewCancellationErrorsP5ControllerSpec extends SpecBase with AppWithDefa
             lrn = lrn.value,
             currentPage = None,
             numberOfErrorsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-            href = routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureIdP5, messageId)
+            departureId = departureIdP5,
+            messageId = messageId
           )
 
           val request = FakeRequest(GET, rejectionMessageController)

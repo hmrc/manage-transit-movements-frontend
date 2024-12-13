@@ -78,7 +78,8 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
             businessRejectionType = DepartureBusinessRejectionType(message),
             currentPage = None,
             numberOfErrorsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-            href = routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureIdP5, messageId)
+            departureId = departureIdP5,
+            messageId = messageId
           )
 
           val request = FakeRequest(GET, rejectionMessageController)

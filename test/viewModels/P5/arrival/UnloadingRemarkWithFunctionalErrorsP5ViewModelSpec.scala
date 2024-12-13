@@ -22,13 +22,10 @@ import models.FunctionalError.FunctionalErrorWithoutSection
 import models.FunctionalErrors.FunctionalErrorsWithoutSection
 import models.InvalidDataItem
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.mvc.Call
-import play.api.test.Helpers.GET
 
 class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  private val mrnString  = "MRNAB123"
-  private val href: Call = Call(GET, "#")
+  private val mrnString = "MRNAB123"
 
   "UnloadingRemarkWithFunctionalErrorsP5ViewModel" - {
 
@@ -44,7 +41,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with S
         )
       )
 
-      val result = UnloadingRemarkWithFunctionalErrorsP5ViewModel(errors, mrnString, None, 20, href)
+      val result = UnloadingRemarkWithFunctionalErrorsP5ViewModel(errors, mrnString, None, 20, arrivalIdP5, messageId)
 
       "must return correct title" in {
         result.title mustEqual "Review unloading remarks errors"
@@ -82,7 +79,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with S
         )
       )
 
-      val result = UnloadingRemarkWithFunctionalErrorsP5ViewModel(errors, mrnString, None, 20, href)
+      val result = UnloadingRemarkWithFunctionalErrorsP5ViewModel(errors, mrnString, None, 20, arrivalIdP5, messageId)
 
       "must return correct title" in {
         result.title mustEqual "Review unloading remarks errors"

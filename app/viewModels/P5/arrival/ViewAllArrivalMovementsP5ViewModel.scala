@@ -27,13 +27,12 @@ case class ViewAllArrivalMovementsP5ViewModel(
   items: Seq[ViewArrivalP5],
   currentPage: Int,
   numberOfItemsPerPage: Int,
-  override val searchParam: Option[String]
+  override val searchParam: Option[String],
+  totalNumberOfItems: Int
 ) extends PaginationViewModel[ViewArrivalP5] {
 
-  override val additionalParams: Seq[(String, String)] =
-    Seq(searchParam.map("mrn" -> _)).flatten
-
-  override val href: Call = routes.ViewAllArrivalsP5Controller.onPageLoad(None, None)
+  override def href(page: Int): Call =
+    routes.ViewAllArrivalsP5Controller.onPageLoad(Some(page), searchParam)
 }
 
 object ViewAllArrivalMovementsP5ViewModel {
@@ -42,7 +41,8 @@ object ViewAllArrivalMovementsP5ViewModel {
     movementsAndMessages: Seq[ViewArrivalP5],
     searchParam: Option[String],
     currentPage: Int,
-    numberOfItemsPerPage: Int
+    numberOfItemsPerPage: Int,
+    totalNumberOfMovements: Int
   )(implicit messages: Messages): ViewAllArrivalMovementsP5ViewModel = {
 
     val heading: String = searchParam match {
@@ -65,7 +65,8 @@ object ViewAllArrivalMovementsP5ViewModel {
       movementsAndMessages,
       currentPage,
       numberOfItemsPerPage,
-      searchParam
+      searchParam,
+      totalNumberOfMovements
     )
   }
 }

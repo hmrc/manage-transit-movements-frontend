@@ -17,11 +17,10 @@
 package services
 
 import connectors.DepartureCacheConnector
-import generated.FunctionalErrorType04
-import models.FunctionalError
+import generated.*
 import models.FunctionalError.*
-import models.FunctionalErrors
 import models.FunctionalErrors.*
+import models.{GuaranteeReference, InvalidGuaranteeReason}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -44,7 +43,7 @@ class FunctionalErrorsService @Inject() (
               errors.value.map {
                 error =>
                   referenceDataService.getFunctionalError(error.error).map {
-                    errorWithDesc => error.copy(error = errorWithDesc.toString)
+                    value => error.copy(error = value.toString)
                   }
               }
             }
@@ -59,9 +58,29 @@ class FunctionalErrorsService @Inject() (
         functionalErrors.map(FunctionalErrorWithoutSection.apply).map {
           error =>
             referenceDataService.getFunctionalError(error.error).map {
-              errorWithDesc => error.copy(error = errorWithDesc.toString)
+              value => error.copy(error = value.toString)
             }
         }
       }
       .map(FunctionalErrorsWithoutSection.apply)
+
+  def convertGuaranteeReferences(
+    guaranteeReferences: Seq[GuaranteeReferenceType08]
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[GuaranteeReference]] =
+    Future
+      .sequence {
+        guaranteeReferences.map {
+          guaranteeReference =>
+            Future
+              .sequence {
+                guaranteeReference.InvalidGuaranteeReason.map {
+                  invalidGuaranteeReason =>
+                    referenceDataService.getInvalidGuaranteeReason(invalidGuaranteeReason.code).map {
+                      value => InvalidGuaranteeReason(value.toString, invalidGuaranteeReason.text)
+                    }
+                }
+              }
+              .map(GuaranteeReference.apply(guaranteeReference.GRN, _))
+        }
+      }
 }

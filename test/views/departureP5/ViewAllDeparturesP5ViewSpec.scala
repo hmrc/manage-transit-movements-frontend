@@ -45,7 +45,8 @@ class ViewAllDeparturesP5ViewSpec
         Seq.fill(totalNumberOfItems)(departure)
       },
       currentPage = currentPage,
-      numberOfItemsPerPage = numberOfItemsPerPage
+      numberOfItemsPerPage = numberOfItemsPerPage,
+      totalNumberOfItems = totalNumberOfItems
     )
 
   override val prefix: String = "viewDepartureDeclarationsP5"
@@ -55,7 +56,7 @@ class ViewAllDeparturesP5ViewSpec
   override val viewMovements: Seq[ViewDepartureP5] = viewModel.items
 
   override def viewWithSpecificPagination(viewModel: ViewAllDepartureMovementsP5ViewModel): HtmlFormat.Appendable =
-    viewWithSpecificPagination(form, viewModel.copy(searchParam = None))
+    viewWithSpecificPagination(form, viewModel)
 
   override def viewWithSpecificSearchResults(numberOfSearchResults: Int, searchParam: String): HtmlFormat.Appendable =
     viewWithSpecificPagination(
@@ -65,7 +66,8 @@ class ViewAllDeparturesP5ViewSpec
           def departure: ViewDepartureP5 = arbitrary[ViewDepartureP5].sample.value
           Seq.fill(numberOfSearchResults)(departure)
         },
-        searchParam = Some(searchParam)
+        searchParam = Some(searchParam),
+        totalNumberOfItems = numberOfSearchResults
       )
     )
 

@@ -22,13 +22,10 @@ import models.FunctionalError.FunctionalErrorWithoutSection
 import models.FunctionalErrors.FunctionalErrorsWithoutSection
 import models.InvalidDataItem
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.mvc.Call
-import play.api.test.Helpers.GET
 
 class ReviewPrelodgedDeclarationErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  private val lrnString  = "LRNAB123"
-  private val href: Call = Call(GET, "#")
+  private val lrnString = "LRNAB123"
 
   "ReviewPrelodgeDepartureErrorsP5ViewModel" - {
 
@@ -45,7 +42,7 @@ class ReviewPrelodgedDeclarationErrorsP5ViewModelSpec extends SpecBase with Scal
         )
       )
 
-      val result = ReviewPrelodgedDeclarationErrorsP5ViewModel(errors, lrnString, None, 20, href)
+      val result = ReviewPrelodgedDeclarationErrorsP5ViewModel(errors, lrnString, None, 20, departureIdP5, messageId)
 
       "must return correct title" in {
         result.title mustEqual "Review pre-lodged declaration errors"
@@ -85,7 +82,7 @@ class ReviewPrelodgedDeclarationErrorsP5ViewModelSpec extends SpecBase with Scal
         )
       )
 
-      val result = ReviewPrelodgedDeclarationErrorsP5ViewModel(errors, lrnString, None, 20, href)
+      val result = ReviewPrelodgedDeclarationErrorsP5ViewModel(errors, lrnString, None, 20, departureIdP5, messageId)
 
       "must return correct title" in {
         result.title mustEqual "Review pre-lodged declaration errors"

@@ -74,7 +74,8 @@ class ArrivalNotificationWithFunctionalErrorsP5ControllerSpec extends SpecBase w
             mrn = mrn,
             currentPage = None,
             numberOfErrorsPerPage = paginationAppConfig.arrivalsNumberOfErrorsPerPage,
-            href = routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5, messageId)
+            arrivalId = arrivalIdP5,
+            messageId = messageId
           )
 
           val request = FakeRequest(GET, rejectionMessageController)

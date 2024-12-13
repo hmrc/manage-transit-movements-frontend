@@ -41,12 +41,12 @@ class ViewAllArrivalsP5ViewSpec
   ): ViewAllArrivalMovementsP5ViewModel =
     viewModel.copy(
       items = {
-        def departure: ViewArrivalP5 = arbitrary[ViewArrivalP5].sample.value
-
-        Seq.fill(totalNumberOfItems)(departure)
+        def arrival: ViewArrivalP5 = arbitrary[ViewArrivalP5].sample.value
+        Seq.fill(totalNumberOfItems)(arrival)
       },
       currentPage = currentPage,
-      numberOfItemsPerPage = numberOfItemsPerPage
+      numberOfItemsPerPage = numberOfItemsPerPage,
+      totalNumberOfItems = totalNumberOfItems
     )
 
   override val prefix: String = "viewArrivalNotificationsP5"
@@ -56,7 +56,7 @@ class ViewAllArrivalsP5ViewSpec
   override val viewMovements: Seq[ViewArrivalP5] = viewModel.items
 
   override def viewWithSpecificPagination(viewModel: ViewAllArrivalMovementsP5ViewModel): HtmlFormat.Appendable =
-    viewWithSpecificPagination(form, viewModel.copy(searchParam = None))
+    viewWithSpecificPagination(form, viewModel)
 
   override def viewWithSpecificSearchResults(numberOfSearchResults: Int, searchParam: String): HtmlFormat.Appendable =
     viewWithSpecificPagination(
@@ -66,7 +66,8 @@ class ViewAllArrivalsP5ViewSpec
           def arrival: ViewArrivalP5 = arbitrary[ViewArrivalP5].sample.value
           Seq.fill(numberOfSearchResults)(arrival)
         },
-        searchParam = Some(searchParam)
+        searchParam = Some(searchParam),
+        totalNumberOfItems = numberOfSearchResults
       )
     )
 

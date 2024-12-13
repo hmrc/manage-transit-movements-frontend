@@ -74,7 +74,8 @@ class UnloadingRemarkWithFunctionalErrorsP5ControllerSpec extends SpecBase with 
             mrn = mrn,
             currentPage = None,
             numberOfErrorsPerPage = paginationAppConfig.arrivalsNumberOfErrorsPerPage,
-            href = routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalIdP5, messageId)
+            arrivalId = arrivalIdP5,
+            messageId = messageId
           )
 
           val request = FakeRequest(GET, controller)

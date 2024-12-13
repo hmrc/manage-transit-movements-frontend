@@ -79,20 +79,11 @@ class DashboardController @Inject() (
     block: HtmlFormat.Appendable => Result
   )(implicit request: IdentifierRequest[?]): Future[Result] = {
 
-    val limit = Limit(pageSize)
     val page  = pageNumber.getOrElse(1)
+    val skip  = Skip(page - 1)
+    val limit = Limit(pageSize)
 
-    val skip = Skip(page - 1)
-
-    // TODO - move to draftDepartureService
-    def sortOrGetDrafts: Future[Option[DeparturesSummary]] = (lrn, sortParams) match {
-      case (Some(lrn), Some(sortParams)) => draftDepartureService.sortDraftDepartures(sortParams, limit, skip, lrn)
-      case (Some(lrn), None)             => draftDepartureService.getLRNs(lrn, skip, limit)
-      case (None, Some(sortParams))      => draftDepartureService.sortDraftDepartures(sortParams, limit, skip)
-      case _                             => draftDepartureService.getPagedDepartureSummary(limit, skip)
-    }
-
-    sortOrGetDrafts.map {
+    draftDepartureService.sortOrGetDrafts(lrn, sortParams, limit, skip).map {
       case Some(drafts) =>
         block(view(form, present(drafts, page, lrn, sortParams)))
       case None =>

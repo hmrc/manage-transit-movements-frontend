@@ -23,13 +23,10 @@ import models.FunctionalErrors.FunctionalErrorsWithSection
 import models.InvalidDataItem
 import models.departureP5.BusinessRejectionType
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.mvc.Call
-import play.api.test.Helpers.GET
 
 class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  private val lrnString  = "LRNAB123"
-  private val href: Call = Call(GET, "#")
+  private val lrnString = "LRNAB123"
 
   "ReviewDepartureErrorsP5ViewModel" - {
 
@@ -48,7 +45,7 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val result = ReviewDepartureErrorsP5ViewModel(errors, lrnString, BusinessRejectionType.DeclarationRejection, None, 20, href)
+        val result = ReviewDepartureErrorsP5ViewModel(errors, lrnString, BusinessRejectionType.DeclarationRejection, None, 20, departureIdP5, messageId)
 
         "must return correct title" in {
           result.title mustEqual "Review declaration errors"
@@ -84,7 +81,7 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val result = ReviewDepartureErrorsP5ViewModel(errors, lrnString, BusinessRejectionType.DeclarationRejection, None, 20, href)
+        val result = ReviewDepartureErrorsP5ViewModel(errors, lrnString, BusinessRejectionType.DeclarationRejection, None, 20, departureIdP5, messageId)
 
         "must return correct title" in {
           result.title mustEqual "Review declaration errors"
@@ -116,7 +113,7 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val result = ReviewDepartureErrorsP5ViewModel(errors, lrnString, BusinessRejectionType.AmendmentRejection, None, 20, href)
+        val result = ReviewDepartureErrorsP5ViewModel(errors, lrnString, BusinessRejectionType.AmendmentRejection, None, 20, departureIdP5, messageId)
 
         "must return correct paragraph 1" in {
           result.paragraph1 mustEqual "There is a problem with this declaration. Review the error and contact the helpdesk to discuss further."
@@ -146,7 +143,7 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPrope
           )
         )
 
-        val result = ReviewDepartureErrorsP5ViewModel(errors, lrnString, BusinessRejectionType.AmendmentRejection, None, 20, href)
+        val result = ReviewDepartureErrorsP5ViewModel(errors, lrnString, BusinessRejectionType.AmendmentRejection, None, 20, departureIdP5, messageId)
 
         "must return correct paragraph 1" in {
           result.paragraph1 mustEqual "There is a problem with this declaration. Review the errors and contact the helpdesk to discuss further."

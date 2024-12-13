@@ -23,13 +23,10 @@ import models.FunctionalErrors.FunctionalErrorsWithSection
 import models.InvalidDataItem
 import models.departureP5.BusinessRejectionType
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.mvc.Call
-import play.api.test.Helpers.GET
 
 class RejectionMessageP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  private val lrnString  = "LRNAB123"
-  private val href: Call = Call(GET, "#")
+  private val lrnString = "LRNAB123"
 
   "RejectionMessageP5ViewModel" - {
 
@@ -48,7 +45,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with ScalaCheckPropertyCh
 
       "when 015 rejection type" - {
 
-        val result = RejectionMessageP5ViewModel(errors, lrnString, BusinessRejectionType.DeclarationRejection, None, 20, href)
+        val result = RejectionMessageP5ViewModel(errors, lrnString, BusinessRejectionType.DeclarationRejection, None, 20, departureIdP5, messageId)
 
         "must return correct title" in {
           result.title mustEqual "Amend declaration errors"
@@ -70,7 +67,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with ScalaCheckPropertyCh
 
       "when 013 rejection type" - {
 
-        val result = RejectionMessageP5ViewModel(errors, lrnString, BusinessRejectionType.AmendmentRejection, None, 20, href)
+        val result = RejectionMessageP5ViewModel(errors, lrnString, BusinessRejectionType.AmendmentRejection, None, 20, departureIdP5, messageId)
 
         "must return correct title" in {
           result.title mustEqual "Amend declaration errors"
@@ -116,7 +113,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with ScalaCheckPropertyCh
 
       "when 015 rejection type" - {
 
-        val result = RejectionMessageP5ViewModel(errors, lrnString, BusinessRejectionType.DeclarationRejection, None, 20, href)
+        val result = RejectionMessageP5ViewModel(errors, lrnString, BusinessRejectionType.DeclarationRejection, None, 20, departureIdP5, messageId)
 
         "must return correct title" in {
           result.title mustEqual "Amend declaration errors"
@@ -140,7 +137,7 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with ScalaCheckPropertyCh
 
       "when 013 rejection type" - {
 
-        val result = RejectionMessageP5ViewModel(errors, lrnString, BusinessRejectionType.AmendmentRejection, None, 20, href)
+        val result = RejectionMessageP5ViewModel(errors, lrnString, BusinessRejectionType.AmendmentRejection, None, 20, departureIdP5, messageId)
 
         "must return correct title" in {
           result.title mustEqual "Amend declaration errors"

@@ -36,10 +36,10 @@ class PaginationSpec extends A11ySpecBase {
       override val currentPage: Int,
       override val numberOfItemsPerPage: Int
     ) extends PaginationViewModel[String] {
-      override val href: Call                              = Call(GET, "href")
-      override val heading: String                         = title
-      override val additionalParams: Seq[(String, String)] = Seq("foo" -> "bar")
-      override val searchParam: Option[String]             = None
+      override def href(page: Int): Call       = Call(GET, "href")
+      override val heading: String             = title
+      override val searchParam: Option[String] = None
+      override val totalNumberOfItems: Int     = items.length
     }
 
     "pass accessibility checks" when {

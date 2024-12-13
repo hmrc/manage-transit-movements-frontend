@@ -43,14 +43,13 @@ trait PaginationViewBehaviours[A, B <: PaginationViewModel[A]] extends ViewBehav
   def pageWithPagination(): Unit =
     "page with pagination" - {
 
-      val href: String = viewModel.href.url
-
       "must display previous button when not on the first page" in {
         val paginationViewModel = buildViewModel(4, 2, 2)
         val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
 
-        val element = doc.select("""[rel="prev"]""").headOption
-        element.value.attr("href") must include(s"$href?page=1")
+        val element      = doc.select("""[rel="prev"]""").headOption
+        val href: String = paginationViewModel.href(1).url
+        element.value.attr("href") mustEqual href
       }
 
       "must not display previous button when on the first page" in {
@@ -65,8 +64,9 @@ trait PaginationViewBehaviours[A, B <: PaginationViewModel[A]] extends ViewBehav
         val paginationViewModel = buildViewModel(2, 1, 1)
         val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
 
-        val element = doc.select("""[rel="next"]""").headOption
-        element.value.attr("href") must include(s"$href?page=2")
+        val element      = doc.select("""[rel="next"]""").headOption
+        val href: String = paginationViewModel.href(2).url
+        element.value.attr("href") mustEqual href
       }
 
       "must not display next button when on the last page" in {
@@ -104,7 +104,7 @@ trait PaginationViewBehaviours[A, B <: PaginationViewModel[A]] extends ViewBehav
             val paginationViewModel = buildViewModel(1, 1, movementsPerPage)
             val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
             val p                   = doc.getElementById("results-count")
-            p.text() mustEqual "Showing 1 result"
+            p.html() mustEqual paginationViewModel.searchResult
             boldWords(p) mustEqual Seq("1")
           }
 
@@ -114,7 +114,7 @@ trait PaginationViewBehaviours[A, B <: PaginationViewModel[A]] extends ViewBehav
                 val paginationViewModel = buildViewModel(numberOfMovements, 1, movementsPerPage)
                 val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
                 val p                   = doc.getElementById("results-count")
-                p.text() mustEqual s"Showing $numberOfMovements results"
+                p.html() mustEqual paginationViewModel.searchResult
                 boldWords(p) mustEqual Seq(numberOfMovements.toString)
             }
           }
@@ -131,7 +131,7 @@ trait PaginationViewBehaviours[A, B <: PaginationViewModel[A]] extends ViewBehav
                   val paginationViewModel = buildViewModel(numberOfMovements, currentPage, movementsPerPage)
                   val doc: Document       = parseView(viewWithSpecificPagination(paginationViewModel))
                   val p                   = doc.getElementById("paginated-results-count")
-                  p.text() mustEqual s"Showing $from to $to of $numberOfMovements results"
+                  p.html() mustEqual paginationViewModel.paginatedSearchResult
                   boldWords(p) mustEqual Seq(from.toString, to.toString, numberOfMovements.toString)
               }
           }

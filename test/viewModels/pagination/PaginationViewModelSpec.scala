@@ -32,11 +32,20 @@ class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
     override val items: Seq[String],
     override val currentPage: Int,
     override val numberOfItemsPerPage: Int,
-    override val searchParam: Option[String] = None
+    override val searchParam: Option[String]
   ) extends PaginationViewModel[String] {
-    override val href: Call                              = Call(GET, "href")
-    override val heading: String                         = "Example page heading"
-    override val additionalParams: Seq[(String, String)] = Seq("foo" -> "bar")
+
+    override val totalNumberOfItems: Int = items.length
+
+    override def href(page: Int): Call = {
+      val url = searchParam match {
+        case Some(value) => s"href?page=$page&foo=$value"
+        case None        => s"href?page=$page"
+      }
+      Call(GET, url)
+    }
+
+    override val heading: String = "Example page heading"
   }
 
   "PaginationViewModel" - {
@@ -46,7 +55,7 @@ class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
         "must return some when current page is less than the total number of pages" in {
           val items     = Seq.fill(10: Int)("value")
-          val viewModel = new FakeViewModel(items, 2, 2)
+          val viewModel = new FakeViewModel(items, 2, 2, Some("bar"))
           val expectedResult = PaginationLink(
             href = "href?page=3&foo=bar",
             text = None,
@@ -59,7 +68,7 @@ class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
         "must return None when current page is not less than the total number of pages" in {
           val items     = Seq.fill(10: Int)("value")
-          val viewModel = new FakeViewModel(items, 5, 2)
+          val viewModel = new FakeViewModel(items, 5, 2, Some("bar"))
           val result    = viewModel.pagination.next
           result mustBe None
         }
@@ -69,7 +78,7 @@ class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
         "must return some when current page is greater than 1" in {
           val items     = Seq.fill(10: Int)("value")
-          val viewModel = new FakeViewModel(items, 2, 2)
+          val viewModel = new FakeViewModel(items, 2, 2, Some("bar"))
           val expectedResult = PaginationLink(
             href = "href?page=1&foo=bar",
             text = None,
@@ -82,7 +91,7 @@ class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
         "must return none when current page is not greater than 1" in {
           val items     = Seq.fill(10: Int)("value")
-          val viewModel = new FakeViewModel(items, 1, 2)
+          val viewModel = new FakeViewModel(items, 1, 2, Some("bar"))
           val result    = viewModel.pagination.previous
           result mustBe None
         }
@@ -92,12 +101,12 @@ class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
         "must return [1] 2 … 10 when on page 1 of 10" in {
           val items     = Seq.fill(100: Int)("value")
-          val viewModel = new FakeViewModel(items, 1, 10)
+          val viewModel = new FakeViewModel(items, 1, 10, None)
           val expectedResult = Seq(
-            PaginationItem(s"href?page=1&foo=bar", Some("1"), current = Some(true)),
-            PaginationItem(s"href?page=2&foo=bar", Some("2"), current = Some(false)),
+            PaginationItem(s"href?page=1", Some("1"), current = Some(true)),
+            PaginationItem(s"href?page=2", Some("2"), current = Some(false)),
             PaginationItem("", ellipsis = Some(true)),
-            PaginationItem(s"href?page=10&foo=bar", Some("10"), current = Some(false))
+            PaginationItem(s"href?page=10", Some("10"), current = Some(false))
           )
           val result = viewModel.pagination.items
           result.value mustBe expectedResult
@@ -105,13 +114,13 @@ class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
         "must return 1 [2] 3 … 10 when on page 2 of 10" in {
           val items     = Seq.fill(100: Int)("value")
-          val viewModel = new FakeViewModel(items, 2, 10)
+          val viewModel = new FakeViewModel(items, 2, 10, None)
           val expectedResult = Seq(
-            PaginationItem(s"href?page=1&foo=bar", Some("1"), current = Some(false)),
-            PaginationItem(s"href?page=2&foo=bar", Some("2"), current = Some(true)),
-            PaginationItem(s"href?page=3&foo=bar", Some("3"), current = Some(false)),
+            PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
+            PaginationItem(s"href?page=2", Some("2"), current = Some(true)),
+            PaginationItem(s"href?page=3", Some("3"), current = Some(false)),
             PaginationItem("", ellipsis = Some(true)),
-            PaginationItem(s"href?page=10&foo=bar", Some("10"), current = Some(false))
+            PaginationItem(s"href?page=10", Some("10"), current = Some(false))
           )
           val result = viewModel.pagination.items
           result.value mustBe expectedResult
@@ -119,14 +128,14 @@ class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
         "must return 1 2 [3] 4 … 10 when on page 3 of 10" in {
           val items     = Seq.fill(100: Int)("value")
-          val viewModel = new FakeViewModel(items, 3, 10)
+          val viewModel = new FakeViewModel(items, 3, 10, None)
           val expectedResult = Seq(
-            PaginationItem(s"href?page=1&foo=bar", Some("1"), current = Some(false)),
-            PaginationItem(s"href?page=2&foo=bar", Some("2"), current = Some(false)),
-            PaginationItem(s"href?page=3&foo=bar", Some("3"), current = Some(true)),
-            PaginationItem(s"href?page=4&foo=bar", Some("4"), current = Some(false)),
+            PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
+            PaginationItem(s"href?page=2", Some("2"), current = Some(false)),
+            PaginationItem(s"href?page=3", Some("3"), current = Some(true)),
+            PaginationItem(s"href?page=4", Some("4"), current = Some(false)),
             PaginationItem("", ellipsis = Some(true)),
-            PaginationItem(s"href?page=10&foo=bar", Some("10"), current = Some(false))
+            PaginationItem(s"href?page=10", Some("10"), current = Some(false))
           )
           val result = viewModel.pagination.items
           result.value mustBe expectedResult
@@ -134,15 +143,15 @@ class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
         "must return 1 … 3 [4] 5 … 10 when on page 4 of 10" in {
           val items     = Seq.fill(100: Int)("value")
-          val viewModel = new FakeViewModel(items, 4, 10)
+          val viewModel = new FakeViewModel(items, 4, 10, None)
           val expectedResult = Seq(
-            PaginationItem(s"href?page=1&foo=bar", Some("1"), current = Some(false)),
+            PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
             PaginationItem("", ellipsis = Some(true)),
-            PaginationItem(s"href?page=3&foo=bar", Some("3"), current = Some(false)),
-            PaginationItem(s"href?page=4&foo=bar", Some("4"), current = Some(true)),
-            PaginationItem(s"href?page=5&foo=bar", Some("5"), current = Some(false)),
+            PaginationItem(s"href?page=3", Some("3"), current = Some(false)),
+            PaginationItem(s"href?page=4", Some("4"), current = Some(true)),
+            PaginationItem(s"href?page=5", Some("5"), current = Some(false)),
             PaginationItem("", ellipsis = Some(true)),
-            PaginationItem(s"href?page=10&foo=bar", Some("10"), current = Some(false))
+            PaginationItem(s"href?page=10", Some("10"), current = Some(false))
           )
           val result = viewModel.pagination.items
           result.value mustBe expectedResult
@@ -150,14 +159,14 @@ class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
         "must return 1 … 7 [8] 9 10 when on page 8 of 10" in {
           val items     = Seq.fill(100: Int)("value")
-          val viewModel = new FakeViewModel(items, 8, 10)
+          val viewModel = new FakeViewModel(items, 8, 10, None)
           val expectedResult = Seq(
-            PaginationItem(s"href?page=1&foo=bar", Some("1"), current = Some(false)),
+            PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
             PaginationItem("", ellipsis = Some(true)),
-            PaginationItem(s"href?page=7&foo=bar", Some("7"), current = Some(false)),
-            PaginationItem(s"href?page=8&foo=bar", Some("8"), current = Some(true)),
-            PaginationItem(s"href?page=9&foo=bar", Some("9"), current = Some(false)),
-            PaginationItem(s"href?page=10&foo=bar", Some("10"), current = Some(false))
+            PaginationItem(s"href?page=7", Some("7"), current = Some(false)),
+            PaginationItem(s"href?page=8", Some("8"), current = Some(true)),
+            PaginationItem(s"href?page=9", Some("9"), current = Some(false)),
+            PaginationItem(s"href?page=10", Some("10"), current = Some(false))
           )
           val result = viewModel.pagination.items
           result.value mustBe expectedResult
@@ -165,13 +174,13 @@ class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
         "must return 1 … 8 [9] 10 when on page 9 of 10" in {
           val items     = Seq.fill(100: Int)("value")
-          val viewModel = new FakeViewModel(items, 9, 10)
+          val viewModel = new FakeViewModel(items, 9, 10, None)
           val expectedResult = Seq(
-            PaginationItem(s"href?page=1&foo=bar", Some("1"), current = Some(false)),
+            PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
             PaginationItem("", ellipsis = Some(true)),
-            PaginationItem(s"href?page=8&foo=bar", Some("8"), current = Some(false)),
-            PaginationItem(s"href?page=9&foo=bar", Some("9"), current = Some(true)),
-            PaginationItem(s"href?page=10&foo=bar", Some("10"), current = Some(false))
+            PaginationItem(s"href?page=8", Some("8"), current = Some(false)),
+            PaginationItem(s"href?page=9", Some("9"), current = Some(true)),
+            PaginationItem(s"href?page=10", Some("10"), current = Some(false))
           )
           val result = viewModel.pagination.items
           result.value mustBe expectedResult
@@ -179,12 +188,12 @@ class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
         "must return 1 … 9 [10] when on page 10 of 10" in {
           val items     = Seq.fill(100: Int)("value")
-          val viewModel = new FakeViewModel(items, 10, 10)
+          val viewModel = new FakeViewModel(items, 10, 10, None)
           val expectedResult = Seq(
-            PaginationItem(s"href?page=1&foo=bar", Some("1"), current = Some(false)),
+            PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
             PaginationItem("", ellipsis = Some(true)),
-            PaginationItem(s"href?page=9&foo=bar", Some("9"), current = Some(false)),
-            PaginationItem(s"href?page=10&foo=bar", Some("10"), current = Some(true))
+            PaginationItem(s"href?page=9", Some("9"), current = Some(false)),
+            PaginationItem(s"href?page=10", Some("10"), current = Some(true))
           )
           val result = viewModel.pagination.items
           result.value mustBe expectedResult
@@ -192,11 +201,11 @@ class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
         "must return 1 [2] 3 when on page 2 of 3" in {
           val items     = Seq.fill(30: Int)("value")
-          val viewModel = new FakeViewModel(items, 2, 10)
+          val viewModel = new FakeViewModel(items, 2, 10, None)
           val expectedResult = Seq(
-            PaginationItem(s"href?page=1&foo=bar", Some("1"), current = Some(false)),
-            PaginationItem(s"href?page=2&foo=bar", Some("2"), current = Some(true)),
-            PaginationItem(s"href?page=3&foo=bar", Some("3"), current = Some(false))
+            PaginationItem(s"href?page=1", Some("1"), current = Some(false)),
+            PaginationItem(s"href?page=2", Some("2"), current = Some(true)),
+            PaginationItem(s"href?page=3", Some("3"), current = Some(false))
           )
           val result = viewModel.pagination.items
           result.value mustBe expectedResult
