@@ -16,6 +16,7 @@
 
 package viewModels.P5.arrival
 
+import controllers.arrivalP5.routes
 import models.FunctionalError.FunctionalErrorWithoutSection
 import models.FunctionalErrors.FunctionalErrorsWithoutSection
 import play.api.i18n.Messages
@@ -32,8 +33,13 @@ case class UnloadingRemarkWithFunctionalErrorsP5ViewModel(
   functionalErrors: FunctionalErrorsWithoutSection,
   currentPage: Int,
   numberOfItemsPerPage: Int,
-  href: Call
-) extends ErrorPaginationViewModel[FunctionalErrorWithoutSection, FunctionalErrorsWithoutSection]
+  arrivalId: String,
+  messageId: String
+) extends ErrorPaginationViewModel[FunctionalErrorWithoutSection, FunctionalErrorsWithoutSection] {
+
+  override def href(page: Int): Call =
+    routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(Some(page), arrivalId, messageId)
+}
 
 object UnloadingRemarkWithFunctionalErrorsP5ViewModel {
 
@@ -42,7 +48,8 @@ object UnloadingRemarkWithFunctionalErrorsP5ViewModel {
     mrn: String,
     currentPage: Option[Int],
     numberOfErrorsPerPage: Int,
-    href: Call
+    arrivalId: String,
+    messageId: String
   )(implicit messages: Messages): UnloadingRemarkWithFunctionalErrorsP5ViewModel = {
 
     val multipleErrors: Boolean = functionalErrors.multipleErrors
@@ -69,7 +76,8 @@ object UnloadingRemarkWithFunctionalErrorsP5ViewModel {
       functionalErrors = functionalErrors,
       currentPage = currentPage.getOrElse(1),
       numberOfItemsPerPage = numberOfErrorsPerPage,
-      href = href
+      arrivalId = arrivalId,
+      messageId = messageId
     )
   }
 }

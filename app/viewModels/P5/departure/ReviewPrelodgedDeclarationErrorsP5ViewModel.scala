@@ -16,6 +16,7 @@
 
 package viewModels.P5.departure
 
+import controllers.departureP5.routes
 import models.FunctionalError.FunctionalErrorWithoutSection
 import models.FunctionalErrors.FunctionalErrorsWithoutSection
 import play.api.i18n.Messages
@@ -32,8 +33,13 @@ case class ReviewPrelodgedDeclarationErrorsP5ViewModel(
   functionalErrors: FunctionalErrorsWithoutSection,
   currentPage: Int,
   numberOfItemsPerPage: Int,
-  href: Call
-) extends ErrorPaginationViewModel[FunctionalErrorWithoutSection, FunctionalErrorsWithoutSection]
+  departureId: String,
+  messageId: String
+) extends ErrorPaginationViewModel[FunctionalErrorWithoutSection, FunctionalErrorsWithoutSection] {
+
+  override def href(page: Int): Call =
+    routes.ReviewPrelodgedDeclarationErrorsP5Controller.onPageLoad(Some(page), departureId, messageId)
+}
 
 object ReviewPrelodgedDeclarationErrorsP5ViewModel {
 
@@ -42,7 +48,8 @@ object ReviewPrelodgedDeclarationErrorsP5ViewModel {
     lrn: String,
     currentPage: Option[Int],
     numberOfErrorsPerPage: Int,
-    href: Call
+    departureId: String,
+    messageId: String
   )(implicit messages: Messages): ReviewPrelodgedDeclarationErrorsP5ViewModel = {
 
     val multipleErrors: Boolean = functionalErrors.multipleErrors
@@ -69,7 +76,8 @@ object ReviewPrelodgedDeclarationErrorsP5ViewModel {
       functionalErrors = functionalErrors,
       currentPage = currentPage.getOrElse(1),
       numberOfItemsPerPage = numberOfErrorsPerPage,
-      href = href
+      departureId = departureId,
+      messageId = messageId
     )
   }
 }

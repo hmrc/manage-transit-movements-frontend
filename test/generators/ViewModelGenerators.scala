@@ -23,7 +23,6 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.FormError
 import play.api.i18n.Messages
-import play.api.mvc.Call
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases.Content
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
@@ -139,13 +138,15 @@ trait ViewModelGenerators {
         mrn                   <- nonEmptyString
         currentPage           <- Gen.option(positiveInts)
         numberOfErrorsPerPage <- positiveInts
-        href                  <- arbitrary[Call]
+        arrivalId             <- nonEmptyString
+        messageId             <- nonEmptyString
       } yield ArrivalNotificationWithFunctionalErrorsP5ViewModel(
         functionalErrors = functionalErrors,
         mrn = mrn,
         currentPage = currentPage,
         numberOfErrorsPerPage = numberOfErrorsPerPage,
-        href = href
+        arrivalId = arrivalId,
+        messageId = messageId
       )
     }
 
@@ -158,13 +159,15 @@ trait ViewModelGenerators {
         mrn                   <- nonEmptyString
         currentPage           <- Gen.option(positiveInts)
         numberOfErrorsPerPage <- positiveInts
-        href                  <- arbitrary[Call]
+        arrivalId             <- nonEmptyString
+        messageId             <- nonEmptyString
       } yield UnloadingRemarkWithFunctionalErrorsP5ViewModel(
         functionalErrors = functionalErrors,
         mrn = mrn,
         currentPage = currentPage,
         numberOfErrorsPerPage = numberOfErrorsPerPage,
-        href = href
+        arrivalId = arrivalId,
+        messageId = messageId
       )
     }
 
@@ -178,14 +181,16 @@ trait ViewModelGenerators {
         businessRejectionType <- arbitrary[DepartureBusinessRejectionType]
         currentPage           <- Gen.option(positiveInts)
         numberOfErrorsPerPage <- positiveInts
-        href                  <- arbitrary[Call]
+        departureId           <- nonEmptyString
+        messageId             <- nonEmptyString
       } yield RejectionMessageP5ViewModel(
         functionalErrors = functionalErrors,
         lrn = lrn,
         businessRejectionType = businessRejectionType,
         currentPage = currentPage,
         numberOfErrorsPerPage = numberOfErrorsPerPage,
-        href = href
+        departureId = departureId,
+        messageId = messageId
       )
     }
 
@@ -199,14 +204,16 @@ trait ViewModelGenerators {
         businessRejectionType <- arbitrary[DepartureBusinessRejectionType]
         currentPage           <- Gen.option(positiveInts)
         numberOfErrorsPerPage <- positiveInts
-        href                  <- arbitrary[Call]
+        departureId           <- nonEmptyString
+        messageId             <- nonEmptyString
       } yield ReviewDepartureErrorsP5ViewModel(
         functionalErrors = functionalErrors,
         lrn = lrn,
         businessRejectionType = businessRejectionType,
         currentPage = currentPage,
         numberOfErrorsPerPage = numberOfErrorsPerPage,
-        href = href
+        departureId = departureId,
+        messageId = messageId
       )
     }
 
@@ -219,13 +226,15 @@ trait ViewModelGenerators {
         lrn                   <- nonEmptyString
         currentPage           <- Gen.option(positiveInts)
         numberOfErrorsPerPage <- positiveInts
-        href                  <- arbitrary[Call]
+        departureId           <- nonEmptyString
+        messageId             <- nonEmptyString
       } yield ReviewCancellationErrorsP5ViewModel(
         functionalErrors = functionalErrors,
         lrn = lrn,
         currentPage = currentPage,
         numberOfErrorsPerPage = numberOfErrorsPerPage,
-        href = href
+        departureId = departureId,
+        messageId = messageId
       )
     }
 
@@ -238,13 +247,15 @@ trait ViewModelGenerators {
         lrn                   <- nonEmptyString
         currentPage           <- Gen.option(positiveInts)
         numberOfErrorsPerPage <- positiveInts
-        href                  <- arbitrary[Call]
+        departureId           <- nonEmptyString
+        messageId             <- nonEmptyString
       } yield ReviewPrelodgedDeclarationErrorsP5ViewModel(
         functionalErrors = functionalErrors,
         lrn = lrn,
         currentPage = currentPage,
         numberOfErrorsPerPage = numberOfErrorsPerPage,
-        href = href
+        departureId = departureId,
+        messageId = messageId
       )
     }
 

@@ -50,7 +50,8 @@ class ReviewPrelodgedDeclarationErrorsP5Controller @Inject() (
               lrn = request.referenceNumbers.localReferenceNumber,
               currentPage = page,
               numberOfErrorsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
-              href = routes.ReviewPrelodgedDeclarationErrorsP5Controller.onPageLoad(None, departureId, messageId)
+              departureId = departureId,
+              messageId = messageId
             )
 
             Ok(view(viewModel, departureId))

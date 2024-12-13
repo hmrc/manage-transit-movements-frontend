@@ -33,10 +33,15 @@ case class ReviewCancellationErrorsP5ViewModel(
   functionalErrors: FunctionalErrorsWithoutSection,
   currentPage: Int,
   numberOfItemsPerPage: Int,
-  href: Call
+  departureId: String,
+  messageId: String
 ) extends ErrorPaginationViewModel[FunctionalErrorWithoutSection, FunctionalErrorsWithoutSection] {
 
-  val viewDeparturesLink: String = routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
+  override def href(page: Int): Call =
+    routes.ReviewCancellationErrorsP5Controller.onPageLoad(Some(page), departureId, messageId)
+
+  val viewDeparturesLink: String =
+    routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url
 }
 
 object ReviewCancellationErrorsP5ViewModel {
@@ -46,7 +51,8 @@ object ReviewCancellationErrorsP5ViewModel {
     lrn: String,
     currentPage: Option[Int],
     numberOfErrorsPerPage: Int,
-    href: Call
+    departureId: String,
+    messageId: String
   )(implicit messages: Messages): ReviewCancellationErrorsP5ViewModel = {
 
     val multipleErrors: Boolean = functionalErrors.multipleErrors
@@ -73,7 +79,8 @@ object ReviewCancellationErrorsP5ViewModel {
       functionalErrors = functionalErrors,
       currentPage = currentPage.getOrElse(1),
       numberOfItemsPerPage = numberOfErrorsPerPage,
-      href = href
+      departureId = departureId,
+      messageId = messageId
     )
   }
 }

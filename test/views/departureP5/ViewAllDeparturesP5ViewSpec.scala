@@ -55,7 +55,7 @@ class ViewAllDeparturesP5ViewSpec
   override val viewMovements: Seq[ViewDepartureP5] = viewModel.items
 
   override def viewWithSpecificPagination(viewModel: ViewAllDepartureMovementsP5ViewModel): HtmlFormat.Appendable =
-    viewWithSpecificPagination(form, viewModel.copy(searchParam = None))
+    viewWithSpecificPagination(form, viewModel)
 
   override def viewWithSpecificSearchResults(numberOfSearchResults: Int, searchParam: String): HtmlFormat.Appendable =
     viewWithSpecificPagination(

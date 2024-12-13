@@ -32,18 +32,16 @@ case class AllDraftDeparturesViewModel(
   currentPage: Int,
   numberOfItemsPerPage: Int,
   lrn: Option[String],
-  sortParams: Sort = SortByCreatedAtDesc
+  sort: Option[Sort]
 ) extends PaginationViewModel[DepartureUserAnswerSummary] {
 
   override val items: Seq[DepartureUserAnswerSummary] = departures.userAnswers
 
-  override val additionalParams: Seq[(String, String)] = Seq(
-    lrn.map(("lrn", _)),
-    Some(("sortParams", sortParams.toString))
-  ).flatten
+  override def href(page: Int): Call =
+    routes.DashboardController.onPageLoad(Some(page), lrn, sort.map(_.convertParams))
 
-  override val href: Call =
-    routes.DashboardController.onSubmit(None)
+  def onSubmit(): Call =
+    routes.DashboardController.onSubmit(sort.map(_.convertParams))
 
   override val searchParam: Option[String] = lrn
 
@@ -62,6 +60,8 @@ case class AllDraftDeparturesViewModel(
   def searchResultsFound: Boolean   = resultsFound && isSearch
   def noResultsFound: Boolean       = departures.totalMovements == 0
   def noSearchResultsFound: Boolean = departures.totalMatchingMovements == 0 && !noResultsFound
+
+  private val sortParams: Sort = sort.getOrElse(SortByCreatedAtDesc)
 
   def sortLrn: String       = sortParams.ariaSort(LRN)
   def sortCreatedAt: String = sortParams.ariaSort(CreatedAt)
@@ -103,7 +103,7 @@ object AllDraftDeparturesViewModel {
       currentPage,
       numberOfItemsPerPage,
       lrn,
-      sortParams.getOrElse(SortByCreatedAtDesc)
+      sortParams
     )
   }
 }

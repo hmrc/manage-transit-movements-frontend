@@ -16,6 +16,7 @@
 
 package viewModels.P5.departure
 
+import controllers.departureP5.routes
 import models.FunctionalError.FunctionalErrorWithSection
 import models.FunctionalErrors.FunctionalErrorsWithSection
 import models.departureP5.BusinessRejectionType.*
@@ -34,8 +35,13 @@ case class RejectionMessageP5ViewModel(
   functionalErrors: FunctionalErrorsWithSection,
   currentPage: Int,
   numberOfItemsPerPage: Int,
-  href: Call
-) extends ErrorPaginationViewModel[FunctionalErrorWithSection, FunctionalErrorsWithSection]
+  departureId: String,
+  messageId: String
+) extends ErrorPaginationViewModel[FunctionalErrorWithSection, FunctionalErrorsWithSection] {
+
+  override def href(page: Int): Call =
+    routes.RejectionMessageP5Controller.onPageLoad(Some(page), departureId, messageId)
+}
 
 object RejectionMessageP5ViewModel {
 
@@ -45,7 +51,8 @@ object RejectionMessageP5ViewModel {
     businessRejectionType: DepartureBusinessRejectionType,
     currentPage: Option[Int],
     numberOfErrorsPerPage: Int,
-    href: Call
+    departureId: String,
+    messageId: String
   )(implicit messages: Messages): RejectionMessageP5ViewModel = {
 
     val multipleErrors: Boolean = functionalErrors.multipleErrors
@@ -83,7 +90,8 @@ object RejectionMessageP5ViewModel {
       functionalErrors = functionalErrors,
       currentPage = currentPage.getOrElse(1),
       numberOfItemsPerPage = numberOfErrorsPerPage,
-      href = href
+      departureId = departureId,
+      messageId = messageId
     )
   }
 }

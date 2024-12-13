@@ -56,7 +56,7 @@ class DashboardViewSpec extends SearchViewBehaviours with PaginationViewBehaviou
   override val movementsPerPage: Int = paginationAppConfig.draftDeparturesNumberOfDrafts
 
   override def viewWithSpecificPagination(viewModel: AllDraftDeparturesViewModel): HtmlFormat.Appendable =
-    viewWithSpecificPagination(form, viewModel.copy(lrn = None))
+    viewWithSpecificPagination(form, viewModel)
 
   override def viewWithSpecificSearchResults(numberOfSearchResults: Int, searchParam: String): HtmlFormat.Appendable =
     viewWithSpecificPagination(

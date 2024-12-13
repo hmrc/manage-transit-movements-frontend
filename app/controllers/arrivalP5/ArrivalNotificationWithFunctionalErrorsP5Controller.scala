@@ -51,7 +51,8 @@ class ArrivalNotificationWithFunctionalErrorsP5Controller @Inject() (
                 mrn = request.messageData.TransitOperation.MRN,
                 currentPage = page,
                 numberOfErrorsPerPage = paginationConfig.arrivalsNumberOfErrorsPerPage,
-                href = routes.ArrivalNotificationWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalId, messageId)
+                arrivalId = arrivalId,
+                messageId = messageId
               )
 
               Ok(view(viewModel, arrivalId))

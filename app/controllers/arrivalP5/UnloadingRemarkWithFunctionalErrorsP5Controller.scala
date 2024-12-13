@@ -52,7 +52,8 @@ class UnloadingRemarkWithFunctionalErrorsP5Controller @Inject() (
                 mrn = request.messageData.TransitOperation.MRN,
                 currentPage = page,
                 numberOfErrorsPerPage = paginationConfig.arrivalsNumberOfErrorsPerPage,
-                href = routes.UnloadingRemarkWithFunctionalErrorsP5Controller.onPageLoad(None, arrivalId, messageId)
+                arrivalId = arrivalId,
+                messageId = messageId
               )
 
               Ok(view(viewModel, arrivalId, messageId))

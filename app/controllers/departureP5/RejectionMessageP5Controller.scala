@@ -61,7 +61,8 @@ class RejectionMessageP5Controller @Inject() (
                   businessRejectionType = rejection.businessRejectionType,
                   currentPage = page,
                   numberOfErrorsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
-                  href = routes.RejectionMessageP5Controller.onPageLoad(None, departureId, messageId)
+                  departureId = departureId,
+                  messageId = messageId
                 )
 
                 Ok(view(viewModel, departureId, messageId, request.referenceNumbers.movementReferenceNumber))

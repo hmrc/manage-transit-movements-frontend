@@ -30,10 +30,8 @@ case class ViewAllArrivalMovementsP5ViewModel(
   override val searchParam: Option[String]
 ) extends PaginationViewModel[ViewArrivalP5] {
 
-  override val additionalParams: Seq[(String, String)] =
-    Seq(searchParam.map("mrn" -> _)).flatten
-
-  override val href: Call = routes.ViewAllArrivalsP5Controller.onPageLoad(None, None)
+  override def href(page: Int): Call =
+    routes.ViewAllArrivalsP5Controller.onPageLoad(Some(page), searchParam)
 }
 
 object ViewAllArrivalMovementsP5ViewModel {

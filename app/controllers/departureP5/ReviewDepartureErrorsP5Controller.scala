@@ -53,7 +53,8 @@ class ReviewDepartureErrorsP5Controller @Inject() (
               businessRejectionType = DepartureBusinessRejectionType(request.messageData),
               currentPage = page,
               numberOfErrorsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
-              href = routes.ReviewDepartureErrorsP5Controller.onPageLoad(None, departureId, messageId)
+              departureId = departureId,
+              messageId = messageId
             )
 
             Ok(view(viewModel, departureId, request.referenceNumbers.movementReferenceNumber))

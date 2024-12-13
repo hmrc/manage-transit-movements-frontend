@@ -25,8 +25,6 @@ trait PaginationViewModel[T] {
   val items: Seq[T]
   val currentPage: Int
   val numberOfItemsPerPage: Int
-  val href: Call
-  val additionalParams: Seq[(String, String)] = Seq.empty
   val heading: String
   val searchParam: Option[String] = None
 
@@ -46,26 +44,22 @@ trait PaginationViewModel[T] {
       case None        => messages("pagination.results", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>")
     }
 
-  def pagination(implicit messages: Messages): Pagination = {
-    // TODO - could we change href type to Int => Call and pass in the page?
-    def hrefWithParams(page: Int): String = additionalParams.foldLeft(s"${href.url}?page=$page") {
-      case (href, (key, value)) =>
-        href + s"&$key=$value"
-    }
+  def href(page: Int): Call
 
+  def pagination(implicit messages: Messages): Pagination = {
     def attributes(key: String): Map[String, String] =
       Map("aria-label" -> messages(key, heading.toLowerCase))
 
     val previous: Option[PaginationLink] = Option.when(currentPage > 1) {
       PaginationLink(
-        href = hrefWithParams(currentPage - 1),
+        href = href(currentPage - 1).url,
         attributes = attributes("pagination.previous.hidden")
       )
     }
 
     val next: Option[PaginationLink] = Option.when(currentPage < results.totalPages) {
       PaginationLink(
-        href = hrefWithParams(currentPage + 1),
+        href = href(currentPage + 1).url,
         attributes = attributes("pagination.next.hidden")
       )
     }
@@ -74,7 +68,7 @@ trait PaginationViewModel[T] {
       (acc, page) =>
         if (page == 1 || (page >= currentPage - 1 && page <= currentPage + 1) || page == results.totalPages) {
           acc :+ PaginationItem(
-            href = hrefWithParams(page),
+            href = href(page).url,
             number = Some(page.toString),
             current = Some(page == currentPage)
           )

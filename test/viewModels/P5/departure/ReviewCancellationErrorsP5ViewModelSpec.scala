@@ -22,13 +22,10 @@ import models.FunctionalError.FunctionalErrorWithoutSection
 import models.FunctionalErrors.FunctionalErrorsWithoutSection
 import models.InvalidDataItem
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.mvc.Call
-import play.api.test.Helpers.GET
 
 class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  private val lrnString  = "LRNAB123"
-  private val href: Call = Call(GET, "#")
+  private val lrnString = "LRNAB123"
 
   "ReviewCancellationErrorsP5ViewModel" - {
 
@@ -44,7 +41,7 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPr
         )
       )
 
-      val result = ReviewCancellationErrorsP5ViewModel(errors, lrnString, None, 20, href)
+      val result = ReviewCancellationErrorsP5ViewModel(errors, lrnString, None, 20, departureIdP5, messageId)
 
       "must return correct title" in {
         result.title mustEqual "Review cancellation errors"
@@ -85,7 +82,7 @@ class ReviewCancellationErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPr
         )
       )
 
-      val result = ReviewCancellationErrorsP5ViewModel(errors, lrnString, None, 20, href)
+      val result = ReviewCancellationErrorsP5ViewModel(errors, lrnString, None, 20, departureIdP5, messageId)
 
       "must return correct title" in {
         result.title mustEqual "Review cancellation errors"

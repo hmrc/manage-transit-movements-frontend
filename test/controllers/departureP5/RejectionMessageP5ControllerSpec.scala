@@ -87,7 +87,8 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
             businessRejectionType = DepartureBusinessRejectionType(message),
             currentPage = None,
             numberOfErrorsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
-            href = routes.RejectionMessageP5Controller.onPageLoad(None, departureIdP5, messageId)
+            departureId = departureIdP5,
+            messageId = messageId
           )
 
           val request = FakeRequest(GET, rejectionMessageOnPageLoadRoute)
