@@ -23,12 +23,13 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, Pagina
 trait PaginationViewModel[T] {
 
   val items: Seq[T]
+  val totalNumberOfItems: Int // this is across all pages
   val currentPage: Int
   val numberOfItemsPerPage: Int
   val heading: String
   val searchParam: Option[String] = None
 
-  def results: MetaData = MetaData(items.length, numberOfItemsPerPage, currentPage)
+  def results: MetaData = MetaData(totalNumberOfItems, numberOfItemsPerPage, currentPage)
 
   def searchResult(implicit messages: Messages): String =
     (searchParam, results.count) match {

@@ -41,12 +41,12 @@ class ViewAllArrivalsP5ViewSpec
   ): ViewAllArrivalMovementsP5ViewModel =
     viewModel.copy(
       items = {
-        def departure: ViewArrivalP5 = arbitrary[ViewArrivalP5].sample.value
-
-        Seq.fill(totalNumberOfItems)(departure)
+        def arrival: ViewArrivalP5 = arbitrary[ViewArrivalP5].sample.value
+        Seq.fill(totalNumberOfItems)(arrival)
       },
       currentPage = currentPage,
-      numberOfItemsPerPage = numberOfItemsPerPage
+      numberOfItemsPerPage = numberOfItemsPerPage,
+      totalNumberOfItems = totalNumberOfItems
     )
 
   override val prefix: String = "viewArrivalNotificationsP5"
@@ -66,7 +66,8 @@ class ViewAllArrivalsP5ViewSpec
           def arrival: ViewArrivalP5 = arbitrary[ViewArrivalP5].sample.value
           Seq.fill(numberOfSearchResults)(arrival)
         },
-        searchParam = Some(searchParam)
+        searchParam = Some(searchParam),
+        totalNumberOfItems = numberOfSearchResults
       )
     )
 

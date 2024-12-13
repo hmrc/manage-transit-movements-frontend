@@ -35,6 +35,8 @@ case class AllDraftDeparturesViewModel(
   sort: Option[Sort]
 ) extends PaginationViewModel[DepartureUserAnswerSummary] {
 
+  override val totalNumberOfItems: Int = departures.totalMatchingMovements
+
   override val items: Seq[DepartureUserAnswerSummary] = departures.userAnswers
 
   override def href(page: Int): Call =

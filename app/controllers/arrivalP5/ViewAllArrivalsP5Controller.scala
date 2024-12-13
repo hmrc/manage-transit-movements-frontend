@@ -83,7 +83,8 @@ class ViewAllArrivalsP5Controller @Inject() (
               arrivals,
               searchParam,
               currentPage,
-              paginationConfig.arrivalsNumberOfMovements
+              paginationConfig.arrivalsNumberOfMovements,
+              movements.totalCount
             )
 
             block(view(form, viewModel))

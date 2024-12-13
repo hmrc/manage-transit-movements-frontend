@@ -26,5 +26,7 @@ trait ErrorPaginationViewModel[A <: FunctionalError, B <: FunctionalErrors[A]] e
 
   override val items: Seq[A] = functionalErrors.value
 
+  override val totalNumberOfItems: Int = items.length
+
   def table(implicit messages: Messages): Table = functionalErrors.paginate(currentPage, numberOfItemsPerPage).toTable
 }

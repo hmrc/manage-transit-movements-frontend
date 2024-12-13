@@ -27,7 +27,8 @@ case class ViewAllArrivalMovementsP5ViewModel(
   items: Seq[ViewArrivalP5],
   currentPage: Int,
   numberOfItemsPerPage: Int,
-  override val searchParam: Option[String]
+  override val searchParam: Option[String],
+  totalNumberOfItems: Int
 ) extends PaginationViewModel[ViewArrivalP5] {
 
   override def href(page: Int): Call =
@@ -40,7 +41,8 @@ object ViewAllArrivalMovementsP5ViewModel {
     movementsAndMessages: Seq[ViewArrivalP5],
     searchParam: Option[String],
     currentPage: Int,
-    numberOfItemsPerPage: Int
+    numberOfItemsPerPage: Int,
+    totalNumberOfMovements: Int
   )(implicit messages: Messages): ViewAllArrivalMovementsP5ViewModel = {
 
     val heading: String = searchParam match {
@@ -63,7 +65,8 @@ object ViewAllArrivalMovementsP5ViewModel {
       movementsAndMessages,
       currentPage,
       numberOfItemsPerPage,
-      searchParam
+      searchParam,
+      totalNumberOfMovements
     )
   }
 }

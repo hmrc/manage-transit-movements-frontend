@@ -45,7 +45,8 @@ class ViewAllDeparturesP5ViewSpec
         Seq.fill(totalNumberOfItems)(departure)
       },
       currentPage = currentPage,
-      numberOfItemsPerPage = numberOfItemsPerPage
+      numberOfItemsPerPage = numberOfItemsPerPage,
+      totalNumberOfItems = totalNumberOfItems
     )
 
   override val prefix: String = "viewDepartureDeclarationsP5"
@@ -65,7 +66,8 @@ class ViewAllDeparturesP5ViewSpec
           def departure: ViewDepartureP5 = arbitrary[ViewDepartureP5].sample.value
           Seq.fill(numberOfSearchResults)(departure)
         },
-        searchParam = Some(searchParam)
+        searchParam = Some(searchParam),
+        totalNumberOfItems = numberOfSearchResults
       )
     )
 

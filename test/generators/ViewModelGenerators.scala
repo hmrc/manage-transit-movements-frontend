@@ -264,15 +264,17 @@ trait ViewModelGenerators {
   ): Arbitrary[ViewAllDepartureMovementsP5ViewModel] =
     Arbitrary {
       for {
-        movementsAndMessages <- listWithMaxLength[ViewDepartureP5]()
-        searchParam          <- Gen.option(nonEmptyString)
-        currentPage          <- positiveInts
-        numberOfItemsPerPage <- positiveInts
+        movementsAndMessages   <- listWithMaxLength[ViewDepartureP5]()
+        searchParam            <- Gen.option(nonEmptyString)
+        currentPage            <- positiveInts
+        numberOfItemsPerPage   <- positiveInts
+        totalNumberOfMovements <- positiveInts
       } yield ViewAllDepartureMovementsP5ViewModel(
         movementsAndMessages = movementsAndMessages,
         searchParam = searchParam,
         currentPage = currentPage,
-        numberOfItemsPerPage = numberOfItemsPerPage
+        numberOfItemsPerPage = numberOfItemsPerPage,
+        totalNumberOfMovements = totalNumberOfMovements
       )
     }
 
@@ -281,15 +283,17 @@ trait ViewModelGenerators {
   ): Arbitrary[ViewAllArrivalMovementsP5ViewModel] =
     Arbitrary {
       for {
-        movementsAndMessages <- listWithMaxLength[ViewArrivalP5]()
-        searchParam          <- Gen.option(nonEmptyString)
-        currentPage          <- positiveInts
-        numberOfItemsPerPage <- positiveInts
+        movementsAndMessages   <- listWithMaxLength[ViewArrivalP5]()
+        searchParam            <- Gen.option(nonEmptyString)
+        currentPage            <- positiveInts
+        numberOfItemsPerPage   <- positiveInts
+        totalNumberOfMovements <- positiveInts
       } yield ViewAllArrivalMovementsP5ViewModel(
         movementsAndMessages = movementsAndMessages,
         searchParam = searchParam,
         currentPage = currentPage,
-        numberOfItemsPerPage = numberOfItemsPerPage
+        numberOfItemsPerPage = numberOfItemsPerPage,
+        totalNumberOfMovements = totalNumberOfMovements
       )
     }
 

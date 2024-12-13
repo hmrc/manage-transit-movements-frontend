@@ -35,6 +35,8 @@ class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
     override val searchParam: Option[String]
   ) extends PaginationViewModel[String] {
 
+    override val totalNumberOfItems: Int = items.length
+
     override def href(page: Int): Call = {
       val url = searchParam match {
         case Some(value) => s"href?page=$page&foo=$value"
@@ -42,6 +44,7 @@ class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
       }
       Call(GET, url)
     }
+
     override val heading: String = "Example page heading"
   }
 
