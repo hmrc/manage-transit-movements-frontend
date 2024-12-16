@@ -97,6 +97,11 @@ class DashboardViewSpec extends SearchViewBehaviours with PaginationViewBehaviou
 
   behave like pageWithHeading()
 
+  behave like pageWithContent(
+    "p",
+    "Complete your draft declarations on or before 21st January. If not, they will be deleted after the NCTS 5 update on 22nd January."
+  )
+
   behave like pageWithSearch(
     "Search by local reference number (LRN)",
     "You have no draft departure declarations."

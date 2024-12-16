@@ -238,6 +238,7 @@ departure.drafts.dashboard.title = Draft departure declarations
 departure.drafts.dashboard.heading = Draft departure declarations
 departure.drafts.dashboard.search = Search by local reference number (LRN)
 departure.drafts.dashboard.link.title = View all draft departure declarations
+departure.drafts.dashboard.paragraph = Complete your draft declarations on or before 21st January. If not, they will be deleted after the NCTS 5 update on 22nd January.
 
 
 departure.drafts.dashboard.table.heading.hidden = Draft departure declarations
