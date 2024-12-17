@@ -56,6 +56,12 @@ case class IncidentsDuringTransitP5ViewModel(
     messages("departure.notification.incident.paragraph1")
   }
 
+  def inset(implicit messages: Messages): String = if (isMultipleIncidents) {
+    messages("departure.notification.incidents.inset")
+  } else {
+    messages("departure.notification.incident.inset")
+  }
+
   def paragraph2(implicit messages: Messages): String = if (isMultipleIncidents) {
     messages("departure.notification.incidents.paragraph2")
   } else {

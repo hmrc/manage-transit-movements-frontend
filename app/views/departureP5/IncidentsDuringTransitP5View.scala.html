@@ -16,14 +16,15 @@
 
 @import views.html.components.{Button, Heading}
 @import viewModels.P5.departure.IncidentsDuringTransitP5ViewModel
-@import views.html.components.AnswerSections
+@import views.html.components.{AnswerSections, InsetText}
 
 @this(
     mainTemplate: MainTemplate,
     heading: Heading,
     answerSections: AnswerSections,
     button: Button,
-    formHelper: FormWithCSRF
+    formHelper: FormWithCSRF,
+    insetText: InsetText
 )
 
 @(viewModel: IncidentsDuringTransitP5ViewModel)(implicit request: Request[?], messages: Messages)
@@ -40,6 +41,8 @@
     )
 
     <p id="paragraph-1" class="govuk-body">@viewModel.paragraph1</p>
+
+    @insetText(viewModel.inset)
 
     <p id="paragraph-2" class="govuk-body">@viewModel.paragraph2</p>
 

@@ -511,12 +511,14 @@ error.table.attributeValue = Invalid answer
 departure.notification.incidents.title = Incidents during transit
 departure.notification.incidents.heading = Incidents during transit
 departure.notification.incidents.paragraph1 = Multiple incidents have been reported by the customs office of incident.
-departure.notification.incidents.paragraph2 = This information is just for your reference - you do not need to take any further action. If you have any questions, you can contact the carrier for more information.
+departure.notification.incidents.inset = This information is just for your reference - you do not need to take any further action.
+departure.notification.incidents.paragraph2 = If you have any questions, you can contact the carrier for more information.
 
 departure.notification.incident.title = Incident during transit
 departure.notification.incident.heading = Incident during transit
 departure.notification.incident.paragraph1 = An incident has been reported by the customs office of incident.
-departure.notification.incident.paragraph2 = This information is just for your reference - you do not need to take any further action. If you have any questions, you can contact the carrier for more information.
+departure.notification.incident.inset = This information is just for your reference - you do not need to take any further action.
+departure.notification.incident.paragraph2 = If you have any questions, you can contact the carrier for more information.
 
 departure.notification.incidents.paragraph3.hyperlink = Check your departure declarations
 departure.notification.incidents.paragraph3.end = for further updates.

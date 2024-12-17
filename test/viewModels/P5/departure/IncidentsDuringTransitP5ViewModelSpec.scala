@@ -117,10 +117,17 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
         }
       }
 
+      "inset" - {
+        "must return correct message" in {
+          viewModel().inset mustBe
+            "This information is just for your reference - you do not need to take any further action."
+        }
+      }
+
       "paragraph2" - {
         "must return correct message" in {
           viewModel().paragraph2 mustBe
-            "This information is just for your reference - you do not need to take any further action. If you have any questions, you can contact the carrier for more information."
+            "If you have any questions, you can contact the carrier for more information."
         }
       }
 
@@ -152,10 +159,17 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
         }
       }
 
+      "inset" - {
+        "must return correct message" in {
+          viewModel(isMultipleIncidents = false).inset mustBe
+            "This information is just for your reference - you do not need to take any further action."
+        }
+      }
+
       "paragraph2" - {
         "must return correct message" in {
           viewModel(isMultipleIncidents = false).paragraph2 mustBe
-            "This information is just for your reference - you do not need to take any further action. If you have any questions, you can contact the carrier for more information."
+            "If you have any questions, you can contact the carrier for more information."
         }
       }
 
