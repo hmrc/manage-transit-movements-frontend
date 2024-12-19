@@ -54,12 +54,14 @@ class IncidentsDuringTransitP5ViewSpec extends DetailsListViewBehaviours with Ge
 
   behave like pageWithContent(
     "p",
-    "This information is just for your reference - you do not need to take any further action. If you have any questions, you can contact the carrier for more information."
+    "If you have any questions, you can contact the carrier for more information."
   )
 
-  behave like pageWithContent("h2", "What happens next")
+  behave like pageWithInsetText("This information is just for your reference - you do not need to take any further action.")
 
   behave like pageWithContent("p", "Check your departure declarations for further updates.")
+
+  behave like pageWithContent("h2", "What happens next")
 
   behave like pageWithLink(
     "departures-link",
