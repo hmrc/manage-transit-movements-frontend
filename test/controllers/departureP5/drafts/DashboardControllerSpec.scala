@@ -73,7 +73,7 @@ class DashboardControllerSpec extends SpecBase with Generators {
           val result  = route(app, request).value
 
           val view      = injector.instanceOf[DashboardView]
-          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 2, None)
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 2, None, phaseConfig.phase)
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual
@@ -104,7 +104,7 @@ class DashboardControllerSpec extends SpecBase with Generators {
           val result  = route(app, request).value
 
           val view      = injector.instanceOf[DashboardView]
-          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 4, Some(sortParam))
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 4, Some(sortParam), phaseConfig.phase)
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual
@@ -134,7 +134,7 @@ class DashboardControllerSpec extends SpecBase with Generators {
           val result  = route(app, request).value
 
           val view      = injector.instanceOf[DashboardView]
-          val viewModel = AllDraftDeparturesViewModel(draftDeparture, Some(lrn), 1, 4, Some(sortParam))
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, Some(lrn), 1, 4, Some(sortParam), phaseConfig.phase)
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual

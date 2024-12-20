@@ -42,6 +42,10 @@
 
     @heading(viewModel.heading)
 
+    @viewModel.paragraph.map { value =>
+        <p class="govuk-body">@value</p>
+    }
+
     @if(viewModel.isSearch) {
         <p class="govuk-body">
             <a id="go-to-view-all-movements" class="govuk-link" href="@controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None, None)">

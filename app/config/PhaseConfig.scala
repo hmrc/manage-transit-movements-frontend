@@ -18,22 +18,26 @@ package config
 
 import com.typesafe.config.Config
 import config.PhaseConfig.Values
+import models.Phase
 import play.api.{ConfigLoader, Configuration}
 
 import javax.inject.Inject
 
 trait PhaseConfig {
   val values: Values
+  val phase: Phase
 }
 
 object PhaseConfig {
 
   class TransitionConfig @Inject() (configuration: Configuration) extends PhaseConfig {
     override val values: Values = configuration.get[Values]("phase.transitional")
+    override val phase: Phase   = Phase.Transition
   }
 
   class PostTransitionConfig @Inject() (configuration: Configuration) extends PhaseConfig {
     override val values: Values = configuration.get[Values]("phase.final")
+    override val phase: Phase   = Phase.PostTransition
   }
 
   case class Values(apiVersion: Double)

@@ -296,6 +296,11 @@ trait ModelGenerators {
         furtherInformation <- Gen.option(nonEmptyString)
       } yield models.InvalidGuaranteeReason(error, furtherInformation)
     }
+
+  implicit lazy val arbitraryPhase: Arbitrary[Phase] =
+    Arbitrary {
+      Gen.oneOf(Phase.Transition, Phase.PostTransition)
+    }
 }
 
 // scalastyle:on magic.number
