@@ -97,10 +97,20 @@ class DashboardViewSpec extends SearchViewBehaviours with PaginationViewBehaviou
 
   behave like pageWithHeading()
 
-  behave like pageWithContent(
-    "p",
-    "Complete your draft declarations on or before 21st January. If not, they will be deleted after the NCTS 5 update on 22nd January."
-  )
+  "when paragraph is defined" - {
+    forAll(nonEmptyString) {
+      paragraph =>
+        s"must render $paragraph" - {
+          val doc = parseView(applyView(form, viewModel.copy(paragraph = Some(paragraph))))
+
+          behave like pageWithContent(
+            doc,
+            "p",
+            paragraph
+          )
+        }
+    }
+  }
 
   behave like pageWithSearch(
     "Search by local reference number (LRN)",

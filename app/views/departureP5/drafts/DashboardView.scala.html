@@ -42,7 +42,9 @@
 
     @heading(viewModel.heading)
 
-    <p class="govuk-body">@messages("departure.drafts.dashboard.paragraph")</p>
+    @viewModel.paragraph.map { value =>
+        <p class="govuk-body">@value</p>
+    }
 
     @if(viewModel.isSearch) {
         <p class="govuk-body">
