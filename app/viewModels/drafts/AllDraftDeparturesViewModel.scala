@@ -19,7 +19,7 @@ package viewModels.drafts
 import controllers.departureP5.drafts.routes
 import models.Sort.*
 import models.Sort.Field.{CreatedAt, LRN}
-import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber, Sort}
+import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber, Phase, Sort}
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
@@ -28,6 +28,7 @@ import viewModels.pagination.PaginationViewModel
 case class AllDraftDeparturesViewModel(
   title: String,
   heading: String,
+  paragraph: Option[String],
   departures: DeparturesSummary,
   currentPage: Int,
   numberOfItemsPerPage: Int,
@@ -93,14 +94,18 @@ object AllDraftDeparturesViewModel {
     lrn: Option[String],
     currentPage: Int,
     numberOfItemsPerPage: Int,
-    sortParams: Option[Sort]
+    sortParams: Option[Sort],
+    phase: Phase
   )(implicit messages: Messages): AllDraftDeparturesViewModel = {
 
     val messageKeyPrefix = "departure.drafts.dashboard"
 
+    val paragraph = Option.when(phase == Phase.Transition)(messages("departure.drafts.dashboard.paragraph"))
+
     new AllDraftDeparturesViewModel(
       messages(s"$messageKeyPrefix.title"),
       messages(s"$messageKeyPrefix.heading"),
+      paragraph,
       departures,
       currentPage,
       numberOfItemsPerPage,

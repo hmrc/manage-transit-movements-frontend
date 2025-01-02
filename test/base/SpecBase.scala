@@ -16,11 +16,11 @@
 
 package base
 
-import config.{FrontendAppConfig, PaginationAppConfig}
+import config.{FrontendAppConfig, PaginationAppConfig, PhaseConfig}
 import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
 import models.{DepartureId, Index, LocalReferenceNumber}
-import org.scalatest._
+import org.scalatest.*
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -62,6 +62,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValue
 
   implicit def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
   def paginationAppConfig: PaginationAppConfig      = injector.instanceOf[PaginationAppConfig]
+  def phaseConfig: PhaseConfig                      = app.injector.instanceOf[PhaseConfig]
 
   implicit val clock: Clock = Clock.systemDefaultZone()
 
