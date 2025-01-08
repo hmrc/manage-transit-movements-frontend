@@ -304,7 +304,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           val viewModel         = AllDraftDeparturesViewModel(departuresSummary, None, 1, 1, None, Phase.Transition)
           val result            = viewModel.paragraph
           result.value mustEqual
-            "Complete your draft declarations on or before 21st January. If not, they will be deleted after the NCTS 5 update on 22nd January."
+            "Complete your draft declarations on or before 20th January. If not, they will be deleted after the NCTS 5 update on 21st January."
         }
       }
     }
