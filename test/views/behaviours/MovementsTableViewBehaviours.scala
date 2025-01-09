@@ -26,7 +26,7 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours {
   val viewMovements: Seq[T]
 
   def pageWithMovementsData(referenceNumberColumnHeader: String): Unit =
-    "page with a movements data table" - {
+    s"$prefix - page with a movements data table" - {
 
       val dates  = doc.getElementsByAttributeValue("data-testrole", "movements-list_group-heading").toList
       val tables = doc.getElementsByClass("govuk-table").toList
