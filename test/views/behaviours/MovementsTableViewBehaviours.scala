@@ -26,7 +26,7 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours {
   val viewMovements: Seq[T]
 
   def pageWithMovementsData(referenceNumberColumnHeader: String): Unit =
-    s"$prefix - page with a movements data table" - {
+    "page with a movements data table" - {
 
       val dates  = doc.getElementsByAttributeValue("data-testrole", "movements-list_group-heading").toList
       val tables = doc.getElementsByClass("govuk-table").toList
@@ -68,44 +68,46 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours {
                   val movement = movements(rowIndex)
                   val cells    = row.getElementsByClass("govuk-table__cell").toList
 
-                  "must display correct value for first column" in {
-                    cells.head.text() mustBe movement.updated
-                  }
+                  s"when row $rowIndex" - {
+                    "must display correct value for first column" in {
+                      cells.head.text() mustBe movement.updated
+                    }
 
-                  "must display correct value for second column" in {
-                    cells(1).text() mustBe movement.referenceNumber
-                  }
+                    "must display correct value for second column" in {
+                      cells(1).text() mustBe movement.referenceNumber
+                    }
 
-                  "must display correct value for third column" in {
-                    cells(2).text() mustBe movement.status
-                  }
+                    "must display correct value for third column" in {
+                      cells(2).text() mustBe movement.status
+                    }
 
-                  "fourth column" - {
+                    "fourth column" - {
 
-                    val actionLinks = cells(3).getElementsByClass("govuk-link")
-                    actionLinks.zipWithIndex.foreach {
-                      case (link, linkIndex) =>
-                        val action = movement.actions(linkIndex)
+                      val actionLinks = cells(3).getElementsByClass("govuk-link")
+                      actionLinks.zipWithIndex.foreach {
+                        case (link, linkIndex) =>
+                          val action = movement.actions(linkIndex)
 
-                        s"when action ${linkIndex + 1}" - {
+                          s"when action ${linkIndex + 1}" - {
 
-                          "must display correct text" in {
-                            link.text() mustBe s"${action.key} for ${movement.referenceNumber}"
+                            "must display correct text" in {
+                              link.text() mustBe s"${action.key} for ${movement.referenceNumber}"
 
-                            link.ownText() mustBe action.key
+                              link.ownText() mustBe action.key
 
-                            val hiddenText = link.getElementsByClass("govuk-visually-hidden").head
-                            hiddenText.text() mustBe s"for ${movement.referenceNumber}"
+                              val hiddenText = link.getElementsByClass("govuk-visually-hidden").head
+                              hiddenText.text() mustBe s"for ${movement.referenceNumber}"
+                            }
+
+                            "must have correct id" in {
+                              link.attr("id") mustBe s"${action.key}-${movement.referenceNumber}"
+                            }
+
+                            "must have correct href" in {
+                              link.attr("href") mustBe action.href
+                            }
                           }
-
-                          "must have correct id" in {
-                            link.attr("id") mustBe s"${action.key}-${movement.referenceNumber}"
-                          }
-
-                          "must have correct href" in {
-                            link.attr("href") mustBe action.href
-                          }
-                        }
+                      }
                     }
                   }
               }
