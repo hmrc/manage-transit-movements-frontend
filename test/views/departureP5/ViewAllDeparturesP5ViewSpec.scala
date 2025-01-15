@@ -51,7 +51,7 @@ class ViewAllDeparturesP5ViewSpec
 
   override val prefix: String = "viewDepartureDeclarationsP5"
 
-  override val movementsPerPage: Int = paginationAppConfig.departuresNumberOfMovements
+  override val movementsPerPage: Int = paginationAppConfig.numberOfMovements
 
   override val viewMovements: Seq[ViewDepartureP5] = viewModel.items
 

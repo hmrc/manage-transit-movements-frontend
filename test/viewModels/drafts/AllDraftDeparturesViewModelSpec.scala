@@ -18,7 +18,6 @@ package viewModels.drafts
 
 import base.SpecBase
 import config.PhaseConfig
-import config.PhaseConfig.TransitionConfig
 import controllers.departureP5.drafts.routes
 import generators.Generators
 import models.Sort.*
@@ -299,7 +298,6 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       "when transition" - {
         "must be defined" in {
-          val phaseConfig       = app.injector.instanceOf[TransitionConfig]
           val departuresSummary = DeparturesSummary(0, 0, Nil)
           val viewModel         = AllDraftDeparturesViewModel(departuresSummary, None, 1, 1, None, Phase.Transition)
           val result            = viewModel.paragraph

@@ -80,7 +80,7 @@ class ReviewPrelodgedDeclarationErrorsP5ControllerSpec extends SpecBase with App
             functionalErrors = functionalErrors,
             lrn = lrn.value,
             currentPage = None,
-            numberOfErrorsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
+            numberOfErrorsPerPage = paginationAppConfig.numberOfErrorsPerPage,
             departureId = departureIdP5,
             messageId = messageId
           )

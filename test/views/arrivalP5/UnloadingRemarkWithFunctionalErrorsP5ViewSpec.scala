@@ -52,7 +52,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewSpec
     )
 
   override val prefix: String        = "arrival.ie057.review.unloading.message"
-  override val movementsPerPage: Int = paginationAppConfig.arrivalsNumberOfErrorsPerPage
+  override val movementsPerPage: Int = paginationAppConfig.numberOfErrorsPerPage
 
   override def view: HtmlFormat.Appendable = applyView(viewModel)
 

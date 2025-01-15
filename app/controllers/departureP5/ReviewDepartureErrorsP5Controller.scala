@@ -52,7 +52,7 @@ class ReviewDepartureErrorsP5Controller @Inject() (
               lrn = request.referenceNumbers.localReferenceNumber,
               businessRejectionType = DepartureBusinessRejectionType(request.messageData),
               currentPage = page,
-              numberOfErrorsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
+              numberOfErrorsPerPage = paginationConfig.numberOfErrorsPerPage,
               departureId = departureId,
               messageId = messageId
             )

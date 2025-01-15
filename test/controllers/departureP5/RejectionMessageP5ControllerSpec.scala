@@ -86,7 +86,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
             lrn = lrn.value,
             businessRejectionType = DepartureBusinessRejectionType(message),
             currentPage = None,
-            numberOfErrorsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
+            numberOfErrorsPerPage = paginationAppConfig.numberOfErrorsPerPage,
             departureId = departureIdP5,
             messageId = messageId
           )

@@ -73,7 +73,7 @@ class ViewAllArrivalsP5Controller @Inject() (
     block: HtmlFormat.Appendable => Result
   )(implicit request: IdentifierRequest[?]): Future[Result] = {
     val currentPage = page.getOrElse(1)
-    arrivalMovementP5Connector.getAllMovementsForSearchQuery(currentPage, paginationConfig.arrivalsNumberOfMovements, searchParam).flatMap {
+    arrivalMovementP5Connector.getAllMovementsForSearchQuery(currentPage, paginationConfig.numberOfMovements, searchParam).flatMap {
       case Some(movements) =>
         arrivalP5MessageService.getLatestMessagesForMovements(movements).map {
           movementsAndMessages =>
@@ -83,7 +83,7 @@ class ViewAllArrivalsP5Controller @Inject() (
               arrivals,
               searchParam,
               currentPage,
-              paginationConfig.arrivalsNumberOfMovements,
+              paginationConfig.numberOfMovements,
               movements.totalCount
             )
 

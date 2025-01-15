@@ -52,7 +52,7 @@ class ReviewDepartureErrorsP5ViewSpec
     )
 
   override val prefix: String        = "departure.ie056.review.message"
-  override val movementsPerPage: Int = paginationAppConfig.departuresNumberOfMovements
+  override val movementsPerPage: Int = paginationAppConfig.numberOfMovements
 
   override def view: HtmlFormat.Appendable = applyView(viewModel, None)
 
