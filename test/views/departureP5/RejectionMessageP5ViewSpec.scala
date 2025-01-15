@@ -54,7 +54,7 @@ class RejectionMessageP5ViewSpec
     )
 
   override val prefix: String        = "departure.ie056.message"
-  override val movementsPerPage: Int = paginationAppConfig.departuresNumberOfErrorsPerPage
+  override val movementsPerPage: Int = paginationAppConfig.numberOfErrorsPerPage
 
   override def view: HtmlFormat.Appendable = applyView(viewModel, None)
 

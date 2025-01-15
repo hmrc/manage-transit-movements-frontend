@@ -73,7 +73,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ControllerSpec extends SpecBase with 
             functionalErrors = functionalErrors,
             mrn = mrn,
             currentPage = None,
-            numberOfErrorsPerPage = paginationAppConfig.arrivalsNumberOfErrorsPerPage,
+            numberOfErrorsPerPage = paginationAppConfig.numberOfErrorsPerPage,
             arrivalId = arrivalIdP5,
             messageId = messageId
           )

@@ -73,7 +73,7 @@ class ArrivalNotificationWithFunctionalErrorsP5ControllerSpec extends SpecBase w
             functionalErrors = functionalErrors,
             mrn = mrn,
             currentPage = None,
-            numberOfErrorsPerPage = paginationAppConfig.arrivalsNumberOfErrorsPerPage,
+            numberOfErrorsPerPage = paginationAppConfig.numberOfErrorsPerPage,
             arrivalId = arrivalIdP5,
             messageId = messageId
           )

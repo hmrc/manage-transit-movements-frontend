@@ -60,7 +60,7 @@ class RejectionMessageP5Controller @Inject() (
                   lrn = request.referenceNumbers.localReferenceNumber,
                   businessRejectionType = rejection.businessRejectionType,
                   currentPage = page,
-                  numberOfErrorsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
+                  numberOfErrorsPerPage = paginationConfig.numberOfErrorsPerPage,
                   departureId = departureId,
                   messageId = messageId
                 )

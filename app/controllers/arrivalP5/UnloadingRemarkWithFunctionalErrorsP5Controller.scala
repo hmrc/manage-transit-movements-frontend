@@ -51,7 +51,7 @@ class UnloadingRemarkWithFunctionalErrorsP5Controller @Inject() (
                 functionalErrors = functionalErrors,
                 mrn = request.messageData.TransitOperation.MRN,
                 currentPage = page,
-                numberOfErrorsPerPage = paginationConfig.arrivalsNumberOfErrorsPerPage,
+                numberOfErrorsPerPage = paginationConfig.numberOfErrorsPerPage,
                 arrivalId = arrivalId,
                 messageId = messageId
               )

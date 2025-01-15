@@ -75,7 +75,7 @@ class ReviewCancellationErrorsP5ControllerSpec extends SpecBase with AppWithDefa
             functionalErrors = functionalErrors,
             lrn = lrn.value,
             currentPage = None,
-            numberOfErrorsPerPage = paginationAppConfig.departuresNumberOfErrorsPerPage,
+            numberOfErrorsPerPage = paginationAppConfig.numberOfErrorsPerPage,
             departureId = departureIdP5,
             messageId = messageId
           )

@@ -49,7 +49,7 @@ class ReviewCancellationErrorsP5Controller @Inject() (
               functionalErrors = functionalErrors,
               lrn = request.referenceNumbers.localReferenceNumber,
               currentPage = page,
-              numberOfErrorsPerPage = paginationConfig.departuresNumberOfErrorsPerPage,
+              numberOfErrorsPerPage = paginationConfig.numberOfErrorsPerPage,
               departureId = departureId,
               messageId = messageId
             )

@@ -22,9 +22,7 @@ import play.api.Configuration
 @Singleton
 class PaginationAppConfig @Inject() (configuration: Configuration) {
 
-  val arrivalsNumberOfMovements: Int       = configuration.get[Int]("pagination.numberOfMovements")
-  val arrivalsNumberOfErrorsPerPage: Int   = configuration.get[Int]("pagination.numberOfErrorsPerPage")
-  val departuresNumberOfMovements: Int     = configuration.get[Int]("pagination.numberOfMovements")
-  val draftDeparturesNumberOfDrafts: Int   = configuration.get[Int]("pagination.draftDepartures.numberOfDrafts")
-  val departuresNumberOfErrorsPerPage: Int = configuration.get[Int]("pagination.numberOfErrorsPerPage")
+  val numberOfMovements: Int             = configuration.get[Int]("pagination.numberOfMovements")
+  val numberOfErrorsPerPage: Int         = configuration.get[Int]("pagination.numberOfErrorsPerPage")
+  val draftDeparturesNumberOfDrafts: Int = configuration.get[Int]("pagination.draftDepartures.numberOfDrafts")
 }

@@ -51,7 +51,7 @@ class ViewAllArrivalsP5ViewSpec
 
   override val prefix: String = "viewArrivalNotificationsP5"
 
-  override val movementsPerPage: Int = paginationAppConfig.arrivalsNumberOfMovements
+  override val movementsPerPage: Int = paginationAppConfig.numberOfMovements
 
   override val viewMovements: Seq[ViewArrivalP5] = viewModel.items
 
