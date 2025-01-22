@@ -3,7 +3,7 @@ import sbt._
 
 object AppDependencies {
 
-  private val bootstrapVersion = "9.6.0"
+  private val bootstrapVersion = "9.7.0"
   private val pekkoVersion = "1.0.3"
 
   val compile: Seq[ModuleID] = Seq(
