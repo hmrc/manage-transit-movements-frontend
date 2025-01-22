@@ -1,3 +1,4 @@
+import play.sbt.PlayImport.caffeine
 import sbt._
 
 object AppDependencies {
@@ -11,7 +12,8 @@ object AppDependencies {
     "uk.gov.hmrc"          %% "bootstrap-frontend-play-30"              % bootstrapVersion,
     "uk.gov.hmrc"          %% "play-frontend-hmrc-play-30"              % "11.9.0",
     "javax.xml.bind"        % "jaxb-api"                                % "2.3.1",
-    "org.typelevel"        %% "cats-core"                               % "2.12.0"
+    "org.typelevel"        %% "cats-core"                               % "2.12.0",
+    caffeine
   )
 
   val test: Seq[ModuleID] = Seq(
@@ -25,7 +27,7 @@ object AppDependencies {
     "io.github.wolfendale"       %% "scalacheck-gen-regexp"    % "1.1.0",
     "org.apache.pekko"           %% "pekko-testkit"            % pekkoVersion,
     "org.apache.pekko"           %% "pekko-stream-testkit"     % pekkoVersion
-  ).map(_ % Test)
+  ).map(_ % "test")
 
   def apply(): Seq[ModuleID] = compile ++ test
 }

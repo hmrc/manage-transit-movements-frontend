@@ -21,7 +21,6 @@ import models.FunctionalError.FunctionalErrorWithSection
 import models.FunctionalErrors.FunctionalErrorsWithSection
 import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.running
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
@@ -127,7 +126,7 @@ class RejectionMessageP5ViewSpec
   }
 
   "when trader test enabled" - {
-    val app = new GuiceApplicationBuilder()
+    val app = guiceApplicationBuilder()
       .configure("trader-test.enabled" -> true)
       .build()
 

@@ -18,7 +18,6 @@ package connectors
 
 import config.PhaseConfig
 import config.PhaseConfig.Values
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers

@@ -25,6 +25,8 @@ import play.api.mvc.Request
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration) {
 
+  val asyncCacheApiExpiration: Int = configuration.get[Int]("async-cache-api.expiration")
+
   val isIE182Enabled: Boolean = configuration.get[Boolean]("microservice.services.features.isIE182Enabled")
 
   val userResearchUrl: String         = configuration.get[String]("urls.userResearch")

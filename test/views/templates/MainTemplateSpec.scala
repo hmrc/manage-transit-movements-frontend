@@ -22,7 +22,6 @@ import generators.Generators
 import org.jsoup.Jsoup
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import play.twirl.api.Html
@@ -35,7 +34,7 @@ class MainTemplateSpec extends SpecBase with ViewSpecAssertions with ScalaCheckP
   implicit private lazy val request: FakeRequest[AnyContent] = FakeRequest("GET", path)
 
   "when not in trader test" - {
-    val app = new GuiceApplicationBuilder()
+    val app = guiceApplicationBuilder()
       .configure("trader-test.enabled" -> false)
       .build()
 
@@ -74,7 +73,7 @@ class MainTemplateSpec extends SpecBase with ViewSpecAssertions with ScalaCheckP
   }
 
   "when in trader test" - {
-    val app = new GuiceApplicationBuilder()
+    val app = guiceApplicationBuilder()
       .configure("trader-test.enabled" -> true)
       .build()
 

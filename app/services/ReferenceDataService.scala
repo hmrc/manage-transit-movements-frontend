@@ -89,39 +89,28 @@ class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) ext
 
   def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType] = {
     val queryParams: (String, String) = "data.code" -> code
-    connector.getControlTypes(queryParams).map(_.head)
+    connector.getControlType(queryParams)
   }
 
   def getIncidentCode(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[IncidentCode] = {
     val queryParams: (String, String) = "data.code" -> code
-    connector.getIncidentCodes(queryParams).map(_.head)
+    connector.getIncidentCode(queryParams)
   }
 
   def getRequestedDocumentType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestedDocumentType] = {
     val queryParams: (String, String) = "data.code" -> code
-    connector.getRequestedDocumentTypes(queryParams).map(_.head)
+    connector.getRequestedDocumentType(queryParams)
   }
 
   def getFunctionalError(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc] = {
     val queryParams: (String, String) = "data.code" -> code
-    connector.getFunctionalErrors(queryParams).map(_.head)
+    connector.getFunctionalError(queryParams)
   }
-
-  def getFunctionalErrors()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]] =
-    connector.getFunctionalErrors().map(_.toSeq).recover {
-      case _ => Seq.empty
-    }
 
   def getInvalidGuaranteeReason(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[InvalidGuaranteeReason] = {
     val queryParams: (String, String) = "data.code" -> code
-    connector.getInvalidGuaranteeReasons(queryParams).map(_.head)
+    connector.getInvalidGuaranteeReason(queryParams)
   }
-
-  def getInvalidGuaranteeReasons()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[InvalidGuaranteeReason]] =
-    connector.getInvalidGuaranteeReasons().map(_.toSeq).recover {
-      case _ => Seq.empty
-    }
-
 }
 
 trait ReferenceDataService {
@@ -136,7 +125,5 @@ trait ReferenceDataService {
   def getIncidentCode(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[IncidentCode]
   def getRequestedDocumentType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestedDocumentType]
   def getFunctionalError(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc]
-  def getFunctionalErrors()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[FunctionalErrorWithDesc]]
   def getInvalidGuaranteeReason(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[InvalidGuaranteeReason]
-  def getInvalidGuaranteeReasons()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[InvalidGuaranteeReason]]
 }
