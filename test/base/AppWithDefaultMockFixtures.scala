@@ -16,12 +16,12 @@
 
 package base
 
-import config.{PostTransitionModule, TransitionModule}
-import controllers.actions._
+import controllers.actions.*
 import org.scalatest.{BeforeAndAfterEach, TestSuite}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
+import play.api.cache.AsyncCacheApi
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 
@@ -36,20 +36,11 @@ trait AppWithDefaultMockFixtures extends GuiceOneAppPerSuite with BeforeAndAfter
   private def defaultApplicationBuilder(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
-        bind[IdentifierAction].toInstance(FakeIdentifierAction())
+        bind[IdentifierAction].toInstance(FakeIdentifierAction()),
+        bind[AsyncCacheApi].to[FakeAsyncCacheApi]
       )
 
   def guiceApplicationBuilder(): GuiceApplicationBuilder =
     defaultApplicationBuilder()
-
-  protected def transitionApplicationBuilder(): GuiceApplicationBuilder =
-    guiceApplicationBuilder()
-      .disable[PostTransitionModule]
-      .bindings(new TransitionModule)
-
-  protected def postTransitionApplicationBuilder(): GuiceApplicationBuilder =
-    guiceApplicationBuilder()
-      .disable[TransitionModule]
-      .bindings(new PostTransitionModule)
 
 }

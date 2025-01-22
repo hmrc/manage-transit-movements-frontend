@@ -16,12 +16,11 @@
 
 package connectors
 
-import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.Generators
-import helper.WireMockServerHandler
-import models.{Availability, MessageStatus}
+import itbase.{ItSpecBase, WireMockServerHandler}
 import models.arrivalP5.*
+import models.{Availability, MessageStatus}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -30,7 +29,7 @@ import play.api.libs.json.{JsValue, Json}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class ArrivalMovementP5ConnectorSpec extends SpecBase with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
+class ArrivalMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
 
   private lazy val connector: ArrivalMovementP5Connector = app.injector.instanceOf[ArrivalMovementP5Connector]
 

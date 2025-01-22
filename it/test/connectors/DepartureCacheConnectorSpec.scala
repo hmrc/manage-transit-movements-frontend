@@ -16,10 +16,9 @@
 
 package connectors
 
-import base.{AppWithDefaultMockFixtures, SpecBase}
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import generated.{FunctionalErrorType04, Number12}
-import helper.WireMockServerHandler
+import itbase.{ItSpecBase, WireMockServerHandler}
 import models.FunctionalError.FunctionalErrorWithSection
 import models.FunctionalErrors.FunctionalErrorsWithSection
 import models.InvalidDataItem
@@ -30,7 +29,7 @@ import play.api.libs.json.{JsArray, JsBoolean, Json}
 import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HttpResponse
 
-class DepartureCacheConnectorSpec extends SpecBase with AppWithDefaultMockFixtures with WireMockServerHandler {
+class DepartureCacheConnectorSpec extends ItSpecBase with WireMockServerHandler {
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super

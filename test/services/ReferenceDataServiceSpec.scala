@@ -57,32 +57,6 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
   private val nationality     = Nationality(nationalityCode, "British")
   private val nationalities   = NonEmptySet.of(nationality)
 
-  private val controlTypeCode = "1"
-  private val controlType1    = ControlType(controlTypeCode, "CT1")
-  private val controlType2    = ControlType("2", "CT2")
-  private val controlTypes    = NonEmptySet.of(controlType1, controlType2)
-
-  private val requestedDocumentTypeCode = "C620"
-  private val requestedDocumentType1    = RequestedDocumentType(requestedDocumentTypeCode, "T2FL document")
-
-  private val incidentCodeCode = "1"
-
-  private val incidentCode =
-    IncidentCode(
-      incidentCodeCode,
-      "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
-    )
-
-  private val functionalErrorCode = "1"
-  private val functionalError1    = FunctionalErrorWithDesc(functionalErrorCode, "FE1")
-  private val functionalError2    = FunctionalErrorWithDesc("2", "FE2")
-  private val functionalErrors    = NonEmptySet.of(functionalError1, functionalError2)
-
-  private val invalidGuaranteeReasonCode = "G02"
-  private val invalidGuaranteeReason1    = InvalidGuaranteeReason(functionalErrorCode, "Guarantee exists, but not valid")
-  private val invalidGuaranteeReason2    = InvalidGuaranteeReason("G03", "Access code not valid")
-  private val invalidGuaranteeReasons    = NonEmptySet.of(invalidGuaranteeReason1, invalidGuaranteeReason2)
-
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockConnector)
@@ -227,81 +201,101 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
     "getControlType" - {
 
+      val controlTypeCode = "1"
+      val controlType     = ControlType(controlTypeCode, "CT1")
+
       val expectedQueryParams = Seq("data.code" -> controlTypeCode)
 
       "should return a control type" in {
-        when(mockConnector.getControlTypes(any())(any(), any())).thenReturn(Future.successful(controlTypes))
+        when(mockConnector.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType))
 
         val service = new ReferenceDataServiceImpl(mockConnector)
 
-        service.getControlType(controlTypeCode).futureValue `mustBe` controlType1
+        service.getControlType(controlTypeCode).futureValue `mustBe` controlType
 
-        verify(mockConnector).getControlTypes(eqTo(expectedQueryParams)*)(any(), any())
+        verify(mockConnector).getControlType(eqTo(expectedQueryParams)*)(any(), any())
       }
     }
 
     "getIncidentCode" - {
 
+      val incidentCodeCode = "1"
+
+      val incidentCode =
+        IncidentCode(
+          incidentCodeCode,
+          "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
+        )
+
       val expectedQueryParams = Seq("data.code" -> incidentCodeCode)
 
       "should return a incident code" in {
 
-        when(mockConnector.getIncidentCodes(any())(any(), any()))
-          .thenReturn(Future.successful(NonEmptySet.of(incidentCode)))
+        when(mockConnector.getIncidentCode(any())(any(), any()))
+          .thenReturn(Future.successful(incidentCode))
 
         val service = new ReferenceDataServiceImpl(mockConnector)
 
         service.getIncidentCode(incidentCodeCode).futureValue `mustBe` incidentCode
 
-        verify(mockConnector).getIncidentCodes(eqTo(expectedQueryParams)*)(any(), any())
+        verify(mockConnector).getIncidentCode(eqTo(expectedQueryParams)*)(any(), any())
       }
     }
 
     "getRequestedDocumentType" - {
 
+      val requestedDocumentTypeCode = "C620"
+      val requestedDocumentType     = RequestedDocumentType(requestedDocumentTypeCode, "T2FL document")
+
       val expectedQueryParams = Seq("data.code" -> requestedDocumentTypeCode)
 
       "should return a requested document type" in {
 
-        when(mockConnector.getRequestedDocumentTypes(any())(any(), any()))
-          .thenReturn(Future.successful(NonEmptySet.of(requestedDocumentType1)))
+        when(mockConnector.getRequestedDocumentType(any())(any(), any()))
+          .thenReturn(Future.successful(requestedDocumentType))
 
         val service = new ReferenceDataServiceImpl(mockConnector)
 
-        service.getRequestedDocumentType(requestedDocumentTypeCode).futureValue `mustBe` requestedDocumentType1
+        service.getRequestedDocumentType(requestedDocumentTypeCode).futureValue `mustBe` requestedDocumentType
 
-        verify(mockConnector).getRequestedDocumentTypes(eqTo(expectedQueryParams)*)(any(), any())
+        verify(mockConnector).getRequestedDocumentType(eqTo(expectedQueryParams)*)(any(), any())
       }
     }
 
     "getFunctionalError" - {
 
+      val functionalErrorCode = "1"
+      val functionalError     = FunctionalErrorWithDesc(functionalErrorCode, "FE1")
+
       val expectedQueryParams = Seq("data.code" -> functionalErrorCode)
 
       "should return a functional error" in {
-        when(mockConnector.getFunctionalErrors(any())(any(), any())).thenReturn(Future.successful(functionalErrors))
+        when(mockConnector.getFunctionalError(any())(any(), any())).thenReturn(Future.successful(functionalError))
 
         val service = new ReferenceDataServiceImpl(mockConnector)
 
-        service.getFunctionalError(functionalErrorCode).futureValue `mustBe` functionalError1
+        service.getFunctionalError(functionalErrorCode).futureValue `mustBe` functionalError
 
-        verify(mockConnector).getFunctionalErrors(eqTo(expectedQueryParams)*)(any(), any())
+        verify(mockConnector).getFunctionalError(eqTo(expectedQueryParams)*)(any(), any())
       }
 
     }
 
     "getInvalidGuaranteeReason" - {
 
+      val invalidGuaranteeReasonCode = "G02"
+      val invalidGuaranteeReason     = InvalidGuaranteeReason(invalidGuaranteeReasonCode, "Guarantee exists, but not valid")
+
       val expectedQueryParams = Seq("data.code" -> invalidGuaranteeReasonCode)
 
       "should return a invalid guarantee reason" in {
-        when(mockConnector.getInvalidGuaranteeReasons(any())(any(), any())).thenReturn(Future.successful(invalidGuaranteeReasons))
+        when(mockConnector.getInvalidGuaranteeReason(any())(any(), any())).thenReturn(Future.successful(invalidGuaranteeReason))
 
         val service = new ReferenceDataServiceImpl(mockConnector)
 
-        service.getInvalidGuaranteeReason(invalidGuaranteeReasonCode).futureValue `mustBe` invalidGuaranteeReason1
+        service.getInvalidGuaranteeReason(invalidGuaranteeReasonCode).futureValue `mustBe` invalidGuaranteeReason
 
-        verify(mockConnector).getInvalidGuaranteeReasons(eqTo(expectedQueryParams)*)(any(), any())
+        verify(mockConnector).getInvalidGuaranteeReason(eqTo(expectedQueryParams)*)(any(), any())
       }
 
     }
