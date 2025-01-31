@@ -22,7 +22,6 @@ import itbase.{ItSpecBase, WireMockServerHandler}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.Helpers.running
 import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
@@ -51,7 +50,6 @@ class ManageDocumentsConnectorSpec extends ItSpecBase with WireMockServerHandler
         val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
-            .withHeader("APIVersion", equalTo("2.1"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -68,7 +66,6 @@ class ManageDocumentsConnectorSpec extends ItSpecBase with WireMockServerHandler
 
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
-            .withHeader("APIVersion", equalTo("2.1"))
             .willReturn(
               aResponse()
                 .withStatus(genErrorResponse)
@@ -88,7 +85,6 @@ class ManageDocumentsConnectorSpec extends ItSpecBase with WireMockServerHandler
         "must return status Ok" in {
           server.stubFor(
             get(urlEqualTo(s"/$startUrl/$arrivalId/unloading-permission-document/$messageId"))
-              .withHeader("APIVersion", equalTo("2.1"))
               .willReturn(
                 aResponse()
                   .withStatus(200)
@@ -105,7 +101,6 @@ class ManageDocumentsConnectorSpec extends ItSpecBase with WireMockServerHandler
 
           server.stubFor(
             get(urlEqualTo(s"/$startUrl/$arrivalId/unloading-permission-document/$messageId"))
-              .withHeader("APIVersion", equalTo("2.1"))
               .willReturn(
                 aResponse()
                   .withStatus(genErrorResponse)
