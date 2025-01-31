@@ -31,15 +31,10 @@ class ManageDocumentsConnector @Inject() (
 )(implicit ec: ExecutionContext)
     extends Logging {
 
-  private val headers = Seq(
-    "APIVersion" -> "2.1"
-  )
-
   def getTAD(departureId: String, messageId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     val url: URL = url"${appConfig.manageDocumentsUrl}/$departureId/transit-accompanying-document/$messageId"
     http
       .get(url)
-      .setHeader(headers*)
       .stream
   }
 
@@ -47,7 +42,6 @@ class ManageDocumentsConnector @Inject() (
     val url: URL = url"${appConfig.manageDocumentsUrl}/$arrivalId/unloading-permission-document/$messageId"
     http
       .get(url)
-      .setHeader(headers*)
       .stream
   }
 

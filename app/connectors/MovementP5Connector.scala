@@ -38,5 +38,4 @@ trait MovementP5Connector extends Logging {
 
   val xmlContentTypeHeader: (String, String)  = contentTypeHeader("xml")
   val jsonContentTypeHeader: (String, String) = contentTypeHeader("json")
-
 }
