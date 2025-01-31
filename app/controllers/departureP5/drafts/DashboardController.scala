@@ -16,7 +16,7 @@
 
 package controllers.departureP5.drafts
 
-import config.{PaginationAppConfig, PhaseConfig}
+import config.PaginationAppConfig
 import controllers.actions.*
 import forms.DeparturesSearchFormProvider
 import models.departure.drafts.{Limit, Skip}
@@ -42,7 +42,7 @@ class DashboardController @Inject() (
   view: DashboardView,
   formProvider: DeparturesSearchFormProvider,
   paginationAppConfig: PaginationAppConfig
-)(implicit ec: ExecutionContext, phaseConfig: PhaseConfig)
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -99,7 +99,6 @@ class DashboardController @Inject() (
       lrn,
       page,
       pageSize,
-      sortParams,
-      phaseConfig.phase
+      sortParams
     )
 }

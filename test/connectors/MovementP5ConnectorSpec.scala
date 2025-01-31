@@ -16,9 +16,6 @@
 
 package connectors
 
-import config.PhaseConfig
-import config.PhaseConfig.Values
-import org.mockito.Mockito.*
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
@@ -26,22 +23,17 @@ import sttp.model.HeaderNames
 
 class MovementP5ConnectorSpec extends AnyFreeSpec with Matchers with MockitoSugar {
 
-  private val phaseConfig: PhaseConfig = mock[PhaseConfig]
-  when(phaseConfig.values).thenReturn(Values(1.0))
-
-  class TestMovementP5Connector(override val phaseConfig: PhaseConfig) extends MovementP5Connector
-  val connector = TestMovementP5Connector(phaseConfig)
+  class TestMovementP5Connector extends MovementP5Connector
+  val connector: MovementP5Connector = TestMovementP5Connector()
 
   "MovementP5Connector" - {
 
     "generate the correct acceptHeader for JSON" in {
-      connector.jsonAcceptHeader mustEqual (HeaderNames.Accept -> "application/vnd.hmrc.1.0+json")
+      connector.jsonAcceptHeader mustEqual (HeaderNames.Accept -> "application/vnd.hmrc.2.1+json")
     }
 
     "generate the correct acceptHeader for XML" in {
-      when(phaseConfig.values.apiVersion).thenReturn(Values(2.0))
-      val connector = TestMovementP5Connector(phaseConfig)
-      connector.xmlAcceptHeader mustEqual (HeaderNames.Accept -> "application/vnd.hmrc.2.0+xml")
+      connector.xmlAcceptHeader mustEqual (HeaderNames.Accept -> "application/vnd.hmrc.2.1+xml")
     }
 
     "generate the correct authorization header" in {

@@ -17,18 +17,15 @@
 package viewModels.drafts
 
 import base.SpecBase
-import config.PhaseConfig
 import controllers.departureP5.drafts.routes
 import generators.Generators
 import models.Sort.*
-import models.{DepartureUserAnswerSummary, DeparturesSummary, Phase}
+import models.{DepartureUserAnswerSummary, DeparturesSummary}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
-
-  implicit private val phaseConfig: PhaseConfig = app.injector.instanceOf[PhaseConfig]
 
   "AllDraftDeparturesViewModel" - {
 
@@ -44,8 +41,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           Some("AB123"),
           1,
           2,
-          None,
-          phaseConfig.phase
+          None
         )
 
         viewModel.isSearch mustEqual true
@@ -58,8 +54,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           None,
           1,
           2,
-          None,
-          phaseConfig.phase
+          None
         )
 
         viewModel.isSearch mustEqual false
@@ -79,8 +74,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           None,
           1,
           2,
-          None,
-          phaseConfig.phase
+          None
         )
 
         viewModel.resultsFound mustEqual true
@@ -95,8 +89,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           None,
           1,
           2,
-          None,
-          phaseConfig.phase
+          None
         )
 
         viewModel.resultsFound mustEqual false
@@ -115,8 +108,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           Some("AB123"),
           1,
           2,
-          None,
-          phaseConfig.phase
+          None
         )
 
         viewModel.searchResultsFound mustEqual true
@@ -132,8 +124,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           None,
           1,
           2,
-          None,
-          phaseConfig.phase
+          None
         )
 
         viewModel.searchResultsFound mustEqual false
@@ -148,8 +139,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           None,
           1,
           2,
-          None,
-          phaseConfig.phase
+          None
         )
 
         viewModel.searchResultsFound mustEqual false
@@ -167,8 +157,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           Some("AB123"),
           1,
           2,
-          None,
-          phaseConfig.phase
+          None
         )
 
         viewModel.noSearchResultsFound mustEqual true
@@ -184,8 +173,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           Some("AB123"),
           1,
           2,
-          None,
-          phaseConfig.phase
+          None
         )
 
         viewModel.noResultsFound mustEqual false
@@ -203,8 +191,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           None,
           1,
           2,
-          None,
-          phaseConfig.phase
+          None
         )
 
         viewModel.noResultsFound mustEqual true
@@ -220,8 +207,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
           None,
           1,
           2,
-          None,
-          phaseConfig.phase
+          None
         )
 
         viewModel.noResultsFound mustEqual false
@@ -233,7 +219,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       "when sortParams is SortByLRNAsc" in {
         val sortParams = SortByLRNAsc
-        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, None, 1, 2, Some(sortParams), phaseConfig.phase)
+        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, None, 1, 2, Some(sortParams))
         viewModel.sortLrn mustEqual "ascending"
         viewModel.sortCreatedAt mustEqual "none"
         viewModel.sortLRNHref mustEqual routes.DashboardController.onPageLoad(None, None, Some(SortByLRNDesc.toString))
@@ -244,7 +230,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       "when sortParams is SortByLRNDesc" in {
         val sortParams = SortByLRNDesc
-        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, None, 1, 2, Some(sortParams), phaseConfig.phase)
+        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, None, 1, 2, Some(sortParams))
         viewModel.sortLrn mustEqual "descending"
         viewModel.sortCreatedAt mustEqual "none"
         viewModel.sortLRNHref mustEqual routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
@@ -255,7 +241,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       "when sortParams is SortByCreatedAtAsc" in {
         val sortParams = SortByCreatedAtAsc
-        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, None, 1, 2, Some(sortParams), phaseConfig.phase)
+        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, None, 1, 2, Some(sortParams))
         viewModel.sortCreatedAt mustEqual "ascending"
         viewModel.sortLrn mustEqual "none"
         viewModel.sortLRNHref mustEqual routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
@@ -266,7 +252,7 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
 
       "when sortParams is SortByCreatedAtDesc" in {
         val sortParams = SortByCreatedAtDesc
-        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, None, 1, 2, Some(sortParams), phaseConfig.phase)
+        val viewModel  = AllDraftDeparturesViewModel(departuresSummary, None, 1, 2, Some(sortParams))
         viewModel.sortCreatedAt mustEqual "descending"
         viewModel.sortLrn mustEqual "none"
         viewModel.sortLRNHref mustEqual routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
@@ -276,34 +262,13 @@ class AllDraftDeparturesViewModelSpec extends SpecBase with Generators with Scal
       }
 
       "when sortParams is None" in {
-        val viewModel = AllDraftDeparturesViewModel(departuresSummary, None, 1, 2, None, phaseConfig.phase)
+        val viewModel = AllDraftDeparturesViewModel(departuresSummary, None, 1, 2, None)
         viewModel.sortCreatedAt mustEqual "descending"
         viewModel.sortLrn mustEqual "none"
         viewModel.sortLRNHref mustEqual routes.DashboardController.onPageLoad(None, None, Some(SortByLRNAsc.toString))
         viewModel.sortCreatedAtHref mustEqual routes.DashboardController.onPageLoad(None, None, Some(SortByCreatedAtAsc.toString))
         viewModel.sortHiddenTextLRN mustEqual "Sort local reference number (LRN) in ascending order"
         viewModel.sortHiddenTextDaysToComplete mustEqual "Sort days to complete in ascending order"
-      }
-    }
-
-    "paragraph" - {
-      "when post-transition" - {
-        "must not be defined" in {
-          val departuresSummary = DeparturesSummary(0, 0, Nil)
-          val viewModel         = AllDraftDeparturesViewModel(departuresSummary, None, 1, 1, None, Phase.PostTransition)
-          val result            = viewModel.paragraph
-          result must not be defined
-        }
-      }
-
-      "when transition" - {
-        "must be defined" in {
-          val departuresSummary = DeparturesSummary(0, 0, Nil)
-          val viewModel         = AllDraftDeparturesViewModel(departuresSummary, None, 1, 1, None, Phase.Transition)
-          val result            = viewModel.paragraph
-          result.value mustEqual
-            "Complete your draft declarations on or before 20th January. If not, they will be deleted after the NCTS 5 update on 21st January."
-        }
       }
     }
   }

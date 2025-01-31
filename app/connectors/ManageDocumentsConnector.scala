@@ -16,25 +16,23 @@
 
 package connectors
 
-import config.{FrontendAppConfig, PhaseConfig}
+import config.FrontendAppConfig
 import play.api.Logging
-import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.client.{readStreamHttpResponse, HttpClientV2}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import java.net.URL
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.http.client.readStreamHttpResponse
 
 class ManageDocumentsConnector @Inject() (
   appConfig: FrontendAppConfig,
-  phaseConfig: PhaseConfig,
   http: HttpClientV2
 )(implicit ec: ExecutionContext)
     extends Logging {
 
   private val headers = Seq(
-    "APIVersion" -> phaseConfig.values.apiVersion.toString
+    "APIVersion" -> "2.1"
   )
 
   def getTAD(departureId: String, messageId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
