@@ -16,23 +16,22 @@
 
 package connectors.testOnly
 
-import config.{FrontendAppConfig, PhaseConfig}
+import config.FrontendAppConfig
 import connectors.MovementP5Connector
 import play.api.libs.json.JsValue
+import play.api.libs.ws.XMLBodyWritables.*
 import play.api.mvc.Headers
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
-import play.api.libs.ws.XMLBodyWritables._
 
 class TestOnlyP5DeparturesAPIConnector @Inject() (
   http: HttpClientV2,
-  config: FrontendAppConfig,
-  override val phaseConfig: PhaseConfig
+  config: FrontendAppConfig
 )(implicit ec: ExecutionContext)
     extends MovementP5Connector {
 
