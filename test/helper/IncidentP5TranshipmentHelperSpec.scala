@@ -17,6 +17,7 @@
 package helper
 
 import base.SpecBase
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import generators.Generators
 import models.{IdentificationType, Nationality}
 import org.mockito.ArgumentMatchers.any
@@ -47,53 +48,59 @@ class IncidentP5TranshipmentHelperSpec extends SpecBase with ScalaCheckPropertyC
     "rows" - {
       "registeredCountryRow" - {
         "must return a row with description when ref data look up is successful" in {
+          val description = "description"
+          val nationality = transhipment.TransportMeans.nationality
+
           when(refDataService.getNationality(any())(any(), any()))
-            .thenReturn(Future.successful(Right(Nationality(transhipment.TransportMeans.nationality, "description"))))
+            .thenReturn(Future.successful(Nationality(nationality, description)))
 
           val helper = new IncidentP5TranshipmentHelper(transhipment, refDataService)
           val result = helper.registeredCountryRow.futureValue.value
 
           result.key.value `mustBe` "Registered country"
-          result.value.value `mustBe` "description"
+          result.value.value `mustBe` description
           result.actions must not be defined
         }
 
-        "must return a row with description when ref data look up cannot find description" in {
-          when(refDataService.getNationality(any())(any(), any()))
-            .thenReturn(Future.successful(Left(transhipment.TransportMeans.nationality)))
+        "must throw an exception when ref data look up cannot find description" in {
+          val refDataService: ReferenceDataService = mock[ReferenceDataService]
+          when(refDataService.getNationality(any())(any(), any())).thenReturn(Future.failed(new NoReferenceDataFoundException("")))
 
           val helper = new IncidentP5TranshipmentHelper(transhipment, refDataService)
-          val result = helper.registeredCountryRow.futureValue.value
 
-          result.key.value `mustBe` "Registered country"
-          result.value.value `mustBe` transhipment.TransportMeans.nationality
-          result.actions must not be defined
+          whenReady(helper.registeredCountryRow.failed) {
+            result => result mustBe a[NoReferenceDataFoundException]
+          }
         }
       }
 
       "identificationTypeRow" - {
         "must return a row with description when ref data look up is successful" in {
+          val description        = "description"
+          val identificationType = transhipment.TransportMeans.typeOfIdentification
+
           when(refDataService.getIdentificationType(any())(any(), any()))
-            .thenReturn(Future.successful(Right(IdentificationType(transhipment.TransportMeans.typeOfIdentification, "description"))))
+            .thenReturn(Future.successful(IdentificationType(identificationType, description)))
 
           val helper = new IncidentP5TranshipmentHelper(transhipment, refDataService)
           val result = helper.identificationTypeRow.futureValue.value
 
           result.key.value `mustBe` "Identification type"
-          result.value.value `mustBe` "description"
+          result.value.value `mustBe` description
           result.actions must not be defined
         }
 
-        "must return a row with description when ref data look up cannot find description" in {
+        "must throw an exception when ref data look up cannot find description" in {
+          val refDataService: ReferenceDataService = mock[ReferenceDataService]
+
           when(refDataService.getIdentificationType(any())(any(), any()))
-            .thenReturn(Future.successful(Left(transhipment.TransportMeans.typeOfIdentification)))
+            .thenReturn(Future.failed(new NoReferenceDataFoundException("")))
 
           val helper = new IncidentP5TranshipmentHelper(transhipment, refDataService)
-          val result = helper.identificationTypeRow.futureValue.value
 
-          result.key.value `mustBe` "Identification type"
-          result.value.value `mustBe` transhipment.TransportMeans.typeOfIdentification
-          result.actions must not be defined
+          whenReady(helper.identificationTypeRow.failed) {
+            result => result mustBe a[NoReferenceDataFoundException]
+          }
         }
       }
 

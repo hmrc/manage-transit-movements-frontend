@@ -20,14 +20,14 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
 import generated.{CC056CType, FunctionalErrorType04}
 import generators.Generators
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{DepartureP5MessageService, ReferenceDataService}
 import viewModels.P5.departure.CancellationNotificationErrorsP5ViewModel
 import views.html.departureP5.CancellationNotificationErrorsP5View
@@ -63,9 +63,9 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
         message =>
           when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
-          when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("AB123")))
+          when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(fakeCustomsOffice))
 
-          val cancellationNotificationErrorsP5ViewModel = new CancellationNotificationErrorsP5ViewModel(lrn.value, Left("AB123"))
+          val cancellationNotificationErrorsP5ViewModel = new CancellationNotificationErrorsP5ViewModel(lrn.value, "AB123", Some(fakeCustomsOffice))
 
           val request = FakeRequest(GET, controllerRoute)
 
@@ -87,7 +87,7 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
             message =>
               when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
-              when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("AB123")))
+              when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(fakeCustomsOffice))
 
               val request = FakeRequest(GET, controllerRoute)
 

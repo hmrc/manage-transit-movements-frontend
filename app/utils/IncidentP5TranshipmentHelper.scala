@@ -43,30 +43,32 @@ class IncidentP5TranshipmentHelper(
     )
 
   def identificationTypeRow: Future[Option[SummaryListRow]] =
-    refDataService.getIdentificationType(transhipment.TransportMeans.typeOfIdentification) map {
-      identificationTypeResponse =>
-        val identificationType = identificationTypeResponse.fold[String](identity, _.description)
-        buildRowFromAnswer[String](
-          answer = Some(identificationType),
-          formatAnswer = formatAsText,
-          prefix = "departure.notification.incident.index.identificationType",
-          id = None,
-          call = None
-        )
-    }
+    refDataService
+      .getIdentificationType(transhipment.TransportMeans.typeOfIdentification)
+      .map {
+        identificationType =>
+          buildRowFromAnswer[String](
+            answer = Some(identificationType.description),
+            formatAnswer = formatAsText,
+            prefix = "departure.notification.incident.index.identificationType",
+            id = None,
+            call = None
+          )
+      }
 
   def registeredCountryRow: Future[Option[SummaryListRow]] =
-    refDataService.getNationality(transhipment.TransportMeans.nationality) map {
-      nationalityResponse =>
-        val nationalityToDisplay = nationalityResponse.fold[String](identity, _.description)
-        buildRowFromAnswer[String](
-          answer = Some(nationalityToDisplay),
-          formatAnswer = formatAsText,
-          prefix = "departure.notification.incident.index.registeredCountry",
-          id = None,
-          call = None
-        )
-    }
+    refDataService
+      .getNationality(transhipment.TransportMeans.nationality)
+      .map {
+        nationality =>
+          buildRowFromAnswer[String](
+            answer = Some(nationality.description),
+            formatAnswer = formatAsText,
+            prefix = "departure.notification.incident.index.registeredCountry",
+            id = None,
+            call = None
+          )
+      }
 
   def replacementMeansOfTransportSection: Future[StaticSection] =
     for {

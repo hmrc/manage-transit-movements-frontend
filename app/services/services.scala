@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-import cats.data.NonEmptySet
+import connectors.ReferenceDataConnector.*
 
 package object services {
 
-  implicit class RichNonEmptySet[T](value: NonEmptySet[T]) {
-    def toSeq: Seq[T] = value.toNonEmptyList.toList
-  }
+  implicit class RichResponse[T](value: Response[T]) {
 
+    def resolve(): T =
+      value match {
+        case Right(value) => value
+        case Left(ex)     => throw ex
+      }
+
+    def resolveAsOption(): Option[T] =
+      value match {
+        case Right(value) => Some(value)
+        case Left(ex)     => throw ex
+      }
+  }
 }

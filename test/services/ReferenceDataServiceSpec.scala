@@ -22,40 +22,17 @@ import connectors.ReferenceDataConnector
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, InvalidGuaranteeReason, RequestedDocumentType}
 import models.{Country, IdentificationType, IncidentCode, Nationality, QualifierOfIdentification}
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{reset, verify, when}
-import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.must.Matchers
-import org.scalatestplus.mockito.MockitoSugar
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matchers with MockitoSugar with SpecBase {
+class ReferenceDataServiceSpec extends SpecBase {
 
   private val mockConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
-
-  private val customsOfficeId = "GB00001"
-  private val customsOffice1  = CustomsOffice(customsOfficeId, "CO1", None)
-  private val customsOffice2  = CustomsOffice("GB00002", "CO2", None)
-  private val customsOffices  = NonEmptySet.of(customsOffice1, customsOffice2)
-
-  private val countryCode1 = "GB"
-  private val country1     = Country(countryCode1, "United Kingdom")
-  private val countries    = NonEmptySet.of(country1)
-
-  private val identificationCode = "U"
-  private val identification     = QualifierOfIdentification("U", "UN/LOCODE")
-  private val identifications    = NonEmptySet.of(identification)
-
-  private val identificationTypeCode = "10"
-  private val identificationType     = IdentificationType(identificationTypeCode, "IMO Ship Identification Number")
-  private val identificationTypes    = NonEmptySet.of(identificationType)
-
-  private val nationalityCode = "GB"
-  private val nationality     = Nationality(nationalityCode, "British")
-  private val nationalities   = NonEmptySet.of(nationality)
+  private val service                               = ReferenceDataService(mockConnector)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -66,136 +43,70 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
 
     "getCustomsOffice" - {
 
-      val expectedQueryParams = Seq("data.id" -> customsOfficeId)
+      val customsOfficeId = "GB00001"
+      val customsOffice1  = CustomsOffice(customsOfficeId, "CO1", None)
 
-      "should return customs office" in {
-        when(mockConnector.getCustomsOffices(eqTo(expectedQueryParams)*)(any(), any())).thenReturn(Future.successful(customsOffices))
+      "should return a valid customs office" in {
+        when(mockConnector.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Right(customsOffice1)))
 
-        val service = new ReferenceDataServiceImpl(mockConnector)
+        service.getCustomsOffice(customsOfficeId).futureValue `mustBe` customsOffice1
 
-        service.getCustomsOffice(customsOfficeId).futureValue `mustBe` Right(customsOffice1)
-
-        verify(mockConnector).getCustomsOffices(eqTo(expectedQueryParams)*)(any(), any())
-      }
-
-      "should return Left" - {
-        "when the connector call returns no data" in {
-          when(mockConnector.getCustomsOffices(any())(any(), any())).thenReturn(Future.failed(new NoReferenceDataFoundException("")))
-
-          val service = new ReferenceDataServiceImpl(mockConnector)
-
-          service.getCustomsOffice(customsOfficeId).futureValue `mustBe` Left(customsOfficeId)
-
-          verify(mockConnector).getCustomsOffices(eqTo(expectedQueryParams)*)(any(), any())
-        }
+        verify(mockConnector).getCustomsOffice(any())(any(), any())
       }
     }
 
     "getCountry" - {
 
-      val expectedQueryParams = Seq("data.code" -> countryCode1)
+      val countryCode1 = "GB"
+      val country1     = Country(countryCode1, "United Kingdom")
 
-      "should return countries" in {
-        when(mockConnector.getCountries(eqTo(expectedQueryParams)*)(any(), any())).thenReturn(Future.successful(countries))
+      "should return a valid country" in {
+        when(mockConnector.getCountry(any())(any(), any())).thenReturn(Future.successful(Right(country1)))
 
-        val service = new ReferenceDataServiceImpl(mockConnector)
+        service.getCountry(countryCode1).futureValue `mustBe` country1
 
-        service.getCountry(countryCode1).futureValue `mustBe` Right(country1)
-
-        verify(mockConnector).getCountries(eqTo(expectedQueryParams)*)(any(), any())
-      }
-
-      "should return Left" - {
-        "when the connector call returns no data" in {
-          when(mockConnector.getCountries(any())(any(), any())).thenReturn(Future.failed(new NoReferenceDataFoundException("")))
-
-          val service = new ReferenceDataServiceImpl(mockConnector)
-
-          service.getCountry(countryCode1).futureValue `mustBe` Left(countryCode1)
-
-          verify(mockConnector).getCountries(eqTo(expectedQueryParams)*)(any(), any())
-        }
+        verify(mockConnector).getCountry(any())(any(), any())
       }
     }
 
     "getQualifierOfIdentification" - {
 
-      val expectedQueryParams = Seq("data.qualifier" -> identificationCode)
+      val identificationCode = "U"
+      val identification     = QualifierOfIdentification("U", "UN/LOCODE")
 
-      "should return countries" in {
-        when(mockConnector.getQualifierOfIdentifications(eqTo(expectedQueryParams)*)(any(), any())).thenReturn(Future.successful(identifications))
+      "should return the qualifier of identification" in {
+        when(mockConnector.getQualifierOfIdentification(any())(any(), any())).thenReturn(Future.successful(Right(identification)))
 
-        val service = new ReferenceDataServiceImpl(mockConnector)
+        service.getQualifierOfIdentification(identificationCode).futureValue `mustBe` identification
 
-        service.getQualifierOfIdentification(identificationCode).futureValue `mustBe` Right(identification)
-
-        verify(mockConnector).getQualifierOfIdentifications(eqTo(expectedQueryParams)*)(any(), any())
-      }
-
-      "should return Left" - {
-        "when the connector call returns no data" in {
-          when(mockConnector.getQualifierOfIdentifications(any())(any(), any())).thenReturn(Future.failed(new NoReferenceDataFoundException("")))
-
-          val service = new ReferenceDataServiceImpl(mockConnector)
-
-          service.getQualifierOfIdentification(identificationCode).futureValue `mustBe` Left(identificationCode)
-
-          verify(mockConnector).getQualifierOfIdentifications(eqTo(expectedQueryParams)*)(any(), any())
-        }
+        verify(mockConnector).getQualifierOfIdentification(any())(any(), any())
       }
     }
 
     "getIdentificationType" - {
 
-      val expectedQueryParams = Seq("data.type" -> identificationTypeCode)
+      val identificationTypeCode = "10"
+      val identificationType     = IdentificationType(identificationTypeCode, "IMO Ship Identification Number")
 
       "should return identification type" in {
-        when(mockConnector.getIdentificationTypes(eqTo(expectedQueryParams)*)(any(), any())).thenReturn(Future.successful(identificationTypes))
+        when(mockConnector.getIdentificationType(any())(any(), any())).thenReturn(Future.successful(Right(identificationType)))
 
-        val service = new ReferenceDataServiceImpl(mockConnector)
+        service.getIdentificationType(identificationTypeCode).futureValue `mustBe` identificationType
 
-        service.getIdentificationType(identificationTypeCode).futureValue `mustBe` Right(identificationType)
-
-        verify(mockConnector).getIdentificationTypes(eqTo(expectedQueryParams)*)(any(), any())
-      }
-
-      "should return Left" - {
-        "when the connector call returns no data" in {
-          when(mockConnector.getIdentificationTypes(any())(any(), any())).thenReturn(Future.failed(new NoReferenceDataFoundException("")))
-
-          val service = new ReferenceDataServiceImpl(mockConnector)
-
-          service.getIdentificationType(identificationTypeCode).futureValue `mustBe` Left(identificationTypeCode)
-
-          verify(mockConnector).getIdentificationTypes(eqTo(expectedQueryParams)*)(any(), any())
-        }
+        verify(mockConnector).getIdentificationType(any())(any(), any())
       }
     }
 
     "getNationalities" - {
-
-      val expectedQueryParams = Seq("data.code" -> nationalityCode)
+      val nationalityCode = "GB"
+      val nationality     = Nationality(nationalityCode, "British")
 
       "should return nationalities" in {
-        when(mockConnector.getNationalities(eqTo(expectedQueryParams)*)(any(), any())).thenReturn(Future.successful(nationalities))
+        when(mockConnector.getNationality(any())(any(), any())).thenReturn(Future.successful(Right(nationality)))
 
-        val service = new ReferenceDataServiceImpl(mockConnector)
+        service.getNationality(nationalityCode).futureValue `mustBe` nationality
 
-        service.getNationality(nationalityCode).futureValue `mustBe` Right(nationality)
-
-        verify(mockConnector).getNationalities(eqTo(expectedQueryParams)*)(any(), any())
-      }
-
-      "should return Left" - {
-        "when the connector call returns no data" in {
-          when(mockConnector.getNationalities(any())(any(), any())).thenReturn(Future.failed(new NoReferenceDataFoundException("")))
-
-          val service = new ReferenceDataServiceImpl(mockConnector)
-
-          service.getNationality(nationalityCode).futureValue `mustBe` Left(nationalityCode)
-
-          verify(mockConnector).getNationalities(eqTo(expectedQueryParams)*)(any(), any())
-        }
+        verify(mockConnector).getNationality(any())(any(), any())
       }
     }
 
@@ -207,9 +118,7 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
       val expectedQueryParams = Seq("data.code" -> controlTypeCode)
 
       "should return a control type" in {
-        when(mockConnector.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType))
-
-        val service = new ReferenceDataServiceImpl(mockConnector)
+        when(mockConnector.getControlType(any())(any(), any())).thenReturn(Future.successful(Right(controlType)))
 
         service.getControlType(controlTypeCode).futureValue `mustBe` controlType
 
@@ -232,9 +141,7 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
       "should return a incident code" in {
 
         when(mockConnector.getIncidentCode(any())(any(), any()))
-          .thenReturn(Future.successful(incidentCode))
-
-        val service = new ReferenceDataServiceImpl(mockConnector)
+          .thenReturn(Future.successful(Right(incidentCode)))
 
         service.getIncidentCode(incidentCodeCode).futureValue `mustBe` incidentCode
 
@@ -252,9 +159,7 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
       "should return a requested document type" in {
 
         when(mockConnector.getRequestedDocumentType(any())(any(), any()))
-          .thenReturn(Future.successful(requestedDocumentType))
-
-        val service = new ReferenceDataServiceImpl(mockConnector)
+          .thenReturn(Future.successful(Right(requestedDocumentType)))
 
         service.getRequestedDocumentType(requestedDocumentTypeCode).futureValue `mustBe` requestedDocumentType
 
@@ -270,9 +175,7 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
       val expectedQueryParams = Seq("data.code" -> functionalErrorCode)
 
       "should return a functional error" in {
-        when(mockConnector.getFunctionalError(any())(any(), any())).thenReturn(Future.successful(functionalError))
-
-        val service = new ReferenceDataServiceImpl(mockConnector)
+        when(mockConnector.getFunctionalError(any())(any(), any())).thenReturn(Future.successful(Right(functionalError)))
 
         service.getFunctionalError(functionalErrorCode).futureValue `mustBe` functionalError
 
@@ -289,16 +192,12 @@ class ReferenceDataServiceSpec extends AnyFreeSpec with ScalaFutures with Matche
       val expectedQueryParams = Seq("data.code" -> invalidGuaranteeReasonCode)
 
       "should return a invalid guarantee reason" in {
-        when(mockConnector.getInvalidGuaranteeReason(any())(any(), any())).thenReturn(Future.successful(invalidGuaranteeReason))
-
-        val service = new ReferenceDataServiceImpl(mockConnector)
+        when(mockConnector.getInvalidGuaranteeReason(any())(any(), any())).thenReturn(Future.successful(Right(invalidGuaranteeReason)))
 
         service.getInvalidGuaranteeReason(invalidGuaranteeReasonCode).futureValue `mustBe` invalidGuaranteeReason
 
         verify(mockConnector).getInvalidGuaranteeReason(eqTo(expectedQueryParams)*)(any(), any())
       }
-
     }
   }
-
 }

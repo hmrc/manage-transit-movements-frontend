@@ -50,7 +50,7 @@ class CancellationNotificationErrorsP5Controller @Inject() (
         if (functionalErrors.isEmpty) {
           referenceDataService.getCustomsOffice(customsOfficeReference).map {
             customsOffice =>
-              Ok(view(viewModelProvider.apply(request.referenceNumbers.localReferenceNumber, customsOffice)))
+              Ok(view(viewModelProvider.apply(request.referenceNumbers.localReferenceNumber, customsOfficeReference, Option(customsOffice))))
           }
         } else {
           Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))

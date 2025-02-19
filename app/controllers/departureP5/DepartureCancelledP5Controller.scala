@@ -56,7 +56,7 @@ class DepartureCancelledP5Controller @Inject() (
 
     referenceDataService.getCustomsOffice(customsOfficeReferenceNumber).flatMap {
       customsOffice =>
-        viewModelProvider.apply(ie009, lrn, customsOffice).map {
+        viewModelProvider.apply(ie009, lrn, customsOfficeReferenceNumber, Option(customsOffice)).map {
           viewModel => Ok(view(viewModel))
         }
     }

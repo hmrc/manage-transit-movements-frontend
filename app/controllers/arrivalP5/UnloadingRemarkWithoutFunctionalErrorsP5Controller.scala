@@ -56,7 +56,8 @@ class UnloadingRemarkWithoutFunctionalErrorsP5Controller @Inject() (
                 view(
                   viewModelProvider.apply(
                     request.messageData.TransitOperation.MRN,
-                    customsOffice
+                    customsOfficeReference,
+                    Option(customsOffice)
                   ),
                   arrivalId,
                   messageId

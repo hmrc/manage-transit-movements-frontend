@@ -33,7 +33,7 @@ class GoodsUnderControlP5RequestedDocumentsViewSpec extends CheckYourAnswersView
   override val prefix: String = "departure.ie060.message.requestedDocuments"
 
   private val goodsUnderControlP5ViewModel: GoodsUnderControlP5ViewModel   = new GoodsUnderControlP5ViewModel(sections, true, Some(lrn.toString))
-  private val customsOfficeContactViewModel: CustomsOfficeContactViewModel = CustomsOfficeContactViewModel(Right(customsOffice))
+  private val customsOfficeContactViewModel: CustomsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice.id, Some(customsOffice))
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector

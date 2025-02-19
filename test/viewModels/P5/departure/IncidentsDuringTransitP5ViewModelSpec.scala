@@ -49,7 +49,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
     super.beforeEach()
     reset(mockReferenceDataService)
     when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
-      .thenReturn(Future.successful(Right(customsOffice)))
+      .thenReturn(Future.successful(customsOffice))
     when(mockReferenceDataService.getIncidentCode(any())(any(), any()))
       .thenReturn(Future.successful(IncidentCode("code", "text")))
   }
@@ -68,10 +68,12 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
 
     def viewModel(
       cc128Data: CC182CType = cc128Data,
-      customsOffice: Either[String, CustomsOffice] = Left(customsReferenceId),
+      customsOffice: Option[CustomsOffice] = None,
       isMultipleIncidents: Boolean = true
     ): IncidentsDuringTransitP5ViewModel =
-      viewModelProvider.apply(departureIdP5, messageId, cc128Data, departureReferenceNumbers, customsOffice, isMultipleIncidents).futureValue
+      viewModelProvider
+        .apply(departureIdP5, messageId, cc128Data, departureReferenceNumbers, customsOffice, customsReferenceId, isMultipleIncidents)
+        .futureValue
 
     "viewModel must have correct sections" in {
       forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
@@ -198,7 +200,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
         "must return correct message" in {
           val customsOfficeName = "custName"
           val telephoneNo       = Some("123")
-          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
+          val result            = viewModel(customsOffice = Some(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
 
           result `mustBe` s"For further help, contact the carrier or Customs at $customsOfficeName on ${telephoneNo.get}."
         }
@@ -207,7 +209,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
       "when customs office found with name and no telephone number" - {
         "must return correct message" in {
           val customsOfficeName = "custName"
-          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
+          val result            = viewModel(customsOffice = Some(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
 
           result `mustBe` s"For further help, contact Customs at $customsOfficeName."
         }
@@ -217,7 +219,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
         "must return correct message" in {
           val customsOfficeName = ""
           val telephoneNo       = Some("123")
-          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
+          val result            = viewModel(customsOffice = Some(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
 
           result `mustBe` s"For further help, contact Customs office $customsReferenceId on ${telephoneNo.get}."
         }
@@ -226,7 +228,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
       "when customs office found with no telephone number and empty name" - {
         "must return correct message" in {
           val customsOfficeName = ""
-          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
+          val result            = viewModel(customsOffice = Some(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
 
           result `mustBe` s"For further help, contact Customs office $customsReferenceId."
         }

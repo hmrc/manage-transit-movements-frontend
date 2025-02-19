@@ -18,7 +18,6 @@ package config
 
 import com.google.inject.AbstractModule
 import controllers.actions.*
-import services.*
 
 import java.time.Clock
 
@@ -29,7 +28,5 @@ class Module extends AbstractModule {
     bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction]).asEagerSingleton()
     bind(classOf[PaginationAppConfig]).asEagerSingleton()
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone())
-    bind(classOf[ReferenceDataService]).to(classOf[ReferenceDataServiceImpl]).asEagerSingleton()
   }
-
 }

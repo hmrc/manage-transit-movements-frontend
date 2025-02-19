@@ -17,6 +17,7 @@
 package helper
 
 import base.SpecBase
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import generated.{AddressType18, GNSSType}
 import generators.Generators
 import models.{Country, IncidentCode, QualifierOfIdentification, RichAddressType18}
@@ -92,53 +93,61 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
       "countryRow" - {
         "must return a row with description when ref data look up is successful" in {
+
+          val description      = "description"
+          val countryCode      = incidentType03.Location.country
+          val expectedResponse = s"$description - $countryCode"
+
           when(refDataService.getCountry(any())(any(), any()))
-            .thenReturn(Future.successful(Right(Country(incidentType03.Location.country, "description"))))
+            .thenReturn(Future.successful(Country(countryCode, description)))
 
           val helper = new IncidentP5Helper(incidentType03, refDataService)
           val result = helper.countryRow.futureValue.value
 
           result.key.value `mustBe` "Country"
-          result.value.value `mustBe` "description"
+          result.value.value `mustBe` expectedResponse
           result.actions must not be defined
         }
 
-        "must return a row with description when ref data look up cannot find description" in {
+        "must throw an exception when ref data look up cannot find description" in {
           when(refDataService.getCountry(any())(any(), any()))
-            .thenReturn(Future.successful(Left(incidentType03.Location.country)))
+            .thenReturn(Future.failed(new NoReferenceDataFoundException("")))
 
           val helper = new IncidentP5Helper(incidentType03, refDataService)
-          val result = helper.countryRow.futureValue.value
 
-          result.key.value `mustBe` "Country"
-          result.value.value `mustBe` incidentType03.Location.country
-          result.actions must not be defined
+          whenReady(helper.countryRow.failed) {
+            result => result mustBe a[NoReferenceDataFoundException]
+          }
         }
       }
 
       "identifierTypeRow" - {
         "must return a row with description when ref data look up is successful" in {
+          val description = "description"
+          val qualifier   = incidentType03.Location.qualifierOfIdentification
+
           when(refDataService.getQualifierOfIdentification(any())(any(), any()))
-            .thenReturn(Future.successful(Right(QualifierOfIdentification(incidentType03.Location.qualifierOfIdentification, "description"))))
+            .thenReturn(Future.successful(QualifierOfIdentification(qualifier, description)))
 
           val helper = new IncidentP5Helper(incidentType03, refDataService)
           val result = helper.identifierTypeRow.futureValue.value
 
           result.key.value `mustBe` "Identifier type"
-          result.value.value `mustBe` "description"
+          result.value.value `mustBe` description
           result.actions must not be defined
         }
 
-        "must return a row with description when ref data look up cannot find description" in {
+        "must throw an exception when ref data look up cannot find description" in {
+          val refDataService: ReferenceDataService = mock[ReferenceDataService]
+
           when(refDataService.getQualifierOfIdentification(any())(any(), any()))
-            .thenReturn(Future.successful(Left(incidentType03.Location.qualifierOfIdentification)))
+            .thenReturn(Future.failed(new NoReferenceDataFoundException("")))
 
           val helper = new IncidentP5Helper(incidentType03, refDataService)
-          val result = helper.identifierTypeRow.futureValue.value
 
-          result.key.value `mustBe` "Identifier type"
-          result.value.value `mustBe` incidentType03.Location.qualifierOfIdentification
-          result.actions must not be defined
+          whenReady(helper.identifierTypeRow.failed) {
+            result => result mustBe a[NoReferenceDataFoundException]
+          }
         }
       }
 
@@ -203,7 +212,7 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           )
 
           when(refDataService.getCountry(any())(any(), any()))
-            .thenReturn(Future.successful(Right(country)))
+            .thenReturn(Future.successful(country))
           when(refDataService.getIncidentCode(any())(any(), any()))
             .thenReturn(Future.successful(incidentCode))
 
@@ -239,5 +248,4 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
       }
     }
   }
-
 }

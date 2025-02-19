@@ -62,7 +62,7 @@ class IncidentP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
 
   "IncidentP5Controller" - {
 
-    val incidentsViewModel = new IncidentP5ViewModel(lrn.toString, Left(customsReferenceNumber), isMultipleIncidents = true, sections, incidentIndex)
+    val incidentsViewModel = new IncidentP5ViewModel(lrn.toString, None, isMultipleIncidents = true, sections, customsReferenceNumber, incidentIndex)
 
     "must return OK and the correct view for a GET" in {
       forAll(arbitrary[CC182CType]) {
@@ -74,9 +74,9 @@ class IncidentP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
             .thenReturn(Future.successful(departureReferenceNumbers))
 
           when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
-            .thenReturn(Future.successful(Left(customsReferenceNumber)))
+            .thenReturn(Future.successful(fakeCustomsOffice))
 
-          when(mockIncidentP5ViewModelProvider.apply(any(), any(), any(), any(), any(), any())(any(), any(), any()))
+          when(mockIncidentP5ViewModelProvider.apply(any(), any(), any(), any(), any(), any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(incidentsViewModel))
 
           val request = FakeRequest(GET, controller)
