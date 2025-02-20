@@ -30,7 +30,7 @@ trait SearchViewBehaviours extends InputTextViewBehaviours[String] with ScalaChe
     assert(doc.getElementsByClass("movement-search").size() == 1)
   }
 
-  def pageWithSearch(expectedLabelText: String, expectedNoResultsFoundText: String): Unit = {
+  def pageWithSearch(expectedLabelText: String, expectedNoResultsFoundText: String, numberOfItemsPerPage: Int): Unit = {
     "page with a search box" - {
       behave like pageWithContent("label", expectedLabelText)
 
@@ -57,7 +57,7 @@ trait SearchViewBehaviours extends InputTextViewBehaviours[String] with ScalaChe
         }
 
         "when there are multiple results" in {
-          forAll(Gen.choose(2, 10)) {
+          forAll(Gen.choose(2, numberOfItemsPerPage)) {
             retrieved =>
               val doc = parseView(viewWithSpecificSearchResults(retrieved, searchParam))
               val p   = doc.getElementById("results-count")
