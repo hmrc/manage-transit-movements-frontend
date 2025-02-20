@@ -75,7 +75,7 @@ class IncidentEndorsementP5HelperSpec extends SpecBase with ScalaCheckPropertyCh
       "endorsementCountryRow" - {
         "must return a row" in {
           when(refDataService.getCountry(any())(any(), any()))
-            .thenReturn(Future.successful(Right(Country("GB", "United Kingdom"))))
+            .thenReturn(Future.successful(Country("GB", "United Kingdom")))
 
           val endorsement = endorsementType03.copy(country = "GB")
 

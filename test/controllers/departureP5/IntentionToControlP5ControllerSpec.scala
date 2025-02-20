@@ -73,12 +73,12 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
               when(mockDepartureP5MessageService.getMessage[CC060CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
                 .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
-              when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Right(customsOffice)))
+              when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
               when(mockIntentionToControlP5ViewModelProvider.apply(any())(any()))
                 .thenReturn(IntentionToControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString)))
 
               val intentionToControlP5ViewModel = new IntentionToControlP5ViewModel(sections, true, Some(lrn.toString))
-              val customsOfficeContactViewModel = CustomsOfficeContactViewModel(Right(customsOffice))
+              val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
 
               val request = FakeRequest(GET, intentionToControlInformationRequestedController)
 
@@ -105,12 +105,12 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
           when(mockDepartureP5MessageService.getMessage[CC060CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
             .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
-          when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Right(customsOffice)))
+          when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
           when(mockIntentionToControlP5ViewModelProvider.apply(any())(any()))
             .thenReturn(IntentionToControlP5ViewModel(sections, requestedDocuments = false, Some(lrn.toString)))
 
           val intentionToControlP5ViewModel = new IntentionToControlP5ViewModel(sections, false, Some(lrn.toString))
-          val customsOfficeContactViewModel = CustomsOfficeContactViewModel(Right(customsOffice))
+          val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
 
           val request = FakeRequest(GET, intentionToControlInformationRequestedController)
 

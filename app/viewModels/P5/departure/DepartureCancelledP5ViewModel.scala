@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 case class DepartureCancelledP5ViewModel(
   sections: Seq[Section],
   lrn: String,
-  customsOffice: Either[String, CustomsOffice]
+  customsOffice: CustomsOffice
 ) extends ViewModelWithCustomsOffice {
 
   override val prefix: String = "departure.cancelled.customsOfficeContact"
@@ -54,7 +54,7 @@ object DepartureCancelledP5ViewModel {
     def apply(
       ie009: CC009CType,
       lrn: String,
-      customsOffice: Either[String, CustomsOffice]
+      customsOffice: CustomsOffice
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[DepartureCancelledP5ViewModel] = {
       val helper = new DepartureCancelledP5Helper(ie009, referenceDataService)
 

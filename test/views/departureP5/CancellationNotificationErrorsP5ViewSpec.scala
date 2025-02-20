@@ -24,7 +24,7 @@ import views.html.departureP5.CancellationNotificationErrorsP5View
 class CancellationNotificationErrorsP5ViewSpec extends ViewBehaviours {
 
   private val cancellationNotificationErrorsP5ViewViewModel =
-    new CancellationNotificationErrorsP5ViewModel("AB123", Left("CD123"))
+    new CancellationNotificationErrorsP5ViewModel("AB123", fakeCustomsOffice)
 
   override def view: HtmlFormat.Appendable =
     injector
@@ -42,8 +42,6 @@ class CancellationNotificationErrorsP5ViewSpec extends ViewBehaviours {
   behave like pageWithHeading()
 
   behave like pageWithContent("p", "There are one or more errors with the cancellation of this declaration.")
-
-  behave like pageWithContent("p", "Try cancelling the declaration again. Or for more information, contact Customs office CD123.")
 
   behave like pageWithLink(
     id = "view-departure-declaration",

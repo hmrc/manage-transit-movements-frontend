@@ -18,112 +18,51 @@ package services
 
 import com.google.inject.Inject
 import connectors.ReferenceDataConnector
-import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, InvalidGuaranteeReason, RequestedDocumentType}
 import models.{Country, IdentificationType, IncidentCode, Nationality, QualifierOfIdentification}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReferenceDataServiceImpl @Inject() (connector: ReferenceDataConnector) extends ReferenceDataService {
+class ReferenceDataService @Inject() (connector: ReferenceDataConnector) {
 
-  def getCustomsOffice(customsOfficeId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, CustomsOffice]] = {
-    val queryParams: (String, String) = "data.id" -> customsOfficeId
+  def getCustomsOffice(customsOfficeId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[CustomsOffice] =
     connector
-      .getCustomsOffices(queryParams)
-      .map(
-        x => Right(x.head)
-      )
-      .recover {
-        case _: NoReferenceDataFoundException => Left(customsOfficeId)
-      }
-  }
+      .getCustomsOffice(customsOfficeId)
+      .map(_.resolve())
 
-  def getCountry(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, Country]] = {
-    val queryParams: (String, String) = "data.code" -> code
+  def getCountry(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Country] =
     connector
-      .getCountries(queryParams)
-      .map(
-        countries => Right(countries.head)
-      )
-      .recover {
-        case _: NoReferenceDataFoundException => Left(code)
-      }
-  }
+      .getCountry(code)
+      .map(_.resolve())
 
-  def getIdentificationType(`type`: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, IdentificationType]] = {
-    val queryParams: (String, String) = "data.type" -> `type`
+  def getIdentificationType(`type`: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[IdentificationType] =
     connector
-      .getIdentificationTypes(queryParams)
-      .map(
-        types => Right(types.head)
-      )
-      .recover {
-        case _: NoReferenceDataFoundException => Left(`type`)
-      }
-  }
+      .getIdentificationType(`type`)
+      .map(_.resolve())
 
-  def getNationality(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, Nationality]] = {
-    val queryParams: (String, String) = "data.code" -> code
+  def getNationality(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Nationality] =
     connector
-      .getNationalities(queryParams)
-      .map(
-        nationalities => Right(nationalities.head)
-      )
-      .recover {
-        case _: NoReferenceDataFoundException => Left(code)
-      }
-  }
+      .getNationality(code)
+      .map(_.resolve())
 
-  def getQualifierOfIdentification(qualifier: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, QualifierOfIdentification]] = {
-    val queryParams: (String, String) = "data.qualifier" -> qualifier
+  def getQualifierOfIdentification(qualifier: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[QualifierOfIdentification] =
     connector
-      .getQualifierOfIdentifications(queryParams)
-      .map(
-        identifications => Right(identifications.head)
-      )
-      .recover {
-        case _: NoReferenceDataFoundException => Left(qualifier)
-      }
-  }
+      .getQualifierOfIdentification(qualifier)
+      .map(_.resolve())
 
-  def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType] = {
-    val queryParams: (String, String) = "data.code" -> code
-    connector.getControlType(queryParams)
-  }
+  def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType] =
+    connector.getControlType(code).map(_.resolve())
 
-  def getIncidentCode(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[IncidentCode] = {
-    val queryParams: (String, String) = "data.code" -> code
-    connector.getIncidentCode(queryParams)
-  }
+  def getIncidentCode(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[IncidentCode] =
+    connector.getIncidentCode(code).map(_.resolve())
 
-  def getRequestedDocumentType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestedDocumentType] = {
-    val queryParams: (String, String) = "data.code" -> code
-    connector.getRequestedDocumentType(queryParams)
-  }
+  def getRequestedDocumentType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestedDocumentType] =
+    connector.getRequestedDocumentType(code).map(_.resolve())
 
-  def getFunctionalError(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc] = {
-    val queryParams: (String, String) = "data.code" -> code
-    connector.getFunctionalError(queryParams)
-  }
+  def getFunctionalError(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc] =
+    connector.getFunctionalError(code).map(_.resolve())
 
-  def getInvalidGuaranteeReason(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[InvalidGuaranteeReason] = {
-    val queryParams: (String, String) = "data.code" -> code
-    connector.getInvalidGuaranteeReason(queryParams)
-  }
-}
-
-trait ReferenceDataService {
-  def getCustomsOffice(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, CustomsOffice]]
-
-  def getQualifierOfIdentification(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, QualifierOfIdentification]]
-  def getCountry(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, Country]]
-
-  def getNationality(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, Nationality]]
-  def getIdentificationType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[String, IdentificationType]]
-  def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType]
-  def getIncidentCode(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[IncidentCode]
-  def getRequestedDocumentType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestedDocumentType]
-  def getFunctionalError(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc]
-  def getInvalidGuaranteeReason(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[InvalidGuaranteeReason]
+  def getInvalidGuaranteeReason(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[InvalidGuaranteeReason] =
+    connector.getInvalidGuaranteeReason(code).map(_.resolve())
 }

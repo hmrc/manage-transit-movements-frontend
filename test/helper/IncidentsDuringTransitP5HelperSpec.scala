@@ -17,6 +17,7 @@
 package helper
 
 import base.SpecBase
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import generated.CC182CType
 import generators.Generators
 import models.referenceData.CustomsOffice
@@ -104,7 +105,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               val customsOffice = CustomsOffice("XI000142", "Belfast", None)
 
               when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
-                .thenReturn(Future.successful(Right(customsOffice)))
+                .thenReturn(Future.successful(customsOffice))
 
               val modifiedCC182CType =
                 CC182CType.copy(CustomsOfficeOfIncidentRegistration = CC182CType.CustomsOfficeOfIncidentRegistration.copy(referenceNumber = value))
@@ -118,21 +119,22 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
           }
         }
 
-        "must return a row with id when reference data fails" in {
+        "must throw an exception when reference data call fails" in {
           forAll(Gen.alphaNumStr) {
             value =>
+              val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
+
               when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
-                .thenReturn(Future.successful(Left(value)))
+                .thenReturn(Future.failed(new NoReferenceDataFoundException("")))
 
               val modifiedCC182CType =
                 CC182CType.copy(CustomsOfficeOfIncidentRegistration = CC182CType.CustomsOfficeOfIncidentRegistration.copy(referenceNumber = value))
 
               val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
-              val result = helper.customsOfficeOfIncidentRow.futureValue.value
 
-              result.key.value `mustBe` "Customs office of incident"
-              result.value.value `mustBe` value
-              result.actions must not be defined
+              whenReady(helper.customsOfficeOfIncidentRow.failed) {
+                result => result mustBe a[NoReferenceDataFoundException]
+              }
           }
         }
       }
@@ -144,7 +146,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               val customsOffice = CustomsOffice("XI000142", "Belfast", None)
 
               when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
-                .thenReturn(Future.successful(Right(customsOffice)))
+                .thenReturn(Future.successful(customsOffice))
 
               val modifiedCC182CType =
                 CC182CType.copy(CustomsOfficeOfDeparture = CC182CType.CustomsOfficeOfDeparture.copy(referenceNumber = value))
@@ -157,21 +159,22 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               result.actions must not be defined
           }
         }
-        "must return a row with id when reference data fails" in {
+
+        "must throw an exception when reference data fails" in {
           forAll(Gen.alphaNumStr) {
             value =>
+              val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
               when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
-                .thenReturn(Future.successful(Left(value)))
+                .thenReturn(Future.failed(new NoReferenceDataFoundException("")))
 
               val modifiedCC182CType =
                 CC182CType.copy(CustomsOfficeOfDeparture = CC182CType.CustomsOfficeOfDeparture.copy(referenceNumber = value))
 
               val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
-              val result = helper.officeOfDepartureRow.futureValue.value
 
-              result.key.value `mustBe` "Office of departure"
-              result.value.value `mustBe` value
-              result.actions must not be defined
+              whenReady(helper.officeOfDepartureRow.failed) {
+                result => result mustBe a[NoReferenceDataFoundException]
+              }
           }
         }
       }
@@ -185,9 +188,9 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
           val customsOffice = CustomsOffice("code", "description", None)
 
           when(mockReferenceDataService.getCountry(any())(any(), any()))
-            .thenReturn(Future.successful(Right(country)))
+            .thenReturn(Future.successful(country))
           when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
-            .thenReturn(Future.successful(Right(customsOffice)))
+            .thenReturn(Future.successful(customsOffice))
 
           val helper = new IncidentsDuringTransitP5Helper(CC182CType, isMultipleIncidents = true, mockReferenceDataService)
           val result = helper.incidentInformationSection.futureValue
@@ -279,5 +282,4 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
       }
     }
   }
-
 }

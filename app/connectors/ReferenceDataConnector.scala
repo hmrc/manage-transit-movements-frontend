@@ -19,7 +19,7 @@ package connectors
 import cats.Order
 import cats.data.NonEmptySet
 import config.FrontendAppConfig
-import connectors.ReferenceDataConnector.NoReferenceDataFoundException
+import connectors.ReferenceDataConnector.*
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, InvalidGuaranteeReason, RequestedDocumentType}
 import models.{Country, IdentificationType, IncidentCode, Nationality, QualifierOfIdentification}
 import play.api.Logging
@@ -38,102 +38,113 @@ import scala.reflect.ClassTag
 
 class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpClientV2, cache: AsyncCacheApi) extends Logging {
 
-  private def get[T](url: URL)(implicit ec: ExecutionContext, hc: HeaderCarrier, reads: HttpReads[NonEmptySet[T]]): Future[NonEmptySet[T]] =
+  private def get[T](url: URL)(implicit ec: ExecutionContext, hc: HeaderCarrier, reads: HttpReads[Responses[T]]): Future[Responses[T]] =
     http
       .get(url)
       .setHeader(HeaderNames.Accept -> "application/vnd.hmrc.2.0+json")
-      .execute[NonEmptySet[T]]
+      .execute[Responses[T]]
 
   // https://www.playframework.com/documentation/2.6.x/ScalaCache#Accessing-the-Cache-API
-  private def getOrElseUpdate[T: ClassTag](url: URL)(implicit ec: ExecutionContext, hc: HeaderCarrier, reads: HttpReads[NonEmptySet[T]]): Future[T] =
-    cache.getOrElseUpdate[T](url.toString, config.asyncCacheApiExpiration.seconds) {
-      get[T](url).map(_.head)
+  private def getOrElseUpdate[T: ClassTag](url: URL)(implicit ec: ExecutionContext, hc: HeaderCarrier, reads: HttpReads[Responses[T]]): Future[Response[T]] =
+    cache.getOrElseUpdate[Response[T]](url.toString, config.asyncCacheApiExpiration.seconds) {
+      get[T](url).map(_.map(_.head))
     }
 
-  private type QueryParams = (String, String)
-
-  def getCustomsOffices(
-    queryParams: QueryParams*
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[NonEmptySet[CustomsOffice]] = {
-    val url = url"${config.customsReferenceDataUrl}/lists/CustomsOffices?$queryParams"
-    get[CustomsOffice](url)
+  def getCustomsOffice(
+    customsOfficeId: String
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[CustomsOffice]] = {
+    val queryParams = Seq("data.id" -> customsOfficeId)
+    val url         = url"${config.customsReferenceDataUrl}/lists/CustomsOffices?$queryParams"
+    getOrElseUpdate[CustomsOffice](url)
   }
 
-  def getCountries(
-    queryParams: QueryParams*
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[NonEmptySet[Country]] = {
-    val url = url"${config.customsReferenceDataUrl}/lists/CountryCodesFullList?$queryParams"
-    get[Country](url)
+  def getCountry(
+    code: String
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[Country]] = {
+    val queryParams = Seq("data.code" -> code)
+    val url         = url"${config.customsReferenceDataUrl}/lists/CountryCodesFullList?$queryParams"
+    getOrElseUpdate[Country](url)
   }
 
-  def getQualifierOfIdentifications(
-    queryParams: QueryParams*
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[NonEmptySet[QualifierOfIdentification]] = {
-    val url = url"${config.customsReferenceDataUrl}/lists/QualifierOfTheIdentification?$queryParams"
-    get[QualifierOfIdentification](url)
+  def getQualifierOfIdentification(
+    qualifier: String
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[QualifierOfIdentification]] = {
+    val queryParams = Seq("data.qualifier" -> qualifier)
+    val url         = url"${config.customsReferenceDataUrl}/lists/QualifierOfTheIdentification?$queryParams"
+    getOrElseUpdate[QualifierOfIdentification](url)
   }
 
-  def getIdentificationTypes(
-    queryParams: QueryParams*
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[NonEmptySet[IdentificationType]] = {
-    val url = url"${config.customsReferenceDataUrl}/lists/TypeOfIdentificationOfMeansOfTransport?$queryParams"
-    get[IdentificationType](url)
+  def getIdentificationType(
+    `type`: String
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[IdentificationType]] = {
+    val queryParams = Seq("data.type" -> `type`)
+    val url         = url"${config.customsReferenceDataUrl}/lists/TypeOfIdentificationOfMeansOfTransport?$queryParams"
+    getOrElseUpdate[IdentificationType](url)
   }
 
-  def getNationalities(
-    queryParams: QueryParams*
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[NonEmptySet[Nationality]] = {
-    val url = url"${config.customsReferenceDataUrl}/lists/Nationality?$queryParams"
-    get[Nationality](url)
+  def getNationality(
+    code: String
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[Nationality]] = {
+    val queryParams = Seq("data.code" -> code)
+    val url         = url"${config.customsReferenceDataUrl}/lists/Nationality?$queryParams"
+    getOrElseUpdate[Nationality](url)
   }
 
   def getIncidentCode(
-    queryParams: QueryParams*
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[IncidentCode] = {
-    val url = url"${config.customsReferenceDataUrl}/lists/IncidentCode?$queryParams"
+    code: String
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[IncidentCode]] = {
+    val queryParams = Seq("data.code" -> code)
+    val url         = url"${config.customsReferenceDataUrl}/lists/IncidentCode?$queryParams"
     getOrElseUpdate[IncidentCode](url)
   }
 
-  def getControlType(queryParams: QueryParams*)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType] = {
-    val url = url"${config.customsReferenceDataUrl}/lists/ControlType?$queryParams"
+  def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[ControlType]] = {
+    val queryParams = Seq("data.code" -> code)
+    val url         = url"${config.customsReferenceDataUrl}/lists/ControlType?$queryParams"
     getOrElseUpdate[ControlType](url)
   }
 
-  def getRequestedDocumentType(queryParams: QueryParams*)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestedDocumentType] = {
-    val url = url"${config.customsReferenceDataUrl}/lists/RequestedDocumentType?$queryParams"
+  def getRequestedDocumentType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[RequestedDocumentType]] = {
+    val queryParams = Seq("data.code" -> code)
+    val url         = url"${config.customsReferenceDataUrl}/lists/RequestedDocumentType?$queryParams"
     getOrElseUpdate[RequestedDocumentType](url)
   }
 
-  def getFunctionalError(queryParams: QueryParams*)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc] = {
-    val url = url"${config.customsReferenceDataUrl}/lists/FunctionalErrorCodesIeCA?$queryParams"
+  def getFunctionalError(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[FunctionalErrorWithDesc]] = {
+    val queryParams = Seq("data.code" -> code)
+    val url         = url"${config.customsReferenceDataUrl}/lists/FunctionalErrorCodesIeCA?$queryParams"
     getOrElseUpdate[FunctionalErrorWithDesc](url)
   }
 
-  def getInvalidGuaranteeReason(queryParams: QueryParams*)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[InvalidGuaranteeReason] = {
-    val url = url"${config.customsReferenceDataUrl}/lists/InvalidGuaranteeReason?$queryParams"
+  def getInvalidGuaranteeReason(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[InvalidGuaranteeReason]] = {
+    val queryParams = Seq("data.code" -> code)
+    val url         = url"${config.customsReferenceDataUrl}/lists/InvalidGuaranteeReason?$queryParams"
     getOrElseUpdate[InvalidGuaranteeReason](url)
   }
 
-  implicit def responseHandlerGeneric[A](implicit reads: Reads[List[A]], order: Order[A]): HttpReads[NonEmptySet[A]] =
+  implicit def responseHandlerGeneric[A](implicit reads: Reads[List[A]], order: Order[A]): HttpReads[Either[Exception, NonEmptySet[A]]] =
     (_: String, url: String, response: HttpResponse) =>
       response.status match {
         case OK =>
           (response.json \ "data").validate[List[A]] match {
             case JsSuccess(Nil, _) =>
-              throw new NoReferenceDataFoundException(url)
+              Left(NoReferenceDataFoundException(url))
             case JsSuccess(head :: tail, _) =>
-              NonEmptySet.of(head, tail*)
+              Right(NonEmptySet.of(head, tail*))
             case JsError(errors) =>
-              throw JsResultException(errors)
+              Left(JsResultException(errors))
           }
         case e =>
           logger.warn(s"[ReferenceDataConnector][responseHandlerGeneric] Reference data call returned $e")
-          throw new Exception(s"[ReferenceDataConnector][responseHandlerGeneric] $e - ${response.body}")
+          Left(Exception(s"[ReferenceDataConnector][responseHandlerGeneric] $e - ${response.body}"))
       }
 
 }
 
 object ReferenceDataConnector {
+
+  type Responses[T] = Either[Exception, NonEmptySet[T]]
+  type Response[T]  = Either[Exception, T]
 
   class NoReferenceDataFoundException(url: String) extends Exception(s"The reference data call was successful but the response body is empty: $url")
 }

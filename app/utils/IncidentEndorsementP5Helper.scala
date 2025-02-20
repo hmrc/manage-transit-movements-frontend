@@ -53,17 +53,18 @@ class IncidentEndorsementP5Helper(
     )
 
   def endorsementCountryRow: Future[Option[SummaryListRow]] =
-    refDataService.getCountry(endorsementType.country) map {
-      countryResponse =>
-        val countryToDisplay = countryResponse.fold[String](identity, _.description)
-        buildRowFromAnswer[String](
-          answer = Some(countryToDisplay),
-          formatAnswer = formatAsText,
-          prefix = "departure.notification.incident.index.endorsementCountry",
-          id = None,
-          call = None
-        )
-    }
+    refDataService
+      .getCountry(endorsementType.country)
+      .map {
+        country =>
+          buildRowFromAnswer[String](
+            answer = Some(country.description),
+            formatAnswer = formatAsText,
+            prefix = "departure.notification.incident.index.endorsementCountry",
+            id = None,
+            call = None
+          )
+      }
 
   def locationRow: Option[SummaryListRow] =
     buildRowFromAnswer[String](

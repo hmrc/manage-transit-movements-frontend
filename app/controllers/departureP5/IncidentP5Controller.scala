@@ -50,12 +50,13 @@ class IncidentP5Controller @Inject() (
         referenceDataService.getCustomsOffice(customsOfficeId).flatMap {
           customsOffice =>
             val incidentP5ViewModel =
-              viewModelProvider.apply(request.messageData,
-                                      referenceDataService,
-                                      request.referenceNumbers,
-                                      customsOffice,
-                                      request.messageData.hasMultipleIncidents,
-                                      incidentIndex
+              viewModelProvider.apply(
+                request.messageData,
+                referenceDataService,
+                request.referenceNumbers,
+                customsOffice,
+                request.messageData.hasMultipleIncidents,
+                incidentIndex
               )
 
             incidentP5ViewModel.map {

@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 case class IncidentP5ViewModel(
   lrn: String,
-  customsOffice: Either[String, CustomsOffice],
+  customsOffice: CustomsOffice,
   isMultipleIncidents: Boolean,
   sections: Seq[Section],
   incidentIndex: Index
@@ -63,7 +63,7 @@ object IncidentP5ViewModel {
       data: CC182CType,
       referenceDataService: ReferenceDataService,
       referenceNumbers: DepartureReferenceNumbers,
-      customsOffice: Either[String, CustomsOffice],
+      customsOffice: CustomsOffice,
       isMultipleIncidents: Boolean,
       incidentIndex: Index
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[IncidentP5ViewModel] = {

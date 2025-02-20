@@ -20,7 +20,7 @@ import models.referenceData.CustomsOffice
 import viewModels.P5.ViewModelWithCustomsOffice
 
 case class CustomsOfficeContactViewModel(
-  customsOffice: Either[String, CustomsOffice]
+  customsOffice: CustomsOffice
 ) extends ViewModelWithCustomsOffice {
 
   override val prefix: String = "customsOfficeContact"
