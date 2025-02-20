@@ -22,12 +22,11 @@ import generators.Generators
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{DepartureP5MessageService, ReferenceDataService}
 import viewModels.P5.departure.IncidentP5ViewModel
 import viewModels.P5.departure.IncidentP5ViewModel.IncidentP5ViewModelProvider
@@ -42,9 +41,8 @@ class IncidentP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
   private val mockIncidentP5ViewModelProvider = mock[IncidentP5ViewModelProvider]
   private val mockDepartureP5MessageService   = mock[DepartureP5MessageService]
 
-  lazy val controller: String        = controllers.departureP5.routes.IncidentP5Controller.onPageLoad(departureIdP5, incidentIndex, messageId).url
-  private val customsReferenceNumber = Gen.alphaNumStr.sample.value
-  private val sections               = arbitrary[Seq[Section]].sample.value
+  lazy val controller: String = controllers.departureP5.routes.IncidentP5Controller.onPageLoad(departureIdP5, incidentIndex, messageId).url
+  private val sections        = arbitrary[Seq[Section]].sample.value
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -62,7 +60,7 @@ class IncidentP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
 
   "IncidentP5Controller" - {
 
-    val incidentsViewModel = new IncidentP5ViewModel(lrn.toString, None, isMultipleIncidents = true, sections, customsReferenceNumber, incidentIndex)
+    val incidentsViewModel = new IncidentP5ViewModel(lrn.toString, fakeCustomsOffice, isMultipleIncidents = true, sections, incidentIndex)
 
     "must return OK and the correct view for a GET" in {
       forAll(arbitrary[CC182CType]) {
@@ -76,7 +74,7 @@ class IncidentP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures 
           when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
             .thenReturn(Future.successful(fakeCustomsOffice))
 
-          when(mockIncidentP5ViewModelProvider.apply(any(), any(), any(), any(), any(), any(), any())(any(), any(), any()))
+          when(mockIncidentP5ViewModelProvider.apply(any(), any(), any(), any(), any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(incidentsViewModel))
 
           val request = FakeRequest(GET, controller)

@@ -66,9 +66,8 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
   "IncidentP5ViewModel" - {
 
-    val mrn                = "AB123"
-    val lrn                = "LRN123"
-    val customsReferenceId = "CD123"
+    val mrn = "AB123"
+    val lrn = "LRN123"
 
     val departureReferenceNumbers = DepartureReferenceNumbers(lrn, Some(mrn))
 
@@ -78,11 +77,11 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
     def viewModel(
       cc182Data: CC182CType = cc182Data,
-      customsOffice: Option[CustomsOffice] = None,
+      customsOffice: CustomsOffice = fakeCustomsOffice,
       isMultipleIncidents: Boolean = true
     ): IncidentP5ViewModel =
       viewModelProvider
-        .apply(cc182Data, mockReferenceDataService, departureReferenceNumbers, customsOffice, isMultipleIncidents, customsReferenceId, incidentIndex)
+        .apply(cc182Data, mockReferenceDataService, departureReferenceNumbers, customsOffice, isMultipleIncidents, incidentIndex)
         .futureValue
 
     "viewModel must have all sections when all defined in incident" in {

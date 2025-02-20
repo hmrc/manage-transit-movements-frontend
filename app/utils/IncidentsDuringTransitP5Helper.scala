@@ -56,7 +56,7 @@ class IncidentsDuringTransitP5Helper(
     referenceDataService.getCustomsOffice(referenceNumber).map {
       customsOffice =>
         buildRowFromAnswer[String](
-          answer = Some(customsOffice.nameAndCode),
+          answer = Some(customsOffice.toString),
           formatAnswer = formatAsText,
           prefix = "departure.notification.incidents.label.officeOfIncident",
           id = None,
@@ -70,7 +70,7 @@ class IncidentsDuringTransitP5Helper(
     referenceDataService.getCustomsOffice(referenceNumber).map {
       customsOffice =>
         buildRowFromAnswer[String](
-          answer = Some(customsOffice.nameAndCode),
+          answer = Some(customsOffice.toString),
           formatAnswer = formatAsText,
           prefix = "departure.notification.incidents.label.officeOfDeparture",
           id = None,

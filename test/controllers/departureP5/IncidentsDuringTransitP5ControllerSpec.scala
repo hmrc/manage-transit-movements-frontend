@@ -22,12 +22,11 @@ import generators.Generators
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{DepartureP5MessageService, ReferenceDataService}
 import viewModels.P5.departure.IncidentsDuringTransitP5ViewModel
 import viewModels.P5.departure.IncidentsDuringTransitP5ViewModel.IncidentsDuringTransitP5ViewModelProvider
@@ -42,9 +41,8 @@ class IncidentsDuringTransitP5ControllerSpec extends SpecBase with AppWithDefaul
   private val mockIncidentsDuringTransitP5ViewModelProvider = mock[IncidentsDuringTransitP5ViewModelProvider]
   private val mockDepartureP5MessageService                 = mock[DepartureP5MessageService]
 
-  lazy val controller: String        = controllers.departureP5.routes.IncidentsDuringTransitP5Controller.onPageLoad(departureIdP5, messageId).url
-  private val customsReferenceNumber = Gen.alphaNumStr.sample.value
-  private val sections               = arbitrary[Seq[Section]].sample.value
+  lazy val controller: String = controllers.departureP5.routes.IncidentsDuringTransitP5Controller.onPageLoad(departureIdP5, messageId).url
+  private val sections        = arbitrary[Seq[Section]].sample.value
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -62,7 +60,7 @@ class IncidentsDuringTransitP5ControllerSpec extends SpecBase with AppWithDefaul
 
   "IncidentsDuringTransitP5Controller" - {
 
-    val incidentsViewModel = new IncidentsDuringTransitP5ViewModel(lrn.toString, None, customsReferenceNumber, isMultipleIncidents = true, sections)
+    val incidentsViewModel = new IncidentsDuringTransitP5ViewModel(lrn.toString, fakeCustomsOffice, isMultipleIncidents = true, sections)
 
     "must return OK and the correct view for a GET" in {
       forAll(arbitrary[CC182CType]) {
@@ -76,7 +74,7 @@ class IncidentsDuringTransitP5ControllerSpec extends SpecBase with AppWithDefaul
           when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
             .thenReturn(Future.successful(fakeCustomsOffice))
 
-          when(mockIncidentsDuringTransitP5ViewModelProvider.apply(any(), any(), any(), any(), any(), any(), any())(any(), any(), any()))
+          when(mockIncidentsDuringTransitP5ViewModelProvider.apply(any(), any(), any(), any(), any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(incidentsViewModel))
 
           val request = FakeRequest(GET, controller)

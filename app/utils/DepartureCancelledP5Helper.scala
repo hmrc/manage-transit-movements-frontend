@@ -62,7 +62,7 @@ class DepartureCancelledP5Helper(ie009: CC009CType, referenceDataService: Refere
     referenceDataService.getCustomsOffice(referenceNumber).map {
       customsOffice =>
         buildRowFromAnswer[String](
-          answer = Some(customsOffice.nameAndCode),
+          answer = Some(customsOffice.toString),
           formatAnswer = formatAsText,
           prefix = messages("row.label.officeOfDeparture"),
           id = None,

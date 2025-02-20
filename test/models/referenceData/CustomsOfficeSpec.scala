@@ -50,7 +50,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks with Gene
     }
 
     "nameAndCode must return correct string" in {
-      CustomsOffice("GB00006", "BOSTON", None).nameAndCode `mustBe` "BOSTON (GB00006)"
+      CustomsOffice("GB00006", "BOSTON", None).toString `mustBe` "BOSTON (GB00006)"
     }
 
     "must deserialise" - {

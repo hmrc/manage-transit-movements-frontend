@@ -31,8 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 case class IncidentsDuringTransitP5ViewModel(
   lrn: String,
-  customsOffice: Option[CustomsOffice],
-  customsOfficeId: String,
+  customsOffice: CustomsOffice,
   isMultipleIncidents: Boolean,
   sections: Seq[Section]
 ) extends ViewModelWithCustomsOffice {
@@ -86,8 +85,7 @@ object IncidentsDuringTransitP5ViewModel {
       messageId: String,
       data: CC182CType,
       referenceNumbers: DepartureReferenceNumbers,
-      customsOffice: Option[CustomsOffice],
-      customsOfficeId: String,
+      customsOffice: CustomsOffice,
       isMultipleIncidents: Boolean
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[IncidentsDuringTransitP5ViewModel] = {
 
@@ -100,7 +98,6 @@ object IncidentsDuringTransitP5ViewModel {
       } yield IncidentsDuringTransitP5ViewModel(
         referenceNumbers.localReferenceNumber,
         customsOffice,
-        customsOfficeId,
         isMultipleIncidents,
         sections
       )

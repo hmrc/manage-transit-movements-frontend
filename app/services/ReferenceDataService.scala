@@ -51,28 +51,18 @@ class ReferenceDataService @Inject() (connector: ReferenceDataConnector) {
       .getQualifierOfIdentification(qualifier)
       .map(_.resolve())
 
-  def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType] = {
-    val queryParams: (String, String) = "data.code" -> code
-    connector.getControlType(queryParams).map(_.resolve())
-  }
+  def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[ControlType] =
+    connector.getControlType(code).map(_.resolve())
 
-  def getIncidentCode(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[IncidentCode] = {
-    val queryParams: (String, String) = "data.code" -> code
-    connector.getIncidentCode(queryParams).map(_.resolve())
-  }
+  def getIncidentCode(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[IncidentCode] =
+    connector.getIncidentCode(code).map(_.resolve())
 
-  def getRequestedDocumentType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestedDocumentType] = {
-    val queryParams: (String, String) = "data.code" -> code
-    connector.getRequestedDocumentType(queryParams).map(_.resolve())
-  }
+  def getRequestedDocumentType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestedDocumentType] =
+    connector.getRequestedDocumentType(code).map(_.resolve())
 
-  def getFunctionalError(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc] = {
-    val queryParams: (String, String) = "data.code" -> code
-    connector.getFunctionalError(queryParams).map(_.resolve())
-  }
+  def getFunctionalError(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc] =
+    connector.getFunctionalError(code).map(_.resolve())
 
-  def getInvalidGuaranteeReason(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[InvalidGuaranteeReason] = {
-    val queryParams: (String, String) = "data.code" -> code
-    connector.getInvalidGuaranteeReason(queryParams).map(_.resolve())
-  }
+  def getInvalidGuaranteeReason(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[InvalidGuaranteeReason] =
+    connector.getInvalidGuaranteeReason(code).map(_.resolve())
 }

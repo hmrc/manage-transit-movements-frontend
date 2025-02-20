@@ -30,7 +30,7 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
       "When Customs office name and telephone exists" in {
 
         val customsOffice     = CustomsOffice("ID001", "Dover", Some("00443243543"))
-        val viewModelProvider = CustomsOfficeContactViewModel(customsOffice.id, Some(customsOffice))
+        val viewModelProvider = CustomsOfficeContactViewModel(customsOffice)
 
         val result: String = viewModelProvider.customsOfficeContent
 
@@ -39,7 +39,7 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
       "When Customs Office name not available and telephone exists" in {
 
         val customsOffice     = CustomsOffice("ID001", "", Some("00443243543"))
-        val viewModelProvider = CustomsOfficeContactViewModel(customsOffice.id, Some(customsOffice))
+        val viewModelProvider = CustomsOfficeContactViewModel(customsOffice)
 
         val result: String = viewModelProvider.customsOfficeContent
 
@@ -48,7 +48,7 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
       "When Customs Office name available and telephone does not exist" in {
 
         val customsOffice     = CustomsOffice("ID001", "Dover", Some(""))
-        val viewModelProvider = CustomsOfficeContactViewModel(customsOffice.id, Some(customsOffice))
+        val viewModelProvider = CustomsOfficeContactViewModel(customsOffice)
 
         val result: String = viewModelProvider.customsOfficeContent
 
@@ -57,7 +57,7 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
       "When Customs Office name available and telephone is None" in {
 
         val customsOffice     = CustomsOffice("ID001", "Dover", None)
-        val viewModelProvider = CustomsOfficeContactViewModel(customsOffice.id, Some(customsOffice))
+        val viewModelProvider = CustomsOfficeContactViewModel(customsOffice)
 
         val result: String = viewModelProvider.customsOfficeContent
 
@@ -66,7 +66,7 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
       "When Customs Office name not available and telephone does not exist" in {
 
         val customsOffice     = CustomsOffice("ID001", "", Some(""))
-        val viewModelProvider = CustomsOfficeContactViewModel(customsOffice.id, Some(customsOffice))
+        val viewModelProvider = CustomsOfficeContactViewModel(customsOffice)
 
         val result: String = viewModelProvider.customsOfficeContent
 
@@ -75,23 +75,12 @@ class CustomsOfficeContactViewModelSpec extends SpecBase with AppWithDefaultMock
       "When Customs Office name not available and telephone is None" in {
 
         val customsOffice     = CustomsOffice("ID001", "", None)
-        val viewModelProvider = CustomsOfficeContactViewModel(customsOffice.id, Some(customsOffice))
+        val viewModelProvider = CustomsOfficeContactViewModel(customsOffice)
 
         val result: String = viewModelProvider.customsOfficeContent
 
         result `mustBe` "You must share the requested documentation with the office of destination. Contact Customs office ID001."
       }
-      "When Customs Office not fetched from reference data service" in {
-
-        val viewModelProvider = CustomsOfficeContactViewModel("GB000060", None)
-
-        val result: String = viewModelProvider.customsOfficeContent
-
-        result `mustBe` "You must share the requested documentation with the office of destination. Contact Customs office GB000060."
-      }
-
     }
-
   }
-
 }

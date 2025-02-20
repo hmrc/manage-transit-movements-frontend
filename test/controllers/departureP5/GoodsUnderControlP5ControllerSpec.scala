@@ -78,7 +78,7 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
                 .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString))))
 
               val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections, true, Some(lrn.toString))
-              val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice.id, Some(customsOffice))
+              val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
 
               val request = FakeRequest(GET, goodsUnderControlRequestedDocumentsController)
 
@@ -108,7 +108,7 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
             .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = false, Some(lrn.toString))))
 
           val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections, false, Some(lrn.toString))
-          val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice.id, Some(customsOffice))
+          val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
 
           val request = FakeRequest(GET, goodsUnderControlNoRequestedDocumentsController)
 

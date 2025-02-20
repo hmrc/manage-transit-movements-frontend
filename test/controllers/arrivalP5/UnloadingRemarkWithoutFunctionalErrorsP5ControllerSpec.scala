@@ -65,7 +65,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
             .thenReturn(Future.successful(fakeCustomsOffice))
 
           val unloadingNotificationErrorsP5ViewModel =
-            new UnloadingRemarkWithoutFunctionalErrorsP5ViewModel(message.TransitOperation.MRN, fakeCustomsOffice.id, Some(fakeCustomsOffice))
+            new UnloadingRemarkWithoutFunctionalErrorsP5ViewModel(message.TransitOperation.MRN, fakeCustomsOffice)
 
           val request = FakeRequest(GET, unloadingRemarkWithErrorsController)
 

@@ -35,7 +35,7 @@ class IncidentP5ViewSpec extends DetailsListViewBehaviours with Generators {
     injector.instanceOf[IncidentP5View].apply(viewModel(false), departureId.toString, messageId)(fakeRequest, messages)
 
   private def viewModel(isMultipleIncidents: Boolean): IncidentP5ViewModel =
-    new IncidentP5ViewModel(lrn.toString, None, isMultipleIncidents, sections, "customsOfficeId", incidentIndex)
+    new IncidentP5ViewModel(lrn.toString, fakeCustomsOffice, isMultipleIncidents, sections, incidentIndex)
 
   behave like pageWithTitle(incidentIndex.display)
 

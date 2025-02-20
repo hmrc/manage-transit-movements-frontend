@@ -22,12 +22,11 @@ import generators.Generators
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{DepartureP5MessageService, ReferenceDataService}
 import viewModels.P5.departure.DepartureCancelledP5ViewModel
 import viewModels.P5.departure.DepartureCancelledP5ViewModel.DepartureCancelledP5ViewModelProvider
@@ -57,20 +56,18 @@ class DepartureCancelledP5ControllerSpec extends SpecBase with AppWithDefaultMoc
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
       .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))
 
-  private val customsReferenceNumber = Gen.alphaNumStr.sample.value
-
   "DepartureCancelledP5Controller" - {
 
     "must return OK and the correct view for a GET" in {
       forAll(arbitrary[CC009CType]) {
         message =>
           val departureCancelledP5ViewModel =
-            new DepartureCancelledP5ViewModel(sections, lrn.toString, customsReferenceNumber, None)
+            new DepartureCancelledP5ViewModel(sections, lrn.toString, fakeCustomsOffice)
 
           when(mockDepartureP5MessageService.getMessage[CC009CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any())).thenReturn(Future.successful(departureReferenceNumbers))
           when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(fakeCustomsOffice))
-          when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any(), any())(any(), any(), any()))
+          when(mockDepartureCancelledP5ViewModelProvider.apply(any(), any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(departureCancelledP5ViewModel))
 
           val request = FakeRequest(GET, routes.DepartureCancelledP5Controller.onPageLoad(departureIdP5, messageId).url)

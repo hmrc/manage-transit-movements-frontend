@@ -17,7 +17,6 @@
 package views.departureP5
 
 import generators.Generators
-import models.referenceData.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import viewModels.P5.departure.IncidentsDuringTransitP5ViewModel
@@ -34,7 +33,7 @@ class IncidentsDuringTransitP5ViewSpec extends DetailsListViewBehaviours with Ge
     injector.instanceOf[IncidentsDuringTransitP5View].apply(viewModel(isMultipleIncidents))(fakeRequest, messages)
 
   private def viewModel(isMultipleIncidents: Boolean): IncidentsDuringTransitP5ViewModel =
-    new IncidentsDuringTransitP5ViewModel(lrn.toString, None, "customsOfficeId", isMultipleIncidents, sections)
+    new IncidentsDuringTransitP5ViewModel(lrn.toString, fakeCustomsOffice, isMultipleIncidents, sections)
 
   behave like pageWithTitle()
 

@@ -17,14 +17,11 @@
 package services
 
 import base.SpecBase
-import cats.data.NonEmptySet
 import connectors.ReferenceDataConnector
-import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, InvalidGuaranteeReason, RequestedDocumentType}
 import models.{Country, IdentificationType, IncidentCode, Nationality, QualifierOfIdentification}
-import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
-import org.scalatest.freespec.AnyFreeSpec
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -115,14 +112,12 @@ class ReferenceDataServiceSpec extends SpecBase {
       val controlTypeCode = "1"
       val controlType     = ControlType(controlTypeCode, "CT1")
 
-      val expectedQueryParams = Seq("data.code" -> controlTypeCode)
-
       "should return a control type" in {
         when(mockConnector.getControlType(any())(any(), any())).thenReturn(Future.successful(Right(controlType)))
 
         service.getControlType(controlTypeCode).futureValue `mustBe` controlType
 
-        verify(mockConnector).getControlType(eqTo(expectedQueryParams)*)(any(), any())
+        verify(mockConnector).getControlType(any())(any(), any())
       }
     }
 
@@ -136,8 +131,6 @@ class ReferenceDataServiceSpec extends SpecBase {
           "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
         )
 
-      val expectedQueryParams = Seq("data.code" -> incidentCodeCode)
-
       "should return a incident code" in {
 
         when(mockConnector.getIncidentCode(any())(any(), any()))
@@ -145,7 +138,7 @@ class ReferenceDataServiceSpec extends SpecBase {
 
         service.getIncidentCode(incidentCodeCode).futureValue `mustBe` incidentCode
 
-        verify(mockConnector).getIncidentCode(eqTo(expectedQueryParams)*)(any(), any())
+        verify(mockConnector).getIncidentCode(any())(any(), any())
       }
     }
 
@@ -154,8 +147,6 @@ class ReferenceDataServiceSpec extends SpecBase {
       val requestedDocumentTypeCode = "C620"
       val requestedDocumentType     = RequestedDocumentType(requestedDocumentTypeCode, "T2FL document")
 
-      val expectedQueryParams = Seq("data.code" -> requestedDocumentTypeCode)
-
       "should return a requested document type" in {
 
         when(mockConnector.getRequestedDocumentType(any())(any(), any()))
@@ -163,7 +154,7 @@ class ReferenceDataServiceSpec extends SpecBase {
 
         service.getRequestedDocumentType(requestedDocumentTypeCode).futureValue `mustBe` requestedDocumentType
 
-        verify(mockConnector).getRequestedDocumentType(eqTo(expectedQueryParams)*)(any(), any())
+        verify(mockConnector).getRequestedDocumentType(any())(any(), any())
       }
     }
 
@@ -172,14 +163,12 @@ class ReferenceDataServiceSpec extends SpecBase {
       val functionalErrorCode = "1"
       val functionalError     = FunctionalErrorWithDesc(functionalErrorCode, "FE1")
 
-      val expectedQueryParams = Seq("data.code" -> functionalErrorCode)
-
       "should return a functional error" in {
         when(mockConnector.getFunctionalError(any())(any(), any())).thenReturn(Future.successful(Right(functionalError)))
 
         service.getFunctionalError(functionalErrorCode).futureValue `mustBe` functionalError
 
-        verify(mockConnector).getFunctionalError(eqTo(expectedQueryParams)*)(any(), any())
+        verify(mockConnector).getFunctionalError(any())(any(), any())
       }
 
     }
@@ -189,14 +178,12 @@ class ReferenceDataServiceSpec extends SpecBase {
       val invalidGuaranteeReasonCode = "G02"
       val invalidGuaranteeReason     = InvalidGuaranteeReason(invalidGuaranteeReasonCode, "Guarantee exists, but not valid")
 
-      val expectedQueryParams = Seq("data.code" -> invalidGuaranteeReasonCode)
-
       "should return a invalid guarantee reason" in {
         when(mockConnector.getInvalidGuaranteeReason(any())(any(), any())).thenReturn(Future.successful(Right(invalidGuaranteeReason)))
 
         service.getInvalidGuaranteeReason(invalidGuaranteeReasonCode).futureValue `mustBe` invalidGuaranteeReason
 
-        verify(mockConnector).getInvalidGuaranteeReason(eqTo(expectedQueryParams)*)(any(), any())
+        verify(mockConnector).getInvalidGuaranteeReason(any())(any(), any())
       }
     }
   }

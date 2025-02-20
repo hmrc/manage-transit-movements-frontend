@@ -78,7 +78,7 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
                 .thenReturn(IntentionToControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString)))
 
               val intentionToControlP5ViewModel = new IntentionToControlP5ViewModel(sections, true, Some(lrn.toString))
-              val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice.id, Some(customsOffice))
+              val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
 
               val request = FakeRequest(GET, intentionToControlInformationRequestedController)
 
@@ -110,7 +110,7 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
             .thenReturn(IntentionToControlP5ViewModel(sections, requestedDocuments = false, Some(lrn.toString)))
 
           val intentionToControlP5ViewModel = new IntentionToControlP5ViewModel(sections, false, Some(lrn.toString))
-          val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice.id, Some(customsOffice))
+          val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
 
           val request = FakeRequest(GET, intentionToControlInformationRequestedController)
 

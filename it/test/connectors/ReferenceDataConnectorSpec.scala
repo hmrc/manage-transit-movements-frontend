@@ -72,8 +72,6 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
     }
   }
 
-  private val queryParams = "foo" -> "bar"
-
   "Reference Data" - {
 
     "getCustomsOffice" - {
@@ -206,7 +204,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
     "getControlType" - {
 
-      val url = s"$baseUrl/lists/ControlType?foo=bar"
+      val url = s"$baseUrl/lists/ControlType?data.code=$typeOfControl"
 
       "should handle a 200 response for control types" in {
         server.stubFor(
@@ -216,21 +214,21 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
         val expectedResult = ControlType(typeOfControl, "Intrusive")
 
-        connector.getControlType(queryParams).futureValue.value mustEqual expectedResult
+        connector.getControlType(typeOfControl).futureValue.value mustEqual expectedResult
       }
 
       "should throw a NoReferenceDataFoundException for an empty response" in {
-        checkNoReferenceDataFoundResponse(url, connector.getControlType(queryParams))
+        checkNoReferenceDataFoundResponse(url, connector.getControlType(typeOfControl))
       }
 
       "should handle client and server errors for control types" in {
-        checkErrorResponse(url, connector.getControlType(queryParams))
+        checkErrorResponse(url, connector.getControlType(typeOfControl))
       }
     }
 
     "getIncidentCode" - {
 
-      val url = s"$baseUrl/lists/IncidentCode?foo=bar"
+      val url = s"$baseUrl/lists/IncidentCode?data.code=$incidentCodeCode"
 
       "should handle a 200 response for incident codes" in {
         server.stubFor(
@@ -243,21 +241,21 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
           "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
         )
 
-        connector.getIncidentCode(queryParams).futureValue.value mustEqual expectedResult
+        connector.getIncidentCode(incidentCodeCode).futureValue.value mustEqual expectedResult
       }
 
       "should throw a NoReferenceDataFoundException for an empty response" in {
-        checkNoReferenceDataFoundResponse(url, connector.getIncidentCode(queryParams))
+        checkNoReferenceDataFoundResponse(url, connector.getIncidentCode(incidentCodeCode))
       }
 
       "should handle client and server errors for incident codes" in {
-        checkErrorResponse(url, connector.getIncidentCode(queryParams))
+        checkErrorResponse(url, connector.getIncidentCode(incidentCodeCode))
       }
     }
 
     "getRequestedDocumentType" - {
 
-      val url = s"$baseUrl/lists/RequestedDocumentType?foo=bar"
+      val url = s"$baseUrl/lists/RequestedDocumentType?data.code=$requestedDocumentType"
 
       "should handle a 200 response for control types" in {
         server.stubFor(
@@ -265,23 +263,23 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
             .willReturn(okJson(requestedDocumentTypeJson))
         )
 
-        val expectedResult = RequestedDocumentType("C620", "T2FL document")
+        val expectedResult = RequestedDocumentType(requestedDocumentType, "T2FL document")
 
-        connector.getRequestedDocumentType(queryParams).futureValue.value mustEqual expectedResult
+        connector.getRequestedDocumentType(requestedDocumentType).futureValue.value mustEqual expectedResult
       }
 
       "should throw a NoReferenceDataFoundException for an empty response" in {
-        checkNoReferenceDataFoundResponse(url, connector.getRequestedDocumentType(queryParams))
+        checkNoReferenceDataFoundResponse(url, connector.getRequestedDocumentType(requestedDocumentType))
       }
 
       "should handle client and server errors for control types" in {
-        checkErrorResponse(url, connector.getRequestedDocumentType(queryParams))
+        checkErrorResponse(url, connector.getRequestedDocumentType(requestedDocumentType))
       }
     }
 
     "getFunctionalError" - {
 
-      val url = s"$baseUrl/lists/FunctionalErrorCodesIeCA?foo=bar"
+      val url = s"$baseUrl/lists/FunctionalErrorCodesIeCA?data.code=$functionalError"
 
       "should handle a 200 response for functional errors" in {
         server.stubFor(
@@ -291,21 +289,21 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
         val expectedResult = FunctionalErrorWithDesc(functionalError, "Rule violation")
 
-        connector.getFunctionalError(queryParams).futureValue.value mustEqual expectedResult
+        connector.getFunctionalError(functionalError).futureValue.value mustEqual expectedResult
       }
 
       "should throw a NoReferenceDataFoundException for an empty response" in {
-        checkNoReferenceDataFoundResponse(url, connector.getFunctionalError(queryParams))
+        checkNoReferenceDataFoundResponse(url, connector.getFunctionalError(functionalError))
       }
 
       "should handle client and server errors for functional errors" in {
-        checkErrorResponse(url, connector.getFunctionalError(queryParams))
+        checkErrorResponse(url, connector.getFunctionalError(functionalError))
       }
     }
 
     "getInvalidGuaranteeReason" - {
 
-      val url = s"$baseUrl/lists/InvalidGuaranteeReason?foo=bar"
+      val url = s"$baseUrl/lists/InvalidGuaranteeReason?data.code=$invalidGuaranteeReasonCode"
 
       "should handle a 200 response for invalid guarantee reasons" in {
         server.stubFor(
@@ -315,15 +313,15 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
         val expectedResult = InvalidGuaranteeReason(invalidGuaranteeReasonCode, "Guarantee exists, but not valid")
 
-        connector.getInvalidGuaranteeReason(queryParams).futureValue.value mustEqual expectedResult
+        connector.getInvalidGuaranteeReason(invalidGuaranteeReasonCode).futureValue.value mustEqual expectedResult
       }
 
       "should throw a NoReferenceDataFoundException for an empty response" in {
-        checkNoReferenceDataFoundResponse(url, connector.getInvalidGuaranteeReason(queryParams))
+        checkNoReferenceDataFoundResponse(url, connector.getInvalidGuaranteeReason(invalidGuaranteeReasonCode))
       }
 
       "should handle client and server errors for invalid guarantee reasons" in {
-        checkErrorResponse(url, connector.getInvalidGuaranteeReason(queryParams))
+        checkErrorResponse(url, connector.getInvalidGuaranteeReason(invalidGuaranteeReasonCode))
       }
     }
   }

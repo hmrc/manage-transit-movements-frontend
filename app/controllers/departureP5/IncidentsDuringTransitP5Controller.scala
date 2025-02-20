@@ -54,8 +54,7 @@ class IncidentsDuringTransitP5Controller @Inject() (
               messageId,
               request.messageData,
               request.referenceNumbers,
-              Option(customsOffice),
-              customsOfficeReference,
+              customsOffice,
               request.messageData.hasMultipleIncidents
             )
 

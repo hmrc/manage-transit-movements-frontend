@@ -33,7 +33,7 @@ class IntentionToControlP5ViewSpec extends CheckYourAnswersViewBehaviours with G
   override val prefix: String = "departure.ie060.message.prelodged"
 
   private val intentionToControlP5ViewModel: IntentionToControlP5ViewModel = new IntentionToControlP5ViewModel(sections, false, Some(lrn.toString))
-  private val customsOfficeContactViewModel: CustomsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice.id, Some(customsOffice))
+  private val customsOfficeContactViewModel: CustomsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector

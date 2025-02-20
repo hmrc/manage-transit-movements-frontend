@@ -22,20 +22,17 @@ import play.api.i18n.Messages
 trait ViewModelWithCustomsOffice {
 
   val prefix: String
-  val customsOfficeId: String
-  val customsOffice: Option[CustomsOffice]
+  val customsOffice: CustomsOffice
 
   def customsOfficeContent(implicit messages: Messages): String =
     customsOffice match {
-      case Some(CustomsOffice(_, name, Some(phoneNumber))) if name.nonEmpty && phoneNumber.nonEmpty =>
+      case CustomsOffice(_, name, Some(phoneNumber)) if name.nonEmpty && phoneNumber.nonEmpty =>
         messages(s"$prefix.telephoneAvailable", name, phoneNumber)
-      case Some(CustomsOffice(id, _, Some(phoneNumber))) if phoneNumber.nonEmpty =>
+      case CustomsOffice(id, _, Some(phoneNumber)) if phoneNumber.nonEmpty =>
         messages(s"$prefix.teleAvailAndOfficeNameNotAvail", id, phoneNumber)
-      case Some(CustomsOffice(_, name, _)) if name.nonEmpty =>
+      case CustomsOffice(_, name, _) if name.nonEmpty =>
         messages(s"$prefix.telephoneNotAvailable", name)
-      case Some(CustomsOffice(id, _, _)) =>
+      case CustomsOffice(id, _, _) =>
         messages(s"$prefix.teleNotAvailAndOfficeNameNotAvail", id)
-      case None =>
-        messages(s"$prefix.teleNotAvailAndOfficeNameNotAvail", customsOfficeId)
     }
 }
