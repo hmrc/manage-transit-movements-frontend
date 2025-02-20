@@ -106,7 +106,8 @@ class ViewAllArrivalsP5ViewSpec
 
   behave like pageWithSearch(
     "Search by Movement Reference Number (MRN)",
-    "No results found"
+    "No results found",
+    viewModel.numberOfItemsPerPage
   )
 
   behave like pageWithPagination()
