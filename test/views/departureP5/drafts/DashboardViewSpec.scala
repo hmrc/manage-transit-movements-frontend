@@ -107,7 +107,8 @@ class DashboardViewSpec extends SearchViewBehaviours with PaginationViewBehaviou
 
   behave like pageWithSearch(
     "Search by local reference number (LRN)",
-    "You have no draft departure declarations."
+    "You have no draft departure declarations.",
+    viewModel.numberOfItemsPerPage
   )
 
   behave like pageWithPagination()

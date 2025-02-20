@@ -106,7 +106,8 @@ class ViewAllDeparturesP5ViewSpec
 
   behave like pageWithSearch(
     "Search by Local Reference Number (LRN)",
-    "No results found"
+    "No results found",
+    viewModel.numberOfItemsPerPage
   )
 
   behave like pageWithPagination()
