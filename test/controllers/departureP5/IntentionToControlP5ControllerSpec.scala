@@ -74,11 +74,10 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
                 .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
               when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
-              when(mockIntentionToControlP5ViewModelProvider.apply(any())(any()))
-                .thenReturn(IntentionToControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString)))
+              when(mockIntentionToControlP5ViewModelProvider.apply(any(), any())(any()))
+                .thenReturn(IntentionToControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString), customsOffice))
 
-              val intentionToControlP5ViewModel = new IntentionToControlP5ViewModel(sections, true, Some(lrn.toString))
-              val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
+              val intentionToControlP5ViewModel = new IntentionToControlP5ViewModel(sections, true, Some(lrn.toString), customsOffice)
 
               val request = FakeRequest(GET, intentionToControlInformationRequestedController)
 
@@ -89,7 +88,7 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
               val view = injector.instanceOf[IntentionToControlP5View]
 
               contentAsString(result) mustEqual
-                view(intentionToControlP5ViewModel, departureIdP5, messageId, customsOfficeContactViewModel)(request, messages).toString
+                view(intentionToControlP5ViewModel, departureIdP5, messageId)(request, messages).toString
           }
       }
     }
@@ -106,11 +105,10 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
             .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
           when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
-          when(mockIntentionToControlP5ViewModelProvider.apply(any())(any()))
-            .thenReturn(IntentionToControlP5ViewModel(sections, requestedDocuments = false, Some(lrn.toString)))
+          when(mockIntentionToControlP5ViewModelProvider.apply(any(), any())(any()))
+            .thenReturn(IntentionToControlP5ViewModel(sections, requestedDocuments = false, Some(lrn.toString), customsOffice))
 
-          val intentionToControlP5ViewModel = new IntentionToControlP5ViewModel(sections, false, Some(lrn.toString))
-          val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
+          val intentionToControlP5ViewModel = new IntentionToControlP5ViewModel(sections, false, Some(lrn.toString), customsOffice)
 
           val request = FakeRequest(GET, intentionToControlInformationRequestedController)
 
@@ -121,7 +119,7 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
           val view = injector.instanceOf[IntentionToControlP5View]
 
           contentAsString(result) mustEqual
-            view(intentionToControlP5ViewModel, departureIdP5, messageId, customsOfficeContactViewModel)(request, messages).toString
+            view(intentionToControlP5ViewModel, departureIdP5, messageId)(request, messages).toString
       }
     }
 

@@ -31,7 +31,7 @@ class DepartureCancelledP5ViewSpec extends CheckYourAnswersViewBehaviours with G
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
       .instanceOf[DepartureCancelledP5View]
-      .apply(DepartureCancelledP5ViewModel(sections, "AB123", CustomsOffice("CD123", "", None)))(fakeRequest, messages, frontendAppConfig)
+      .apply(DepartureCancelledP5ViewModel(sections, "AB123", CustomsOffice("CD123", "", None, None)))(fakeRequest, messages, frontendAppConfig)
 
   behave like pageWithTitle()
 

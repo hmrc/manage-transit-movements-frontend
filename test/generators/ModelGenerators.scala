@@ -146,7 +146,8 @@ trait ModelGenerators {
         id          <- arbitrary[String]
         name        <- arbitrary[String]
         phoneNumber <- arbitrary[Option[String]]
-      } yield CustomsOffice(id, name, phoneNumber)
+        email       <- arbitrary[Option[String]]
+      } yield CustomsOffice(id, name, phoneNumber, email)
     }
 
   implicit lazy val arbitraryCall: Arbitrary[Call] =

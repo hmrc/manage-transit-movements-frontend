@@ -74,11 +74,10 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
                 .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
               when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
-              when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any(), any(), any()))
-                .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString))))
+              when(mockGoodsUnderControlP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
+                .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString), customsOffice)))
 
-              val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections, true, Some(lrn.toString))
-              val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
+              val goodsUnderControlP5ViewModel = new GoodsUnderControlP5ViewModel(sections, true, Some(lrn.toString), customsOffice)
 
               val request = FakeRequest(GET, goodsUnderControlRequestedDocumentsController)
 
@@ -89,7 +88,7 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
               val view = injector.instanceOf[GoodsUnderControlP5View]
 
               contentAsString(result) mustEqual
-                view(goodsUnderControlP5ViewModel, departureIdP5, customsOfficeContactViewModel)(request, messages).toString
+                view(goodsUnderControlP5ViewModel, departureIdP5)(request, messages).toString
           }
       }
     }
@@ -104,11 +103,10 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
             .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
           when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
-          when(mockGoodsUnderControlP5ViewModelProvider.apply(any())(any(), any(), any()))
-            .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = false, Some(lrn.toString))))
+          when(mockGoodsUnderControlP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
+            .thenReturn(Future.successful(GoodsUnderControlP5ViewModel(sections, requestedDocuments = false, Some(lrn.toString), customsOffice)))
 
-          val goodsUnderControlP5ViewModel  = new GoodsUnderControlP5ViewModel(sections, false, Some(lrn.toString))
-          val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
+          val goodsUnderControlP5ViewModel = new GoodsUnderControlP5ViewModel(sections, false, Some(lrn.toString), customsOffice)
 
           val request = FakeRequest(GET, goodsUnderControlNoRequestedDocumentsController)
 
@@ -119,7 +117,7 @@ class GoodsUnderControlP5ControllerSpec extends SpecBase with AppWithDefaultMock
           val view = injector.instanceOf[GoodsUnderControlP5View]
 
           contentAsString(result) mustEqual
-            view(goodsUnderControlP5ViewModel, departureIdP5, customsOfficeContactViewModel)(request, messages).toString
+            view(goodsUnderControlP5ViewModel, departureIdP5)(request, messages).toString
       }
     }
   }

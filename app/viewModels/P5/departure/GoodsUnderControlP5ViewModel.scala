@@ -18,6 +18,7 @@ package viewModels.P5.departure
 
 import generated.CC060CType
 import models.RichCC060Type
+import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import services.ReferenceDataService
@@ -28,7 +29,8 @@ import viewModels.sections.Section
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-case class GoodsUnderControlP5ViewModel(sections: Seq[Section], requestedDocuments: Boolean, lrn: Option[String]) {
+case class GoodsUnderControlP5ViewModel(sections: Seq[Section], requestedDocuments: Boolean, lrn: Option[String], customsOffice: CustomsOffice)
+    extends CustomsOfficeContactViewModel {
 
   def title(implicit messages: Messages): String = if (requestedDocuments) {
     messages("departure.ie060.message.requestedDocuments.title")
@@ -73,7 +75,8 @@ object GoodsUnderControlP5ViewModel {
   class GoodsUnderControlP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
 
     def apply(
-      ie060: CC060CType
+      ie060: CC060CType,
+      customsOffice: CustomsOffice
     )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[GoodsUnderControlP5ViewModel] = {
       val helper = new GoodsUnderControlP5MessageHelper(ie060, referenceDataService)
 
@@ -86,7 +89,7 @@ object GoodsUnderControlP5ViewModel {
           case "1" => Seq(goodsUnderControlSection) ++ documentSection
           case _   => Seq(goodsUnderControlSection) ++ controlInfoSections ++ documentSection
         }
-        new GoodsUnderControlP5ViewModel(sections, ie060.informationRequested, ie060.TransitOperation.LRN)
+        new GoodsUnderControlP5ViewModel(sections, ie060.informationRequested, ie060.TransitOperation.LRN, customsOffice)
       }
     }
 

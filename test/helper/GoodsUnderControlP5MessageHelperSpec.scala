@@ -148,7 +148,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
               }) {
                 message =>
                   when(mockReferenceDataService.getCustomsOffice(eqTo(customsOfficeId))(any(), any()))
-                    .thenReturn(Future.successful(CustomsOffice("22323323", "Office", None)))
+                    .thenReturn(Future.successful(CustomsOffice("22323323", "Office", None, None)))
 
                   val helper = new GoodsUnderControlP5MessageHelper(message, mockReferenceDataService)
 

@@ -17,11 +17,22 @@
 package viewModels.P5.departure
 
 import models.referenceData.CustomsOffice
-import viewModels.P5.ViewModelWithCustomsOffice
+import play.api.i18n.Messages
 
-case class CustomsOfficeContactViewModel(
-  customsOffice: CustomsOffice
-) extends ViewModelWithCustomsOffice {
+trait CustomsOfficeContactViewModel {
+  val prefix: String = "customsOfficeContact"
+  val customsOffice: CustomsOffice
 
-  override val prefix: String = "customsOfficeContact"
+  def customsOfficeContent(implicit messages: Messages): String =
+    customsOffice match {
+      case CustomsOffice(_, name, Some(phoneNumber), Some(email)) if phoneNumber.nonEmpty && email.nonEmpty =>
+        messages(s"$prefix.telephoneAndEmailAvailable", name, phoneNumber, email)
+      case CustomsOffice(_, name, _, Some(email)) if email.nonEmpty =>
+        messages(s"$prefix.telephoneNotAvailable", name, email)
+      case CustomsOffice(_, name, Some(phoneNumber), _) if phoneNumber.nonEmpty =>
+        messages(s"$prefix.emailNotAvailable", name, phoneNumber)
+      case CustomsOffice(_, name, _, _) =>
+        messages(s"$prefix.telephoneAndEmailNotAvailable", name)
+    }
+
 }

@@ -26,13 +26,13 @@ trait ViewModelWithCustomsOffice {
 
   def customsOfficeContent(implicit messages: Messages): String =
     customsOffice match {
-      case CustomsOffice(_, name, Some(phoneNumber)) if name.nonEmpty && phoneNumber.nonEmpty =>
+      case CustomsOffice(_, name, Some(phoneNumber), _) if name.nonEmpty && phoneNumber.nonEmpty =>
         messages(s"$prefix.telephoneAvailable", name, phoneNumber)
-      case CustomsOffice(id, _, Some(phoneNumber)) if phoneNumber.nonEmpty =>
+      case CustomsOffice(id, _, Some(phoneNumber), _) if phoneNumber.nonEmpty =>
         messages(s"$prefix.teleAvailAndOfficeNameNotAvail", id, phoneNumber)
-      case CustomsOffice(_, name, _) if name.nonEmpty =>
+      case CustomsOffice(_, name, _, _) if name.nonEmpty =>
         messages(s"$prefix.telephoneNotAvailable", name)
-      case CustomsOffice(id, _, _) =>
+      case CustomsOffice(id, _, _, _) =>
         messages(s"$prefix.teleNotAvailAndOfficeNameNotAvail", id)
     }
 }

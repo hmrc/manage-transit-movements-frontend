@@ -16,8 +16,9 @@
 
 package viewModels.P5.departure
 
-import generated.CC060CType
 import models.RichCC060Type
+import generated.CC060CType
+import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import utils.IntentionToControlP5MessageHelper
@@ -25,7 +26,8 @@ import viewModels.sections.Section
 
 import javax.inject.Inject
 
-case class IntentionToControlP5ViewModel(sections: Seq[Section], requestedDocuments: Boolean, lrn: Option[String]) {
+case class IntentionToControlP5ViewModel(sections: Seq[Section], requestedDocuments: Boolean, lrn: Option[String], customsOffice: CustomsOffice)
+    extends CustomsOfficeContactViewModel {
 
   def title(implicit messages: Messages): String = if (requestedDocuments) {
     messages("departure.ie060.message.prelodged.requestedDocuments.title")
@@ -70,7 +72,8 @@ object IntentionToControlP5ViewModel {
   class IntentionToControlP5ViewModelProvider @Inject() () {
 
     def apply(
-      ie060: CC060CType
+      ie060: CC060CType,
+      customsOffice: CustomsOffice
     )(implicit messages: Messages): IntentionToControlP5ViewModel = {
       val helper = new IntentionToControlP5MessageHelper(ie060)
 
@@ -81,7 +84,7 @@ object IntentionToControlP5ViewModel {
 
       val sections = Seq(intentionToControlSection) ++ helper.documentSection()
 
-      new IntentionToControlP5ViewModel(sections, requestedDocuments, lrn)
+      new IntentionToControlP5ViewModel(sections, requestedDocuments, lrn, customsOffice: CustomsOffice)
     }
 
   }
