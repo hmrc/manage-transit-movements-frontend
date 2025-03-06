@@ -21,7 +21,7 @@ import models.referenceData.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewModels.P5.departure.{CustomsOfficeContactViewModel, IntentionToControlP5ViewModel}
+import viewModels.P5.departure.IntentionToControlP5ViewModel
 import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
 import views.html.departureP5.IntentionToControlP5View

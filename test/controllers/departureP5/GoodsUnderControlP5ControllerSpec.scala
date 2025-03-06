@@ -19,7 +19,7 @@ package controllers.departureP5
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generated.{CC060CType, RequestedDocumentType}
 import generators.Generators
-import models.departureP5._
+import models.departureP5.*
 import models.referenceData.CustomsOffice
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -28,10 +28,10 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{DepartureP5MessageService, ReferenceDataService}
+import viewModels.P5.departure.GoodsUnderControlP5ViewModel
 import viewModels.P5.departure.GoodsUnderControlP5ViewModel.GoodsUnderControlP5ViewModelProvider
-import viewModels.P5.departure.{CustomsOfficeContactViewModel, GoodsUnderControlP5ViewModel}
 import views.html.departureP5.GoodsUnderControlP5View
 
 import scala.concurrent.Future

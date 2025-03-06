@@ -21,10 +21,13 @@ import generated.CC060CType
 import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
 import play.api.mvc.Call
+import services.ReferenceDataService
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.IntentionToControlP5MessageHelper
 import viewModels.sections.Section
 
 import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 case class IntentionToControlP5ViewModel(sections: Seq[Section], requestedDocuments: Boolean, lrn: Option[String], customsOffice: CustomsOffice)
     extends CustomsOfficeContactViewModel {
@@ -69,24 +72,23 @@ case class IntentionToControlP5ViewModel(sections: Seq[Section], requestedDocume
 
 object IntentionToControlP5ViewModel {
 
-  class IntentionToControlP5ViewModelProvider @Inject() () {
+  class IntentionToControlP5ViewModelProvider @Inject() (referenceDataService: ReferenceDataService) {
 
     def apply(
       ie060: CC060CType,
       customsOffice: CustomsOffice
-    )(implicit messages: Messages): IntentionToControlP5ViewModel = {
-      val helper = new IntentionToControlP5MessageHelper(ie060)
+    )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier): Future[IntentionToControlP5ViewModel] = {
+      val helper = new IntentionToControlP5MessageHelper(ie060, referenceDataService)
 
       val requestedDocuments: Boolean = ie060.informationRequested
       val lrn                         = ie060.TransitOperation.LRN
 
-      val intentionToControlSection = helper.buildIntentionToControlSection()
-
-      val sections = Seq(intentionToControlSection) ++ helper.documentSection()
-
-      new IntentionToControlP5ViewModel(sections, requestedDocuments, lrn, customsOffice: CustomsOffice)
+      for {
+        intentionToControlSection <- helper.buildIntentionToControlSection()
+      } yield {
+        val sections = Seq(intentionToControlSection)
+        new IntentionToControlP5ViewModel(sections, requestedDocuments, lrn, customsOffice: CustomsOffice)
+      }
     }
-
   }
-
 }

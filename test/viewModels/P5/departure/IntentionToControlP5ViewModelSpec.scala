@@ -29,6 +29,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import services.ReferenceDataService
 import viewModels.P5.departure.IntentionToControlP5ViewModel.IntentionToControlP5ViewModelProvider
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
@@ -61,10 +62,10 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
         .copy(RequestedDocument = Nil)
 
       when(mockReferenceDataService.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType44))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(fakeCustomsOffice))
 
-      val viewModelProvider = new IntentionToControlP5ViewModelProvider
-      val result            = viewModelProvider.apply(message, customsOffice)
+      val viewModelProvider = new IntentionToControlP5ViewModelProvider(mockReferenceDataService)
+      val result            = viewModelProvider.apply(message, customsOffice).futureValue
 
       "must return correct section length" in {
         result.sections.length `mustBe` 1
@@ -95,16 +96,13 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
       )
 
       when(mockReferenceDataService.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType44))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
+      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(fakeCustomsOffice))
 
-      val viewModelProvider = new IntentionToControlP5ViewModelProvider
-      val result            = viewModelProvider.apply(message, customsOffice)
+      val viewModelProvider = new IntentionToControlP5ViewModelProvider(mockReferenceDataService)
+      val result            = viewModelProvider.apply(message, customsOffice).futureValue
 
-      "must not render type of control if present" in {
-        result.sections.length `mustBe` 2
-
-        result.sections(1).rows.size `mustBe` 2
-        result.sections(1).sectionTitle.value `mustBe` "Control information 1"
+      "must return correct section length" in {
+        result.sections.length `mustBe` 1
       }
 
       "must return correct title and heading" in {
@@ -130,10 +128,10 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
       when(mockReferenceDataService.getRequestedDocumentType(any())(any(), any())).thenReturn(Future.successful(requestedDocumentType))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(fakeCustomsOffice))
 
-      val viewModelProvider = new IntentionToControlP5ViewModelProvider
+      val viewModelProvider = new IntentionToControlP5ViewModelProvider(mockReferenceDataService)
 
       def viewModel(customsOffice: CustomsOffice): IntentionToControlP5ViewModel =
-        viewModelProvider.apply(message, customsOffice)
+        viewModelProvider.apply(message, customsOffice).futureValue
 
       "When Customs office name, telephone and email exists" - {
         "must return correct message" in {

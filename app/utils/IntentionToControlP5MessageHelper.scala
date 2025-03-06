@@ -16,16 +16,21 @@
 
 package utils
 
-import generated.{CC060CType, RequestedDocumentType}
+import generated.CC060CType
 import play.api.i18n.Messages
+import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.sections.Section
 import viewModels.sections.Section.StaticSection
 
 import javax.xml.datatype.XMLGregorianCalendar
+import scala.concurrent.{ExecutionContext, Future}
 
-class IntentionToControlP5MessageHelper(ie060: CC060CType)(implicit
-  messages: Messages
+class IntentionToControlP5MessageHelper(ie060: CC060CType, referenceDataService: ReferenceDataService)(implicit
+  messages: Messages,
+  hc: HeaderCarrier,
+  ec: ExecutionContext
 ) extends DeparturesP5MessageHelper {
 
   def buildLRNRow: Option[SummaryListRow] = buildRowFromAnswer[String](
@@ -52,38 +57,29 @@ class IntentionToControlP5MessageHelper(ie060: CC060CType)(implicit
     call = None
   )
 
-  private def buildDocumentTypeRow(documentSequence: String): Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(documentSequence),
-    formatAnswer = formatAsText,
-    prefix = messages("row.label.documentType"),
-    id = None,
-    call = None
-  )
+  def getCustomsOfficeForDisplay(referenceNumber: String): Future[String] = referenceDataService
+    .getCustomsOffice(referenceNumber)
+    .map(_.toString)
 
-  private def buildOfficeOfDepartureRow(referenceNumber: String): Option[SummaryListRow] = buildRowFromAnswer[String](
-    answer = Some(referenceNumber),
-    formatAnswer = formatAsText,
-    prefix = messages("row.label.controlInformation.officeOfDeparture"),
-    id = None,
-    call = None
-  )
-
-  private def buildDocumentSection(document: RequestedDocumentType): Section = {
-
-    val controlType: Seq[SummaryListRow]     = extractOptionalRow(buildDocumentTypeRow(document.documentType))
-    val referenceNumber: Seq[SummaryListRow] = extractOptionalRow(buildOfficeOfDepartureRow(ie060.CustomsOfficeOfDeparture.referenceNumber))
-    val rows                                 = controlType ++ referenceNumber
-    StaticSection(messages("heading.label.controlInformation", document.sequenceNumber), rows)
+  def buildOfficeOfDepartureRow: Future[Option[SummaryListRow]] = getCustomsOfficeForDisplay(ie060.CustomsOfficeOfDeparture.referenceNumber).map {
+    nameAndCode =>
+      buildRowFromAnswer[String](
+        answer = Some(nameAndCode),
+        formatAnswer = formatAsText,
+        prefix = messages("row.label.controlInformation.officeOfDeparture"),
+        id = None,
+        call = None
+      )
   }
 
-  def documentSection(): Seq[Section] = ie060.RequestedDocument.map(buildDocumentSection)
-
-  def buildIntentionToControlSection(): Section = {
-    val lrnRow             = extractOptionalRow(buildLRNRow)
-    val mrnRow             = extractOptionalRow(buildMRNRow)
-    val dateTimeControlRow = extractOptionalRow(buildDateTimeControlRow)
-    val rows               = lrnRow ++ mrnRow ++ dateTimeControlRow
-    StaticSection(None, rows)
-  }
-
+  def buildIntentionToControlSection(): Future[Section] =
+    buildOfficeOfDepartureRow.map {
+      officeOfDeparture =>
+        val lrnRow               = extractOptionalRow(buildLRNRow)
+        val mrnRow               = extractOptionalRow(buildMRNRow)
+        val dateTimeControlRow   = extractOptionalRow(buildDateTimeControlRow)
+        val officeOfDepartureRow = extractOptionalRow(officeOfDeparture)
+        val rows                 = lrnRow ++ mrnRow ++ dateTimeControlRow ++ officeOfDepartureRow
+        StaticSection(None, rows)
+    }
 }
