@@ -74,8 +74,8 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
               when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
                 .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
               when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
-              when(mockIntentionToControlP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
-                .thenReturn(Future.successful(IntentionToControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString), customsOffice)))
+              when(mockIntentionToControlP5ViewModelProvider.apply(any(), any())(any()))
+                .thenReturn(IntentionToControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString), customsOffice))
 
               val intentionToControlP5ViewModel = new IntentionToControlP5ViewModel(sections, true, Some(lrn.toString), customsOffice)
 
@@ -105,8 +105,8 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
             .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
           when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
-          when(mockIntentionToControlP5ViewModelProvider.apply(any(), any())(any(), any(), any()))
-            .thenReturn(Future.successful(IntentionToControlP5ViewModel(sections, requestedDocuments = false, Some(lrn.toString), customsOffice)))
+          when(mockIntentionToControlP5ViewModelProvider.apply(any(), any())(any()))
+            .thenReturn(IntentionToControlP5ViewModel(sections, requestedDocuments = false, Some(lrn.toString), customsOffice))
 
           val intentionToControlP5ViewModel = new IntentionToControlP5ViewModel(sections, false, Some(lrn.toString), customsOffice)
 

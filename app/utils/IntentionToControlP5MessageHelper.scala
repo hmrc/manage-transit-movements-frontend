@@ -17,20 +17,16 @@
 package utils
 
 import generated.CC060CType
+import models.referenceData.CustomsOffice
 import play.api.i18n.Messages
-import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import uk.gov.hmrc.http.HeaderCarrier
 import viewModels.sections.Section
 import viewModels.sections.Section.StaticSection
 
 import javax.xml.datatype.XMLGregorianCalendar
-import scala.concurrent.{ExecutionContext, Future}
 
-class IntentionToControlP5MessageHelper(ie060: CC060CType, referenceDataService: ReferenceDataService)(implicit
-  messages: Messages,
-  hc: HeaderCarrier,
-  ec: ExecutionContext
+class IntentionToControlP5MessageHelper(ie060: CC060CType, customsOffice: CustomsOffice)(implicit
+  messages: Messages
 ) extends DeparturesP5MessageHelper {
 
   def buildLRNRow: Option[SummaryListRow] = buildRowFromAnswer[String](
@@ -49,6 +45,14 @@ class IntentionToControlP5MessageHelper(ie060: CC060CType, referenceDataService:
     call = None
   )
 
+  def buildOfficeOfDepartureRow: Option[SummaryListRow] = buildRowFromAnswer[String](
+    answer = Some(customsOffice.toString),
+    formatAnswer = formatAsText,
+    prefix = messages("row.label.controlInformation.officeOfDeparture"),
+    id = None,
+    call = None
+  )
+
   def buildDateTimeControlRow: Option[SummaryListRow] = buildRowFromAnswer[XMLGregorianCalendar](
     answer = Some(ie060.TransitOperation.controlNotificationDateAndTime),
     formatAnswer = formatAsDateAndTime,
@@ -57,29 +61,11 @@ class IntentionToControlP5MessageHelper(ie060: CC060CType, referenceDataService:
     call = None
   )
 
-  def getCustomsOfficeForDisplay(referenceNumber: String): Future[String] = referenceDataService
-    .getCustomsOffice(referenceNumber)
-    .map(_.toString)
-
-  def buildOfficeOfDepartureRow: Future[Option[SummaryListRow]] = getCustomsOfficeForDisplay(ie060.CustomsOfficeOfDeparture.referenceNumber).map {
-    nameAndCode =>
-      buildRowFromAnswer[String](
-        answer = Some(nameAndCode),
-        formatAnswer = formatAsText,
-        prefix = messages("row.label.controlInformation.officeOfDeparture"),
-        id = None,
-        call = None
-      )
-  }
-
-  def buildIntentionToControlSection(): Future[Section] =
-    buildOfficeOfDepartureRow.map {
-      officeOfDeparture =>
-        val lrnRow               = extractOptionalRow(buildLRNRow)
-        val mrnRow               = extractOptionalRow(buildMRNRow)
-        val dateTimeControlRow   = extractOptionalRow(buildDateTimeControlRow)
-        val officeOfDepartureRow = extractOptionalRow(officeOfDeparture)
-        val rows                 = lrnRow ++ mrnRow ++ dateTimeControlRow ++ officeOfDepartureRow
-        StaticSection(None, rows)
-    }
+  def buildIntentionToControlSection(): Section =
+    val lrnRow               = extractOptionalRow(buildLRNRow)
+    val mrnRow               = extractOptionalRow(buildMRNRow)
+    val dateTimeControlRow   = extractOptionalRow(buildDateTimeControlRow)
+    val officeOfDepartureRow = extractOptionalRow(buildOfficeOfDepartureRow)
+    val rows                 = lrnRow ++ mrnRow ++ dateTimeControlRow ++ officeOfDepartureRow
+    StaticSection(None, rows)
 }

@@ -47,13 +47,11 @@ class IntentionToControlP5Controller @Inject() (
       implicit request =>
         val customsOfficeId = request.messageData.CustomsOfficeOfDeparture.referenceNumber
 
-        referenceDataService.getCustomsOffice(customsOfficeId).flatMap {
+        referenceDataService.getCustomsOffice(customsOfficeId).map {
           customsOffice =>
             val intentionToControlP5ViewModel = viewModelProvider.apply(request.messageData, customsOffice)
-            intentionToControlP5ViewModel.map {
-              viewModel =>
-                Ok(view(viewModel, departureId, messageId))
-            }
+
+            Ok(view(intentionToControlP5ViewModel, departureId, messageId))
         }
     }
 

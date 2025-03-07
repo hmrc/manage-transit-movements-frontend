@@ -17,12 +17,8 @@
 package helper
 
 import base.SpecBase
-import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import generated.*
 import generators.Generators
-import models.referenceData.CustomsOffice
-import org.mockito.ArgumentMatchers.{any, eq as eqTo}
-import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -33,9 +29,6 @@ import services.ReferenceDataService
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.*
 import utils.IntentionToControlP5MessageHelper
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
   val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
@@ -53,7 +46,7 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
             x.copy(TransitOperation = x.TransitOperation.copy(LRN = None))
         }) {
           message =>
-            val helper = new IntentionToControlP5MessageHelper(message, mockReferenceDataService)
+            val helper = new IntentionToControlP5MessageHelper(message, fakeCustomsOffice)
 
             val result = helper.buildLRNRow
 
@@ -69,7 +62,7 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
                 x.copy(TransitOperation = x.TransitOperation.copy(LRN = Some(lrn)))
             }) {
               message =>
-                val helper = new IntentionToControlP5MessageHelper(message, mockReferenceDataService)
+                val helper = new IntentionToControlP5MessageHelper(message, fakeCustomsOffice)
 
                 val result = helper.buildLRNRow
 
@@ -87,7 +80,7 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
             x.copy(TransitOperation = x.TransitOperation.copy(MRN = None))
         }) {
           message =>
-            val helper = new IntentionToControlP5MessageHelper(message, mockReferenceDataService)
+            val helper = new IntentionToControlP5MessageHelper(message, fakeCustomsOffice)
 
             val result = helper.buildMRNRow
 
@@ -103,7 +96,7 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
                 x.copy(TransitOperation = x.TransitOperation.copy(MRN = Some(mrn)))
             }) {
               message =>
-                val helper = new IntentionToControlP5MessageHelper(message, mockReferenceDataService)
+                val helper = new IntentionToControlP5MessageHelper(message, fakeCustomsOffice)
 
                 val result = helper.buildMRNRow
 
@@ -124,7 +117,7 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
             x.copy(TransitOperation = x.TransitOperation.copy(controlNotificationDateAndTime = controlNotificationDateAndTime))
         }) {
           message =>
-            val helper = new IntentionToControlP5MessageHelper(message, mockReferenceDataService)
+            val helper = new IntentionToControlP5MessageHelper(message, fakeCustomsOffice)
 
             val result = helper.buildDateTimeControlRow
 
@@ -136,44 +129,16 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
 
     "buildOfficeOfDepartureRow" - {
 
-      "must return SummaryListRow with customs office id and code" - {
-        "when reference data call returns a customs office" in {
-          forAll(Gen.alphaNumStr) {
-            customsOfficeId =>
-              forAll(arbitrary[CC060CType].map {
-                x =>
-                  x.copy(CustomsOfficeOfDeparture = x.CustomsOfficeOfDeparture.copy(referenceNumber = customsOfficeId))
-              }) {
-                message =>
-                  when(mockReferenceDataService.getCustomsOffice(eqTo(customsOfficeId))(any(), any()))
-                    .thenReturn(Future.successful(CustomsOffice("22323323", "Office", None, None)))
+      "must return SummaryListRow" in {
 
-                  val helper = new IntentionToControlP5MessageHelper(message, mockReferenceDataService)
+        forAll(arbitrary[CC060CType]) {
+          message =>
+            val helper = new IntentionToControlP5MessageHelper(message, fakeCustomsOffice)
 
-                  val result = helper.buildOfficeOfDepartureRow.futureValue
+            val result = helper.buildOfficeOfDepartureRow
 
-                  result mustBe
-                    Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("Office (22323323)".toText)))
-              }
-          }
-        }
-      }
-
-      "must throw an exception" - {
-        "when reference data call returns None" in {
-          forAll(arbitrary[CC060CType]) {
-            message =>
-              val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
-
-              when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
-                .thenReturn(Future.failed(new NoReferenceDataFoundException("")))
-
-              val helper = new IntentionToControlP5MessageHelper(message, mockReferenceDataService)
-
-              whenReady(helper.buildOfficeOfDepartureRow.failed) {
-                result => result mustBe a[NoReferenceDataFoundException]
-              }
-          }
+            result mustBe
+              Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("Customs Office (1234)".toText)))
         }
       }
     }
