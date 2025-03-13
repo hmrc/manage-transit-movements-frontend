@@ -16,7 +16,10 @@
 
 package models.arrivalP5
 
+import cats.data.NonEmptyList
+import models.MessageStatus.Success
 import models.arrivalP5.ArrivalMessageType.ArrivalNotification
+import models.nonEmptyListReads
 import play.api.libs.json.{__, JsonValidationError, Reads}
 
 case class LatestArrivalMessage(latestMessage: ArrivalMessage, ie007Id: String)
@@ -25,24 +28,26 @@ object LatestArrivalMessage {
 
   implicit val reads: Reads[LatestArrivalMessage] =
     (__ \ "messages")
-      .read[List[ArrivalMessage]]
-      .filter(
-        JsonValidationError("expected a NonEmptyList but the list was empty")
-      )(
-        _.nonEmpty
-      )
-      .filter(
-        JsonValidationError("could not find IE007 message")
-      )(
-        _.exists(_.messageType == ArrivalNotification)
-      )
+      .read[NonEmptyList[ArrivalMessage]]
+      .map(_.sorted)
       .map {
-        list =>
-          val sortedList: List[ArrivalMessage] = list.sortBy(_.received).reverse
-
-          val ie007Message = sortedList.filter(_.messageType == ArrivalNotification).head
-
-          LatestArrivalMessage(sortedList.head, ie007Message.messageId)
+        messages =>
+          (
+            messages,
+            messages.find {
+              case ArrivalMessage(_, _, ArrivalNotification, Success) => true
+              case _                                                  => false
+            }
+          )
+      }
+      .collect {
+        JsonValidationError("could not find IE007 message")
+      } {
+        case (messages, Some(message)) =>
+          LatestArrivalMessage(
+            latestMessage = messages.head,
+            ie007Id = message.messageId
+          )
       }
 
 }

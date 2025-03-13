@@ -195,12 +195,10 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
         "and there are functional errors" in {
 
-          val messages = MessagesForArrivalMovement(
-            NonEmptyList(
-              ArrivalMessage(messageId, dateTimeNow, RejectionFromOfficeOfDestination, MessageStatus.Success),
-              List(
-                ArrivalMessage(messageId, dateTimeNow, UnloadingRemarks, MessageStatus.Success)
-              )
+          val messages = NonEmptyList(
+            ArrivalMessage(messageId, dateTimeNow, RejectionFromOfficeOfDestination, MessageStatus.Success),
+            List(
+              ArrivalMessage(messageId, dateTimeNow, UnloadingRemarks, MessageStatus.Success)
             )
           )
 
@@ -211,7 +209,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
                 "mrn",
                 LocalDateTime.now()
               ),
-              LatestArrivalMessage(messages.messages.head, arrivalIdP5),
+              LatestArrivalMessage(messages.head, arrivalIdP5),
               functionalErrorCount = 3,
               "044"
             )
@@ -235,14 +233,13 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
 
         "and there are functional errors" in {
 
-          val messages = MessagesForArrivalMovement(
-            NonEmptyList(
-              ArrivalMessage(messageId, dateTimeNow, RejectionFromOfficeOfDestination, MessageStatus.Success),
-              List(
-                ArrivalMessage(messageId, dateTimeNow, UnloadingRemarks, MessageStatus.Success)
-              )
+          val messages = NonEmptyList(
+            ArrivalMessage(messageId, dateTimeNow, RejectionFromOfficeOfDestination, MessageStatus.Success),
+            List(
+              ArrivalMessage(messageId, dateTimeNow, UnloadingRemarks, MessageStatus.Success)
             )
           )
+
           val movementAndMessagesRejectedMultiple: ArrivalMovementAndMessage =
             RejectedMovementAndMessage(
               ArrivalMovement(
@@ -250,7 +247,7 @@ class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCh
                 "mrn",
                 LocalDateTime.now()
               ),
-              LatestArrivalMessage(messages.messages.head, arrivalIdP5),
+              LatestArrivalMessage(messages.head, arrivalIdP5),
               functionalErrorCount = 3,
               "007"
             )
