@@ -26,21 +26,21 @@ case class DepartureStatusP5ViewModel(status: String, actions: Seq[ViewMovementA
 
 object DepartureStatusP5ViewModel {
 
-  def apply(movementAndMessage: MovementAndMessage)(implicit frontendAppConfig: FrontendAppConfig): DepartureStatusP5ViewModel =
+  def apply(movementAndMessage: MovementAndMessages)(implicit frontendAppConfig: FrontendAppConfig): DepartureStatusP5ViewModel =
     (movementAndMessage match {
-      case DepartureMovementAndMessage(departureId, localReferenceNumber, _, message, isPrelodged) =>
+      case DepartureMovementAndMessages(departureId, localReferenceNumber, _, message, isPrelodged) =>
         preLodgeStatus(departureId, message.latestMessage.messageId, localReferenceNumber, isPrelodged)
           .lift(message.latestMessage)
-      case RejectedMovementAndMessage(departureId, _, _, message, rejectionType, isDeclarationAmendable, xPaths) =>
+      case RejectedMovementAndMessages(departureId, _, _, message, rejectionType, isDeclarationAmendable, xPaths) =>
         rejectedStatus(departureId, message.latestMessage.messageId, rejectionType, isDeclarationAmendable, xPaths)
           .lift(message.latestMessage)
-      case PrelodgeRejectedMovementAndMessage(departureId, _, _, message, xPaths) =>
+      case PrelodgeRejectedMovementAndMessages(departureId, _, _, message, xPaths) =>
         prelodgeRejectedStatus(departureId, message.latestMessage.messageId, xPaths)
           .lift(message.latestMessage)
-      case IncidentMovementAndMessage(departureId, _, _, message, hasMultipleIncidents) =>
+      case IncidentMovementAndMessages(departureId, _, _, message, hasMultipleIncidents) =>
         incidentDuringTransit(departureId, message.latestMessage.messageId, hasMultipleIncidents)
           .lift(message.latestMessage)
-      case OtherMovementAndMessage(departureId, localReferenceNumber, _, message) =>
+      case OtherMovementAndMessages(departureId, localReferenceNumber, _, message) =>
         currentStatus(departureId, message.latestMessage.messageId, localReferenceNumber)
           .lift(message.latestMessage)
     }).getOrElse(DepartureStatusP5ViewModel("", Seq.empty))

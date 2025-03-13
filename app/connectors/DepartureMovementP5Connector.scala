@@ -94,14 +94,14 @@ class DepartureMovementP5Connector @Inject() (
       }
   }
 
-  def getLatestMessageForMovement(departureId: String)(implicit hc: HeaderCarrier): Future[LatestDepartureMessage] = {
+  def getMessages(departureId: String)(implicit hc: HeaderCarrier): Future[DepartureMovementMessages] = {
     val queryParams = Seq("count" -> config.apiResults.toString)
     val url         = url"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages?$queryParams"
 
     http
       .get(url)
       .setHeader(jsonAcceptHeader)
-      .execute[LatestDepartureMessage]
+      .execute[DepartureMovementMessages]
   }
 
   def getMessage[T](

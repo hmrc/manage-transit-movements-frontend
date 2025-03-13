@@ -16,6 +16,7 @@
 
 package connectors
 
+import cats.data.NonEmptyList
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
 import generators.Generators
 import itbase.{ItSpecBase, WireMockServerHandler}
@@ -447,13 +448,15 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
               .willReturn(okJson(responseJson.toString()))
           )
 
-          connector.getLatestMessageForMovement(departureIdP5).futureValue mustBe
-            LatestDepartureMessage(
-              latestMessage = DepartureMessage(
-                messageId = messageId,
-                received = LocalDateTime.of(2022, 11, 10, 15, 32, 51, 459000000),
-                messageType = DepartureMessageType.DepartureNotification,
-                status = MessageStatus.Success
+          connector.getMessages(departureIdP5).futureValue mustBe
+            DepartureMovementMessages(
+              messages = NonEmptyList.one(
+                DepartureMessage(
+                  messageId = messageId,
+                  received = LocalDateTime.of(2022, 11, 10, 15, 32, 51, 459000000),
+                  messageType = DepartureMessageType.DepartureNotification,
+                  status = MessageStatus.Success
+                )
               ),
               ie015MessageId = messageId
             )
