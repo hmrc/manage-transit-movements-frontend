@@ -17,6 +17,7 @@
 package controllers.departureP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import cats.data.NonEmptyList
 import connectors.DepartureMovementP5Connector
 import generators.Generators
 import models.MessageStatus
@@ -60,16 +61,18 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with AppWithDefaultMock
         .thenReturn(
           Future.successful(
             Seq(
-              OtherMovementAndMessage(
+              OtherMovementAndMessages(
                 "id",
                 "ref",
                 LocalDateTime.now(),
-                LatestDepartureMessage(
-                  DepartureMessage(
-                    "messageId",
-                    LocalDateTime.now(),
-                    DepartureMessageType.DepartureNotification,
-                    MessageStatus.Success
+                DepartureMovementMessages(
+                  NonEmptyList.one(
+                    DepartureMessage(
+                      "messageId",
+                      LocalDateTime.now(),
+                      DepartureMessageType.DepartureNotification,
+                      MessageStatus.Success
+                    )
                   ),
                   "id"
                 )
