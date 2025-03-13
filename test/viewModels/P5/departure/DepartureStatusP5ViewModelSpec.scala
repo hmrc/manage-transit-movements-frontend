@@ -968,47 +968,95 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
     "when given Message with head of goodsUnderControl" - {
 
-      "when prelodged" in {
+      "when prelodged" - {
 
-        val movementAndMessage = DepartureMovementAndMessages(
-          departureIdP5,
-          lrn.value,
-          LocalDateTime.now(),
-          DepartureMovementMessages(
-            NonEmptyList.one(
-              DepartureMessage(
-                messageId,
-                LocalDateTime.now(),
-                GoodsUnderControl,
-                MessageStatus.Success
+        "and IE170 not yet submitted" in {
+
+          val movementAndMessage = DepartureMovementAndMessages(
+            departureIdP5,
+            lrn.value,
+            LocalDateTime.now(),
+            DepartureMovementMessages(
+              NonEmptyList.one(
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now(),
+                  GoodsUnderControl,
+                  MessageStatus.Success
+                )
+              ),
+              "ie015MessageId"
+            ),
+            isPrelodged = true
+          )
+
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.goodsUnderControl",
+            Seq(
+              ViewMovementAction(
+                controllers.departureP5.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url,
+                "movement.status.P5.action.goodsUnderControl.viewDetails"
+              ),
+              ViewMovementAction(
+                s"${frontendAppConfig.p5Cancellation}/$departureIdP5/index/$lrn",
+                "movement.status.P5.action.goodsUnderControl.cancelDeclaration"
+              ),
+              ViewMovementAction(
+                s"${frontendAppConfig.presentationNotificationFrontendUrl(departureIdP5)}",
+                "movement.status.P5.action.goodsUnderControl.completeDeclaration"
               )
-            ),
-            "ie015MessageId"
-          ),
-          isPrelodged = true
-        )
-
-        val result = DepartureStatusP5ViewModel(movementAndMessage)
-
-        val expectedResult = DepartureStatusP5ViewModel(
-          "movement.status.P5.goodsUnderControl",
-          Seq(
-            ViewMovementAction(
-              controllers.departureP5.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url,
-              "movement.status.P5.action.goodsUnderControl.viewDetails"
-            ),
-            ViewMovementAction(
-              s"${frontendAppConfig.p5Cancellation}/$departureIdP5/index/$lrn",
-              "movement.status.P5.action.goodsUnderControl.cancelDeclaration"
-            ),
-            ViewMovementAction(
-              s"${frontendAppConfig.presentationNotificationFrontendUrl(departureIdP5)}",
-              "movement.status.P5.action.goodsUnderControl.completeDeclaration"
             )
           )
-        )
 
-        result `mustBe` expectedResult
+          result `mustBe` expectedResult
+        }
+
+        "and IE170 already submitted" in {
+
+          val movementAndMessage = DepartureMovementAndMessages(
+            departureIdP5,
+            lrn.value,
+            LocalDateTime.now(),
+            DepartureMovementMessages(
+              NonEmptyList.of(
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now(),
+                  GoodsUnderControl,
+                  MessageStatus.Success
+                ),
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now().minusDays(1),
+                  PrelodgedDeclarationSent,
+                  MessageStatus.Success
+                )
+              ),
+              "ie015MessageId"
+            ),
+            isPrelodged = true
+          )
+
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.goodsUnderControl",
+            Seq(
+              ViewMovementAction(
+                controllers.departureP5.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url,
+                "movement.status.P5.action.goodsUnderControl.viewDetails"
+              ),
+              ViewMovementAction(
+                s"${frontendAppConfig.p5Cancellation}/$departureIdP5/index/$lrn",
+                "movement.status.P5.action.goodsUnderControl.cancelDeclaration"
+              )
+            )
+          )
+
+          result `mustBe` expectedResult
+        }
       }
 
       "when not prelodged" in {

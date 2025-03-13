@@ -25,6 +25,9 @@ import play.api.libs.json.{__, JsonValidationError, Reads}
 case class DepartureMovementMessages(messages: NonEmptyList[DepartureMessage], ie015MessageId: String) {
 
   val latestMessage: DepartureMessage = messages.head
+
+  def contains(messageType: DepartureMessageType): Boolean =
+    messages.toList.map(_.messageType).contains(messageType)
 }
 
 object DepartureMovementMessages {
