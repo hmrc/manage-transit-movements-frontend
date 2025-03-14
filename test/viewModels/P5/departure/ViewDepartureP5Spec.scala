@@ -18,7 +18,7 @@ package viewModels.P5.departure
 
 import base.SpecBase
 
-import java.time.{LocalDate, LocalTime}
+import java.time.LocalDateTime
 
 class ViewDepartureP5Spec extends SpecBase {
 
@@ -26,40 +26,35 @@ class ViewDepartureP5Spec extends SpecBase {
 
     "must group departures by date and sort in reversed date/time order" in {
       val departure1 = ViewDepartureP5(
-        updatedDate = LocalDate.of(2025, 3, 14),
-        updatedTime = LocalTime.of(11, 30),
+        updatedDateTime = LocalDateTime.of(2025, 3, 14, 11, 30),
         referenceNumber = "Reference number 1",
         status = "Status 1",
         actions = Nil
       )
 
       val departure2 = ViewDepartureP5(
-        updatedDate = LocalDate.of(2025, 3, 14),
-        updatedTime = LocalTime.of(12, 30),
+        updatedDateTime = LocalDateTime.of(2025, 3, 14, 12, 30),
         referenceNumber = "Reference number 2",
         status = "Status 2",
         actions = Nil
       )
 
       val departure3 = ViewDepartureP5(
-        updatedDate = LocalDate.of(2025, 3, 13),
-        updatedTime = LocalTime.of(13, 30),
+        updatedDateTime = LocalDateTime.of(2025, 3, 13, 13, 30),
         referenceNumber = "Reference number 3",
         status = "Status 3",
         actions = Nil
       )
 
       val departure4 = ViewDepartureP5(
-        updatedDate = LocalDate.of(2025, 3, 15),
-        updatedTime = LocalTime.of(14, 30),
+        updatedDateTime = LocalDateTime.of(2025, 3, 15, 14, 30),
         referenceNumber = "Reference number 4",
         status = "Status 4",
         actions = Nil
       )
 
       val departure5 = ViewDepartureP5(
-        updatedDate = LocalDate.of(2025, 3, 14),
-        updatedTime = LocalTime.of(10, 30),
+        updatedDateTime = LocalDateTime.of(2025, 3, 14, 10, 30),
         referenceNumber = "Reference number 5",
         status = "Status 5",
         actions = Nil

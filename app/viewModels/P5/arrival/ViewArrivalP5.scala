@@ -17,15 +17,14 @@
 package viewModels.P5.arrival
 
 import config.FrontendAppConfig
-import models.arrivalP5.ArrivalMovementAndMessage
 import models.RichLocalDateTime
+import models.arrivalP5.ArrivalMovementAndMessage
 import viewModels.{ViewMovement, ViewMovementAction}
 
-import java.time._
+import java.time.*
 
 final case class ViewArrivalP5(
-  updatedDate: LocalDate,
-  updatedTime: LocalTime,
+  updatedDateTime: LocalDateTime,
   movementReferenceNumber: String,
   status: String,
   actions: Seq[ViewMovementAction]
@@ -40,11 +39,8 @@ object ViewArrivalP5 {
 
     val arrivalStatus: ArrivalStatusP5ViewModel = ArrivalStatusP5ViewModel(movementAndMessage)
 
-    val systemTime = movementAndMessage.arrivalMovement.updated.toSystemDefaultTime
-
-    ViewArrivalP5(
-      updatedDate = systemTime.toLocalDate,
-      updatedTime = systemTime.toLocalTime,
+    new ViewArrivalP5(
+      updatedDateTime = movementAndMessage.arrivalMovement.updated.toSystemDefaultTime,
       movementReferenceNumber = movementAndMessage.arrivalMovement.movementReferenceNumber,
       status = arrivalStatus.status,
       actions = arrivalStatus.actions

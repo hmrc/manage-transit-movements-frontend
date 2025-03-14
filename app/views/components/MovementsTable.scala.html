@@ -52,7 +52,7 @@
     )),
     rows = rows.map { row =>
       Seq(
-        TableRow(content = Text(row.updated), classes = "word-break"),
+        TableRow(content = Text(row.updatedTimeFormatted), classes = "word-break"),
         TableRow(content = Text(row.referenceNumber), classes = "word-break"),
         TableRow(content = Text(messages(row.status)), classes = "word-break"),
         TableRow(content = HtmlContent(links(row)), classes = "word-break")

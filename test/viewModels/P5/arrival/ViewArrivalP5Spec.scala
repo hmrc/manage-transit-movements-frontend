@@ -18,7 +18,7 @@ package viewModels.P5.arrival
 
 import base.SpecBase
 
-import java.time.{LocalDate, LocalTime}
+import java.time.LocalDateTime
 
 class ViewArrivalP5Spec extends SpecBase {
 
@@ -26,40 +26,35 @@ class ViewArrivalP5Spec extends SpecBase {
 
     "must group arrivals by date and sort in reversed date/time order" in {
       val arrival1 = ViewArrivalP5(
-        updatedDate = LocalDate.of(2025, 3, 14),
-        updatedTime = LocalTime.of(11, 30),
+        updatedDateTime = LocalDateTime.of(2025, 3, 14, 11, 30),
         movementReferenceNumber = "Reference number 1",
         status = "Status 1",
         actions = Nil
       )
 
       val arrival2 = ViewArrivalP5(
-        updatedDate = LocalDate.of(2025, 3, 14),
-        updatedTime = LocalTime.of(12, 30),
+        updatedDateTime = LocalDateTime.of(2025, 3, 14, 12, 30),
         movementReferenceNumber = "Reference number 2",
         status = "Status 2",
         actions = Nil
       )
 
       val arrival3 = ViewArrivalP5(
-        updatedDate = LocalDate.of(2025, 3, 13),
-        updatedTime = LocalTime.of(13, 30),
+        updatedDateTime = LocalDateTime.of(2025, 3, 13, 13, 30),
         movementReferenceNumber = "Reference number 3",
         status = "Status 3",
         actions = Nil
       )
 
       val arrival4 = ViewArrivalP5(
-        updatedDate = LocalDate.of(2025, 3, 15),
-        updatedTime = LocalTime.of(14, 30),
+        updatedDateTime = LocalDateTime.of(2025, 3, 15, 14, 30),
         movementReferenceNumber = "Reference number 4",
         status = "Status 4",
         actions = Nil
       )
 
       val arrival5 = ViewArrivalP5(
-        updatedDate = LocalDate.of(2025, 3, 14),
-        updatedTime = LocalTime.of(10, 30),
+        updatedDateTime = LocalDateTime.of(2025, 3, 14, 10, 30),
         movementReferenceNumber = "Reference number 5",
         status = "Status 5",
         actions = Nil
