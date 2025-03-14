@@ -17,7 +17,6 @@
 package models.departureP5
 
 import cats.data.NonEmptyList
-import models.MessageStatus.Success
 import models.departureP5.DepartureMessageType.DepartureNotification
 import models.nonEmptyListReads
 import play.api.libs.json.{__, JsonValidationError, Reads}
@@ -41,8 +40,8 @@ object DepartureMovementMessages {
           (
             messages,
             messages.find {
-              case DepartureMessage(_, _, DepartureNotification, Success) => true
-              case _                                                      => false
+              case DepartureMessage(_, _, DepartureNotification, _) => true
+              case _                                                => false
             }
           )
       }
