@@ -17,15 +17,14 @@
 package viewModels.P5.departure
 
 import config.FrontendAppConfig
-import models.departureP5.MovementAndMessages
 import models.RichLocalDateTime
+import models.departureP5.MovementAndMessages
 import viewModels.{ViewMovement, ViewMovementAction}
 
-import java.time._
+import java.time.*
 
 final case class ViewDepartureP5(
-  updatedDate: LocalDate,
-  updatedTime: LocalTime,
+  updatedDateTime: LocalDateTime,
   referenceNumber: String,
   status: String,
   actions: Seq[ViewMovementAction]
@@ -33,16 +32,13 @@ final case class ViewDepartureP5(
 
 object ViewDepartureP5 {
 
-  def apply(movementAndMessage: MovementAndMessages)(implicit frontendAppConfig: FrontendAppConfig, clock: Clock): ViewDepartureP5 = {
+  def apply(movement: MovementAndMessages)(implicit frontendAppConfig: FrontendAppConfig, clock: Clock): ViewDepartureP5 = {
 
-    val departureStatus: DepartureStatusP5ViewModel = DepartureStatusP5ViewModel(movementAndMessage)
+    val departureStatus: DepartureStatusP5ViewModel = DepartureStatusP5ViewModel(movement)
 
-    val systemTime = movementAndMessage.updated.toSystemDefaultTime
-
-    ViewDepartureP5(
-      updatedDate = systemTime.toLocalDate,
-      updatedTime = systemTime.toLocalTime,
-      referenceNumber = movementAndMessage.localReferenceNumber,
+    new ViewDepartureP5(
+      updatedDateTime = movement.updated.toSystemDefaultTime,
+      referenceNumber = movement.localReferenceNumber,
       status = departureStatus.status,
       actions = departureStatus.actions
     )
