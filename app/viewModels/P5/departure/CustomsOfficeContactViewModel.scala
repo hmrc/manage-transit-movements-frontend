@@ -25,14 +25,14 @@ trait CustomsOfficeContactViewModel {
 
   def customsOfficeContent(implicit messages: Messages): String =
     customsOffice match {
-      case CustomsOffice(_, name, Some(phoneNumber), Some(email)) if phoneNumber.nonEmpty && email.nonEmpty =>
-        messages(s"$prefix.telephoneAndEmailAvailable", name, phoneNumber, email)
-      case CustomsOffice(_, name, _, Some(email)) if email.nonEmpty =>
-        messages(s"$prefix.telephoneNotAvailable", name, email)
-      case CustomsOffice(_, name, Some(phoneNumber), _) if phoneNumber.nonEmpty =>
-        messages(s"$prefix.emailNotAvailable", name, phoneNumber)
-      case CustomsOffice(_, name, _, _) =>
-        messages(s"$prefix.telephoneAndEmailNotAvailable", name)
+      case CustomsOffice(id, name, Some(phoneNumber), Some(email)) if phoneNumber.nonEmpty && email.nonEmpty =>
+        messages(s"$prefix.telephoneAndEmailAvailable", name, id, phoneNumber, email)
+      case CustomsOffice(id, name, _, Some(email)) if email.nonEmpty =>
+        messages(s"$prefix.telephoneNotAvailable", name, id, email)
+      case CustomsOffice(id, name, Some(phoneNumber), _) if phoneNumber.nonEmpty =>
+        messages(s"$prefix.emailNotAvailable", name, id, phoneNumber)
+      case CustomsOffice(id, name, _, _) =>
+        messages(s"$prefix.telephoneAndEmailNotAvailable", name, id)
     }
 
 }

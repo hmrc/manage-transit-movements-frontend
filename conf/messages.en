@@ -325,10 +325,10 @@ row.label.description =  Description
 
 goodsUnderControl.subHeading = What happens next
 
-customsOfficeContact.telephoneAndEmailAvailable = You must share the requested documentation with the office of destination. Contact Customs at {0} on {1} or {2}.
-customsOfficeContact.telephoneNotAvailable = You must share the requested documentation with the office of destination. Contact Customs at {0} on {1}.
-customsOfficeContact.emailNotAvailable = You must share the requested documentation with the office of destination. Contact Customs at {0} on {1}.
-customsOfficeContact.telephoneAndEmailNotAvailable = You must share the requested documentation with the office of destination. Contact Customs at {0}.
+customsOfficeContact.telephoneAndEmailAvailable = You must share the requested documentation with the office of departure. Contact Customs at {0}({1}) on {2} or {3}.
+customsOfficeContact.telephoneNotAvailable = You must share the requested documentation with the office of departure. Contact Customs at {0}({1}) on {2}.
+customsOfficeContact.emailNotAvailable = You must share the requested documentation with the office of departure. Contact Customs at {0}({1}) on {2}.
+customsOfficeContact.telephoneAndEmailNotAvailable = You must share the requested documentation with the office of departure. Contact Customs at {0}({1}).
 
 departure.ie056.message.title = Amend declaration errors
 departure.ie056.message.heading = Amend declaration errors

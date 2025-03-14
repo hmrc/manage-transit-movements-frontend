@@ -149,7 +149,7 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
 
           val result = viewModel(customsOffice).customsOfficeContent
 
-          result `mustBe` s"You must share the requested documentation with the office of destination. Contact Customs at Dover on 00443243543 or test123@gmail.com."
+          result `mustBe` s"You must share the requested documentation with the office of departure. Contact Customs at Dover(CD123) on 00443243543 or test123@gmail.com."
         }
       }
 
@@ -164,7 +164,7 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
           when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
           val result = viewModel(customsOffice).customsOfficeContent
 
-          result `mustBe` s"You must share the requested documentation with the office of destination. Contact Customs at Dover on test123@gmail.com."
+          result `mustBe` s"You must share the requested documentation with the office of departure. Contact Customs at Dover(CD123) on test123@gmail.com."
         }
       }
 
@@ -180,7 +180,7 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
 
           val result = viewModel(customsOffice).customsOfficeContent
 
-          result `mustBe` s"You must share the requested documentation with the office of destination. Contact Customs at Dover on 00443243543."
+          result `mustBe` s"You must share the requested documentation with the office of departure. Contact Customs at Dover(CD123) on 00443243543."
         }
       }
 
@@ -195,7 +195,7 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
 
           val result = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, None, None)).customsOfficeContent
 
-          result `mustBe` s"You must share the requested documentation with the office of destination. Contact Customs at Dover."
+          result `mustBe` s"You must share the requested documentation with the office of departure. Contact Customs at Dover(CD123)."
         }
       }
     }
