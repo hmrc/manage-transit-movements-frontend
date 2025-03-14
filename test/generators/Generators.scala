@@ -24,6 +24,8 @@ import java.time.{Instant, LocalDate, ZoneOffset}
 
 trait Generators extends ModelGenerators with ViewModelGenerators with MessagesModelGenerators {
 
+  lazy val stringMaxLength = 36
+
   private val maxListLength = 10
 
   implicit def noShrink[T]: Shrink[T] = Shrink.shrinkAny
@@ -91,14 +93,7 @@ trait Generators extends ModelGenerators with ViewModelGenerators with MessagesM
       .suchThat(_ != "false")
 
   def nonEmptyString: Gen[String] =
-    Gen.alphaNumStr.map(
-      x =>
-        if (x.nonEmpty) {
-          x
-        } else {
-          "nonEmptyString"
-        }
-    )
+    stringsWithMaxLength(stringMaxLength)
 
   def stringsWithMaxLength(maxLength: Int): Gen[String] =
     for {
