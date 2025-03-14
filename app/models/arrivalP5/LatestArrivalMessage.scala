@@ -17,7 +17,6 @@
 package models.arrivalP5
 
 import cats.data.NonEmptyList
-import models.MessageStatus.Success
 import models.arrivalP5.ArrivalMessageType.ArrivalNotification
 import models.nonEmptyListReads
 import play.api.libs.json.{__, JsonValidationError, Reads}
@@ -35,8 +34,8 @@ object LatestArrivalMessage {
           (
             messages,
             messages.find {
-              case ArrivalMessage(_, _, ArrivalNotification, Success) => true
-              case _                                                  => false
+              case ArrivalMessage(_, _, ArrivalNotification, _) => true
+              case _                                            => false
             }
           )
       }

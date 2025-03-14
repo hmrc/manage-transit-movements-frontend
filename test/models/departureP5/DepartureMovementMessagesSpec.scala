@@ -28,7 +28,7 @@ class DepartureMovementMessagesSpec extends SpecBase {
 
   "DepartureMovementMessages" - {
 
-    "must deserialize and find Successful IE015" in {
+    "must deserialize and find most recent IE015" in {
 
       val json =
         Json.parse(s"""
