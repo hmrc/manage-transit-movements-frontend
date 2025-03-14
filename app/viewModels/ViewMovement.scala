@@ -16,6 +16,7 @@
 
 package viewModels
 
+import models.RichSeq
 import utils.Format
 
 import java.time.{LocalDate, LocalTime}
@@ -32,24 +33,17 @@ trait ViewMovement {
 
 object ViewMovement {
 
+  implicit def ordering[T <: ViewMovement]: Ordering[T] =
+    Ordering.by[T, LocalDate](_.updatedDate).orElseBy(_.updatedTime).reverse
+
   implicit class RichViewMovements[T <: ViewMovement](value: Seq[T]) {
 
-    def groupByDate: Seq[(String, Seq[T])] = {
-
-      implicit val dateOrdering: Ordering[(LocalDate, Seq[T])] =
-        Ordering.by[(LocalDate, Seq[T]), LocalDate](_._1).reverse
-
-      implicit val timeOrdering: Ordering[T] =
-        Ordering.by[T, LocalTime](_.updatedTime).reverse
-
-      value
-        .groupBy(_.updatedDate)
-        .toSeq
-        .sorted
+    def groupByDate: Seq[(String, Seq[T])] =
+      value.sorted
+        .groupByPreserveOrder(_.updatedDate)
         .map {
           result =>
-            (Format.formatMovementUpdatedDate(result._1), result._2.sorted)
+            (Format.formatMovementUpdatedDate(result._1), result._2.toSeq)
         }
-    }
   }
 }

@@ -26,8 +26,8 @@ case class DepartureStatusP5ViewModel(status: String, actions: Seq[ViewMovementA
 
 object DepartureStatusP5ViewModel {
 
-  def apply(movementAndMessage: MovementAndMessages)(implicit frontendAppConfig: FrontendAppConfig): DepartureStatusP5ViewModel =
-    (movementAndMessage match {
+  def apply(movement: MovementAndMessages)(implicit frontendAppConfig: FrontendAppConfig): DepartureStatusP5ViewModel =
+    (movement match {
       case DepartureMovementAndMessages(departureId, localReferenceNumber, _, messages, isPrelodged) =>
         preLodgeStatus(departureId, messages.latestMessage.messageId, localReferenceNumber, isPrelodged, messages)
           .lift(messages.latestMessage)
