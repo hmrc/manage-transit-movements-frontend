@@ -18,50 +18,50 @@ package models.departureP5
 
 import java.time.LocalDateTime
 
-sealed trait MovementAndMessage {
+sealed trait MovementAndMessages {
   val departureId: String
   val localReferenceNumber: String
-  val message: LatestDepartureMessage
+  val messages: DepartureMovementMessages
   val updated: LocalDateTime
 }
 
-case class RejectedMovementAndMessage(
+case class RejectedMovementAndMessages(
   departureId: String,
   localReferenceNumber: String,
   updated: LocalDateTime,
-  message: LatestDepartureMessage,
+  messages: DepartureMovementMessages,
   rejectionType: BusinessRejectionType,
   isRejectionAmendable: Boolean,
   xPaths: Seq[String]
-) extends MovementAndMessage
+) extends MovementAndMessages
 
-case class PrelodgeRejectedMovementAndMessage(
+case class PrelodgeRejectedMovementAndMessages(
   departureId: String,
   localReferenceNumber: String,
   updated: LocalDateTime,
-  message: LatestDepartureMessage,
+  messages: DepartureMovementMessages,
   xPaths: Seq[String]
-) extends MovementAndMessage
+) extends MovementAndMessages
 
-case class OtherMovementAndMessage(
+case class OtherMovementAndMessages(
   departureId: String,
   localReferenceNumber: String,
   updated: LocalDateTime,
-  message: LatestDepartureMessage
-) extends MovementAndMessage
+  messages: DepartureMovementMessages
+) extends MovementAndMessages
 
-case class DepartureMovementAndMessage(
+case class DepartureMovementAndMessages(
   departureId: String,
   localReferenceNumber: String,
   updated: LocalDateTime,
-  message: LatestDepartureMessage,
+  messages: DepartureMovementMessages,
   isPrelodged: Boolean
-) extends MovementAndMessage
+) extends MovementAndMessages
 
-case class IncidentMovementAndMessage(
+case class IncidentMovementAndMessages(
   departureId: String,
   localReferenceNumber: String,
   updated: LocalDateTime,
-  message: LatestDepartureMessage,
+  messages: DepartureMovementMessages,
   hasMultipleIncidents: Boolean
-) extends MovementAndMessage
+) extends MovementAndMessages

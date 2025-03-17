@@ -37,7 +37,7 @@ import viewModels.pagination.MetaData
 import viewModels.sections.Section
 import viewModels.sections.Section.{AccordionSection, StaticSection}
 
-import java.time.{LocalDate, LocalTime}
+import java.time.LocalDateTime
 
 trait ViewModelGenerators {
   self: Generators =>
@@ -110,23 +110,21 @@ trait ViewModelGenerators {
   implicit val arbitraryViewArrivalP5: Arbitrary[ViewArrivalP5] =
     Arbitrary {
       for {
-        date    <- arbitrary[LocalDate]
-        time    <- arbitrary[LocalTime]
-        mrn     <- stringsWithMaxLength(17: Int)
-        status  <- nonEmptyString
-        actions <- listWithMaxLength[ViewMovementAction]()
-      } yield ViewArrivalP5(date, time, mrn, status, actions)
+        dateTime <- arbitrary[LocalDateTime]
+        mrn      <- stringsWithMaxLength(17: Int)
+        status   <- nonEmptyString
+        actions  <- listWithMaxLength[ViewMovementAction]()
+      } yield ViewArrivalP5(dateTime, mrn, status, actions)
     }
 
   implicit val arbitraryViewDepartureP5: Arbitrary[ViewDepartureP5] =
     Arbitrary {
       for {
-        date    <- arbitrary[LocalDate]
-        time    <- arbitrary[LocalTime]
-        lrn     <- stringsWithMaxLength(17: Int)
-        status  <- nonEmptyString
-        actions <- listWithMaxLength[ViewMovementAction]()
-      } yield ViewDepartureP5(date, time, lrn, status, actions)
+        dateTime <- arbitrary[LocalDateTime]
+        lrn      <- stringsWithMaxLength(17: Int)
+        status   <- nonEmptyString
+        actions  <- listWithMaxLength[ViewMovementAction]()
+      } yield ViewDepartureP5(dateTime, lrn, status, actions)
     }
 
   implicit def arbitraryArrivalNotificationWithFunctionalErrorsP5ViewModel(implicit

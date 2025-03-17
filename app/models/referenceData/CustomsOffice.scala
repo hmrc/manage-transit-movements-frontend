@@ -17,12 +17,12 @@
 package models.referenceData
 
 import cats.Order
-import forms.mappings.RichSeq
-import play.api.libs.functional.syntax._
-import play.api.libs.json._
+import models.RichSeq
+import play.api.libs.functional.syntax.*
+import play.api.libs.json.*
 
 case class CustomsOffice(id: String, name: String, phoneNumber: Option[String], eMailAddress: Option[String]) {
-  override def toString: String = s"${this.name} (${this.id})"
+  override def toString: String = s"$name ($id)"
 }
 
 object CustomsOffice {

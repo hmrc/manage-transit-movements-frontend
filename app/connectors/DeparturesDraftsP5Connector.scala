@@ -33,11 +33,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class DeparturesDraftsP5Connector @Inject() (config: FrontendAppConfig, http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
 
   private def getDeparturesSummary(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] = {
-    val url = url"${config.departureCacheUrl}/user-answers"
+    val url = url"${config.departureCacheUrl}/user-answers?${queryParams :+ ("state" -> "notSubmitted")}"
 
     http
       .get(url)
-      .transform(_.withQueryStringParameters(queryParams :+ ("state" -> "notSubmitted")*))
       .execute[DeparturesSummary]
       .map(Some(_))
       .recover {

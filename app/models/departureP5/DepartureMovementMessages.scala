@@ -14,38 +14,44 @@
  * limitations under the License.
  */
 
-package models.arrivalP5
+package models.departureP5
 
 import cats.data.NonEmptyList
-import models.arrivalP5.ArrivalMessageType.ArrivalNotification
+import models.departureP5.DepartureMessageType.DepartureNotification
 import models.nonEmptyListReads
 import play.api.libs.json.{__, JsonValidationError, Reads}
 
-case class LatestArrivalMessage(latestMessage: ArrivalMessage, ie007Id: String)
+case class DepartureMovementMessages(messages: NonEmptyList[DepartureMessage], ie015MessageId: String) {
 
-object LatestArrivalMessage {
+  val latestMessage: DepartureMessage = messages.head
 
-  implicit val reads: Reads[LatestArrivalMessage] =
+  def contains(messageType: DepartureMessageType): Boolean =
+    messages.toList.map(_.messageType).contains(messageType)
+}
+
+object DepartureMovementMessages {
+
+  implicit val reads: Reads[DepartureMovementMessages] =
     (__ \ "messages")
-      .read[NonEmptyList[ArrivalMessage]]
+      .read[NonEmptyList[DepartureMessage]]
       .map(_.sorted)
       .map {
         messages =>
           (
             messages,
             messages.find {
-              case ArrivalMessage(_, _, ArrivalNotification, _) => true
-              case _                                            => false
+              case DepartureMessage(_, _, DepartureNotification, _) => true
+              case _                                                => false
             }
           )
       }
       .collect {
-        JsonValidationError("could not find IE007 message")
+        JsonValidationError("could not find IE015 message")
       } {
         case (messages, Some(message)) =>
-          LatestArrivalMessage(
-            latestMessage = messages.head,
-            ie007Id = message.messageId
+          DepartureMovementMessages(
+            messages = messages,
+            ie015MessageId = message.messageId
           )
       }
 
