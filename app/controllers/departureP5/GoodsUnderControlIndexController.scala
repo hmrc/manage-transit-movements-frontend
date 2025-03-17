@@ -16,18 +16,16 @@
 
 package controllers.departureP5
 
-import config.Constants.NotificationType._
-import controllers.actions._
+import config.Constants.NotificationType.*
+import controllers.actions.*
 import controllers.routes
-import generated.CC060CType
+import generated.{CC060CType, Generated_CC060CTypeFormat}
 import play.api.Logging
-import models.RichCC060Type
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
-import generated.Generated_CC060CTypeFormat
 
 class GoodsUnderControlIndexController @Inject() (
   actions: Actions,
@@ -46,11 +44,7 @@ class GoodsUnderControlIndexController @Inject() (
           case AdditionalDocumentsRequest =>
             controllers.departureP5.routes.GoodsUnderControlP5Controller.requestedDocuments(departureId, messageId)
           case IntentionToControl =>
-            if (request.messageData.informationRequested) {
-              controllers.departureP5.routes.IntentionToControlP5Controller.informationRequested(departureId, messageId)
-            } else {
-              controllers.departureP5.routes.IntentionToControlP5Controller.noInformationRequested(departureId, messageId)
-            }
+            controllers.departureP5.routes.IntentionToControlP5Controller.onPageLoad(departureId, messageId)
           case x =>
             logger.warn(s"Unexpected notification type: $x")
             routes.ErrorController.technicalDifficulties()
