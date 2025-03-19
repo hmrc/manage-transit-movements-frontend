@@ -157,7 +157,6 @@ class GoodsUnderControlP5MessageHelper(ie060: CC060CType, referenceDataService: 
         StaticSection(None, rows)
     }
 
-  def controlInformationSection(): Future[Seq[Section]] =
-    Future.sequence(ie060.TypeOfControls.map(buildTypeOfControlSection))
+  def controlInformationSection(): Future[Seq[Section]] = Future.sequence(ie060.TypeOfControls.map(buildTypeOfControlSection))
 
 }

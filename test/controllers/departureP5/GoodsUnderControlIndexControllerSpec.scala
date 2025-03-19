@@ -50,7 +50,7 @@ class GoodsUnderControlIndexControllerSpec extends SpecBase with ScalaCheckPrope
       .overrides(bind[ReferenceDataService].toInstance(mockReferenceDataService))
       .overrides(bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService))
 
-  private val customsOffice = CustomsOffice("GB00006", "UK", None)
+  private val customsOffice = CustomsOffice("GB00006", "UK", None, None)
 
   "GoodsUnderControlIndexController" - {
 

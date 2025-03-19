@@ -21,7 +21,7 @@ import models.referenceData.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewModels.P5.departure.{CustomsOfficeContactViewModel, GoodsUnderControlP5ViewModel}
+import viewModels.P5.departure.GoodsUnderControlP5ViewModel
 import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
 import views.html.departureP5.GoodsUnderControlP5View
@@ -32,13 +32,12 @@ class GoodsUnderControlP5RequestedDocumentsViewSpec extends CheckYourAnswersView
 
   override val prefix: String = "departure.ie060.message.requestedDocuments"
 
-  private val goodsUnderControlP5ViewModel: GoodsUnderControlP5ViewModel   = new GoodsUnderControlP5ViewModel(sections, true, Some(lrn.toString))
-  private val customsOfficeContactViewModel: CustomsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
+  private val goodsUnderControlP5ViewModel: GoodsUnderControlP5ViewModel = new GoodsUnderControlP5ViewModel(sections, true, Some(lrn.toString), customsOffice)
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
       .instanceOf[GoodsUnderControlP5View]
-      .apply(goodsUnderControlP5ViewModel, departureIdP5, customsOfficeContactViewModel)(fakeRequest, messages)
+      .apply(goodsUnderControlP5ViewModel, departureIdP5)(fakeRequest, messages)
 
   override def summaryLists: Seq[SummaryList] = sections.map(
     section => SummaryList(section.rows)

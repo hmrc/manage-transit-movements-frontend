@@ -21,7 +21,7 @@ import models.referenceData.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewModels.P5.departure.{CustomsOfficeContactViewModel, IntentionToControlP5ViewModel}
+import viewModels.P5.departure.IntentionToControlP5ViewModel
 import viewModels.sections.Section
 import views.behaviours.CheckYourAnswersViewBehaviours
 import views.html.departureP5.IntentionToControlP5View
@@ -32,13 +32,13 @@ class IntentionToControlP5ViewSpec extends CheckYourAnswersViewBehaviours with G
 
   override val prefix: String = "departure.ie060.message.prelodged"
 
-  private val intentionToControlP5ViewModel: IntentionToControlP5ViewModel = new IntentionToControlP5ViewModel(sections, false, Some(lrn.toString))
-  private val customsOfficeContactViewModel: CustomsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
+  private val intentionToControlP5ViewModel: IntentionToControlP5ViewModel =
+    new IntentionToControlP5ViewModel(sections, false, Some(lrn.toString), customsOffice)
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
       .instanceOf[IntentionToControlP5View]
-      .apply(intentionToControlP5ViewModel, departureIdP5, messageId, customsOfficeContactViewModel)(fakeRequest, messages)
+      .apply(intentionToControlP5ViewModel, departureIdP5, messageId)(fakeRequest, messages)
 
   override def summaryLists: Seq[SummaryList] = sections.map(
     section => SummaryList(section.rows)
@@ -102,7 +102,7 @@ class IntentionToControlP5ViewSpec extends CheckYourAnswersViewBehaviours with G
     val document = parseView(
       injector
         .instanceOf[IntentionToControlP5View]
-        .apply(viewModel, departureIdP5, messageId, customsOfficeContactViewModel)(fakeRequest, messages)
+        .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
     )
 
     behave like pageWithSubmitButton(document, "Complete pre-lodged declaration")

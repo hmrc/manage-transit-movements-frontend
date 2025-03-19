@@ -41,7 +41,7 @@ class ReferenceDataServiceSpec extends SpecBase {
     "getCustomsOffice" - {
 
       val customsOfficeId = "GB00001"
-      val customsOffice1  = CustomsOffice(customsOfficeId, "CO1", None)
+      val customsOffice1  = CustomsOffice(customsOfficeId, "CO1", None, None)
 
       "should return a valid customs office" in {
         when(mockConnector.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Right(customsOffice1)))

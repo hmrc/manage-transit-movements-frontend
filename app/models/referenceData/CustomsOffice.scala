@@ -21,8 +21,8 @@ import models.RichSeq
 import play.api.libs.functional.syntax.*
 import play.api.libs.json.*
 
-case class CustomsOffice(id: String, name: String, phoneNumber: Option[String]) {
-  override def toString: String = s"$name ($id)"
+case class CustomsOffice(id: String, name: String, phoneNumber: Option[String], eMailAddress: Option[String]) {
+  override def toString: String = s"${this.name} (${this.id})"
 }
 
 object CustomsOffice {

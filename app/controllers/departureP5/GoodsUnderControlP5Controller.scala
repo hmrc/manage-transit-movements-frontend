@@ -16,19 +16,17 @@
 
 package controllers.departureP5
 
-import controllers.actions._
-import generated.CC060CType
+import controllers.actions.*
+import generated.{CC060CType, Generated_CC060CTypeFormat}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReferenceDataService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.departure.CustomsOfficeContactViewModel
 import viewModels.P5.departure.GoodsUnderControlP5ViewModel.GoodsUnderControlP5ViewModelProvider
 import views.html.departureP5.GoodsUnderControlP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
-import generated.Generated_CC060CTypeFormat
 
 class GoodsUnderControlP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -49,11 +47,10 @@ class GoodsUnderControlP5Controller @Inject() (
 
         referenceDataService.getCustomsOffice(customsOfficeId).flatMap {
           customsOffice =>
-            val goodsUnderControlP5ViewModel  = viewModelProvider.apply(request.messageData)
-            val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
+            val goodsUnderControlP5ViewModel = viewModelProvider.apply(request.messageData, customsOffice)
             goodsUnderControlP5ViewModel.map {
               viewModel =>
-                Ok(view(viewModel, departureId, customsOfficeContactViewModel))
+                Ok(view(viewModel, departureId))
             }
         }
     }

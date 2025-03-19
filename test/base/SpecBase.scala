@@ -58,7 +58,7 @@ trait SpecBase
   val incidentIndex: Index           = Index(0)
   val transportEquipmentIndex: Index = Index(0)
 
-  val fakeCustomsOffice: CustomsOffice = CustomsOffice("1234", "Customs Office", Some("01234567"))
+  val fakeCustomsOffice: CustomsOffice = CustomsOffice("1234", "Customs Office", Some("01234567"), Some("test123@gmail.com"))
 
   val departureReferenceNumbers = DepartureReferenceNumbers(lrn.value, None)
 

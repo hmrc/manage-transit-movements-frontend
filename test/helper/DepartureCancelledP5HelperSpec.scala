@@ -163,7 +163,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
             }) {
               message =>
                 when(mockReferenceDataService.getCustomsOffice(eqTo(customsOfficeId))(any(), any()))
-                  .thenReturn(Future.successful(CustomsOffice("GB00060", "BOSTON", None)))
+                  .thenReturn(Future.successful(CustomsOffice("GB00060", "BOSTON", None, None)))
 
                 val helper = new DepartureCancelledP5Helper(message, mockReferenceDataService)
 

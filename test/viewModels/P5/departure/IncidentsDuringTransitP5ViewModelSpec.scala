@@ -43,7 +43,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
       .guiceApplicationBuilder()
       .overrides(inject.bind[ReferenceDataService].toInstance(mockReferenceDataService))
 
-  val customsOffice: CustomsOffice = CustomsOffice("XI00060", "Belfast", None)
+  val customsOffice: CustomsOffice = CustomsOffice("XI00060", "Belfast", None, None)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -193,7 +193,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
         "must return correct message" in {
           val customsOfficeName = "custName"
           val telephoneNo       = Some("123")
-          val result            = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo)).customsOfficeContent
+          val result            = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo, None)).customsOfficeContent
 
           result `mustBe` s"For further help, contact the carrier or Customs at $customsOfficeName on ${telephoneNo.get}."
         }
@@ -202,7 +202,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
       "when customs office found with name and no telephone number" - {
         "must return correct message" in {
           val customsOfficeName = "custName"
-          val result            = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, None)).customsOfficeContent
+          val result            = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, None, None)).customsOfficeContent
 
           result `mustBe` s"For further help, contact Customs at $customsOfficeName."
         }
@@ -212,7 +212,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
         "must return correct message" in {
           val customsOfficeName = ""
           val telephoneNo       = Some("123")
-          val result            = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo)).customsOfficeContent
+          val result            = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo, None)).customsOfficeContent
 
           result `mustBe` s"For further help, contact Customs office $customsReferenceId on ${telephoneNo.get}."
         }
@@ -221,7 +221,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
       "when customs office found with no telephone number and empty name" - {
         "must return correct message" in {
           val customsOfficeName = ""
-          val result            = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, None)).customsOfficeContent
+          val result            = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, None, None)).customsOfficeContent
 
           result `mustBe` s"For further help, contact Customs office $customsReferenceId."
         }

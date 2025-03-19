@@ -84,7 +84,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
             .willReturn(okJson(customsOfficesResponseJson))
         )
 
-        val expectedResult = CustomsOffice(code, "NAME001", Some("004412323232345"))
+        val expectedResult = CustomsOffice(code, "NAME001", Some("004412323232345"), Some("test123@gmail.com"))
 
         connector.getCustomsOffice(code).futureValue.value mustEqual expectedResult
       }
@@ -347,7 +347,8 @@ object ReferenceDataConnectorSpec {
        |      "id": "$code",
        |      "name": "NAME001",
        |      "languageCode": "EN",
-       |      "phoneNumber": "004412323232345"
+       |      "phoneNumber": "004412323232345",
+       |      "eMailAddress": "test123@gmail.com"
        |    }
        |  ]
        |}

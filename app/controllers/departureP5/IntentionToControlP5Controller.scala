@@ -18,18 +18,16 @@ package controllers.departureP5
 
 import config.FrontendAppConfig
 import controllers.actions.*
-import generated.CC060CType
+import generated.{CC060CType, Generated_CC060CTypeFormat}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReferenceDataService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.departure.CustomsOfficeContactViewModel
 import viewModels.P5.departure.IntentionToControlP5ViewModel.IntentionToControlP5ViewModelProvider
 import views.html.departureP5.IntentionToControlP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
-import generated.Generated_CC060CTypeFormat
 
 class IntentionToControlP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -51,10 +49,9 @@ class IntentionToControlP5Controller @Inject() (
 
         referenceDataService.getCustomsOffice(customsOfficeId).map {
           customsOffice =>
-            val intentionToControlP5ViewModel = viewModelProvider.apply(request.messageData)
-            val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
+            val intentionToControlP5ViewModel = viewModelProvider.apply(request.messageData, customsOffice)
 
-            Ok(view(intentionToControlP5ViewModel, departureId, messageId, customsOfficeContactViewModel))
+            Ok(view(intentionToControlP5ViewModel, departureId, messageId))
         }
     }
 

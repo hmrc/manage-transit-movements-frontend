@@ -102,7 +102,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
         "must return a row with name and code when reference data succeeds" in {
           forAll(Gen.alphaNumStr) {
             value =>
-              val customsOffice = CustomsOffice("XI000142", "Belfast", None)
+              val customsOffice = CustomsOffice("XI000142", "Belfast", None, None)
 
               when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
                 .thenReturn(Future.successful(customsOffice))
@@ -143,7 +143,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
         "must return a row with name and code when reference data succeeds" in {
           forAll(Gen.alphaNumStr) {
             value =>
-              val customsOffice = CustomsOffice("XI000142", "Belfast", None)
+              val customsOffice = CustomsOffice("XI000142", "Belfast", None, None)
 
               when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
                 .thenReturn(Future.successful(customsOffice))
@@ -185,7 +185,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
         "must return a static section" in {
 
           val country       = Country("code", "description")
-          val customsOffice = CustomsOffice("code", "description", None)
+          val customsOffice = CustomsOffice("code", "description", None, None)
 
           when(mockReferenceDataService.getCountry(any())(any(), any()))
             .thenReturn(Future.successful(country))
