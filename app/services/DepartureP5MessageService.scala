@@ -43,12 +43,12 @@ class DepartureP5MessageService @Inject() (
 
   private def handleDepartureMovementAndMessage(
     movement: DepartureMovement,
-    message: LatestDepartureMessage
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MovementAndMessage] = {
+    message: DepartureMovementMessages
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MovementAndMessages] = {
     val departureId = movement.departureId
     getMessage[CC015CType](departureId, message.ie015MessageId).map {
       ie015 =>
-        DepartureMovementAndMessage(
+        DepartureMovementAndMessages(
           departureId,
           movement.localReferenceNumber,
           movement.updated,
@@ -60,8 +60,8 @@ class DepartureP5MessageService @Inject() (
 
   private def handleRejectedMovementAndMessage(
     movement: DepartureMovement,
-    message: LatestDepartureMessage
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MovementAndMessage] = {
+    message: DepartureMovementMessages
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MovementAndMessages] = {
     val departureId = movement.departureId
     getMessage[CC056CType](departureId, message.latestMessage.messageId).flatMap {
       ie056 =>
@@ -69,7 +69,7 @@ class DepartureP5MessageService @Inject() (
         BusinessRejectionType(ie056) match {
           case PresentationNotificationRejection =>
             Future.successful(
-              PrelodgeRejectedMovementAndMessage(
+              PrelodgeRejectedMovementAndMessages(
                 departureId,
                 movement.localReferenceNumber,
                 movement.updated,
@@ -79,7 +79,7 @@ class DepartureP5MessageService @Inject() (
             )
           case InvalidationRejection =>
             Future.successful(
-              RejectedMovementAndMessage(
+              RejectedMovementAndMessages(
                 departureId,
                 movement.localReferenceNumber,
                 movement.updated,
@@ -93,7 +93,7 @@ class DepartureP5MessageService @Inject() (
             val rejection = IE056Rejection(departureId, ie056)
             cacheConnector.isRejectionAmendable(movement.localReferenceNumber, rejection).map {
               isRejectionAmendable =>
-                RejectedMovementAndMessage(
+                RejectedMovementAndMessages(
                   departureId,
                   movement.localReferenceNumber,
                   movement.updated,
@@ -109,12 +109,12 @@ class DepartureP5MessageService @Inject() (
 
   private def handleIncidentMovementAndMessage(
     movement: DepartureMovement,
-    message: LatestDepartureMessage
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MovementAndMessage] = {
+    message: DepartureMovementMessages
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MovementAndMessages] = {
     val departureId = movement.departureId
     getMessage[CC182CType](departureId, message.latestMessage.messageId).map {
       ie182 =>
-        IncidentMovementAndMessage(
+        IncidentMovementAndMessages(
           departureId,
           movement.localReferenceNumber,
           movement.updated,
@@ -126,10 +126,10 @@ class DepartureP5MessageService @Inject() (
 
   private def handleOtherMovementAndMessage(
     movement: DepartureMovement,
-    message: LatestDepartureMessage
-  ): Future[MovementAndMessage] =
+    message: DepartureMovementMessages
+  ): Future[MovementAndMessages] =
     Future.successful(
-      OtherMovementAndMessage(
+      OtherMovementAndMessages(
         movement.departureId,
         movement.localReferenceNumber,
         movement.updated,
@@ -139,10 +139,10 @@ class DepartureP5MessageService @Inject() (
 
   def getLatestMessagesForMovements(
     departureMovements: DepartureMovements
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[MovementAndMessage]] =
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[MovementAndMessages]] =
     departureMovements.departureMovements.traverse {
       movement =>
-        departureMovementP5Connector.getLatestMessageForMovement(movement.departureId).flatMap {
+        departureMovementP5Connector.getMessages(movement.departureId).flatMap {
           message =>
             message.latestMessage.messageType match {
               case RejectedByOfficeOfDeparture =>

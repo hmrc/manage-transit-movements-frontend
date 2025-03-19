@@ -17,6 +17,7 @@
 package services
 
 import base.SpecBase
+import cats.data.NonEmptyList
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import generated.*
 import generators.Generators
@@ -56,12 +57,14 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
         "must return PrelodgeRejectedMovementAndMessage when rejection type is 170" in {
           val rejectionType = PresentationNotificationRejection
 
-          val latestDepartureMessage = LatestDepartureMessage(
-            DepartureMessage(
-              "messageId1",
-              dateTimeNow,
-              RejectedByOfficeOfDeparture,
-              MessageStatus.Success
+          val latestDepartureMessage = DepartureMovementMessages(
+            NonEmptyList.one(
+              DepartureMessage(
+                "messageId1",
+                dateTimeNow,
+                RejectedByOfficeOfDeparture,
+                MessageStatus.Success
+              )
             ),
             "messageId2"
           )
@@ -84,7 +87,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             TransitOperation = x.TransitOperation.copy(businessRejectionType = rejectionType.value)
           )
 
-          when(mockMovementConnector.getLatestMessageForMovement(any())(any())).thenReturn(
+          when(mockMovementConnector.getMessages(any())(any())).thenReturn(
             Future.successful(latestDepartureMessage)
           )
 
@@ -94,8 +97,8 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
 
           val result = departureP5MessageService.getLatestMessagesForMovements(departureMovements).futureValue
 
-          val expectedResult: Seq[MovementAndMessage] = Seq(
-            PrelodgeRejectedMovementAndMessage(
+          val expectedResult: Seq[MovementAndMessages] = Seq(
+            PrelodgeRejectedMovementAndMessages(
               "AB123",
               "LRN",
               dateTimeNow,
@@ -110,12 +113,14 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
         "must return RejectedMovementAndMessage when rejection type is 014" in {
           val rejectionType = InvalidationRejection
 
-          val latestDepartureMessage = LatestDepartureMessage(
-            DepartureMessage(
-              "messageId1",
-              dateTimeNow,
-              RejectedByOfficeOfDeparture,
-              MessageStatus.Success
+          val latestDepartureMessage = DepartureMovementMessages(
+            NonEmptyList.one(
+              DepartureMessage(
+                "messageId1",
+                dateTimeNow,
+                RejectedByOfficeOfDeparture,
+                MessageStatus.Success
+              )
             ),
             "messageId2"
           )
@@ -138,7 +143,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             TransitOperation = x.TransitOperation.copy(businessRejectionType = rejectionType.value)
           )
 
-          when(mockMovementConnector.getLatestMessageForMovement(any())(any())).thenReturn(
+          when(mockMovementConnector.getMessages(any())(any())).thenReturn(
             Future.successful(latestDepartureMessage)
           )
 
@@ -148,8 +153,8 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
 
           val result = departureP5MessageService.getLatestMessagesForMovements(departureMovements).futureValue
 
-          val expectedResult: Seq[MovementAndMessage] = Seq(
-            RejectedMovementAndMessage(
+          val expectedResult: Seq[MovementAndMessages] = Seq(
+            RejectedMovementAndMessages(
               "AB123",
               "LRN",
               dateTimeNow,
@@ -167,12 +172,14 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           val isDeclarationAmendable = arbitrary[Boolean].sample.value
           val rejectionType          = arbitrary[DepartureBusinessRejectionType].sample.value
 
-          val latestDepartureMessage = LatestDepartureMessage(
-            DepartureMessage(
-              "messageId1",
-              dateTimeNow,
-              RejectedByOfficeOfDeparture,
-              MessageStatus.Success
+          val latestDepartureMessage = DepartureMovementMessages(
+            NonEmptyList.one(
+              DepartureMessage(
+                "messageId1",
+                dateTimeNow,
+                RejectedByOfficeOfDeparture,
+                MessageStatus.Success
+              )
             ),
             "messageId2"
           )
@@ -195,7 +202,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             TransitOperation = x.TransitOperation.copy(businessRejectionType = rejectionType.value)
           )
 
-          when(mockMovementConnector.getLatestMessageForMovement(any())(any())).thenReturn(
+          when(mockMovementConnector.getMessages(any())(any())).thenReturn(
             Future.successful(latestDepartureMessage)
           )
 
@@ -209,8 +216,8 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
 
           val result = departureP5MessageService.getLatestMessagesForMovements(departureMovements).futureValue
 
-          val expectedResult: Seq[MovementAndMessage] = Seq(
-            RejectedMovementAndMessage(
+          val expectedResult: Seq[MovementAndMessages] = Seq(
+            RejectedMovementAndMessages(
               "AB123",
               "LRN",
               dateTimeNow,
@@ -230,12 +237,14 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
 
         val genStatus = Gen.oneOf(Seq(DeclarationSent, DeclarationAmendmentAccepted, GoodsUnderControl)).sample.value
 
-        val latestDepartureMessage = LatestDepartureMessage(
-          DepartureMessage(
-            "messageId1",
-            dateTimeNow,
-            genStatus,
-            MessageStatus.Success
+        val latestDepartureMessage = DepartureMovementMessages(
+          NonEmptyList.one(
+            DepartureMessage(
+              "messageId1",
+              dateTimeNow,
+              genStatus,
+              MessageStatus.Success
+            )
           ),
           "messageId2"
         )
@@ -254,7 +263,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
 
         val ie015 = arbitrary[CC015CType].sample.value
 
-        when(mockMovementConnector.getLatestMessageForMovement(any())(any())).thenReturn(
+        when(mockMovementConnector.getMessages(any())(any())).thenReturn(
           Future.successful(latestDepartureMessage)
         )
 
@@ -264,8 +273,8 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
 
         val result = departureP5MessageService.getLatestMessagesForMovements(departureMovements).futureValue
 
-        val expectedResult: Seq[MovementAndMessage] = Seq(
-          DepartureMovementAndMessage(
+        val expectedResult: Seq[MovementAndMessages] = Seq(
+          DepartureMovementAndMessages(
             "AB123",
             "LRN",
             dateTimeNow,
@@ -279,12 +288,14 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
 
       "must return IncidentMovementAndMessage when IncidentDuringTransit" in {
 
-        val latestDepartureMessage = LatestDepartureMessage(
-          DepartureMessage(
-            "messageId",
-            dateTimeNow,
-            IncidentDuringTransit,
-            MessageStatus.Success
+        val latestDepartureMessage = DepartureMovementMessages(
+          NonEmptyList.one(
+            DepartureMessage(
+              "messageId",
+              dateTimeNow,
+              IncidentDuringTransit,
+              MessageStatus.Success
+            )
           ),
           "messageId"
         )
@@ -303,7 +314,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
 
         val ie182 = arbitrary[CC182CType].sample.value
 
-        when(mockMovementConnector.getLatestMessageForMovement(any())(any())).thenReturn(
+        when(mockMovementConnector.getMessages(any())(any())).thenReturn(
           Future.successful(latestDepartureMessage)
         )
 
@@ -313,8 +324,8 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
 
         val result = departureP5MessageService.getLatestMessagesForMovements(departureMovements).futureValue
 
-        val expectedResult: Seq[MovementAndMessage] = Seq(
-          IncidentMovementAndMessage(
+        val expectedResult: Seq[MovementAndMessages] = Seq(
+          IncidentMovementAndMessages(
             "AB123",
             "LRN",
             dateTimeNow,
@@ -340,12 +351,14 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           .map {
 
             messageType =>
-              val latestDepartureMessage = LatestDepartureMessage(
-                DepartureMessage(
-                  "messageId1",
-                  dateTimeNow,
-                  messageType,
-                  MessageStatus.Success
+              val latestDepartureMessage = DepartureMovementMessages(
+                NonEmptyList.one(
+                  DepartureMessage(
+                    "messageId1",
+                    dateTimeNow,
+                    messageType,
+                    MessageStatus.Success
+                  )
                 ),
                 "messageId2"
               )
@@ -364,7 +377,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
 
               val ie015 = arbitrary[CC015CType].sample.value
 
-              when(mockMovementConnector.getLatestMessageForMovement(any())(any())).thenReturn(
+              when(mockMovementConnector.getMessages(any())(any())).thenReturn(
                 Future.successful(latestDepartureMessage)
               )
 
@@ -374,8 +387,8 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
 
               val result = departureP5MessageService.getLatestMessagesForMovements(departureMovements).futureValue
 
-              val expectedResult: Seq[MovementAndMessage] = Seq(
-                OtherMovementAndMessage(
+              val expectedResult: Seq[MovementAndMessages] = Seq(
+                OtherMovementAndMessages(
                   "AB123",
                   "LRN",
                   dateTimeNow,

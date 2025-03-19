@@ -211,4 +211,15 @@ package object models {
 
   }
 
+  implicit class RichSeq[A](value: Seq[A]) {
+
+    def groupByPreserveOrder[K](f: A => K): Seq[(K, Iterable[A])] = {
+      val keys   = value.map(f).distinct
+      val groups = value.groupBy(f)
+      keys.map {
+        key => key -> groups(key)
+      }
+    }
+
+  }
 }

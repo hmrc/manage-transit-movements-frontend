@@ -39,11 +39,11 @@ class ArrivalMovementP5Connector @Inject() (
     extends MovementP5Connector {
 
   def getAllMovements()(implicit hc: HeaderCarrier): Future[Option[ArrivalMovements]] =
-    getMovements(Seq.empty)
+    getMovements()
 
   def getAvailability()(implicit hc: HeaderCarrier): Future[Availability] = {
     val queryParams = Seq("count" -> "1")
-    getMovements(queryParams).map(_.map(_.movements)).map(Availability(_))
+    getMovements(queryParams*).map(_.map(_.movements)).map(Availability(_))
   }
 
   def getAllMovementsForSearchQuery(
@@ -59,16 +59,15 @@ class ArrivalMovementP5Connector @Inject() (
       case (key, Some(value)) => Some((key, value.toString))
       case _                  => None
     }
-    getMovements(queryParams)
+    getMovements(queryParams*)
   }
 
-  private def getMovements(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[ArrivalMovements]] = {
-    val url = url"${config.commonTransitConventionTradersUrl}movements/arrivals"
+  private def getMovements(queryParams: (String, String)*)(implicit hc: HeaderCarrier): Future[Option[ArrivalMovements]] = {
+    val url = url"${config.commonTransitConventionTradersUrl}movements/arrivals?$queryParams"
 
     http
       .get(url)
       .setHeader(jsonAcceptHeader)
-      .transform(_.withQueryStringParameters(queryParams*))
       .execute[HttpResponse]
       .map {
         response =>
@@ -96,12 +95,12 @@ class ArrivalMovementP5Connector @Inject() (
   }
 
   def getLatestMessageForMovement(arrivalId: String)(implicit hc: HeaderCarrier): Future[LatestArrivalMessage] = {
-    val url = url"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages"
+    val queryParams = Seq("count" -> config.apiResults.toString)
+    val url         = url"${config.commonTransitConventionTradersUrl}movements/arrivals/$arrivalId/messages?$queryParams"
 
     http
       .get(url)
       .setHeader(jsonAcceptHeader)
-      .transform(_.withQueryStringParameters("count" -> config.apiResults.toString))
       .execute[LatestArrivalMessage]
   }
 

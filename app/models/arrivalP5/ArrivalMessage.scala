@@ -16,6 +16,7 @@
 
 package models.arrivalP5
 
+import cats.Order
 import models.MessageStatus
 import play.api.libs.json.{__, Reads}
 
@@ -35,4 +36,6 @@ object ArrivalMessage {
     )(ArrivalMessage.apply)
   }
 
+  implicit val order: Order[ArrivalMessage] =
+    Order.fromOrdering(Ordering.by[ArrivalMessage, LocalDateTime](_.received).reverse)
 }

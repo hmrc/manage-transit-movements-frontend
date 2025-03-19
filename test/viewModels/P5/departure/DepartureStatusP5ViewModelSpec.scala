@@ -17,6 +17,7 @@
 package viewModels.P5.departure
 
 import base.SpecBase
+import cats.data.NonEmptyList
 import config.FrontendAppConfig
 import generators.Generators
 import models.MessageStatus
@@ -34,17 +35,19 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
   "DepartureStatusP5ViewModel" - {
 
-    def otherMovementAndMessage(messageType: DepartureMessageType, status: MessageStatus = MessageStatus.Success): OtherMovementAndMessage =
-      OtherMovementAndMessage(
+    def otherMovementAndMessage(messageType: DepartureMessageType, status: MessageStatus = MessageStatus.Success): OtherMovementAndMessages =
+      OtherMovementAndMessages(
         departureIdP5,
         lrn.value,
         LocalDateTime.now(),
-        LatestDepartureMessage(
-          DepartureMessage(
-            messageId,
-            LocalDateTime.now(),
-            messageType,
-            status
+        DepartureMovementMessages(
+          NonEmptyList.one(
+            DepartureMessage(
+              messageId,
+              LocalDateTime.now(),
+              messageType,
+              status
+            )
           ),
           "ie015MessageId"
         )
@@ -214,16 +217,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       "when prelodged" in {
 
-        val movementAndMessage = DepartureMovementAndMessage(
+        val movementAndMessage = DepartureMovementAndMessages(
           departureIdP5,
           lrn.value,
           LocalDateTime.now(),
-          LatestDepartureMessage(
-            DepartureMessage(
-              messageId,
-              LocalDateTime.now(),
-              DeclarationAmendmentAccepted,
-              MessageStatus.Success
+          DepartureMovementMessages(
+            NonEmptyList.one(
+              DepartureMessage(
+                messageId,
+                LocalDateTime.now(),
+                DeclarationAmendmentAccepted,
+                MessageStatus.Success
+              )
             ),
             "ie015MessageId"
           ),
@@ -255,16 +260,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       "when not prelodged" in {
 
-        val movementAndMessage = DepartureMovementAndMessage(
+        val movementAndMessage = DepartureMovementAndMessages(
           departureIdP5,
           lrn.value,
           LocalDateTime.now(),
-          LatestDepartureMessage(
-            DepartureMessage(
-              messageId,
-              LocalDateTime.now(),
-              DeclarationAmendmentAccepted,
-              MessageStatus.Success
+          DepartureMovementMessages(
+            NonEmptyList.one(
+              DepartureMessage(
+                messageId,
+                LocalDateTime.now(),
+                DeclarationAmendmentAccepted,
+                MessageStatus.Success
+              )
             ),
             "ie015MessageId"
           ),
@@ -337,16 +344,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
     "when given Message with head of allocatedMRN" in {
 
-      val movementAndMessage = OtherMovementAndMessage(
+      val movementAndMessage = OtherMovementAndMessages(
         departureIdP5,
         lrn.value,
         LocalDateTime.now(),
-        LatestDepartureMessage(
-          DepartureMessage(
-            messageId,
-            LocalDateTime.now(),
-            AllocatedMRN,
-            MessageStatus.Success
+        DepartureMovementMessages(
+          NonEmptyList.one(
+            DepartureMessage(
+              messageId,
+              LocalDateTime.now(),
+              AllocatedMRN,
+              MessageStatus.Success
+            )
           ),
           "ie015MessageId"
         )
@@ -440,16 +449,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
         "with one functional error and cache exists for LRN" in {
 
-          val movementAndMessage = RejectedMovementAndMessage(
+          val movementAndMessage = RejectedMovementAndMessages(
             departureIdP5,
             lrn.value,
             LocalDateTime.now(),
-            LatestDepartureMessage(
-              DepartureMessage(
-                messageId,
-                LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                MessageStatus.Success
+            DepartureMovementMessages(
+              NonEmptyList.one(
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now(),
+                  RejectedByOfficeOfDeparture,
+                  MessageStatus.Success
+                )
               ),
               "ie015MessageId"
             ),
@@ -475,16 +486,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
         "and cache exists for LRN with no functional errors" in {
 
-          val movementAndMessage = RejectedMovementAndMessage(
+          val movementAndMessage = RejectedMovementAndMessages(
             departureIdP5,
             lrn.value,
             LocalDateTime.now(),
-            LatestDepartureMessage(
-              DepartureMessage(
-                messageId,
-                LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                MessageStatus.Success
+            DepartureMovementMessages(
+              NonEmptyList.one(
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now(),
+                  RejectedByOfficeOfDeparture,
+                  MessageStatus.Success
+                )
               ),
               "ie015MessageId"
             ),
@@ -510,16 +523,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
         "and cache does not exists for LRN and no errors" in {
 
-          val movementAndMessage = RejectedMovementAndMessage(
+          val movementAndMessage = RejectedMovementAndMessages(
             departureIdP5,
             lrn.value,
             LocalDateTime.now(),
-            LatestDepartureMessage(
-              DepartureMessage(
-                messageId,
-                LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                MessageStatus.Success
+            DepartureMovementMessages(
+              NonEmptyList.one(
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now(),
+                  RejectedByOfficeOfDeparture,
+                  MessageStatus.Success
+                )
               ),
               "ie015MessageId"
             ),
@@ -545,16 +560,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
         "and cache does not exists for LRN with errors" in {
 
-          val movementAndMessage = RejectedMovementAndMessage(
+          val movementAndMessage = RejectedMovementAndMessages(
             departureIdP5,
             lrn.value,
             LocalDateTime.now(),
-            LatestDepartureMessage(
-              DepartureMessage(
-                messageId,
-                LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                MessageStatus.Success
+            DepartureMovementMessages(
+              NonEmptyList.one(
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now(),
+                  RejectedByOfficeOfDeparture,
+                  MessageStatus.Success
+                )
               ),
               "ie015MessageId"
             ),
@@ -586,16 +603,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         val rejectionType = DeclarationRejection
 
         "and declaration is amendable" in {
-          val movementAndMessage = RejectedMovementAndMessage(
+          val movementAndMessage = RejectedMovementAndMessages(
             departureIdP5,
             lrn.value,
             LocalDateTime.now(),
-            LatestDepartureMessage(
-              DepartureMessage(
-                messageId,
-                LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                MessageStatus.Success
+            DepartureMovementMessages(
+              NonEmptyList.one(
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now(),
+                  RejectedByOfficeOfDeparture,
+                  MessageStatus.Success
+                )
               ),
               "ie015MessageId"
             ),
@@ -620,16 +639,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         }
 
         "and declaration is not amendable with errors in range 2 to 10" in {
-          val movementAndMessage = RejectedMovementAndMessage(
+          val movementAndMessage = RejectedMovementAndMessages(
             departureIdP5,
             lrn.value,
             LocalDateTime.now(),
-            LatestDepartureMessage(
-              DepartureMessage(
-                messageId,
-                LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                MessageStatus.Success
+            DepartureMovementMessages(
+              NonEmptyList.one(
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now(),
+                  RejectedByOfficeOfDeparture,
+                  MessageStatus.Success
+                )
               ),
               "ie015MessageId"
             ),
@@ -654,16 +675,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         }
 
         "and declaration is not amendable with one error" in {
-          val movementAndMessage = RejectedMovementAndMessage(
+          val movementAndMessage = RejectedMovementAndMessages(
             departureIdP5,
             lrn.value,
             LocalDateTime.now(),
-            LatestDepartureMessage(
-              DepartureMessage(
-                messageId,
-                LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                MessageStatus.Success
+            DepartureMovementMessages(
+              NonEmptyList.one(
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now(),
+                  RejectedByOfficeOfDeparture,
+                  MessageStatus.Success
+                )
               ),
               "ie015MessageId"
             ),
@@ -688,16 +711,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         }
 
         "and declaration is not amendable and no FunctionalErrors" in {
-          val movementAndMessage = RejectedMovementAndMessage(
+          val movementAndMessage = RejectedMovementAndMessages(
             departureIdP5,
             lrn.value,
             LocalDateTime.now(),
-            LatestDepartureMessage(
-              DepartureMessage(
-                messageId,
-                LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                MessageStatus.Success
+            DepartureMovementMessages(
+              NonEmptyList.one(
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now(),
+                  RejectedByOfficeOfDeparture,
+                  MessageStatus.Success
+                )
               ),
               "ie015MessageId"
             ),
@@ -727,16 +752,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         val rejectionType = InvalidationRejection
 
         "with errors in range 2 to 10" in {
-          val movementAndMessage = RejectedMovementAndMessage(
+          val movementAndMessage = RejectedMovementAndMessages(
             departureIdP5,
             lrn.value,
             LocalDateTime.now(),
-            LatestDepartureMessage(
-              DepartureMessage(
-                messageId,
-                LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                MessageStatus.Success
+            DepartureMovementMessages(
+              NonEmptyList.one(
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now(),
+                  RejectedByOfficeOfDeparture,
+                  MessageStatus.Success
+                )
               ),
               "ie015MessageId"
             ),
@@ -761,16 +788,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         }
 
         "with one error " in {
-          val movementAndMessage = RejectedMovementAndMessage(
+          val movementAndMessage = RejectedMovementAndMessages(
             departureIdP5,
             lrn.value,
             LocalDateTime.now(),
-            LatestDepartureMessage(
-              DepartureMessage(
-                messageId,
-                LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                MessageStatus.Success
+            DepartureMovementMessages(
+              NonEmptyList.one(
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now(),
+                  RejectedByOfficeOfDeparture,
+                  MessageStatus.Success
+                )
               ),
               "ie015MessageId"
             ),
@@ -795,16 +824,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         }
 
         "with no FunctionalErrors" in {
-          val movementAndMessage = RejectedMovementAndMessage(
+          val movementAndMessage = RejectedMovementAndMessages(
             departureIdP5,
             lrn.value,
             LocalDateTime.now(),
-            LatestDepartureMessage(
-              DepartureMessage(
-                messageId,
-                LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                MessageStatus.Success
+            DepartureMovementMessages(
+              NonEmptyList.one(
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now(),
+                  RejectedByOfficeOfDeparture,
+                  MessageStatus.Success
+                )
               ),
               "ie015MessageId"
             ),
@@ -833,16 +864,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
       "and head of tail is IE170" - {
 
         "with errors in range 2 to 10" in {
-          val movementAndMessage = PrelodgeRejectedMovementAndMessage(
+          val movementAndMessage = PrelodgeRejectedMovementAndMessages(
             departureIdP5,
             lrn.value,
             LocalDateTime.now(),
-            LatestDepartureMessage(
-              DepartureMessage(
-                messageId,
-                LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                MessageStatus.Success
+            DepartureMovementMessages(
+              NonEmptyList.one(
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now(),
+                  RejectedByOfficeOfDeparture,
+                  MessageStatus.Success
+                )
               ),
               "ie015MessageId"
             ),
@@ -865,16 +898,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         }
 
         "with one error " in {
-          val movementAndMessage = PrelodgeRejectedMovementAndMessage(
+          val movementAndMessage = PrelodgeRejectedMovementAndMessages(
             departureIdP5,
             lrn.value,
             LocalDateTime.now(),
-            LatestDepartureMessage(
-              DepartureMessage(
-                messageId,
-                LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                MessageStatus.Success
+            DepartureMovementMessages(
+              NonEmptyList.one(
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now(),
+                  RejectedByOfficeOfDeparture,
+                  MessageStatus.Success
+                )
               ),
               "ie015MessageId"
             ),
@@ -897,16 +932,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         }
 
         "with no FunctionalErrors" in {
-          val movementAndMessage = PrelodgeRejectedMovementAndMessage(
+          val movementAndMessage = PrelodgeRejectedMovementAndMessages(
             departureIdP5,
             lrn.value,
             LocalDateTime.now(),
-            LatestDepartureMessage(
-              DepartureMessage(
-                messageId,
-                LocalDateTime.now(),
-                RejectedByOfficeOfDeparture,
-                MessageStatus.Success
+            DepartureMovementMessages(
+              NonEmptyList.one(
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now(),
+                  RejectedByOfficeOfDeparture,
+                  MessageStatus.Success
+                )
               ),
               "ie015MessageId"
             ),
@@ -931,59 +968,111 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
     "when given Message with head of goodsUnderControl" - {
 
-      "when prelodged" in {
+      "when prelodged" - {
 
-        val movementAndMessage = DepartureMovementAndMessage(
-          departureIdP5,
-          lrn.value,
-          LocalDateTime.now(),
-          LatestDepartureMessage(
-            DepartureMessage(
-              messageId,
-              LocalDateTime.now(),
-              GoodsUnderControl,
-              MessageStatus.Success
-            ),
-            "ie015MessageId"
-          ),
-          isPrelodged = true
-        )
+        "and IE170 not yet submitted" in {
 
-        val result = DepartureStatusP5ViewModel(movementAndMessage)
+          val movementAndMessage = DepartureMovementAndMessages(
+            departureIdP5,
+            lrn.value,
+            LocalDateTime.now(),
+            DepartureMovementMessages(
+              NonEmptyList.one(
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now(),
+                  GoodsUnderControl,
+                  MessageStatus.Success
+                )
+              ),
+              "ie015MessageId"
+            ),
+            isPrelodged = true
+          )
 
-        val expectedResult = DepartureStatusP5ViewModel(
-          "movement.status.P5.goodsUnderControl",
-          Seq(
-            ViewMovementAction(
-              controllers.departureP5.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url,
-              "movement.status.P5.action.goodsUnderControl.viewDetails"
-            ),
-            ViewMovementAction(
-              s"${frontendAppConfig.p5Cancellation}/$departureIdP5/index/$lrn",
-              "movement.status.P5.action.goodsUnderControl.cancelDeclaration"
-            ),
-            ViewMovementAction(
-              s"${frontendAppConfig.presentationNotificationFrontendUrl(departureIdP5)}",
-              "movement.status.P5.action.goodsUnderControl.completeDeclaration"
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.goodsUnderControl",
+            Seq(
+              ViewMovementAction(
+                controllers.departureP5.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url,
+                "movement.status.P5.action.goodsUnderControl.viewDetails"
+              ),
+              ViewMovementAction(
+                s"${frontendAppConfig.p5Cancellation}/$departureIdP5/index/$lrn",
+                "movement.status.P5.action.goodsUnderControl.cancelDeclaration"
+              ),
+              ViewMovementAction(
+                s"${frontendAppConfig.presentationNotificationFrontendUrl(departureIdP5)}",
+                "movement.status.P5.action.goodsUnderControl.completeDeclaration"
+              )
             )
           )
-        )
 
-        result `mustBe` expectedResult
+          result `mustBe` expectedResult
+        }
+
+        "and IE170 already submitted" in {
+
+          val movementAndMessage = DepartureMovementAndMessages(
+            departureIdP5,
+            lrn.value,
+            LocalDateTime.now(),
+            DepartureMovementMessages(
+              NonEmptyList.of(
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now(),
+                  GoodsUnderControl,
+                  MessageStatus.Success
+                ),
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now().minusDays(1),
+                  PrelodgedDeclarationSent,
+                  MessageStatus.Success
+                )
+              ),
+              "ie015MessageId"
+            ),
+            isPrelodged = true
+          )
+
+          val result = DepartureStatusP5ViewModel(movementAndMessage)
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.goodsUnderControl",
+            Seq(
+              ViewMovementAction(
+                controllers.departureP5.routes.GoodsUnderControlIndexController.onPageLoad(departureIdP5, messageId).url,
+                "movement.status.P5.action.goodsUnderControl.viewDetails"
+              ),
+              ViewMovementAction(
+                s"${frontendAppConfig.p5Cancellation}/$departureIdP5/index/$lrn",
+                "movement.status.P5.action.goodsUnderControl.cancelDeclaration"
+              )
+            )
+          )
+
+          result `mustBe` expectedResult
+        }
       }
 
       "when not prelodged" in {
 
-        val movementAndMessage = DepartureMovementAndMessage(
+        val movementAndMessage = DepartureMovementAndMessages(
           departureIdP5,
           lrn.value,
           LocalDateTime.now(),
-          LatestDepartureMessage(
-            DepartureMessage(
-              messageId,
-              LocalDateTime.now(),
-              GoodsUnderControl,
-              MessageStatus.Success
+          DepartureMovementMessages(
+            NonEmptyList.one(
+              DepartureMessage(
+                messageId,
+                LocalDateTime.now(),
+                GoodsUnderControl,
+                MessageStatus.Success
+              )
             ),
             "ie015MessageId"
           ),
@@ -1019,16 +1108,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
         "and containing multiple incidents" in {
           running(app) {
-            val movementAndMessage = IncidentMovementAndMessage(
+            val movementAndMessage = IncidentMovementAndMessages(
               departureIdP5,
               lrn.value,
               LocalDateTime.now(),
-              LatestDepartureMessage(
-                DepartureMessage(
-                  messageId,
-                  LocalDateTime.now(),
-                  IncidentDuringTransit,
-                  MessageStatus.Success
+              DepartureMovementMessages(
+                NonEmptyList.one(
+                  DepartureMessage(
+                    messageId,
+                    LocalDateTime.now(),
+                    IncidentDuringTransit,
+                    MessageStatus.Success
+                  )
                 ),
                 "messageId"
               ),
@@ -1053,16 +1144,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
         "and containing one incident" in {
 
-          val movementAndMessage = IncidentMovementAndMessage(
+          val movementAndMessage = IncidentMovementAndMessages(
             departureIdP5,
             lrn.value,
             LocalDateTime.now(),
-            LatestDepartureMessage(
-              DepartureMessage(
-                messageId,
-                LocalDateTime.now(),
-                IncidentDuringTransit,
-                MessageStatus.Success
+            DepartureMovementMessages(
+              NonEmptyList.one(
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now(),
+                  IncidentDuringTransit,
+                  MessageStatus.Success
+                )
               ),
               "messageId"
             ),
@@ -1094,16 +1187,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         running(app) {
           forAll(arbitrary[Boolean]) {
             hasMultipleIncidents =>
-              val movementAndMessage = IncidentMovementAndMessage(
+              val movementAndMessage = IncidentMovementAndMessages(
                 departureIdP5,
                 lrn.value,
                 LocalDateTime.now(),
-                LatestDepartureMessage(
-                  DepartureMessage(
-                    messageId,
-                    LocalDateTime.now(),
-                    IncidentDuringTransit,
-                    MessageStatus.Success
+                DepartureMovementMessages(
+                  NonEmptyList.one(
+                    DepartureMessage(
+                      messageId,
+                      LocalDateTime.now(),
+                      IncidentDuringTransit,
+                      MessageStatus.Success
+                    )
                   ),
                   "messageId"
                 ),
@@ -1127,16 +1222,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       "when prelodged" in {
 
-        val movementAndMessage = DepartureMovementAndMessage(
+        val movementAndMessage = DepartureMovementAndMessages(
           departureIdP5,
           lrn.value,
           LocalDateTime.now(),
-          LatestDepartureMessage(
-            DepartureMessage(
-              messageId,
-              LocalDateTime.now(),
-              DeclarationSent,
-              MessageStatus.Success
+          DepartureMovementMessages(
+            NonEmptyList.one(
+              DepartureMessage(
+                messageId,
+                LocalDateTime.now(),
+                DeclarationSent,
+                MessageStatus.Success
+              )
             ),
             "ie015MessageId"
           ),
@@ -1168,16 +1265,18 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       "when not prelodged" in {
 
-        val movementAndMessage = DepartureMovementAndMessage(
+        val movementAndMessage = DepartureMovementAndMessages(
           departureIdP5,
           lrn.value,
           LocalDateTime.now(),
-          LatestDepartureMessage(
-            DepartureMessage(
-              messageId,
-              LocalDateTime.now(),
-              DeclarationSent,
-              MessageStatus.Success
+          DepartureMovementMessages(
+            NonEmptyList.one(
+              DepartureMessage(
+                messageId,
+                LocalDateTime.now(),
+                DeclarationSent,
+                MessageStatus.Success
+              )
             ),
             "ie015MessageId"
           ),

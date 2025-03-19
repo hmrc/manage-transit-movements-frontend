@@ -70,7 +70,7 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours {
 
                   s"when row $rowIndex" - {
                     "must display correct value for first column" in {
-                      cells.head.text() mustBe movement.updated
+                      cells.head.text() mustBe movement.updatedTimeFormatted
                     }
 
                     "must display correct value for second column" in {

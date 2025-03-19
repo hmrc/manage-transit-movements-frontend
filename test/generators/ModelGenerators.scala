@@ -53,20 +53,11 @@ trait ModelGenerators {
     } yield LocalTime.of(hours, minutes)
   }
 
-  def dateTimesBetween(min: LocalDateTime, max: LocalDateTime): Gen[LocalDateTime] = {
-    def toMillis(date: LocalDateTime): Long =
-      date.atZone(ZoneOffset.UTC).toInstant.toEpochMilli
-    Gen.choose(toMillis(min), toMillis(max)).map {
-      millis =>
-        Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).toLocalDateTime
-    }
-  }
-
   implicit lazy val arbitraryLocalDateTime: Arbitrary[LocalDateTime] = Arbitrary {
-    dateTimesBetween(
-      LocalDateTime.of(1900, 1, 1, 0, 0, 0),
-      LocalDateTime.of(2100, 1, 1, 0, 0, 0)
-    )
+    for {
+      date <- arbitrary[LocalDate]
+      time <- arbitrary[LocalTime]
+    } yield LocalDateTime.of(date, time)
   }
 
   implicit lazy val arbitraryArrivalId: Arbitrary[ArrivalId] =
