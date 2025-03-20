@@ -50,17 +50,13 @@ config: FrontendAppConfig
         @answerSections(intentionToControlP5ViewModel.sections)
         <h2 class="govuk-heading-m" id="subheading">@messages("goodsUnderControl.subHeading")</h2>
 
-        @if(intentionToControlP5ViewModel.requestedDocuments) {
-            <div id="what-happens-next-block">
-                <p class="govuk-body" id="what-happens-next">@messages("departure.ie060.message.requestedDocuments.prelodged.whatHappensNext")</p>
+        <div id="what-happens-next-block">
+            <p class="govuk-body" id="what-happens-next">@messages("departure.ie060.message.requestedDocuments.prelodged.whatHappensNext")</p>
 
-                @button(
-                    attributes = Map("id" -> "submit"),
-                    messageKey = messages("departure.ie060.message.requestedDocuments.prelodged.button")
-                )
-            </div>
-        }else{
-            <p class="govuk-body" id="link-text">@intentionToControlP5ViewModel.type0LinkPrefix <a id="view-all-declarations" href="@intentionToControlP5ViewModel.type0ParagraphLink">@intentionToControlP5ViewModel.type0LinkText</a> @intentionToControlP5ViewModel.type0LinkTextSuffix</p>
-        }
+            @button(
+                attributes = Map("id" -> "submit"),
+                messageKey = messages("departure.ie060.message.requestedDocuments.prelodged.button")
+            )
+        </div>
     }
 }

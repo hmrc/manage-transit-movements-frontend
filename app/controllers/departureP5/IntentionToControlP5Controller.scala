@@ -42,7 +42,7 @@ class IntentionToControlP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  private def intentionToControlOnPageLoad(departureId: String, messageId: String): Action[AnyContent] =
+  def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.identify() andThen messageRetrievalAction[CC060CType](departureId, messageId)).async {
       implicit request =>
         val customsOfficeId = request.messageData.CustomsOfficeOfDeparture.referenceNumber
@@ -54,10 +54,6 @@ class IntentionToControlP5Controller @Inject() (
             Ok(view(intentionToControlP5ViewModel, departureId, messageId))
         }
     }
-
-  def noInformationRequested(departureId: String, messageId: String): Action[AnyContent] = intentionToControlOnPageLoad(departureId, messageId)
-
-  def informationRequested(departureId: String, messageId: String): Action[AnyContent] = intentionToControlOnPageLoad(departureId, messageId)
 
   def onSubmit(departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.identify() andThen messageRetrievalAction[CC060CType](departureId, messageId)) {

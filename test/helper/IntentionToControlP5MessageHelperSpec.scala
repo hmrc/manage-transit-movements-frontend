@@ -17,7 +17,7 @@
 package helper
 
 import base.SpecBase
-import generated._
+import generated.*
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -26,10 +26,9 @@ import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
 import scalaxb.XMLCalendar
 import services.ReferenceDataService
-import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
+import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.*
 import utils.IntentionToControlP5MessageHelper
-import viewModels.sections.Section.StaticSection
 
 class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
   val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
@@ -47,7 +46,7 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
             x.copy(TransitOperation = x.TransitOperation.copy(LRN = None))
         }) {
           message =>
-            val helper = new IntentionToControlP5MessageHelper(message)
+            val helper = new IntentionToControlP5MessageHelper(message, fakeCustomsOffice)
 
             val result = helper.buildLRNRow
 
@@ -63,7 +62,7 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
                 x.copy(TransitOperation = x.TransitOperation.copy(LRN = Some(lrn)))
             }) {
               message =>
-                val helper = new IntentionToControlP5MessageHelper(message)
+                val helper = new IntentionToControlP5MessageHelper(message, fakeCustomsOffice)
 
                 val result = helper.buildLRNRow
 
@@ -81,7 +80,7 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
             x.copy(TransitOperation = x.TransitOperation.copy(MRN = None))
         }) {
           message =>
-            val helper = new IntentionToControlP5MessageHelper(message)
+            val helper = new IntentionToControlP5MessageHelper(message, fakeCustomsOffice)
 
             val result = helper.buildMRNRow
 
@@ -97,7 +96,7 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
                 x.copy(TransitOperation = x.TransitOperation.copy(MRN = Some(mrn)))
             }) {
               message =>
-                val helper = new IntentionToControlP5MessageHelper(message)
+                val helper = new IntentionToControlP5MessageHelper(message, fakeCustomsOffice)
 
                 val result = helper.buildMRNRow
 
@@ -118,7 +117,7 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
             x.copy(TransitOperation = x.TransitOperation.copy(controlNotificationDateAndTime = controlNotificationDateAndTime))
         }) {
           message =>
-            val helper = new IntentionToControlP5MessageHelper(message)
+            val helper = new IntentionToControlP5MessageHelper(message, fakeCustomsOffice)
 
             val result = helper.buildDateTimeControlRow
 
@@ -128,55 +127,20 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
       }
     }
 
-    "documentSection" - {
+    "buildOfficeOfDepartureRow" - {
 
-      "must return empty Sequence of Sections" in {
-        forAll(arbitrary[CC060CType].map {
-          _.copy(RequestedDocument = Nil)
-        }) {
+      "must return SummaryListRow" in {
+
+        forAll(arbitrary[CC060CType]) {
           message =>
-            val helper = new IntentionToControlP5MessageHelper(message)
+            val helper = new IntentionToControlP5MessageHelper(message, fakeCustomsOffice)
 
-            val result = helper.documentSection()
+            val result = helper.buildOfficeOfDepartureRow
 
-            result `mustBe` Seq.empty
-        }
-      }
-
-      "must return Sequence of Sections" in {
-        val requestedDocuments = Seq(
-          RequestedDocumentType(1, "44", None),
-          RequestedDocumentType(2, "45", Some("Desc1"))
-        )
-
-        forAll(arbitrary[CC060CType].map {
-          x =>
-            x
-              .copy(RequestedDocument = requestedDocuments)
-              .copy(CustomsOfficeOfDeparture = CustomsOfficeOfDepartureType03("22323323"))
-        }) {
-          message =>
-            val helper = new IntentionToControlP5MessageHelper(message)
-
-            val result = helper.documentSection()
-
-            val firstRow =
-              Seq(
-                SummaryListRow(key = Key("Document type".toText), value = Value("44".toText)),
-                SummaryListRow(key = Key("Office of departure".toText), value = Value("22323323".toText))
-              )
-
-            val secondRow = Seq(
-              SummaryListRow(key = Key("Document type".toText), value = Value("45".toText)),
-              SummaryListRow(key = Key("Office of departure".toText), value = Value("22323323".toText))
-            )
-
-            val seqSummaryRow = Seq(StaticSection(Some("Control information 1"), firstRow), StaticSection(Some("Control information 2"), secondRow))
-
-            result `mustBe` seqSummaryRow
+            result mustBe
+              Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("Customs Office (1234)".toText)))
         }
       }
     }
   }
-
 }

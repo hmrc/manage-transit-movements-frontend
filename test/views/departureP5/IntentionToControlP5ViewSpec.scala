@@ -33,7 +33,7 @@ class IntentionToControlP5ViewSpec extends CheckYourAnswersViewBehaviours with G
   override val prefix: String = "departure.ie060.message.prelodged"
 
   private val intentionToControlP5ViewModel: IntentionToControlP5ViewModel =
-    new IntentionToControlP5ViewModel(sections, false, Some(lrn.toString), customsOffice)
+    new IntentionToControlP5ViewModel(sections, Some(lrn.toString), customsOffice)
 
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
@@ -72,43 +72,22 @@ class IntentionToControlP5ViewSpec extends CheckYourAnswersViewBehaviours with G
 
   behave like pageWithSpecificContent(
     "paragraph1",
-    "Customs are intending to place this declaration under control while they carry out further checks. This is because of a possible risk to health and safety."
+    "Customs are intending to place this movement under control and have requested you complete your pre-lodged declaration."
   )
 
   behave like pageWithSpecificContent(
     "paragraph2",
-    "While under control, the goods will remain under supervision at the office of destination."
+    "While awaiting your response, the goods will remain under supervision at the office of destination."
   )
 
   behave like pageWithSpecificContent(
     "paragraph3",
-    "Once Customs have completed their checks, they will notify you with the outcome."
+    "Once Customs have reviewed the information you provide, they will notify you with the outcome."
   )
 
-  behave like pageWithSpecificContent(
-    "link-text",
-    "You must wait for the outcome of Customs’ checks. Check your departure declarations for further updates."
-  )
+  behave like pageWithSubmitButton("Complete pre-lodged declaration")
 
-  "must not render what happens next section" in {
-    assertNotRenderedById(doc, "what-happens-next")
-  }
-
-  "when documents requested" - {
-
-    val viewModel = intentionToControlP5ViewModel
-      .copy(requestedDocuments = true)
-
-    val document = parseView(
-      injector
-        .instanceOf[IntentionToControlP5View]
-        .apply(viewModel, departureIdP5, messageId)(fakeRequest, messages)
-    )
-
-    behave like pageWithSubmitButton(document, "Complete pre-lodged declaration")
-
-    "must render what happens next section" in {
-      assertRenderedById(document, "what-happens-next")
-    }
+  "must render what happens next section" in {
+    assertRenderedById(doc, "what-happens-next")
   }
 }

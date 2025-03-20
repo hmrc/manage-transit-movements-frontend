@@ -17,6 +17,7 @@
 package viewModels.P5.departure
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
+import config.Constants.NotificationType.*
 import generated.{CC060CType, RequestedDocumentType, TypeOfControlsType}
 import generators.Generators
 import models.referenceData.{ControlType, CustomsOffice, RequestedDocumentType as RequestedDocumentTypeRef}
@@ -51,72 +52,29 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
     val requestedDocument = Seq(RequestedDocumentType(1, "44", None))
 
     val requestedDocumentType = RequestedDocumentTypeRef("C620", "")
+    val x                     = arbitrary[CC060CType].sample.value
 
-    "when no requested documents" - {
+    val message = x.copy(TransitOperation = x.TransitOperation.copy(notificationType = IntentionToControl))
 
-      val x = arbitrary[CC060CType].sample.value
+    when(mockReferenceDataService.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType44))
+    when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(fakeCustomsOffice))
 
-      val message = x
-        .copy(TypeOfControls = typeOfControls)
-        .copy(RequestedDocument = Nil)
+    val viewModelProvider = new IntentionToControlP5ViewModelProvider()
+    val result            = viewModelProvider.apply(message, customsOffice)
 
-      when(mockReferenceDataService.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType44))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
-
-      val viewModelProvider = new IntentionToControlP5ViewModelProvider
-      val result            = viewModelProvider.apply(message, customsOffice)
-
-      "must return correct section length" in {
-        result.sections.length `mustBe` 1
-      }
-
-      "must return correct title and heading" in {
-        result.title `mustBe` messages("departure.ie060.message.prelodged.title")
-        result.heading `mustBe` messages("departure.ie060.message.prelodged.heading")
-      }
-      "must return correct paragraphs" in {
-        result.paragraph1 `mustBe` messages("departure.ie060.message.prelodged.paragraph1")
-        result.paragraph2 `mustBe` messages("departure.ie060.message.prelodged.paragraph2")
-        result.paragraph3 `mustBe` messages("departure.ie060.message.prelodged.paragraph3")
-      }
-      "must return correct end paragraph" in {
-        result.type0LinkPrefix `mustBe` messages("departure.ie060.message.paragraph4.prefix")
-        result.type0LinkText `mustBe` messages("departure.ie060.message.paragraph4.linkText")
-        result.type0LinkTextSuffix `mustBe` messages("departure.ie060.message.paragraph4.suffix")
-      }
+    "must return correct section length" in {
+      result.sections.length `mustBe` 1
     }
 
-    "when there is information requested" - {
-      val x = arbitrary[CC060CType].sample.value
+    "must return correct title and heading" in {
+      result.title `mustBe` messages("departure.ie060.message.prelodged.title")
+      result.heading `mustBe` messages("departure.ie060.message.prelodged.heading")
+    }
 
-      val message = x.copy(
-        TypeOfControls = typeOfControls,
-        RequestedDocument = requestedDocument
-      )
-
-      when(mockReferenceDataService.getControlType(any())(any(), any())).thenReturn(Future.successful(controlType44))
-      when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("22323323")))
-
-      val viewModelProvider = new IntentionToControlP5ViewModelProvider
-      val result            = viewModelProvider.apply(message, customsOffice)
-
-      "must not render type of control if present" in {
-        result.sections.length `mustBe` 2
-
-        result.sections(1).rows.size `mustBe` 2
-        result.sections(1).sectionTitle.value `mustBe` "Control information 1"
-      }
-
-      "must return correct title and heading" in {
-        result.title `mustBe` messages("departure.ie060.message.prelodged.requestedDocuments.title")
-        result.heading `mustBe` messages("departure.ie060.message.prelodged.requestedDocuments.heading")
-      }
-
-      "must return correct paragraphs" in {
-        result.paragraph1 `mustBe` messages("departure.ie060.message.requestedDocuments.prelodged.paragraph1")
-        result.paragraph2 `mustBe` messages("departure.ie060.message.requestedDocuments.prelodged.paragraph2")
-        result.paragraph3 `mustBe` messages("departure.ie060.message.requestedDocuments.prelodged.paragraph3")
-      }
+    "must return correct paragraphs" in {
+      result.paragraph1 `mustBe` messages("departure.ie060.message.prelodged.paragraph1")
+      result.paragraph2 `mustBe` messages("departure.ie060.message.prelodged.paragraph2")
+      result.paragraph3 `mustBe` messages("departure.ie060.message.prelodged.paragraph3")
     }
 
     "customsOfficeContent" - {
@@ -130,7 +88,7 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
       when(mockReferenceDataService.getRequestedDocumentType(any())(any(), any())).thenReturn(Future.successful(requestedDocumentType))
       when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(fakeCustomsOffice))
 
-      val viewModelProvider = new IntentionToControlP5ViewModelProvider
+      val viewModelProvider = new IntentionToControlP5ViewModelProvider()
 
       def viewModel(customsOffice: CustomsOffice): IntentionToControlP5ViewModel =
         viewModelProvider.apply(message, customsOffice)
