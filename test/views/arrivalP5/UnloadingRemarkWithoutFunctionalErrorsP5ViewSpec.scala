@@ -24,7 +24,7 @@ import views.html.arrivalP5.UnloadingRemarkWithoutFunctionalErrorsP5View
 class UnloadingRemarkWithoutFunctionalErrorsP5ViewSpec extends ViewBehaviours {
 
   private val unloadingNotificationErrorsP5ViewModel =
-    new UnloadingRemarkWithoutFunctionalErrorsP5ViewModel("AB123", Left("CD123"))
+    new UnloadingRemarkWithoutFunctionalErrorsP5ViewModel("AB123", fakeCustomsOffice)
 
   override def view: HtmlFormat.Appendable =
     injector
@@ -42,8 +42,6 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ViewSpec extends ViewBehaviours {
   behave like pageWithCaption("MRN: AB123")
 
   behave like pageWithContent("p", "There are one or more errors with the unloading remarks for this notification.")
-
-  behave like pageWithContent("p", "Try making the unloading remarks again. Or for more information, contact Customs office CD123.")
 
   behave like pageWithSubmitButton("Make unloading remarks")
 

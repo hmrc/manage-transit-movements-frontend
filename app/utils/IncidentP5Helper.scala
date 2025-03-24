@@ -55,30 +55,32 @@ class IncidentP5Helper(
   )
 
   def countryRow: Future[Option[SummaryListRow]] =
-    refDataService.getCountry(data.Location.country) map {
-      countryResponse =>
-        val countryToDisplay = countryResponse.fold[String](identity, _.description)
-        buildRowFromAnswer[String](
-          answer = Some(countryToDisplay),
-          formatAnswer = formatAsText,
-          prefix = "departure.notification.incident.index.country",
-          id = None,
-          call = None
-        )
-    }
+    refDataService
+      .getCountry(data.Location.country)
+      .map {
+        country =>
+          buildRowFromAnswer[String](
+            answer = Some(country.toString),
+            formatAnswer = formatAsText,
+            prefix = "departure.notification.incident.index.country",
+            id = None,
+            call = None
+          )
+      }
 
   def identifierTypeRow: Future[Option[SummaryListRow]] =
-    refDataService.getQualifierOfIdentification(data.Location.qualifierOfIdentification) map {
-      identificationResponse =>
-        val identification = identificationResponse.fold[String](identity, _.description)
-        buildRowFromAnswer[String](
-          answer = Some(identification),
-          formatAnswer = formatAsText,
-          prefix = "departure.notification.incident.index.identifierType",
-          id = None,
-          call = None
-        )
-    }
+    refDataService
+      .getQualifierOfIdentification(data.Location.qualifierOfIdentification)
+      .map {
+        qualifierOfIdentification =>
+          buildRowFromAnswer[String](
+            answer = Some(qualifierOfIdentification.description),
+            formatAnswer = formatAsText,
+            prefix = "departure.notification.incident.index.identifierType",
+            id = None,
+            call = None
+          )
+      }
 
   def coordinatesRow: Option[SummaryListRow] =
     buildRowFromAnswer[GNSSType](

@@ -18,18 +18,16 @@ package controllers.departureP5
 
 import config.FrontendAppConfig
 import controllers.actions.*
-import generated.CC060CType
+import generated.{CC060CType, Generated_CC060CTypeFormat}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReferenceDataService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.departure.CustomsOfficeContactViewModel
 import viewModels.P5.departure.IntentionToControlP5ViewModel.IntentionToControlP5ViewModelProvider
 import views.html.departureP5.IntentionToControlP5View
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
-import generated.Generated_CC060CTypeFormat
 
 class IntentionToControlP5Controller @Inject() (
   override val messagesApi: MessagesApi,
@@ -44,23 +42,18 @@ class IntentionToControlP5Controller @Inject() (
     extends FrontendController(cc)
     with I18nSupport {
 
-  private def intentionToControlOnPageLoad(departureId: String, messageId: String): Action[AnyContent] =
+  def onPageLoad(departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.identify() andThen messageRetrievalAction[CC060CType](departureId, messageId)).async {
       implicit request =>
         val customsOfficeId = request.messageData.CustomsOfficeOfDeparture.referenceNumber
 
         referenceDataService.getCustomsOffice(customsOfficeId).map {
           customsOffice =>
-            val intentionToControlP5ViewModel = viewModelProvider.apply(request.messageData)
-            val customsOfficeContactViewModel = CustomsOfficeContactViewModel(customsOffice)
+            val intentionToControlP5ViewModel = viewModelProvider.apply(request.messageData, customsOffice)
 
-            Ok(view(intentionToControlP5ViewModel, departureId, messageId, customsOfficeContactViewModel))
+            Ok(view(intentionToControlP5ViewModel, departureId, messageId))
         }
     }
-
-  def noInformationRequested(departureId: String, messageId: String): Action[AnyContent] = intentionToControlOnPageLoad(departureId, messageId)
-
-  def informationRequested(departureId: String, messageId: String): Action[AnyContent] = intentionToControlOnPageLoad(departureId, messageId)
 
   def onSubmit(departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.identify() andThen messageRetrievalAction[CC060CType](departureId, messageId)) {

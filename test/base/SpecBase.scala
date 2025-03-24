@@ -26,6 +26,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.Injector
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Content, Key, Value}
@@ -33,7 +34,16 @@ import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpResponse}
 
 import java.time.Clock
 
-trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValues with ScalaFutures with IntegrationPatience with AppWithDefaultMockFixtures {
+trait SpecBase
+    extends AnyFreeSpec
+    with Matchers
+    with OptionValues
+    with MockitoSugar
+    with EitherValues
+    with TryValues
+    with ScalaFutures
+    with IntegrationPatience
+    with AppWithDefaultMockFixtures {
 
   val configKey                 = "config"
   val lrn: LocalReferenceNumber = LocalReferenceNumber("ABCD1234567890123")
@@ -48,7 +58,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with OptionValues with TryValue
   val incidentIndex: Index           = Index(0)
   val transportEquipmentIndex: Index = Index(0)
 
-  val fakeCustomsOffice: CustomsOffice = CustomsOffice("1234", "Customs Office", Some("01234567"))
+  val fakeCustomsOffice: CustomsOffice = CustomsOffice("1234", "Customs Office", Some("01234567"), Some("test123@gmail.com"))
 
   val departureReferenceNumbers: DepartureReferenceNumbers = DepartureReferenceNumbers(lrn.value, None)
 

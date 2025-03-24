@@ -292,18 +292,12 @@ departure.ie060.message.paragraph4.prefix = You must wait for the outcome of Cus
 departure.ie060.message.paragraph4.linkText = Check your departure declarations
 departure.ie060.message.paragraph4.suffix = for further updates.
 
-departure.ie060.message.prelodged.requestedDocuments.title = Intention to control - complete pre-lodged declaration
-departure.ie060.message.prelodged.requestedDocuments.heading = Intention to control - complete pre-lodged declaration
-departure.ie060.message.prelodged.title = Intention to control
-departure.ie060.message.prelodged.heading = Intention to control
+departure.ie060.message.prelodged.title = Intention to control - complete pre-lodged declaration
+departure.ie060.message.prelodged.heading = Intention to control - complete pre-lodged declaration
 
-departure.ie060.message.requestedDocuments.prelodged.paragraph1 = Customs are intending to place this movement under control and have requested you complete your pre-lodged declaration.
-departure.ie060.message.requestedDocuments.prelodged.paragraph2 = While awaiting your response, the goods will remain under supervision at the office of destination.
-departure.ie060.message.requestedDocuments.prelodged.paragraph3 = Once Customs have reviewed the information you provide, they will notify you with the outcome.
-
-departure.ie060.message.prelodged.paragraph1 = Customs are intending to place this declaration under control while they carry out further checks. This is because of a possible risk to health and safety.
-departure.ie060.message.prelodged.paragraph2 = While under control, the goods will remain under supervision at the office of destination.
-departure.ie060.message.prelodged.paragraph3 = Once Customs have completed their checks, they will notify you with the outcome.
+departure.ie060.message.prelodged.paragraph1 = Customs are intending to place this movement under control and have requested you complete your pre-lodged declaration.
+departure.ie060.message.prelodged.paragraph2 = While awaiting your response, the goods will remain under supervision at the office of destination.
+departure.ie060.message.prelodged.paragraph3 = Once Customs have reviewed the information you provide, they will notify you with the outcome.
 
 departure.ie060.message.requestedDocuments.prelodged.whatHappensNext = You must complete your pre-lodged declaration.
 departure.ie060.message.requestedDocuments.prelodged.button = Complete pre-lodged declaration
@@ -324,10 +318,10 @@ row.label.description =  Description
 
 goodsUnderControl.subHeading = What happens next
 
-customsOfficeContact.telephoneAvailable = You must share the requested documentation with the office of destination. Contact Customs at {0} on {1}.
-customsOfficeContact.telephoneNotAvailable = You must share the requested documentation with the office of destination. Contact Customs at {0}.
-customsOfficeContact.teleAvailAndOfficeNameNotAvail = You must share the requested documentation with the office of destination. Contact Customs office {0} on {1}.
-customsOfficeContact.teleNotAvailAndOfficeNameNotAvail = You must share the requested documentation with the office of destination. Contact Customs office {0}.
+customsOfficeContact.telephoneAndEmailAvailable = You must share the requested documentation with the customs office of departure. Contact Customs at {0} ({1}) on {2} or {3}.
+customsOfficeContact.telephoneNotAvailable = You must share the requested documentation with the customs office of departure. Contact Customs at {0} ({1}) on {2}.
+customsOfficeContact.emailNotAvailable = You must share the requested documentation with the customs office of departure. Contact Customs at {0} ({1}) on {2}.
+customsOfficeContact.telephoneAndEmailNotAvailable = You must share the requested documentation with the customs office of departure. Contact Customs at {0} ({1}).
 
 departure.ie056.message.title = Amend declaration errors
 departure.ie056.message.heading = Amend declaration errors

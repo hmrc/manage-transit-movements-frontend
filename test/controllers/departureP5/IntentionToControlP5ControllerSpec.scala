@@ -17,9 +17,10 @@
 package controllers.departureP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import generated._
+import config.Constants.NotificationType.*
+import generated.*
 import generators.Generators
-import models.departureP5._
+import models.departureP5.*
 import models.referenceData.CustomsOffice
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -28,10 +29,10 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{DepartureP5MessageService, ReferenceDataService}
+import viewModels.P5.departure.IntentionToControlP5ViewModel
 import viewModels.P5.departure.IntentionToControlP5ViewModel.IntentionToControlP5ViewModelProvider
-import viewModels.P5.departure.{CustomsOfficeContactViewModel, IntentionToControlP5ViewModel}
 import views.html.departureP5.IntentionToControlP5View
 
 import scala.concurrent.Future
@@ -62,55 +63,23 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
 
   "IntentionToControlP5Controller Controller" - {
 
-    "must return OK and the correct view for a GET when informationRequested" in {
-      forAll(listWithMaxLength[RequestedDocumentType]()) {
-        requestedDocuments =>
-          forAll(arbitrary[CC060CType].map(_.copy(RequestedDocument = requestedDocuments))) {
-            message =>
-              val intentionToControlInformationRequestedController: String =
-                controllers.departureP5.routes.IntentionToControlP5Controller.informationRequested(departureIdP5, messageId).url
-
-              when(mockDepartureP5MessageService.getMessage[CC060CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
-              when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
-                .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
-              when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Right(customsOffice)))
-              when(mockIntentionToControlP5ViewModelProvider.apply(any())(any()))
-                .thenReturn(IntentionToControlP5ViewModel(sections, requestedDocuments = true, Some(lrn.toString)))
-
-              val intentionToControlP5ViewModel = new IntentionToControlP5ViewModel(sections, true, Some(lrn.toString))
-              val customsOfficeContactViewModel = CustomsOfficeContactViewModel(Right(customsOffice))
-
-              val request = FakeRequest(GET, intentionToControlInformationRequestedController)
-
-              val result = route(app, request).value
-
-              status(result) mustEqual OK
-
-              val view = injector.instanceOf[IntentionToControlP5View]
-
-              contentAsString(result) mustEqual
-                view(intentionToControlP5ViewModel, departureIdP5, messageId, customsOfficeContactViewModel)(request, messages).toString
-          }
-      }
-    }
-
-    "must return OK and the correct view for a GET when noInformationRequested" in {
+    "must return OK and the correct view for a GET" in {
       forAll(arbitrary[CC060CType].map {
-        _.copy(RequestedDocument = Nil)
+        x =>
+          x.copy(TransitOperation = x.TransitOperation.copy(notificationType = IntentionToControl))
       }) {
         message =>
           val intentionToControlInformationRequestedController: String =
-            controllers.departureP5.routes.IntentionToControlP5Controller.noInformationRequested(departureIdP5, messageId).url
+            controllers.departureP5.routes.IntentionToControlP5Controller.onPageLoad(departureIdP5, messageId).url
 
           when(mockDepartureP5MessageService.getMessage[CC060CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
             .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
-          when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Right(customsOffice)))
-          when(mockIntentionToControlP5ViewModelProvider.apply(any())(any()))
-            .thenReturn(IntentionToControlP5ViewModel(sections, requestedDocuments = false, Some(lrn.toString)))
+          when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
+          when(mockIntentionToControlP5ViewModelProvider.apply(any(), any())(any()))
+            .thenReturn(IntentionToControlP5ViewModel(sections, Some(lrn.toString), customsOffice))
 
-          val intentionToControlP5ViewModel = new IntentionToControlP5ViewModel(sections, false, Some(lrn.toString))
-          val customsOfficeContactViewModel = CustomsOfficeContactViewModel(Right(customsOffice))
+          val intentionToControlP5ViewModel = new IntentionToControlP5ViewModel(sections, Some(lrn.toString), customsOffice)
 
           val request = FakeRequest(GET, intentionToControlInformationRequestedController)
 
@@ -121,7 +90,7 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
           val view = injector.instanceOf[IntentionToControlP5View]
 
           contentAsString(result) mustEqual
-            view(intentionToControlP5ViewModel, departureIdP5, messageId, customsOfficeContactViewModel)(request, messages).toString
+            view(intentionToControlP5ViewModel, departureIdP5, messageId)(request, messages).toString
       }
     }
 
@@ -129,7 +98,7 @@ class IntentionToControlP5ControllerSpec extends SpecBase with AppWithDefaultMoc
       forAll(arbitrary[CC060CType]) {
         message =>
           val intentionToControlInformationRequestedController: String =
-            controllers.departureP5.routes.IntentionToControlP5Controller.informationRequested(departureIdP5, messageId).url
+            controllers.departureP5.routes.IntentionToControlP5Controller.onPageLoad(departureIdP5, messageId).url
 
           when(mockDepartureP5MessageService.getMessage[CC060CType](any(), any())(any(), any(), any())).thenReturn(Future.successful(message))
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))

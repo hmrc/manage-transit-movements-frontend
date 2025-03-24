@@ -16,38 +16,36 @@
 
 package viewModels
 
+import models.RichSeq
 import utils.Format
 
-import java.time.chrono.ChronoLocalDate
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalTime}
+import java.time.{LocalDate, LocalDateTime, LocalTime}
 
 trait ViewMovement {
-  val updatedDate: LocalDate
-  val updatedTime: LocalTime
+  val updatedDateTime: LocalDateTime
   val referenceNumber: String
   val status: String
   val actions: Seq[ViewMovementAction]
 
-  val updated: String = updatedTime
-    .format(DateTimeFormatter.ofPattern("h:mma"))
-    .toLowerCase
+  val updatedDate: LocalDate = updatedDateTime.toLocalDate
+  val updatedTime: LocalTime = updatedDateTime.toLocalTime
 
+  val updatedTimeFormatted: String = Format.formatMovementUpdatedTime(updatedTime)
 }
 
 object ViewMovement {
 
+  implicit def ordering[T <: ViewMovement]: Ordering[T] =
+    Ordering.by[T, LocalDateTime](_.updatedDateTime).reverse
+
   implicit class RichViewMovements[T <: ViewMovement](value: Seq[T]) {
 
-    def groupByDate: Seq[(String, Seq[T])] = {
-      implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(identity[ChronoLocalDate])
-
-      val groupMovements: Map[LocalDate, Seq[T]] = value.groupBy(_.updatedDate)
-      val sortByDate: Seq[(LocalDate, Seq[T])]   = groupMovements.toSeq.sortBy(_._1).reverse
-      sortByDate.map {
-        result =>
-          (Format.formatMovementUpdatedDate(result._1), result._2.sortBy(_.updatedTime).reverse)
-      }
-    }
+    def groupByDate: Seq[(String, Seq[T])] =
+      value.sorted
+        .groupByPreserveOrder(_.updatedDate)
+        .map {
+          result =>
+            (Format.formatMovementUpdatedDate(result._1), result._2.toSeq)
+        }
   }
 }

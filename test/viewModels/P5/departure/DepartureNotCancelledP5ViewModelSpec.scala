@@ -60,7 +60,7 @@ class DepartureNotCancelledP5ViewModelSpec extends SpecBase with ScalaCheckPrope
 
     val viewModelProvider = new DepartureNotCancelledP5ViewModelProvider(mockReferenceDataService)
 
-    when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left(customsReferenceId)))
+    when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(fakeCustomsOffice))
 
     val viewModel: DepartureNotCancelledP5ViewModel = viewModelProvider.apply(message, departureIdP5, lrn).futureValue
 
@@ -97,5 +97,4 @@ class DepartureNotCancelledP5ViewModelSpec extends SpecBase with ScalaCheckPrope
       }
     }
   }
-
 }

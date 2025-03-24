@@ -17,8 +17,8 @@
 package utils
 
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, LocalTime}
 import javax.xml.datatype.XMLGregorianCalendar
 
 object Format {
@@ -26,6 +26,11 @@ object Format {
   def formatMovementUpdatedDate(movementUpdatedDate: LocalDate): String = {
     val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
     movementUpdatedDate.format(formatter)
+  }
+
+  def formatMovementUpdatedTime(movementUpdatedTime: LocalTime): String = {
+    val formatter = DateTimeFormatter.ofPattern("h:mma")
+    movementUpdatedTime.format(formatter).toLowerCase
   }
 
   def formatDeclarationAcceptanceDate(declarationAcceptanceDate: XMLGregorianCalendar): String = {

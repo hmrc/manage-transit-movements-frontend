@@ -17,6 +17,7 @@
 package views.departureP5
 
 import generators.Generators
+import models.referenceData.CustomsOffice
 import play.twirl.api.HtmlFormat
 import viewModels.P5.departure.DepartureCancelledP5ViewModel
 import viewModels.sections.Section
@@ -30,7 +31,7 @@ class DepartureCancelledP5ViewSpec extends CheckYourAnswersViewBehaviours with G
   override def viewWithSections(sections: Seq[Section]): HtmlFormat.Appendable =
     injector
       .instanceOf[DepartureCancelledP5View]
-      .apply(DepartureCancelledP5ViewModel(sections, "AB123", Left("CD123")))(fakeRequest, messages, frontendAppConfig)
+      .apply(DepartureCancelledP5ViewModel(sections, "AB123", CustomsOffice("CD123", "", None, None)))(fakeRequest, messages, frontendAppConfig)
 
   behave like pageWithTitle()
 

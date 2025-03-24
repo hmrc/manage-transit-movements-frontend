@@ -31,7 +31,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase wit
 
     val viewModelProvider = new UnloadingRemarkWithoutFunctionalErrorsP5ViewModelProvider()
 
-    def viewModel(customsOffice: Either[String, CustomsOffice] = Left(customsReferenceId)): UnloadingRemarkWithoutFunctionalErrorsP5ViewModel =
+    def viewModel(customsOffice: CustomsOffice = fakeCustomsOffice): UnloadingRemarkWithoutFunctionalErrorsP5ViewModel =
       viewModelProvider.apply(mrn, customsOffice)
 
     "title" - {
@@ -54,18 +54,12 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase wit
 
     "customsOfficeContent" - {
 
-      "when no customs office found" - {
-        "must return correct message" in {
-          viewModel().customsOfficeContent mustBe
-            s"Try making the unloading remarks again. Or for more information, contact Customs office $customsReferenceId."
-        }
-      }
-
       "when customs office found with telephone number and name" - {
         "must return correct message" in {
           val customsOfficeName = "custName"
           val telephoneNo       = Some("123")
-          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
+          val email             = Some("test123@email.com")
+          val result            = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo, email)).customsOfficeContent
 
           result `mustBe` s"Try making the unloading remarks again. Or for more information, contact Customs at $customsOfficeName on ${telephoneNo.get}."
         }
@@ -74,7 +68,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase wit
       "when customs office found with name and no telephone number" - {
         "must return correct message" in {
           val customsOfficeName = "custName"
-          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
+          val result            = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, None, None)).customsOfficeContent
 
           result `mustBe` s"Try making the unloading remarks again. Or for more information, contact Customs at $customsOfficeName."
         }
@@ -84,7 +78,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase wit
         "must return correct message" in {
           val customsOfficeName = ""
           val telephoneNo       = Some("123")
-          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo))).customsOfficeContent
+          val result            = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo, None)).customsOfficeContent
 
           result `mustBe` s"Try making the unloading remarks again. Or for more information, contact Customs office $customsReferenceId on ${telephoneNo.get}."
         }
@@ -93,7 +87,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase wit
       "when customs office found with no telephone number and empty name" - {
         "must return correct message" in {
           val customsOfficeName = ""
-          val result            = viewModel(customsOffice = Right(CustomsOffice(customsReferenceId, customsOfficeName, None))).customsOfficeContent
+          val result            = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, None, None)).customsOfficeContent
 
           result `mustBe` s"Try making the unloading remarks again. Or for more information, contact Customs office $customsReferenceId."
         }

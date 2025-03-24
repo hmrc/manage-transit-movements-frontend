@@ -29,7 +29,7 @@ button: Button,
 formHelper: FormWithCSRF
 )
 
-@(goodsUnderControlP5ViewModel: GoodsUnderControlP5ViewModel, departureId: String, customsOfficeContactViewModel: CustomsOfficeContactViewModel)(implicit request: Request[?], messages: Messages)
+@(goodsUnderControlP5ViewModel: GoodsUnderControlP5ViewModel, departureId: String)(implicit request: Request[?], messages: Messages)
 
     @mainTemplate(
         title = goodsUnderControlP5ViewModel.title,
@@ -50,7 +50,7 @@ formHelper: FormWithCSRF
     <h2 class="govuk-heading-m" id="subheading">@messages("goodsUnderControl.subHeading")</h2>
 
     @if(goodsUnderControlP5ViewModel.requestedDocuments) {
-        <p class="govuk-body" id="what-happens-next">@customsOfficeContactViewModel.customsOfficeContent</p>
+        <p class="govuk-body" id="what-happens-next">@goodsUnderControlP5ViewModel.customsOfficeContent</p>
     }else{
         <p class="govuk-body" id="link-text">@goodsUnderControlP5ViewModel.type0LinkPrefix <a id="view-all-declarations" href="@goodsUnderControlP5ViewModel.type0ParagraphLink">@goodsUnderControlP5ViewModel.type0LinkText</a> @goodsUnderControlP5ViewModel.type0LinkTextSuffix</p>
     }

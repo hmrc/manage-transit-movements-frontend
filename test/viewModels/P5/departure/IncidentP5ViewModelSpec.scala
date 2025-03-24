@@ -55,20 +55,19 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
     when(mockReferenceDataService.getIncidentCode(any())(any(), any()))
       .thenReturn(Future.successful(incident))
     when(mockReferenceDataService.getCountry(any())(any(), any()))
-      .thenReturn(Future.successful(Right(country)))
+      .thenReturn(Future.successful(country))
     when(mockReferenceDataService.getQualifierOfIdentification(any())(any(), any()))
-      .thenReturn(Future.successful(Right(identification)))
+      .thenReturn(Future.successful(identification))
     when(mockReferenceDataService.getNationality(any())(any(), any()))
-      .thenReturn(Future.successful(Right(nationality)))
+      .thenReturn(Future.successful(nationality))
     when(mockReferenceDataService.getIdentificationType(any())(any(), any()))
-      .thenReturn(Future.successful(Right(identificationType)))
+      .thenReturn(Future.successful(identificationType))
   }
 
   "IncidentP5ViewModel" - {
 
-    val mrn                = "AB123"
-    val lrn                = "LRN123"
-    val customsReferenceId = "CD123"
+    val mrn = "AB123"
+    val lrn = "LRN123"
 
     val departureReferenceNumbers = DepartureReferenceNumbers(lrn, Some(mrn))
 
@@ -78,10 +77,12 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
     def viewModel(
       cc182Data: CC182CType = cc182Data,
-      customsOffice: Either[String, CustomsOffice] = Left(customsReferenceId),
+      customsOffice: CustomsOffice = fakeCustomsOffice,
       isMultipleIncidents: Boolean = true
     ): IncidentP5ViewModel =
-      viewModelProvider.apply(cc182Data, mockReferenceDataService, departureReferenceNumbers, customsOffice, isMultipleIncidents, incidentIndex).futureValue
+      viewModelProvider
+        .apply(cc182Data, mockReferenceDataService, departureReferenceNumbers, customsOffice, isMultipleIncidents, incidentIndex)
+        .futureValue
 
     "viewModel must have all sections when all defined in incident" in {
       val updatedIncident = arbitraryIncidentType03.arbitrary.sample.value.copy(

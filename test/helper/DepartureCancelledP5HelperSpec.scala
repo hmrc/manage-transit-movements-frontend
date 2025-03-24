@@ -17,10 +17,11 @@
 package helper
 
 import base.SpecBase
-import generated._
+import connectors.ReferenceDataConnector.NoReferenceDataFoundException
+import generated.*
 import generators.Generators
 import models.referenceData.CustomsOffice
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -29,8 +30,8 @@ import play.api
 import play.api.inject.guice.GuiceApplicationBuilder
 import scalaxb.XMLCalendar
 import services.ReferenceDataService
-import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
+import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.*
 import utils.DepartureCancelledP5Helper
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -162,7 +163,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
             }) {
               message =>
                 when(mockReferenceDataService.getCustomsOffice(eqTo(customsOfficeId))(any(), any()))
-                  .thenReturn(Future.successful(Right(CustomsOffice("GB00060", "BOSTON", None))))
+                  .thenReturn(Future.successful(CustomsOffice("GB00060", "BOSTON", None, None)))
 
                 val helper = new DepartureCancelledP5Helper(message, mockReferenceDataService)
 
@@ -174,19 +175,20 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
         }
       }
 
-      "must return SummaryListRow with code" - {
+      "must throw an exception" - {
         "when customs office returns None" in {
           forAll(arbitrary[CC009CType]) {
             message =>
+              val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
+
               when(mockReferenceDataService.getCustomsOffice(any())(any(), any()))
-                .thenReturn(Future.successful(Left("GB00060")))
+                .thenReturn(Future.failed(new NoReferenceDataFoundException("")))
 
               val helper = new DepartureCancelledP5Helper(message, mockReferenceDataService)
 
-              val result = helper.buildOfficeOfDepartureRow.futureValue
-
-              result mustBe
-                Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("GB00060".toText)))
+              whenReady(helper.buildOfficeOfDepartureRow.failed) {
+                result => result mustBe a[NoReferenceDataFoundException]
+              }
           }
         }
       }
@@ -244,7 +246,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
               .copy(CustomsOfficeOfDeparture = CustomsOfficeOfDepartureType03("22323323"))
         }) {
           message =>
-            when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Left("1234")))
+            when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(fakeCustomsOffice))
 
             val helper = new DepartureCancelledP5Helper(message, mockReferenceDataService)
 
@@ -255,11 +257,10 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
             result.rows.head `mustBe` SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value("abd123".toText))
             result.rows(1) `mustBe` SummaryListRow(key = Key("Date and time of decision".toText), value = Value("09 June 2014 at 4:15pm".toText))
             result.rows(2) `mustBe` SummaryListRow(key = Key("Initiated by Customs?".toText), value = Value("Yes".toText))
-            result.rows(3) `mustBe` SummaryListRow(key = Key("Office of departure".toText), value = Value("1234".toText))
+            result.rows(3) `mustBe` SummaryListRow(key = Key("Office of departure".toText), value = Value("Customs Office (1234)".toText))
             result.rows(4) `mustBe` SummaryListRow(key = Key("Comments".toText), value = Value("some justification".toText))
         }
       }
     }
   }
-
 }

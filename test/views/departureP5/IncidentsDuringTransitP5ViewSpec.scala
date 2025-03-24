@@ -33,7 +33,7 @@ class IncidentsDuringTransitP5ViewSpec extends DetailsListViewBehaviours with Ge
     injector.instanceOf[IncidentsDuringTransitP5View].apply(viewModel(isMultipleIncidents))(fakeRequest, messages)
 
   private def viewModel(isMultipleIncidents: Boolean): IncidentsDuringTransitP5ViewModel =
-    new IncidentsDuringTransitP5ViewModel(lrn.toString, Left("customId"), isMultipleIncidents, sections)
+    new IncidentsDuringTransitP5ViewModel(lrn.toString, fakeCustomsOffice, isMultipleIncidents, sections)
 
   behave like pageWithTitle()
 

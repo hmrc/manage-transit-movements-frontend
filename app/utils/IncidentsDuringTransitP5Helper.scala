@@ -55,12 +55,8 @@ class IncidentsDuringTransitP5Helper(
     val referenceNumber = data.CustomsOfficeOfIncidentRegistration.referenceNumber
     referenceDataService.getCustomsOffice(referenceNumber).map {
       customsOffice =>
-        val answerToDisplay = customsOffice match {
-          case Right(customsOffice) => customsOffice.nameAndCode
-          case Left(id)             => id
-        }
         buildRowFromAnswer[String](
-          answer = Some(answerToDisplay),
+          answer = Some(customsOffice.toString),
           formatAnswer = formatAsText,
           prefix = "departure.notification.incidents.label.officeOfIncident",
           id = None,
@@ -73,12 +69,8 @@ class IncidentsDuringTransitP5Helper(
     val referenceNumber = data.CustomsOfficeOfDeparture.referenceNumber
     referenceDataService.getCustomsOffice(referenceNumber).map {
       customsOffice =>
-        val answerToDisplay = customsOffice match {
-          case Right(customsOffice) => customsOffice.nameAndCode
-          case Left(id)             => id
-        }
         buildRowFromAnswer[String](
-          answer = Some(answerToDisplay),
+          answer = Some(customsOffice.toString),
           formatAnswer = formatAsText,
           prefix = "departure.notification.incidents.label.officeOfDeparture",
           id = None,
@@ -134,5 +126,4 @@ class IncidentsDuringTransitP5Helper(
         )
     }
   }
-
 }

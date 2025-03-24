@@ -14,12 +14,11 @@
  * limitations under the License.
  *@
 
-@import views.html.components.{Button, Heading, AnswerSections}
-@import viewModels.P5.departure.IntentionToControlP5ViewModel
-@import viewModels.P5.departure.IntentionToControlP5ViewModel._
-@import models.referenceData.CustomsOffice
-@import viewModels.P5.departure.CustomsOfficeContactViewModel
 @import config.FrontendAppConfig
+@import models.referenceData.CustomsOffice
+@import viewModels.P5.departure.{CustomsOfficeContactViewModel, IntentionToControlP5ViewModel}
+@import viewModels.P5.departure.IntentionToControlP5ViewModel.*
+@import views.html.components.{AnswerSections, Button, Heading}
 
 @this(
 mainTemplate: MainTemplate,
@@ -30,7 +29,7 @@ formHelper: FormWithCSRF,
 config: FrontendAppConfig
 )
 
-@(intentionToControlP5ViewModel: IntentionToControlP5ViewModel, departureId: String, messageId: String, customsOfficeContactViewModel: CustomsOfficeContactViewModel)(implicit request: Request[?], messages: Messages)
+@(intentionToControlP5ViewModel: IntentionToControlP5ViewModel, departureId: String, messageId: String)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = intentionToControlP5ViewModel.title,
@@ -51,17 +50,13 @@ config: FrontendAppConfig
         @answerSections(intentionToControlP5ViewModel.sections)
         <h2 class="govuk-heading-m" id="subheading">@messages("goodsUnderControl.subHeading")</h2>
 
-        @if(intentionToControlP5ViewModel.requestedDocuments) {
-            <div id="what-happens-next-block">
-                <p class="govuk-body" id="what-happens-next">@messages("departure.ie060.message.requestedDocuments.prelodged.whatHappensNext")</p>
+        <div id="what-happens-next-block">
+            <p class="govuk-body" id="what-happens-next">@messages("departure.ie060.message.requestedDocuments.prelodged.whatHappensNext")</p>
 
-                @button(
-                    attributes = Map("id" -> "submit"),
-                    messageKey = messages("departure.ie060.message.requestedDocuments.prelodged.button")
-                )
-            </div>
-        }else{
-            <p class="govuk-body" id="link-text">@intentionToControlP5ViewModel.type0LinkPrefix <a id="view-all-declarations" href="@intentionToControlP5ViewModel.type0ParagraphLink">@intentionToControlP5ViewModel.type0LinkText</a> @intentionToControlP5ViewModel.type0LinkTextSuffix</p>
-        }
+            @button(
+                attributes = Map("id" -> "submit"),
+                messageKey = messages("departure.ie060.message.requestedDocuments.prelodged.button")
+            )
+        </div>
     }
 }
