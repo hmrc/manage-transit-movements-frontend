@@ -77,7 +77,7 @@ class IntentionToControlP5ViewSpec extends CheckYourAnswersViewBehaviours with G
 
   behave like pageWithSpecificContent(
     "paragraph2",
-    "While awaiting your response, the goods will remain under supervision at the office of destination."
+    "While awaiting your response, the goods will remain under supervision at the office of departure."
   )
 
   behave like pageWithSpecificContent(

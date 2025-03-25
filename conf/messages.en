@@ -297,7 +297,7 @@ departure.ie060.message.prelodged.title = Intention to control - complete pre-lo
 departure.ie060.message.prelodged.heading = Intention to control - complete pre-lodged declaration
 
 departure.ie060.message.prelodged.paragraph1 = Customs are intending to place this movement under control and have requested you complete your pre-lodged declaration.
-departure.ie060.message.prelodged.paragraph2 = While awaiting your response, the goods will remain under supervision at the office of destination.
+departure.ie060.message.prelodged.paragraph2 = While awaiting your response, the goods will remain under supervision at the office of departure.
 departure.ie060.message.prelodged.paragraph3 = Once Customs have reviewed the information you provide, they will notify you with the outcome.
 
 departure.ie060.message.requestedDocuments.prelodged.whatHappensNext = You must complete your pre-lodged declaration.
