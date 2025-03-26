@@ -16,7 +16,6 @@
 
 package itbase
 
-import config.{PostTransitionModule, TransitionModule}
 import models.{DepartureId, LocalReferenceNumber}
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -45,15 +44,4 @@ trait ItSpecBase extends AnyFreeSpec with Matchers with ScalaFutures with Option
   final override def fakeApplication(): Application =
     guiceApplicationBuilder()
       .build()
-
-  protected def transitionApplicationBuilder(): GuiceApplicationBuilder =
-    guiceApplicationBuilder()
-      .disable[PostTransitionModule]
-      .bindings(new TransitionModule)
-
-  protected def postTransitionApplicationBuilder(): GuiceApplicationBuilder =
-    guiceApplicationBuilder()
-      .disable[TransitionModule]
-      .bindings(new PostTransitionModule)
-
 }

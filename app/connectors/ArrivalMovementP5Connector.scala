@@ -16,14 +16,14 @@
 
 package connectors
 
-import config.{FrontendAppConfig, PhaseConfig}
+import config.FrontendAppConfig
 import models.Availability
 import models.arrivalP5.{ArrivalMovements, LatestArrivalMessage}
 import play.api.http.Status.{NOT_FOUND, OK}
 import play.api.libs.json.{JsError, JsSuccess}
 import scalaxb.XMLFormat
 import scalaxb.`package`.fromXML
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
@@ -33,7 +33,6 @@ import scala.xml.XML
 
 class ArrivalMovementP5Connector @Inject() (
   config: FrontendAppConfig,
-  override val phaseConfig: PhaseConfig,
   http: HttpClientV2
 )(implicit ec: ExecutionContext)
     extends MovementP5Connector {

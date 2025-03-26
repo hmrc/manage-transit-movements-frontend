@@ -16,15 +16,15 @@
 
 package connectors
 
-import config.{FrontendAppConfig, PhaseConfig}
+import config.FrontendAppConfig
 import models.Availability
-import models.departureP5._
-import play.api.http.Status._
+import models.departureP5.*
+import play.api.http.Status.*
 import play.api.libs.json.{JsError, JsSuccess}
 import scalaxb.XMLFormat
 import scalaxb.`package`.fromXML
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.*
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 
 import javax.inject.Inject
@@ -33,7 +33,6 @@ import scala.xml.XML
 
 class DepartureMovementP5Connector @Inject() (
   config: FrontendAppConfig,
-  override val phaseConfig: PhaseConfig,
   http: HttpClientV2
 )(implicit ec: ExecutionContext)
     extends MovementP5Connector {
