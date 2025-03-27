@@ -76,7 +76,7 @@ class GoodsUnderControlP5ViewSpec extends CheckYourAnswersViewBehaviours with Ge
 
   behave like pageWithSpecificContent(
     "paragraph2",
-    "While under control, the goods will remain under supervision at the office of destination."
+    "While under control, the goods will remain under supervision at the office of departure."
   )
 
   behave like pageWithSpecificContent(
