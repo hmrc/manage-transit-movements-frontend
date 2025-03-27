@@ -76,12 +76,12 @@ class GoodsUnderControlP5RequestedDocumentsViewSpec extends CheckYourAnswersView
 
   behave like pageWithSpecificContent(
     "paragraph2",
-    "While awaiting the documentation, the goods will remain under supervision at the office of destination."
+    "While awaiting the documentation, the goods will remain under supervision at the customs office of departure."
   )
 
   behave like pageWithSpecificContent(
     "paragraph3",
-    "You must contact the office of destination directly to share the requested documentation."
+    "You must contact the customs office of departure directly to share the requested documentation."
   )
 
   "must render what happens next" in {
