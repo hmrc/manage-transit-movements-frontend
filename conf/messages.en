@@ -283,11 +283,11 @@ departure.ie060.message.h2 = What happens next
 
 departure.ie060.message.subheading = LRN: {0}
 departure.ie060.message.paragraph1 = Customs have placed this declaration under control while they carry out further checks. This is because of a possible discrepancy or risk to health and safety.
-departure.ie060.message.paragraph2 = While under control, the goods will remain under supervision at the office of destination.
+departure.ie060.message.paragraph2 = While under control, the goods will remain under supervision at the office of departure.
 departure.ie060.message.paragraph3 = Once Customs have completed their checks, they will notify you with the outcome.
 departure.ie060.message.requestedDocuments.paragraph1 = Customs have placed this declaration under control and requested further documentation. This is because of a possible discrepancy or risk to health and safety.
-departure.ie060.message.requestedDocuments.paragraph2 = While awaiting the documentation, the goods will remain under supervision at the office of destination.
-departure.ie060.message.requestedDocuments.paragraph3 = You must contact the office of destination directly to share the requested documentation.
+departure.ie060.message.requestedDocuments.paragraph2 = While awaiting the documentation, the goods will remain under supervision at the customs office of departure.
+departure.ie060.message.requestedDocuments.paragraph3 = You must contact the customs office of departure directly to share the requested documentation.
 departure.ie060.message.paragraph4.prefix = You must wait for the outcome of Customs’ checks.
 departure.ie060.message.paragraph4.linkText = Check your departure declarations
 departure.ie060.message.paragraph4.suffix = for further updates.
@@ -296,7 +296,7 @@ departure.ie060.message.prelodged.title = Intention to control - complete pre-lo
 departure.ie060.message.prelodged.heading = Intention to control - complete pre-lodged declaration
 
 departure.ie060.message.prelodged.paragraph1 = Customs are intending to place this movement under control and have requested you complete your pre-lodged declaration.
-departure.ie060.message.prelodged.paragraph2 = While awaiting your response, the goods will remain under supervision at the office of destination.
+departure.ie060.message.prelodged.paragraph2 = While awaiting your response, the goods will remain under supervision at the office of departure.
 departure.ie060.message.prelodged.paragraph3 = Once Customs have reviewed the information you provide, they will notify you with the outcome.
 
 departure.ie060.message.requestedDocuments.prelodged.whatHappensNext = You must complete your pre-lodged declaration.
