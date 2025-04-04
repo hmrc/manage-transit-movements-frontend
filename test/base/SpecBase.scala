@@ -16,7 +16,7 @@
 
 package base
 
-import config.{FrontendAppConfig, PaginationAppConfig, PhaseConfig}
+import config.{FrontendAppConfig, PaginationAppConfig}
 import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
 import models.{DepartureId, Index, LocalReferenceNumber}
@@ -60,7 +60,7 @@ trait SpecBase
 
   val fakeCustomsOffice: CustomsOffice = CustomsOffice("1234", "Customs Office", Some("01234567"), Some("test123@gmail.com"))
 
-  val departureReferenceNumbers = DepartureReferenceNumbers(lrn.value, None)
+  val departureReferenceNumbers: DepartureReferenceNumbers = DepartureReferenceNumbers(lrn.value, None)
 
   def injector: Injector                   = app.injector
   def fakeRequest: FakeRequest[AnyContent] = FakeRequest("", "")
@@ -72,7 +72,6 @@ trait SpecBase
 
   implicit def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
   def paginationAppConfig: PaginationAppConfig      = injector.instanceOf[PaginationAppConfig]
-  def phaseConfig: PhaseConfig                      = app.injector.instanceOf[PhaseConfig]
 
   implicit val clock: Clock = Clock.systemDefaultZone()
 

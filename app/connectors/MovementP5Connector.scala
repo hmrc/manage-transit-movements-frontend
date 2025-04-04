@@ -16,16 +16,13 @@
 
 package connectors
 
-import config.PhaseConfig
 import play.api.Logging
 import sttp.model.HeaderNames
 
 trait MovementP5Connector extends Logging {
 
-  val phaseConfig: PhaseConfig
-
   private def acceptHeader(format: String): (String, String) =
-    HeaderNames.Accept -> s"application/vnd.hmrc.${phaseConfig.values.apiVersion}+$format"
+    HeaderNames.Accept -> s"application/vnd.hmrc.2.1+$format"
 
   def authorizationHeader(authorization: String): (String, String) =
     HeaderNames.Authorization -> authorization
@@ -41,5 +38,4 @@ trait MovementP5Connector extends Logging {
 
   val xmlContentTypeHeader: (String, String)  = contentTypeHeader("xml")
   val jsonContentTypeHeader: (String, String) = contentTypeHeader("json")
-
 }

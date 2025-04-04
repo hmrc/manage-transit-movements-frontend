@@ -97,14 +97,6 @@ class DashboardViewSpec extends SearchViewBehaviours with PaginationViewBehaviou
 
   behave like pageWithHeading()
 
-  "when paragraph is defined" - {
-    "must render paragraph" - {
-      val paragraph = "foo"
-      val doc       = parseView(applyView(form, viewModel.copy(paragraph = Some(paragraph))))
-      behave like pageWithContent(doc, "p", paragraph)
-    }
-  }
-
   behave like pageWithSearch(
     "Search by local reference number (LRN)",
     "You have no draft departure declarations.",

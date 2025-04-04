@@ -22,7 +22,6 @@ import itbase.{ItSpecBase, WireMockServerHandler}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.Helpers.running
 import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
@@ -38,6 +37,8 @@ class ManageDocumentsConnectorSpec extends ItSpecBase with WireMockServerHandler
 
   val errorResponses: Gen[Int] = Gen.chooseNum(400, 599)
 
+  lazy val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
+
   "ManageDocumentsConnectorSpec" - {
 
     "getTAD" - {
@@ -45,90 +46,35 @@ class ManageDocumentsConnectorSpec extends ItSpecBase with WireMockServerHandler
       val departureId = "ABC123"
       val messageId   = "DFG456"
 
-      "when transition" - {
-
-        "must return status Ok" in {
-          val app = transitionApplicationBuilder().build()
-          running(app) {
-            val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
-            server.stubFor(
-              get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
-                .withHeader("APIVersion", equalTo("2.0"))
-                .willReturn(
-                  aResponse()
-                    .withStatus(200)
-                )
+      "must return status Ok" in {
+        val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
             )
+        )
 
-            val result: Future[HttpResponse] = connector.getTAD(departureId, messageId)
+        val result: Future[HttpResponse] = connector.getTAD(departureId, messageId)
 
-            result.futureValue.status `mustBe` 200
-          }
-        }
-
-        "must return other error status codes without exceptions" in {
-          val app = transitionApplicationBuilder().build()
-          running(app) {
-            val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
-            val genErrorResponse                    = Gen.oneOf(300, 500).sample.value
-
-            server.stubFor(
-              get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
-                .withHeader("APIVersion", equalTo("2.0"))
-                .willReturn(
-                  aResponse()
-                    .withStatus(genErrorResponse)
-                )
-            )
-
-            val result: Future[HttpResponse] = connector.getTAD(departureId, messageId)
-
-            result.futureValue.status `mustBe` genErrorResponse
-          }
-        }
+        result.futureValue.status `mustBe` 200
       }
 
-      "when final" - {
+      "must return other error status codes without exceptions" in {
+        val genErrorResponse = Gen.oneOf(300, 500).sample.value
 
-        "must return status Ok" in {
-          val app = postTransitionApplicationBuilder().build()
-          running(app) {
-            val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
-            server.stubFor(
-              get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
-                .withHeader("APIVersion", equalTo("2.1"))
-                .willReturn(
-                  aResponse()
-                    .withStatus(200)
-                )
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
+            .willReturn(
+              aResponse()
+                .withStatus(genErrorResponse)
             )
+        )
 
-            val result: Future[HttpResponse] = connector.getTAD(departureId, messageId)
+        val result: Future[HttpResponse] = connector.getTAD(departureId, messageId)
 
-            result.futureValue.status `mustBe` 200
-          }
-        }
-
-        "must return other error status codes without exceptions" in {
-          val app = postTransitionApplicationBuilder().build()
-          running(app) {
-            val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
-            val genErrorResponse                    = Gen.oneOf(300, 500).sample.value
-
-            server.stubFor(
-              get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
-                .withHeader("APIVersion", equalTo("2.1"))
-                .willReturn(
-                  aResponse()
-                    .withStatus(genErrorResponse)
-                )
-            )
-
-            val result: Future[HttpResponse] = connector.getTAD(departureId, messageId)
-
-            result.futureValue.status `mustBe` genErrorResponse
-          }
-        }
+        result.futureValue.status `mustBe` genErrorResponse
       }
 
       "getUnloadingPermission" - {
@@ -136,91 +82,36 @@ class ManageDocumentsConnectorSpec extends ItSpecBase with WireMockServerHandler
         val arrivalId = "ABC123"
         val messageId = "DFG456"
 
-        "when transition" - {
-          "must return status Ok" in {
-            val app = transitionApplicationBuilder().build()
-            running(app) {
-              val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
-              server.stubFor(
-                get(urlEqualTo(s"/$startUrl/$arrivalId/unloading-permission-document/$messageId"))
-                  .withHeader("APIVersion", equalTo("2.0"))
-                  .willReturn(
-                    aResponse()
-                      .withStatus(200)
-                  )
+        "must return status Ok" in {
+          server.stubFor(
+            get(urlEqualTo(s"/$startUrl/$arrivalId/unloading-permission-document/$messageId"))
+              .willReturn(
+                aResponse()
+                  .withStatus(200)
               )
+          )
 
-              val result: Future[HttpResponse] = connector.getUnloadingPermission(arrivalId, messageId)
+          val result: Future[HttpResponse] = connector.getUnloadingPermission(arrivalId, messageId)
 
-              result.futureValue.status `mustBe` 200
-            }
-          }
-
-          "must return other error status codes without exceptions" in {
-            val app = transitionApplicationBuilder().build()
-            running(app) {
-              val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
-              val genErrorResponse                    = Gen.oneOf(300, 500).sample.value
-
-              server.stubFor(
-                get(urlEqualTo(s"/$startUrl/$arrivalId/unloading-permission-document/$messageId"))
-                  .withHeader("APIVersion", equalTo("2.0"))
-                  .willReturn(
-                    aResponse()
-                      .withStatus(genErrorResponse)
-                  )
-              )
-
-              val result: Future[HttpResponse] = connector.getUnloadingPermission(arrivalId, messageId)
-
-              result.futureValue.status `mustBe` genErrorResponse
-            }
-          }
+          result.futureValue.status `mustBe` 200
         }
 
-        "when final" - {
-          "must return status Ok" in {
-            val app = postTransitionApplicationBuilder().build()
-            running(app) {
-              val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
-              server.stubFor(
-                get(urlEqualTo(s"/$startUrl/$arrivalId/unloading-permission-document/$messageId"))
-                  .withHeader("APIVersion", equalTo("2.1"))
-                  .willReturn(
-                    aResponse()
-                      .withStatus(200)
-                  )
+        "must return other error status codes without exceptions" in {
+          val genErrorResponse = Gen.oneOf(300, 500).sample.value
+
+          server.stubFor(
+            get(urlEqualTo(s"/$startUrl/$arrivalId/unloading-permission-document/$messageId"))
+              .willReturn(
+                aResponse()
+                  .withStatus(genErrorResponse)
               )
+          )
 
-              val result: Future[HttpResponse] = connector.getUnloadingPermission(arrivalId, messageId)
+          val result: Future[HttpResponse] = connector.getUnloadingPermission(arrivalId, messageId)
 
-              result.futureValue.status `mustBe` 200
-            }
-          }
-
-          "must return other error status codes without exceptions" in {
-            val app = postTransitionApplicationBuilder().build()
-            running(app) {
-              val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
-              val genErrorResponse                    = Gen.oneOf(300, 500).sample.value
-
-              server.stubFor(
-                get(urlEqualTo(s"/$startUrl/$arrivalId/unloading-permission-document/$messageId"))
-                  .withHeader("APIVersion", equalTo("2.1"))
-                  .willReturn(
-                    aResponse()
-                      .withStatus(genErrorResponse)
-                  )
-              )
-
-              val result: Future[HttpResponse] = connector.getUnloadingPermission(arrivalId, messageId)
-
-              result.futureValue.status `mustBe` genErrorResponse
-            }
-          }
+          result.futureValue.status `mustBe` genErrorResponse
         }
       }
     }
   }
-
 }
