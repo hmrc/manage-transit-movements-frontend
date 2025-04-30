@@ -50,7 +50,7 @@ class MainTemplateSpec extends SpecBase with ViewSpecAssertions with ScalaCheckP
           val doc = Jsoup.parse(view.toString())
 
           val link = getElementBySelector(doc, ".govuk-phase-banner__text > .govuk-link")
-          getElementHref(link) `mustBe` s"http://localhost:9250/contact/beta-feedback?service=CTCTraders&referrerUrl=$path"
+          getElementHref(link) mustEqual s"http://localhost:9250/contact/beta-feedback?service=CTCTraders&referrerUrl=$path"
       }
     }
 
@@ -66,8 +66,55 @@ class MainTemplateSpec extends SpecBase with ViewSpecAssertions with ScalaCheckP
           val doc = Jsoup.parse(view.toString())
 
           val link = getElementBySelector(doc, ".hmrc-report-technical-issue")
-          getElementHref(link) `mustBe` s"http://localhost:9250/contact/report-technical-problem?service=CTCTraders&referrerUrl=$path"
-          link.text() `mustBe` "Is this page not working properly? (opens in new tab)"
+          getElementHref(link) mustEqual s"http://localhost:9250/contact/report-technical-problem?service=CTCTraders&referrerUrl=$path"
+          link.text() mustEqual "Is this page not working properly? (opens in new tab)"
+      }
+    }
+
+    "when session has an auth token" - {
+      "must render timeout dialog and sign out link" in {
+        implicit lazy val request: FakeRequest[AnyContent] = FakeRequest("GET", path).withSession("authToken" -> "auth123")
+
+        forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+          (content, title) =>
+            val view = app.injector
+              .instanceOf[MainTemplate]
+              .apply(title, timeoutEnabled = true, showBackLink = true) {
+                Html.apply(content)
+              }
+
+            val doc = Jsoup.parse(view.toString())
+
+            val metas = getElementsByTag(doc, "meta")
+            assertElementExists(metas, _.attr("name") == "hmrc-timeout-dialog")
+            assertElementExists(metas, _.attr("data-keep-alive-url") == "/manage-transit-movements/keep-alive")
+
+            val link = getElementByClass(doc, "hmrc-sign-out-nav__link")
+            assertElementContainsText(link, "Sign out")
+            assertElementContainsHref(
+              link,
+              "http://localhost:9553/bas-gateway/sign-out-without-state?continue=http://localhost:9514/feedback/manage-transit-movements"
+            )
+        }
+      }
+    }
+
+    "when session does not have an auth token" - {
+      "must not render timeout dialog or sign out link" in {
+        forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+          (content, title) =>
+            val view = app.injector
+              .instanceOf[MainTemplate]
+              .apply(title, timeoutEnabled = true, showBackLink = true) {
+                Html.apply(content)
+              }
+
+            val doc = Jsoup.parse(view.toString())
+
+            val metas = getElementsByTag(doc, "meta")
+            assertElementDoesNotExist(metas, _.attr("name") == "hmrc-timeout-dialog")
+            assertElementDoesNotExist(doc, "hmrc-sign-out-nav__link")
+        }
       }
     }
   }
@@ -91,7 +138,7 @@ class MainTemplateSpec extends SpecBase with ViewSpecAssertions with ScalaCheckP
           val doc = Jsoup.parse(view.toString())
 
           val link = getElementBySelector(doc, ".govuk-phase-banner__text > .govuk-link")
-          getElementHref(link) `mustBe` config.feedbackForm
+          getElementHref(link) mustEqual config.feedbackForm
       }
     }
 
@@ -108,9 +155,55 @@ class MainTemplateSpec extends SpecBase with ViewSpecAssertions with ScalaCheckP
 
           val link = getElementBySelector(doc, ".hmrc-report-technical-issue")
           getElementHref(link) must startWith(s"mailto:${config.feedbackEmail}")
-          link.text() `mustBe` s"If you have any questions or issues, email us at ${config.feedbackEmail}"
+          link.text() mustEqual s"If you have any questions or issues, email us at ${config.feedbackEmail}"
+      }
+    }
+
+    "when session has an auth token" - {
+      "must render timeout dialog and sign out link" in {
+        implicit lazy val request: FakeRequest[AnyContent] = FakeRequest("GET", path).withSession("authToken" -> "auth123")
+
+        forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+          (content, title) =>
+            val view = app.injector
+              .instanceOf[MainTemplate]
+              .apply(title, timeoutEnabled = true, showBackLink = true) {
+                Html.apply(content)
+              }
+
+            val doc = Jsoup.parse(view.toString())
+
+            val metas = getElementsByTag(doc, "meta")
+            assertElementExists(metas, _.attr("name") == "hmrc-timeout-dialog")
+            assertElementExists(metas, _.attr("data-keep-alive-url") == "/manage-transit-movements/keep-alive")
+
+            val link = getElementByClass(doc, "hmrc-sign-out-nav__link")
+            assertElementContainsText(link, "Sign out")
+            assertElementContainsHref(
+              link,
+              "http://localhost:9553/bas-gateway/sign-out-without-state?continue=http://localhost:9514/feedback/manage-transit-movements"
+            )
+        }
+      }
+    }
+
+    "when session does not have an auth token" - {
+      "must not render timeout dialog or sign out link" in {
+        forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
+          (content, title) =>
+            val view = app.injector
+              .instanceOf[MainTemplate]
+              .apply(title, timeoutEnabled = true, showBackLink = true) {
+                Html.apply(content)
+              }
+
+            val doc = Jsoup.parse(view.toString())
+
+            val metas = getElementsByTag(doc, "meta")
+            assertElementDoesNotExist(metas, _.attr("name") == "hmrc-timeout-dialog")
+            assertElementDoesNotExist(doc, "hmrc-sign-out-nav__link")
+        }
       }
     }
   }
-
 }
