@@ -1,9 +1,8 @@
-@import "lib/ministryofjustice__frontend/moj/all";
+$govuk-include-default-font-face: false;
 @import "lib/govuk-frontend/dist/govuk/base";
+@import "lib/ministryofjustice__frontend/moj/all";
 
 @import "components/amend";
 @import "components/pagination";
 @import "components/search";
-@import "components/shame";
-@import "components/table";
 @import "components/ticket-panel";
