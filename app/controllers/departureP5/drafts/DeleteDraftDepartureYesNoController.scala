@@ -19,7 +19,7 @@ package controllers.departureP5.drafts
 import controllers.actions.{Actions, LockActionProvider}
 import forms.YesNoFormProvider
 import models.LocalReferenceNumber
-import play.api.http.Status.{OK => StatusOK}
+import play.api.http.Status.OK
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.DraftDepartureService
@@ -59,19 +59,19 @@ class DeleteDraftDepartureYesNoController @Inject() (
             {
               case true =>
                 draftDepartureService.deleteDraftDeparture(lrn.value) map {
-                  case response if response.status == StatusOK =>
+                  case response if response.status == OK =>
                     val redirectPageNumber: Int = pageNumber match {
                       case 1                               => 1
                       case pageNumber if numberOfRows == 1 => pageNumber - 1
                       case pageNumber                      => pageNumber
                     }
 
-                    Redirect(controllers.departureP5.drafts.routes.DashboardController.onPageLoad(Some(redirectPageNumber), searchLrn, None))
+                    Redirect(controllers.departureP5.drafts.routes.DashboardController.onPageLoad(Some(redirectPageNumber), searchLrn))
                   case _ =>
                     Redirect(controllers.routes.ErrorController.internalServerError())
                 }
               case false =>
-                Future.successful(Redirect(controllers.departureP5.drafts.routes.DashboardController.onPageLoad(Some(pageNumber), searchLrn, None)))
+                Future.successful(Redirect(controllers.departureP5.drafts.routes.DashboardController.onPageLoad(Some(pageNumber), searchLrn)))
             }
           )
     }

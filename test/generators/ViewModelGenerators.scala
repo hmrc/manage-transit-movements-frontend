@@ -18,7 +18,7 @@ package generators
 
 import models.FunctionalErrors.{FunctionalErrorsWithSection, FunctionalErrorsWithoutSection}
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
-import models.{DeparturesSummary, GuaranteeReference, Sort}
+import models.{DeparturesSummary, GuaranteeReference}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.FormError
@@ -302,13 +302,11 @@ trait ViewModelGenerators {
         lrn                  <- Gen.option(nonEmptyString)
         currentPage          <- positiveInts
         numberOfItemsPerPage <- positiveInts
-        sortParams           <- Gen.option(arbitrary[Sort])
       } yield AllDraftDeparturesViewModel(
         departures = departures,
         lrn = lrn,
         currentPage = currentPage,
-        numberOfItemsPerPage = numberOfItemsPerPage,
-        sortParams = sortParams
+        numberOfItemsPerPage = numberOfItemsPerPage
       )
     }
 

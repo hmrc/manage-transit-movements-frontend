@@ -30,7 +30,7 @@
 )
 
 @(
-    form: Form[?],
+    form: Form[String],
     viewModel: AllDraftDeparturesViewModel
 )(implicit request: Request[?], messages: Messages)
 
@@ -44,7 +44,7 @@
 
     @if(viewModel.isSearch) {
         <p class="govuk-body">
-            <a id="go-to-view-all-movements" class="govuk-link" href="@controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None, None)">
+            <a id="go-to-view-all-movements" class="govuk-link" href="@controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None)">
             @messages("departure.drafts.dashboard.link.title")
             </a>
         </p>

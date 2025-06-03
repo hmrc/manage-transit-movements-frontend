@@ -21,7 +21,6 @@ import models.{DepartureUserAnswerSummary, DeparturesSummary}
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatest.Assertion
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
@@ -113,19 +112,10 @@ class DashboardViewSpec extends SearchViewBehaviours with PaginationViewBehaviou
     rows.size() mustEqual drafts.size
   }
 
-  "must have visually hidden text on table headers" in {
+  "must have table headers" in {
     val tableHeaders = doc.getElementsByTag("th").toList
 
     tableHeaders.size mustEqual 3
-
-    def check(th: Element, expectedVisuallyHiddenText: String): Assertion = {
-      val visuallyHiddenText = th.getElementsByClass("govuk-visually-hidden").text()
-      visuallyHiddenText mustEqual expectedVisuallyHiddenText
-    }
-
-    check(tableHeaders.head, viewModel.sortHiddenTextLRN)
-    check(tableHeaders(1), viewModel.sortHiddenTextDaysToComplete)
-    check(tableHeaders(2), "Actions")
   }
 
   "must generate correct data in each row" - {
@@ -137,12 +127,6 @@ class DashboardViewSpec extends SearchViewBehaviours with PaginationViewBehaviou
 
           def elementWithVisibleText(element: Element, text: String): Unit =
             element.ownText() mustEqual text
-
-          def elementWithHiddenText(element: Element, text: String): Unit = {
-            val heading = element.getElementsByClass("responsive-table__heading").head
-            heading.attr("aria-hidden").toBoolean mustEqual true
-            heading.text() mustEqual text
-          }
 
           "Local reference number" - {
 
@@ -164,7 +148,6 @@ class DashboardViewSpec extends SearchViewBehaviours with PaginationViewBehaviou
             val daysToComplete = row.selectFirst("td[data-testrole*=-daysToComplete]")
 
             behave like elementWithVisibleText(daysToComplete, draft.expiresInDays.toString)
-            behave like elementWithHiddenText(daysToComplete, messages(s"$prefix.table.daysToComplete"))
           }
 
           "Delete" - {

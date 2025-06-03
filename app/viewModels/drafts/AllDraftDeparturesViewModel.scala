@@ -17,9 +17,7 @@
 package viewModels.drafts
 
 import controllers.departureP5.drafts.routes
-import models.Sort.*
-import models.Sort.Field.{CreatedAt, LRN}
-import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber, Sort}
+import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber}
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import viewModels.drafts.AllDraftDeparturesViewModel.DraftDepartureRow
@@ -31,8 +29,7 @@ case class AllDraftDeparturesViewModel(
   departures: DeparturesSummary,
   currentPage: Int,
   numberOfItemsPerPage: Int,
-  lrn: Option[String],
-  sort: Option[Sort]
+  lrn: Option[String]
 ) extends PaginationViewModel[DepartureUserAnswerSummary] {
 
   override val totalNumberOfItems: Int = departures.totalMatchingMovements
@@ -40,10 +37,10 @@ case class AllDraftDeparturesViewModel(
   override val items: Seq[DepartureUserAnswerSummary] = departures.userAnswers
 
   override def href(page: Int): Call =
-    routes.DashboardController.onPageLoad(Some(page), lrn, sort.map(_.convertParams))
+    routes.DashboardController.onPageLoad(Some(page), lrn)
 
   def onSubmit(): Call =
-    routes.DashboardController.onSubmit(sort.map(_.convertParams))
+    routes.DashboardController.onSubmit(Some(currentPage))
 
   override val searchParam: Option[String] = lrn
 
@@ -63,17 +60,6 @@ case class AllDraftDeparturesViewModel(
   def noResultsFound: Boolean       = departures.totalMovements == 0
   def noSearchResultsFound: Boolean = departures.totalMatchingMovements == 0 && !noResultsFound
 
-  private val sortParams: Sort = sort.getOrElse(SortByCreatedAtDesc)
-
-  def sortLrn: String       = sortParams.ariaSort(LRN)
-  def sortCreatedAt: String = sortParams.ariaSort(CreatedAt)
-
-  def sortLRNHref: Call       = sortParams.href(LRN, lrn)
-  def sortCreatedAtHref: Call = sortParams.href(CreatedAt, lrn)
-
-  def sortHiddenTextLRN(implicit messages: Messages): String            = sortParams.hiddenText(LRN)
-  def sortHiddenTextDaysToComplete(implicit messages: Messages): String = sortParams.hiddenText(CreatedAt)
-
   def deleteDraftUrl(draft: DraftDepartureRow): Call =
     routes.DeleteDraftDepartureYesNoController.onPageLoad(LocalReferenceNumber(draft.lrn), currentPage, numberOfItems, lrn)
 }
@@ -92,8 +78,7 @@ object AllDraftDeparturesViewModel {
     departures: DeparturesSummary,
     lrn: Option[String],
     currentPage: Int,
-    numberOfItemsPerPage: Int,
-    sortParams: Option[Sort]
+    numberOfItemsPerPage: Int
   )(implicit messages: Messages): AllDraftDeparturesViewModel = {
 
     val messageKeyPrefix = "departure.drafts.dashboard"
@@ -104,8 +89,7 @@ object AllDraftDeparturesViewModel {
       departures,
       currentPage,
       numberOfItemsPerPage,
-      lrn,
-      sortParams
+      lrn
     )
   }
 }

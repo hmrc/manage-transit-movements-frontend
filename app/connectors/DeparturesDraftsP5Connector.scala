@@ -19,10 +19,10 @@ package connectors
 import config.FrontendAppConfig
 import models.LockCheck.{LockCheckFailure, Locked, Unlocked}
 import models.departure.drafts.{Limit, Skip}
-import models.{Availability, DeparturesSummary, LockCheck, Sort}
+import models.{Availability, DeparturesSummary, LockCheck}
 import play.api.Logging
 import play.api.http.Status.{LOCKED, OK}
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.UpstreamErrorResponse.{Upstream4xxResponse, Upstream5xxResponse}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
@@ -57,12 +57,6 @@ class DeparturesDraftsP5Connector @Inject() (config: FrontendAppConfig, http: Ht
 
   def lrnFuzzySearch(lrn: String, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
     getDeparturesSummary(Seq("lrn" -> lrn, "limit" -> limit.value.toString))
-
-  def sortDraftDepartures(sortParams: Sort, limit: Limit, skip: Skip)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
-    getDeparturesSummary(Seq("limit" -> limit.value.toString, "skip" -> skip.value.toString, "sortBy" -> sortParams.convertParams))
-
-  def sortDraftDepartures(sortParams: Sort, limit: Limit, skip: Skip, lrn: String)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
-    getDeparturesSummary(Seq("limit" -> limit.value.toString, "skip" -> skip.value.toString, "sortBy" -> sortParams.convertParams, "lrn" -> lrn))
 
   def deleteDraftDeparture(lrn: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     val url = url"${config.departureCacheUrl}/user-answers/$lrn"
