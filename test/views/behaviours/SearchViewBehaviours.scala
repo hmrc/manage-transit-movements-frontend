@@ -24,13 +24,13 @@ trait SearchViewBehaviours extends InputTextViewBehaviours[String] with ScalaChe
 
   implicit override val arbitraryT: Arbitrary[String] = Arbitrary(Gen.alphaNumStr)
 
-  def viewWithSpecificSearchResults(numberOfSearchResults: Int, searchParam: String): HtmlFormat.Appendable
+  def viewWithSpecificSearchResults(numberOfSearchResults: Int, currentPage: Int, numberOfItemsPerPage: Int, searchParam: String): HtmlFormat.Appendable
 
   "must contain search div" in {
     assertRenderedById(doc, "search")
   }
 
-  def pageWithSearch(expectedLabelText: String, expectedNoResultsFoundText: String, numberOfItemsPerPage: Int): Unit = {
+  def pageWithSearch(expectedLabelText: String, expectednoResultsFound: String, numberOfItemsPerPage: Int): Unit = {
     "page with a search box" - {
       behave like pageWithContent("label", expectedLabelText)
 
@@ -44,13 +44,13 @@ trait SearchViewBehaviours extends InputTextViewBehaviours[String] with ScalaChe
     "page with search results" - {
       "must display correct text" - {
         "when there are no results" in {
-          val doc = parseView(viewWithSpecificSearchResults(0, searchParam))
-          val p   = doc.getElementById("no-results-found")
-          p.text() `mustBe` expectedNoResultsFoundText
+          val doc = parseView(viewWithSpecificSearchResults(0, 1, 20, searchParam))
+          val p   = doc.getElementById("results-count")
+          p.text() `mustBe` expectednoResultsFound
         }
 
         "when there is a single result" in {
-          val doc = parseView(viewWithSpecificSearchResults(1, searchParam))
+          val doc = parseView(viewWithSpecificSearchResults(1, 1, 20, searchParam))
           val p   = doc.getElementById("results-count")
           p.text() `mustBe` s"Showing 1 result matching $searchParam"
           boldWords(p) `mustBe` Seq("1")
@@ -59,7 +59,7 @@ trait SearchViewBehaviours extends InputTextViewBehaviours[String] with ScalaChe
         "when there are multiple results" in {
           forAll(Gen.choose(2, numberOfItemsPerPage)) {
             retrieved =>
-              val doc = parseView(viewWithSpecificSearchResults(retrieved, searchParam))
+              val doc = parseView(viewWithSpecificSearchResults(retrieved, 1, numberOfItemsPerPage, searchParam))
               val p   = doc.getElementById("results-count")
               p.text() `mustBe` s"Showing $retrieved results matching $searchParam"
               boldWords(p) `mustBe` Seq(retrieved.toString)

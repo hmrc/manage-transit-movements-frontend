@@ -50,26 +50,16 @@
         </p>
     }
 
-    @if(!viewModel.noResultsFound) {
-        @search(
-            form = form,
-            action = viewModel.onSubmit(),
-            label = "departure.drafts.dashboard.search"
-        )
-    }
+    @search(
+        form = form,
+        action = viewModel.onSubmit(),
+        label = "departure.drafts.dashboard.search"
+    )
 
     @pagination(viewModel)
 
-    @if(viewModel.resultsFound) {
+    @if(viewModel.items.nonEmpty) {
         @draftDeparturesTable(viewModel)
-    }
-
-    @if(viewModel.noSearchResultsFound) {
-        @status(id = "no-search-results-found", classes = "govuk-body", html = messages("departure.drafts.dashboard.table.noSearchResults"))
-    }
-
-    @if(viewModel.noResultsFound){
-        @status(id = "no-results-found", classes = "govuk-body", html = messages("departure.drafts.dashboard.table.noResults"))
     }
 
     <article class="moj-ticket-panel" aria-label="Sub navigation 1">

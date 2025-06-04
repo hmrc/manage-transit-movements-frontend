@@ -31,18 +31,29 @@ trait PaginationViewModel[T] {
 
   def results: MetaData = MetaData(totalNumberOfItems, numberOfItemsPerPage, currentPage)
 
-  def searchResult(implicit messages: Messages): String =
-    (searchParam, results.count) match {
-      case (Some(value), 1) => messages("numberOfMovements.singular.withSearchParam", "<b>1</b>", value)
-      case (Some(value), x) => messages("numberOfMovements.plural.withSearchParam", s"<b>$x</b>", value)
-      case (None, 1)        => messages("numberOfMovements.singular", "<b>1</b>")
-      case (None, x)        => messages("numberOfMovements.plural", s"<b>$x</b>")
-    }
+  def noResultsFound(implicit messages: Messages): String = messages("search.noResultsFound")
 
-  def paginatedSearchResult(implicit messages: Messages): String =
-    searchParam match {
-      case Some(value) => messages("pagination.results.search", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>", value)
-      case None        => messages("pagination.results", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>")
+  private def currentPageInvalid: Boolean = totalNumberOfItems < ((currentPage - 1) * numberOfItemsPerPage)
+
+  def paginated: Boolean = results.totalPages > 1
+
+  def status(implicit messages: Messages): String =
+    if (totalNumberOfItems == 0) {
+      noResultsFound
+    } else if (currentPageInvalid) {
+      messages("numberOfMovements.plural", "<b>0</b>")
+    } else if (paginated) {
+      searchParam match {
+        case Some(value) => messages("pagination.results.search", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>", value)
+        case None        => messages("pagination.results", s"<b>${results.from}</b>", s"<b>${results.to}</b>", s"<b>${results.count}</b>")
+      }
+    } else {
+      (searchParam, results.count) match {
+        case (Some(value), 1) => messages("numberOfMovements.singular.withSearchParam", "<b>1</b>", value)
+        case (Some(value), x) => messages("numberOfMovements.plural.withSearchParam", s"<b>$x</b>", value)
+        case (None, 1)        => messages("numberOfMovements.singular", "<b>1</b>")
+        case (None, x)        => messages("numberOfMovements.plural", s"<b>$x</b>")
+      }
     }
 
   def href(page: Int): Call

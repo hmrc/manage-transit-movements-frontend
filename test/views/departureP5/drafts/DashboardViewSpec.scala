@@ -57,7 +57,12 @@ class DashboardViewSpec extends SearchViewBehaviours with PaginationViewBehaviou
   override def viewWithSpecificPagination(viewModel: AllDraftDeparturesViewModel): HtmlFormat.Appendable =
     viewWithSpecificPagination(form, viewModel)
 
-  override def viewWithSpecificSearchResults(numberOfSearchResults: Int, searchParam: String): HtmlFormat.Appendable =
+  override def viewWithSpecificSearchResults(
+    numberOfSearchResults: Int,
+    currentPage: Int,
+    numberOfItemsPerPage: Int,
+    searchParam: String
+  ): HtmlFormat.Appendable =
     viewWithSpecificPagination(
       form.fill(searchParam),
       viewModel.copy(
@@ -65,6 +70,8 @@ class DashboardViewSpec extends SearchViewBehaviours with PaginationViewBehaviou
           def departure: DepartureUserAnswerSummary = arbitrary[DepartureUserAnswerSummary].sample.value
           DeparturesSummary(numberOfSearchResults, numberOfSearchResults, List.fill(numberOfSearchResults)(departure))
         },
+        currentPage = currentPage,
+        numberOfItemsPerPage = numberOfItemsPerPage,
         lrn = Some(searchParam)
       )
     )

@@ -17,10 +17,8 @@
 @this()
 
 @(
-    id: String,
-    classes: String,
     html: String
 )
 <span class="govuk-body" role="status">
-    <span id="@id" class="@classes">@Html(html)</span>
+    <span id="results-count" class="govuk-body">@Html(html)</span>
 </span>

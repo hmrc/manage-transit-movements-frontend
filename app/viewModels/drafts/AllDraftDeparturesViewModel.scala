@@ -46,6 +46,9 @@ case class AllDraftDeparturesViewModel(
 
   private val numberOfItems: Int = items.length
 
+  override def noResultsFound(implicit messages: Messages): String =
+    messages("departure.drafts.dashboard.table.noResults")
+
   private val tableMessageKeyPrefix                                   = "departure.drafts.dashboard.table"
   def visuallyHiddenHeader(implicit messages: Messages): String       = messages(s"$tableMessageKeyPrefix.heading.hidden")
   def referenceNumber(implicit messages: Messages): String            = messages(s"$tableMessageKeyPrefix.lrn")
@@ -54,11 +57,7 @@ case class AllDraftDeparturesViewModel(
 
   def dataRows: Seq[DraftDepartureRow] = items.map(DraftDepartureRow.apply)
 
-  def isSearch: Boolean             = searchParam.isDefined
-  def resultsFound: Boolean         = numberOfItems > 0
-  def searchResultsFound: Boolean   = resultsFound && isSearch
-  def noResultsFound: Boolean       = departures.totalMovements == 0
-  def noSearchResultsFound: Boolean = departures.totalMatchingMovements == 0 && !noResultsFound
+  def isSearch: Boolean = searchParam.isDefined
 
   def deleteDraftUrl(draft: DraftDepartureRow): Call =
     routes.DeleteDraftDepartureYesNoController.onPageLoad(LocalReferenceNumber(draft.lrn), currentPage, numberOfItems, lrn)

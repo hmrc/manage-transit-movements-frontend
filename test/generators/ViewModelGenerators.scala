@@ -266,7 +266,7 @@ trait ViewModelGenerators {
         searchParam            <- Gen.option(nonEmptyString)
         currentPage            <- positiveInts
         numberOfItemsPerPage   <- positiveInts
-        totalNumberOfMovements <- positiveInts
+        totalNumberOfMovements <- Gen.choose(1, (currentPage - 1) * numberOfItemsPerPage)
       } yield ViewAllDepartureMovementsP5ViewModel(
         movementsAndMessages = movementsAndMessages,
         searchParam = searchParam,
@@ -285,7 +285,7 @@ trait ViewModelGenerators {
         searchParam            <- Gen.option(nonEmptyString)
         currentPage            <- positiveInts
         numberOfItemsPerPage   <- positiveInts
-        totalNumberOfMovements <- positiveInts
+        totalNumberOfMovements <- Gen.choose(1, (currentPage - 1) * numberOfItemsPerPage)
       } yield ViewAllArrivalMovementsP5ViewModel(
         movementsAndMessages = movementsAndMessages,
         searchParam = searchParam,
