@@ -22,14 +22,14 @@
 @(
     viewModel: AllDraftDeparturesViewModel
 )(implicit messages: Messages)
-
+<!-- Based on https://design-patterns.service.justice.gov.uk/components/sortable-table/ -->
 <table class="govuk-table" data-module="moj-sortable-table">
     <caption class="govuk-table__caption govuk-visually-hidden">@viewModel.visuallyHiddenHeader</caption>
 
     <thead class="govuk-table__head">
         <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header" aria-sort="none">@viewModel.referenceNumber</th>
-            <th scope="col" class="govuk-table__header govuk-table__header--numeric" aria-sort="descending">@viewModel.daysToComplete</th>
+            <th scope="col" class="govuk-table__header" aria-sort="descending">@viewModel.daysToComplete</th>
             <th scope="col" class="govuk-table__header"><span id="actionHidden" class="govuk-visually-hidden">@messages("departure.drafts.dashboard.table.delete.action.hidden")</span></th>
         </tr>
     </thead>
@@ -41,7 +41,7 @@
                     <a href="@config.p5DepartureDraft(row.lrn)" class="govuk-link">@row.lrn</a>
                 </td>
 
-                <td class="govuk-table__cell govuk-table__cell--numeric" data-testrole="draft-list_row@rowIndex-daysToComplete">
+                <td class="govuk-table__cell" data-testrole="draft-list_row@rowIndex-daysToComplete">
                     @row.daysRemaining
                 </td>
 
