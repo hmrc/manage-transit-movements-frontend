@@ -60,13 +60,13 @@ class DeleteDraftDepartureYesNoController @Inject() (
               case true =>
                 draftDepartureService.deleteDraftDeparture(lrn.value) map {
                   case response if response.status == OK =>
-                    val redirectPageNumber: Int = pageNumber match {
-                      case 1                               => 1
-                      case pageNumber if numberOfRows == 1 => pageNumber - 1
-                      case pageNumber                      => pageNumber
+                    val redirectPageNumber = pageNumber match {
+                      case 1                               => None
+                      case pageNumber if numberOfRows == 1 => Some(pageNumber - 1)
+                      case pageNumber                      => Some(pageNumber)
                     }
 
-                    Redirect(controllers.departureP5.drafts.routes.DashboardController.onPageLoad(Some(redirectPageNumber), searchLrn))
+                    Redirect(controllers.departureP5.drafts.routes.DashboardController.onPageLoad(redirectPageNumber, searchLrn))
                   case _ =>
                     Redirect(controllers.routes.ErrorController.internalServerError())
                 }

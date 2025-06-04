@@ -52,7 +52,11 @@ class DashboardController @Inject() (
   def onPageLoad(pageNumber: Option[Int], lrn: Option[String]): Action[AnyContent] =
     (Action andThen actions.identify()).async {
       implicit request =>
-        buildView(form, pageNumber, lrn)(Ok(_))
+        val preparedForm = lrn match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
+        buildView(preparedForm, pageNumber, lrn)(Ok(_))
     }
 
   def onSubmit(pageNumber: Option[Int]): Action[AnyContent] =
@@ -62,7 +66,12 @@ class DashboardController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => buildView(formWithErrors)(BadRequest(_)),
-            lrn => buildView(form, pageNumber, Some(lrn))(Ok(_))
+            {
+              case lrn if lrn.trim.nonEmpty =>
+                Future.successful(Redirect(routes.DashboardController.onPageLoad(pageNumber, Some(lrn))))
+              case _ =>
+                Future.successful(Redirect(routes.DashboardController.onPageLoad(pageNumber, None)))
+            }
           )
     }
 

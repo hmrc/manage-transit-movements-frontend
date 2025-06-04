@@ -85,7 +85,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual
-        controllers.departureP5.drafts.routes.DashboardController.onPageLoad(Some(1), None).url
+        controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None).url
     }
 
     "when yes submitted must redirect back to draft departure dashboard when on page is not 1 and rows is 1" in {
