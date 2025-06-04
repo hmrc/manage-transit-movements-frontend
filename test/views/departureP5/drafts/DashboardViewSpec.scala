@@ -171,7 +171,7 @@ class DashboardViewSpec extends SearchViewBehaviours with PaginationViewBehaviou
 
   "panel" - {
 
-    val panel = doc.getElementsByClass("ticket-panel")
+    val panel = doc.getElementsByClass("moj-ticket-panel")
 
     "must render panel" in {
       panel.headOption must be(defined)

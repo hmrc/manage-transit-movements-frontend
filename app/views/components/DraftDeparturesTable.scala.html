@@ -29,8 +29,8 @@
     <thead class="govuk-table__head">
         <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header" aria-sort="none">@viewModel.referenceNumber</th>
-            <th scope="col" class="govuk-table__header govuk-table__header--numeric" aria-sort="none">@viewModel.daysToComplete</th>
-            <th scope="col"><span id="actionHidden" class="govuk-visually-hidden">@messages("departure.drafts.dashboard.table.delete.action.hidden")</span></th>
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric" aria-sort="descending">@viewModel.daysToComplete</th>
+            <th scope="col" class="govuk-table__header"><span id="actionHidden" class="govuk-visually-hidden">@messages("departure.drafts.dashboard.table.delete.action.hidden")</span></th>
         </tr>
     </thead>
 

@@ -31,17 +31,17 @@
     label: String
 )(implicit request: Request[?], messages: Messages)
 
-@formHelper(action = action, Symbol("autoComplete") -> "off") {
+<div class="moj-search govuk-!-margin-bottom-6 govuk-!-width-one-half">
+    @formHelper(action = action, Symbol("autoComplete") -> "off") {
 
-    @errorSummary(form.errors)
-
-    <div class="movement-search">
+        @errorSummary(form.errors)
 
         @govukInput(searchInput(form, label))
 
         @button(
             messageKey = "site.search",
-            attributes = Map("id" -> "submit")
+            attributes = Map("id" -> "submit"),
+            classes = Some("moj-search__button")
         )
-    </div>
-}
+    }
+</div>
