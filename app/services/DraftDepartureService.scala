@@ -18,7 +18,7 @@ package services
 
 import connectors.DeparturesDraftsP5Connector
 import models.departure.drafts.{Limit, Skip}
-import models.{DeparturesSummary, LockCheck, Sort}
+import models.{DeparturesSummary, LockCheck}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import javax.inject.Inject
@@ -35,19 +35,14 @@ class DraftDepartureService @Inject() (connector: DeparturesDraftsP5Connector) {
   def checkLock(lrn: String)(implicit hc: HeaderCarrier): Future[LockCheck] =
     connector.checkLock(lrn)
 
-  def sortOrGetDrafts(
+  def getDrafts(
     lrn: Option[String],
-    sortParams: Option[Sort],
     limit: Limit,
     skip: Skip
-  )(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] = (lrn, sortParams) match {
-    case (Some(lrn), Some(sortParams)) =>
-      connector.sortDraftDepartures(sortParams, limit, skip, lrn)
-    case (Some(lrn), None) =>
+  )(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] = lrn match {
+    case Some(lrn) =>
       connector.getLRNs(lrn, skip, limit)
-    case (None, Some(sortParams)) =>
-      connector.sortDraftDepartures(sortParams, limit, skip)
-    case _ =>
+    case None =>
       connector.getAllDeparturesSummary(limit, skip)
   }
 }

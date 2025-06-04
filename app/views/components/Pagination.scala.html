@@ -21,9 +21,8 @@
 
 @(viewModel: PaginationViewModel[?])(implicit messages: Messages)
 
-@if(viewModel.results.totalPages == 1) {
-    @status(id = "results-count", classes = "govuk-body", html = viewModel.searchResult)
-} else if(viewModel.results.totalPages > 1) {
-    @status(id = "paginated-results-count", classes = "pagination__results", html = viewModel.paginatedSearchResult)
-    @govukPagination(viewModel.pagination)
+@status(html = viewModel.status)
+
+@if(viewModel.paginated) {
+  @govukPagination(viewModel.pagination)
 }

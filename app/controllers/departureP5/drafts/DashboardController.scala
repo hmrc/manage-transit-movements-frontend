@@ -21,7 +21,6 @@ import controllers.actions.*
 import forms.DeparturesSearchFormProvider
 import models.departure.drafts.{Limit, Skip}
 import models.requests.IdentifierRequest
-import models.{DeparturesSummary, Sort}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -50,22 +49,28 @@ class DashboardController @Inject() (
 
   private lazy val pageSize = paginationAppConfig.draftDeparturesNumberOfDrafts
 
-  def onPageLoad(pageNumber: Option[Int], lrn: Option[String], sortParams: Option[String]): Action[AnyContent] =
+  def onPageLoad(search: Option[String], pageNumber: Option[Int]): Action[AnyContent] =
     (Action andThen actions.identify()).async {
       implicit request =>
-        buildView(form, pageNumber, lrn, Sort(sortParams))(Ok(_))
+        val preparedForm = search match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
+        buildView(preparedForm, pageNumber, search)(Ok(_))
     }
 
-  def onSubmit(sortParams: Option[String]): Action[AnyContent] =
+  def onSubmit(): Action[AnyContent] =
     (Action andThen actions.identify()).async {
       implicit request =>
         form
           .bindFromRequest()
           .fold(
             formWithErrors => buildView(formWithErrors)(BadRequest(_)),
-            lrn => {
-              val fuzzyLrn: Option[String] = Option(lrn).filter(_.trim.nonEmpty)
-              buildView(form, lrn = fuzzyLrn, sortParams = Sort(sortParams))(Ok(_))
+            {
+              case lrn if lrn.trim.nonEmpty =>
+                Future.successful(Redirect(routes.DashboardController.onPageLoad(Some(lrn), None)))
+              case _ =>
+                Future.successful(Redirect(routes.DashboardController.onPageLoad(None, None)))
             }
           )
     }
@@ -73,8 +78,7 @@ class DashboardController @Inject() (
   private def buildView(
     form: Form[String],
     pageNumber: Option[Int] = None,
-    lrn: Option[String] = None,
-    sortParams: Option[Sort] = None
+    search: Option[String] = None
   )(
     block: HtmlFormat.Appendable => Result
   )(implicit request: IdentifierRequest[?]): Future[Result] = {
@@ -83,22 +87,12 @@ class DashboardController @Inject() (
     val skip  = Skip(page - 1)
     val limit = Limit(pageSize)
 
-    draftDepartureService.sortOrGetDrafts(lrn, sortParams, limit, skip).map {
+    draftDepartureService.getDrafts(search, limit, skip).map {
       case Some(drafts) =>
-        block(view(form, present(drafts, page, lrn, sortParams)))
+        val viewModel = AllDraftDeparturesViewModel(drafts, search, page, pageSize)
+        block(view(form, viewModel))
       case None =>
         Redirect(controllers.routes.ErrorController.technicalDifficulties())
     }
   }
-
-  private def present(drafts: DeparturesSummary, page: Int, lrn: Option[String], sortParams: Option[Sort])(implicit
-    request: IdentifierRequest[?]
-  ): AllDraftDeparturesViewModel =
-    AllDraftDeparturesViewModel(
-      drafts,
-      lrn,
-      page,
-      pageSize,
-      sortParams
-    )
 }

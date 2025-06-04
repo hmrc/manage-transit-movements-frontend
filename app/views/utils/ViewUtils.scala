@@ -36,13 +36,12 @@ object ViewUtils {
       label = Label(
         content = messages(label).toText
       ),
-      formGroup = FormGroup(
-        classes = Some("search-input-custom")
-      ),
       errorMessage = field.error.map {
         e =>
           ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(e.message, e.args*)))
-      }
+      },
+      inputType = "search",
+      classes = "govuk-!-width-one-half"
     ).withFormField(field)
   }
 

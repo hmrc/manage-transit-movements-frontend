@@ -16,7 +16,7 @@
 
 package services
 
-import connectors._
+import connectors.*
 import models.Feature
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -42,6 +42,6 @@ class WhatDoYouWantToDoService @Inject() (
   def fetchDraftDepartureFeature()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Feature] =
     for {
       draftsAvailability <- departureDraftsP5Connector.getDraftDeparturesAvailability()
-    } yield Feature(draftsAvailability, controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None, None).url)
+    } yield Feature(draftsAvailability, controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None).url)
 
 }

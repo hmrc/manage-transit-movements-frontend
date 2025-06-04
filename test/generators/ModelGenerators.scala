@@ -263,16 +263,6 @@ trait ModelGenerators {
     }
   }
 
-  implicit lazy val arbitrarySort: Arbitrary[Sort] =
-    Arbitrary {
-      Gen.oneOf(
-        Sort.SortByLRNAsc,
-        Sort.SortByLRNDesc,
-        Sort.SortByCreatedAtAsc,
-        Sort.SortByCreatedAtDesc
-      )
-    }
-
   implicit lazy val arbitraryGuaranteeReference: Arbitrary[models.GuaranteeReference] =
     Arbitrary {
       for {

@@ -58,7 +58,12 @@ class ViewAllArrivalsP5ViewSpec
   override def viewWithSpecificPagination(viewModel: ViewAllArrivalMovementsP5ViewModel): HtmlFormat.Appendable =
     viewWithSpecificPagination(form, viewModel)
 
-  override def viewWithSpecificSearchResults(numberOfSearchResults: Int, searchParam: String): HtmlFormat.Appendable =
+  override def viewWithSpecificSearchResults(
+    numberOfSearchResults: Int,
+    currentPage: Int,
+    numberOfItemsPerPage: Int,
+    searchParam: String
+  ): HtmlFormat.Appendable =
     viewWithSpecificPagination(
       form.fill(searchParam),
       viewModel.copy(
@@ -66,6 +71,8 @@ class ViewAllArrivalsP5ViewSpec
           def arrival: ViewArrivalP5 = arbitrary[ViewArrivalP5].sample.value
           Seq.fill(numberOfSearchResults)(arrival)
         },
+        currentPage = currentPage,
+        numberOfItemsPerPage = numberOfItemsPerPage,
         searchParam = Some(searchParam),
         totalNumberOfItems = numberOfSearchResults
       )

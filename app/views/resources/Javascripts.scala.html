@@ -18,3 +18,7 @@
 
 @()(implicit request: Request[?])
 
+<script @CSPNonce.attr type="module">
+  import * as MOJFrontend from '@controllers.routes.Assets.versioned("lib/ministryofjustice__frontend/moj/all.bundle.mjs")';
+  MOJFrontend.initAll();
+</script>

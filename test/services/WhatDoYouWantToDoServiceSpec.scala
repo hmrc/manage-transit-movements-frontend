@@ -92,7 +92,7 @@ class WhatDoYouWantToDoServiceSpec extends SpecBase with ScalaCheckPropertyCheck
             when(mockDepartureDraftsP5Connector.getDraftDeparturesAvailability()(any())).thenReturn(Future.successful(availability))
 
             whatDoYouWantToDoService.fetchDraftDepartureFeature().futureValue mustBe
-              Feature(availability, controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None, None).url)
+              Feature(availability, controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None).url)
 
             verify(mockDepartureDraftsP5Connector).getDraftDeparturesAvailability()(any())
         }

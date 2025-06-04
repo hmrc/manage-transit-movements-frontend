@@ -20,7 +20,7 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.departureP5.drafts.DraftLockedView
 
 class DraftLockedControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
@@ -52,7 +52,7 @@ class DraftLockedControllerSpec extends SpecBase with AppWithDefaultMockFixtures
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None, None).url
+      redirectLocation(result).value mustEqual controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None).url
     }
   }
 }

@@ -1,7 +1,10 @@
+import com.typesafe.sbt.web.Import.WebKeys.webModules
 import play.sbt.routes.RoutesKeys
 import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
+
+import scala.sys.process.*
 
 lazy val appName: String = "manage-transit-movements-frontend"
 
@@ -59,6 +62,24 @@ lazy val microservice = (project in file("."))
     Assets / pipelineStages        := Seq(digest),
     ThisBuild / useSuperShell      := false
   )
+
+lazy val createSassSymlink = taskKey[Unit]("Create symlink from node_modules to lib for Sass overrides")
+
+createSassSymlink := {
+  val log = streams.value.log
+  val targetLink = baseDirectory.value / "target" / "web" / "web-modules" / "main" / "webjars" / "node_modules"
+  val sourceDir = baseDirectory.value / "target" / "web" / "web-modules" / "main" / "webjars" / "lib" / "govuk-frontend"
+
+  if (!targetLink.exists()) {
+    IO.createDirectory(targetLink)
+    log.info(s"Creating symlink: $targetLink → $sourceDir")
+    val result = Process(Seq("ln", "-s", sourceDir.getAbsolutePath, targetLink.getAbsolutePath)).!
+    if (result != 0) sys.error("Failed to create symlink.")
+  }
+}
+
+createSassSymlink := createSassSymlink.dependsOn(Assets / webModules).value
+Compile / compile := (Compile / compile).dependsOn(createSassSymlink).value
 
 lazy val it = project
   .enablePlugins(PlayScala)
