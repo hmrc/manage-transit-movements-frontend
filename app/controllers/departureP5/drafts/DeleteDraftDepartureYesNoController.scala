@@ -42,35 +42,35 @@ class DeleteDraftDepartureYesNoController @Inject() (
 
   private val form = formProvider("departure.drafts.deleteDraftDepartureYesNo")
 
-  def onPageLoad(lrn: LocalReferenceNumber, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String]): Action[AnyContent] =
+  def onPageLoad(lrn: LocalReferenceNumber, search: Option[String], pageNumber: Int, drafts: Int): Action[AnyContent] =
     (Action andThen actions.identify() andThen lockAction(lrn.value)) {
       implicit request =>
-        Ok(view(form, lrn, pageNumber, numberOfRows, searchLrn))
+        Ok(view(form, lrn, pageNumber, drafts, search))
     }
 
-  def onSubmit(lrn: LocalReferenceNumber, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String]): Action[AnyContent] =
+  def onSubmit(lrn: LocalReferenceNumber, search: Option[String], pageNumber: Int, drafts: Int): Action[AnyContent] =
     (Action andThen actions.identify() andThen lockAction(lrn.value)).async {
       implicit request =>
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, pageNumber, numberOfRows, searchLrn))),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, lrn, pageNumber, drafts, search))),
             {
               case true =>
                 draftDepartureService.deleteDraftDeparture(lrn.value) map {
                   case response if response.status == OK =>
                     val redirectPageNumber = pageNumber match {
-                      case 1                               => None
-                      case pageNumber if numberOfRows == 1 => Some(pageNumber - 1)
-                      case pageNumber                      => Some(pageNumber)
+                      case 1                         => None
+                      case pageNumber if drafts == 1 => Some(pageNumber - 1)
+                      case pageNumber                => Some(pageNumber)
                     }
 
-                    Redirect(controllers.departureP5.drafts.routes.DashboardController.onPageLoad(searchLrn, redirectPageNumber))
+                    Redirect(controllers.departureP5.drafts.routes.DashboardController.onPageLoad(search, redirectPageNumber))
                   case _ =>
                     Redirect(controllers.routes.ErrorController.internalServerError())
                 }
               case false =>
-                Future.successful(Redirect(controllers.departureP5.drafts.routes.DashboardController.onPageLoad(searchLrn, Some(pageNumber))))
+                Future.successful(Redirect(controllers.departureP5.drafts.routes.DashboardController.onPageLoad(search, Some(pageNumber))))
             }
           )
     }

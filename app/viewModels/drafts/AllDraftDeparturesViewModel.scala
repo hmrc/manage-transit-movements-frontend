@@ -57,7 +57,7 @@ case class AllDraftDeparturesViewModel(
   def isSearch: Boolean = searchParam.isDefined
 
   def deleteDraftUrl(draft: DraftDepartureRow): Call =
-    routes.DeleteDraftDepartureYesNoController.onPageLoad(LocalReferenceNumber(draft.lrn), currentPage, numberOfItems, lrn)
+    routes.DeleteDraftDepartureYesNoController.onPageLoad(LocalReferenceNumber(draft.lrn), lrn, currentPage, numberOfItems)
 }
 
 object AllDraftDeparturesViewModel {

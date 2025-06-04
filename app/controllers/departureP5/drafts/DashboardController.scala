@@ -49,14 +49,14 @@ class DashboardController @Inject() (
 
   private lazy val pageSize = paginationAppConfig.draftDeparturesNumberOfDrafts
 
-  def onPageLoad(lrn: Option[String], pageNumber: Option[Int]): Action[AnyContent] =
+  def onPageLoad(search: Option[String], pageNumber: Option[Int]): Action[AnyContent] =
     (Action andThen actions.identify()).async {
       implicit request =>
-        val preparedForm = lrn match {
+        val preparedForm = search match {
           case None        => form
           case Some(value) => form.fill(value)
         }
-        buildView(preparedForm, pageNumber, lrn)(Ok(_))
+        buildView(preparedForm, pageNumber, search)(Ok(_))
     }
 
   def onSubmit(): Action[AnyContent] =
@@ -78,7 +78,7 @@ class DashboardController @Inject() (
   private def buildView(
     form: Form[String],
     pageNumber: Option[Int] = None,
-    lrn: Option[String] = None
+    search: Option[String] = None
   )(
     block: HtmlFormat.Appendable => Result
   )(implicit request: IdentifierRequest[?]): Future[Result] = {
@@ -87,9 +87,9 @@ class DashboardController @Inject() (
     val skip  = Skip(page - 1)
     val limit = Limit(pageSize)
 
-    draftDepartureService.getDrafts(lrn, limit, skip).map {
+    draftDepartureService.getDrafts(search, limit, skip).map {
       case Some(drafts) =>
-        val viewModel = AllDraftDeparturesViewModel(drafts, lrn, page, pageSize)
+        val viewModel = AllDraftDeparturesViewModel(drafts, search, page, pageSize)
         block(view(form, viewModel))
       case None =>
         Redirect(controllers.routes.ErrorController.technicalDifficulties())

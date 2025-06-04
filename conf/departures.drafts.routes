@@ -1,8 +1,8 @@
-GET        /draft-declarations                                  controllers.departureP5.drafts.DashboardController.onPageLoad(lrn: Option[String], page: Option[Int])
+GET        /draft-declarations                                  controllers.departureP5.drafts.DashboardController.onPageLoad(search: Option[String], page: Option[Int])
 POST       /draft-declarations                                  controllers.departureP5.drafts.DashboardController.onSubmit()
 
-GET        /draft-declarations/:lrn/delete                      controllers.departureP5.drafts.DeleteDraftDepartureYesNoController.onPageLoad(lrn: LocalReferenceNumber, page: Int, numberOfRows: Int, searchLrn: Option[String])
-POST       /draft-declarations/:lrn/delete                      controllers.departureP5.drafts.DeleteDraftDepartureYesNoController.onSubmit(lrn: LocalReferenceNumber, page: Int, numberOfRows: Int, searchLrn: Option[String])
+GET        /draft-declarations/:lrn/delete                      controllers.departureP5.drafts.DeleteDraftDepartureYesNoController.onPageLoad(lrn: LocalReferenceNumber, search: Option[String], page: Int, drafts: Int)
+POST       /draft-declarations/:lrn/delete                      controllers.departureP5.drafts.DeleteDraftDepartureYesNoController.onSubmit(lrn: LocalReferenceNumber, search: Option[String], page: Int, drafts: Int)
 
 GET        /draft-declarations/cannot-delete                    controllers.departureP5.drafts.DraftLockedController.onPageLoad()
 POST       /draft-declarations/cannot-delete                    controllers.departureP5.drafts.DraftLockedController.onSubmit()
