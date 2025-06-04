@@ -31,15 +31,13 @@ trait PaginationViewModel[T] {
 
   def results: MetaData = MetaData(totalNumberOfItems, numberOfItemsPerPage, currentPage)
 
-  def noResultsFound(implicit messages: Messages): String = messages("search.noResultsFound")
-
   private def currentPageInvalid: Boolean = totalNumberOfItems < ((currentPage - 1) * numberOfItemsPerPage)
 
   def paginated: Boolean = results.totalPages > 1
 
   def status(implicit messages: Messages): String =
     if (totalNumberOfItems == 0) {
-      noResultsFound
+      messages("search.noResultsFound")
     } else if (currentPageInvalid) {
       messages("numberOfMovements.plural", "<b>0</b>")
     } else if (paginated) {

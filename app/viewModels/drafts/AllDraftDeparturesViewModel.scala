@@ -46,9 +46,6 @@ case class AllDraftDeparturesViewModel(
 
   private val numberOfItems: Int = items.length
 
-  override def noResultsFound(implicit messages: Messages): String =
-    messages("departure.drafts.dashboard.table.noResults")
-
   private val tableMessageKeyPrefix                                   = "departure.drafts.dashboard.table"
   def visuallyHiddenHeader(implicit messages: Messages): String       = messages(s"$tableMessageKeyPrefix.heading.hidden")
   def referenceNumber(implicit messages: Messages): String            = messages(s"$tableMessageKeyPrefix.lrn")
