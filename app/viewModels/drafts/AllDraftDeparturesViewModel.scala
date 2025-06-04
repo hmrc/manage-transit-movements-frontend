@@ -37,10 +37,10 @@ case class AllDraftDeparturesViewModel(
   override val items: Seq[DepartureUserAnswerSummary] = departures.userAnswers
 
   override def href(page: Int): Call =
-    routes.DashboardController.onPageLoad(Some(page), lrn)
+    routes.DashboardController.onPageLoad(lrn, Some(page))
 
   def onSubmit(): Call =
-    routes.DashboardController.onSubmit(Some(currentPage))
+    routes.DashboardController.onSubmit()
 
   override val searchParam: Option[String] = lrn
 

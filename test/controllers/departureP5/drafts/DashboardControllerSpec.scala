@@ -40,7 +40,7 @@ class DashboardControllerSpec extends SpecBase with Generators {
   private val formProvider                 = new DeparturesSearchFormProvider()
   private val form                         = formProvider()
   private lazy val draftDashboardGetRoute  = routes.DashboardController.onPageLoad(None, None).url
-  private lazy val draftDashboardPostRoute = routes.DashboardController.onSubmit(None).url
+  private lazy val draftDashboardPostRoute = routes.DashboardController.onSubmit().url
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -100,7 +100,7 @@ class DashboardControllerSpec extends SpecBase with Generators {
 
           val filledForm = form.bind(Map("value" -> searchParam))
 
-          val draftDashboardGetRoute = routes.DashboardController.onPageLoad(None, Some(searchParam)).url
+          val draftDashboardGetRoute = routes.DashboardController.onPageLoad(Some(searchParam), None).url
 
           val request = FakeRequest(GET, draftDashboardGetRoute)
           val result  = route(app, request).value
@@ -152,7 +152,7 @@ class DashboardControllerSpec extends SpecBase with Generators {
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.DashboardController.onPageLoad(None, Some(searchParam)).url
+        redirectLocation(result).value mustEqual routes.DashboardController.onPageLoad(Some(searchParam), None).url
       }
 
       "must return OK and the correct view when empty search" in {

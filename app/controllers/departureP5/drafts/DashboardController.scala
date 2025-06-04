@@ -49,7 +49,7 @@ class DashboardController @Inject() (
 
   private lazy val pageSize = paginationAppConfig.draftDeparturesNumberOfDrafts
 
-  def onPageLoad(pageNumber: Option[Int], lrn: Option[String]): Action[AnyContent] =
+  def onPageLoad(lrn: Option[String], pageNumber: Option[Int]): Action[AnyContent] =
     (Action andThen actions.identify()).async {
       implicit request =>
         val preparedForm = lrn match {
@@ -59,7 +59,7 @@ class DashboardController @Inject() (
         buildView(preparedForm, pageNumber, lrn)(Ok(_))
     }
 
-  def onSubmit(pageNumber: Option[Int]): Action[AnyContent] =
+  def onSubmit(): Action[AnyContent] =
     (Action andThen actions.identify()).async {
       implicit request =>
         form
@@ -68,9 +68,9 @@ class DashboardController @Inject() (
             formWithErrors => buildView(formWithErrors)(BadRequest(_)),
             {
               case lrn if lrn.trim.nonEmpty =>
-                Future.successful(Redirect(routes.DashboardController.onPageLoad(pageNumber, Some(lrn))))
+                Future.successful(Redirect(routes.DashboardController.onPageLoad(Some(lrn), None)))
               case _ =>
-                Future.successful(Redirect(routes.DashboardController.onPageLoad(pageNumber, None)))
+                Future.successful(Redirect(routes.DashboardController.onPageLoad(None, None)))
             }
           )
     }
