@@ -26,8 +26,8 @@ trait SearchViewBehaviours extends InputTextViewBehaviours[String] with ScalaChe
 
   def viewWithSpecificSearchResults(numberOfSearchResults: Int, searchParam: String): HtmlFormat.Appendable
 
-  "must contain movement-search div" in {
-    assert(doc.getElementsByClass("moj-search").size() == 1)
+  "must contain search div" in {
+    assertRenderedById(doc, "search")
   }
 
   def pageWithSearch(expectedLabelText: String, expectedNoResultsFoundText: String, numberOfItemsPerPage: Int): Unit = {

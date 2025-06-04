@@ -30,20 +30,18 @@ object ViewUtils {
     (if (mainContent.body.contains("govuk-error-summary")) s"${messages("error.title.prefix")} " else "") +
       s"$title - ${messages("site.service_name")} - GOV.UK"
 
-  // Based on https://design-patterns.service.justice.gov.uk/components/search/
   def searchInput(form: Form[?], label: String)(implicit messages: Messages): Input = {
     val field = form("value")
     Input(
       label = Label(
-        content = messages(label).toText,
-        classes = "moj-search__label"
+        content = messages(label).toText
       ),
       errorMessage = field.error.map {
         e =>
           ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(e.message, e.args*)))
       },
-      classes = "moj-search__input",
-      inputType = "search"
+      inputType = "search",
+      classes = "govuk-!-width-one-half"
     ).withFormField(field)
   }
 
