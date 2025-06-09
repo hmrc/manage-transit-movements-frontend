@@ -52,12 +52,7 @@ class DashboardController @Inject() (
   def onPageLoad(search: Option[String], pageNumber: Option[Int]): Action[AnyContent] =
     (Action andThen actions.identify()).async {
       implicit request =>
-        val preparedForm = search match {
-          case None        => form
-          case Some(value) => form.fillAndValidate(value)
-        }
-
-        buildView(preparedForm, search, pageNumber)
+        buildView(form.fillAndValidate(search), search, pageNumber)
     }
 
   def onSubmit(): Action[AnyContent] =
@@ -68,7 +63,7 @@ class DashboardController @Inject() (
           .fold(
             formWithErrors => buildView(formWithErrors),
             {
-              case lrn if lrn.trim.nonEmpty =>
+              case Some(lrn) if lrn.trim.nonEmpty =>
                 Future.successful(Redirect(routes.DashboardController.onPageLoad(Some(lrn), None)))
               case _ =>
                 Future.successful(Redirect(routes.DashboardController.onPageLoad(None, None)))
@@ -77,7 +72,7 @@ class DashboardController @Inject() (
     }
 
   private def buildView(
-    form: Form[String],
+    form: Form[Option[String]],
     search: Option[String] = None,
     pageNumber: Option[Int] = None
   )(implicit request: IdentifierRequest[?]): Future[Result] = {

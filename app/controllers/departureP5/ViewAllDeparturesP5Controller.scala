@@ -49,11 +49,7 @@ class ViewAllDeparturesP5Controller @Inject() (
 
   def onPageLoad(page: Option[Int], lrn: Option[String]): Action[AnyContent] = (Action andThen actions.identify()).async {
     implicit request =>
-      val preparedForm = lrn match {
-        case Some(value) => form.fill(value)
-        case None        => form
-      }
-      buildView(preparedForm, page, lrn)(Ok(_))
+      buildView(form.fill(lrn), page, lrn)(Ok(_))
   }
 
   def onSubmit(): Action[AnyContent] = (Action andThen actions.identify()).async {
@@ -63,13 +59,13 @@ class ViewAllDeparturesP5Controller @Inject() (
         .fold(
           formWithErrors => buildView(formWithErrors, None, None)(BadRequest(_)),
           value => {
-            val lrn: Option[String] = Option(value).filter(_.trim.nonEmpty)
+            val lrn: Option[String] = value.filter(_.trim.nonEmpty)
             Future.successful(Redirect(controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, lrn)))
           }
         )
   }
 
-  private def buildView(form: Form[String], page: Option[Int], searchParam: Option[String])(
+  private def buildView(form: Form[Option[String]], page: Option[Int], searchParam: Option[String])(
     block: HtmlFormat.Appendable => Result
   )(implicit request: IdentifierRequest[?]): Future[Result] = {
     val currentPage = page.getOrElse(1)

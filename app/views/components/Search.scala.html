@@ -26,17 +26,11 @@
 )
 
 @(
-    form: Form[?],
+    form: Form[Option[String]],
     action: Call,
     label: String
 )(implicit request: Request[?], messages: Messages)
 
-<!-- There is no search component in play-frontend-hmrc, but there is one on the MOJ design system.
-https://design-patterns.service.justice.gov.uk/components/search/
-However, it doesn't integrate well with an error summary and has known accessibility issues.
-If these issues get addressed we could look to migrate to using that component at a later date.
-There is also guidance however that we should "Align the primary action button to the left edge of your form.", which the MOJ component doesn't currently do.
-https://design-system.service.gov.uk/components/button/#how-it-works -->
 <div id="search">
     @formHelper(action = action, Symbol("autoComplete") -> "off") {
 

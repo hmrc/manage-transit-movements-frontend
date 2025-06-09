@@ -29,7 +29,7 @@ class ViewAllDeparturesP5ViewSpec
     with SearchViewBehaviours
     with PaginationViewBehaviours[ViewDepartureP5, ViewAllDepartureMovementsP5ViewModel] {
 
-  override def form: Form[String] = new DeparturesSearchFormProvider()()
+  override def form: Form[Option[String]] = new DeparturesSearchFormProvider()()
 
   override val viewModel: ViewAllDepartureMovementsP5ViewModel =
     arbitraryViewAllDepartureMovementsP5ViewModel.arbitrary.sample.value
@@ -62,7 +62,7 @@ class ViewAllDeparturesP5ViewSpec
     numberOfSearchResults: Int,
     currentPage: Int,
     numberOfItemsPerPage: Int,
-    searchParam: String
+    searchParam: Option[String]
   ): HtmlFormat.Appendable =
     viewWithSpecificPagination(
       form.fill(searchParam),
@@ -73,22 +73,22 @@ class ViewAllDeparturesP5ViewSpec
         },
         currentPage = currentPage,
         numberOfItemsPerPage = numberOfItemsPerPage,
-        searchParam = Some(searchParam),
+        searchParam = searchParam,
         totalNumberOfItems = numberOfSearchResults
       )
     )
 
   private def viewWithSpecificPagination(
-    form: Form[String],
+    form: Form[Option[String]],
     viewModel: ViewAllDepartureMovementsP5ViewModel
   ): HtmlFormat.Appendable =
     applyView(form, viewModel)
 
-  override def applyView(form: Form[String]): HtmlFormat.Appendable =
+  override def applyView(form: Form[Option[String]]): HtmlFormat.Appendable =
     applyView(form, viewModel)
 
   private def applyView(
-    form: Form[String],
+    form: Form[Option[String]],
     viewModel: ViewAllDepartureMovementsP5ViewModel
   ): HtmlFormat.Appendable =
     injector

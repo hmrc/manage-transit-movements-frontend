@@ -31,7 +31,7 @@ import views.html.departureP5.drafts.DashboardView
 
 class DashboardViewSpec extends SearchViewBehaviours with PaginationViewBehaviours[DepartureUserAnswerSummary, AllDraftDeparturesViewModel] {
 
-  override def form: Form[String] = new DeparturesSearchFormProvider()()
+  override def form: Form[Option[String]] = new DeparturesSearchFormProvider()()
 
   override val viewModel: AllDraftDeparturesViewModel =
     arbitraryAllDraftDeparturesViewModel.arbitrary.sample.value
@@ -61,7 +61,7 @@ class DashboardViewSpec extends SearchViewBehaviours with PaginationViewBehaviou
     numberOfSearchResults: Int,
     currentPage: Int,
     numberOfItemsPerPage: Int,
-    searchParam: String
+    searchParam: Option[String]
   ): HtmlFormat.Appendable =
     viewWithSpecificPagination(
       form.fill(searchParam),
@@ -72,21 +72,21 @@ class DashboardViewSpec extends SearchViewBehaviours with PaginationViewBehaviou
         },
         currentPage = currentPage,
         numberOfItemsPerPage = numberOfItemsPerPage,
-        lrn = Some(searchParam)
+        lrn = searchParam
       )
     )
 
   private def viewWithSpecificPagination(
-    form: Form[String],
+    form: Form[Option[String]],
     viewModel: AllDraftDeparturesViewModel
   ): HtmlFormat.Appendable =
     applyView(form, viewModel)
 
-  override def applyView(form: Form[String]): HtmlFormat.Appendable =
+  override def applyView(form: Form[Option[String]]): HtmlFormat.Appendable =
     applyView(form, viewModel)
 
   private def applyView(
-    form: Form[String],
+    form: Form[Option[String]],
     viewModel: AllDraftDeparturesViewModel
   ): HtmlFormat.Appendable =
     injector

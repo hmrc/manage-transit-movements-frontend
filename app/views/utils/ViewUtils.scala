@@ -30,7 +30,7 @@ object ViewUtils {
     (if (mainContent.body.contains("govuk-error-summary")) s"${messages("error.title.prefix")} " else "") +
       s"$title - ${messages("site.service_name")} - GOV.UK"
 
-  def searchInput(form: Form[?], label: String)(implicit messages: Messages): Input = {
+  def searchInput(form: Form[Option[String]], label: String)(implicit messages: Messages): Input = {
     val field = form("value")
     Input(
       label = Label(
