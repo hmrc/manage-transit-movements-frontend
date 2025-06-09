@@ -21,7 +21,7 @@ import forms.DeparturesSearchFormProvider
 import generators.Generators
 import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, verifyNoInteractions, when}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
@@ -35,7 +35,7 @@ import scala.concurrent.Future
 
 class DashboardControllerSpec extends SpecBase with Generators {
 
-  private val draftDepartureService = mock[DraftDepartureService]
+  private val mockDraftDepartureService = mock[DraftDepartureService]
 
   private val formProvider                 = new DeparturesSearchFormProvider()
   private val form                         = formProvider()
@@ -46,8 +46,13 @@ class DashboardControllerSpec extends SpecBase with Generators {
     super
       .guiceApplicationBuilder()
       .overrides(
-        bind[DraftDepartureService].toInstance(draftDepartureService)
+        bind[DraftDepartureService].toInstance(mockDraftDepartureService)
       )
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockDraftDepartureService)
+  }
 
   "DashboardController" - {
 
@@ -65,7 +70,7 @@ class DashboardControllerSpec extends SpecBase with Generators {
               )
             )
 
-          when(draftDepartureService.getDrafts(any(), any(), any())(any()))
+          when(mockDraftDepartureService.getDrafts(any(), any(), any())(any()))
             .thenReturn(Future.successful(Option(draftDeparture)))
 
           val draftDashboardGetRoute = routes.DashboardController.onPageLoad(None, None).url
@@ -93,7 +98,7 @@ class DashboardControllerSpec extends SpecBase with Generators {
               )
             )
 
-          when(draftDepartureService.getDrafts(any(), any(), any())(any()))
+          when(mockDraftDepartureService.getDrafts(any(), any(), any())(any()))
             .thenReturn(Future.successful(Option(draftDeparture)))
 
           val searchParam = "123"
@@ -113,9 +118,30 @@ class DashboardControllerSpec extends SpecBase with Generators {
             view(filledForm, viewModel)(request, messages).toString
         }
 
+        "must return a Bad Request and errors when invalid data is submitted" in {
+
+          val searchParam = "§§§"
+
+          val filledForm = form.bind(Map("value" -> searchParam))
+
+          val draftDashboardGetRoute = routes.DashboardController.onPageLoad(Some(searchParam), None).url
+
+          val request = FakeRequest(GET, draftDashboardGetRoute)
+          val result  = route(app, request).value
+
+          val view      = injector.instanceOf[DashboardView]
+          val viewModel = AllDraftDeparturesViewModel(DeparturesSummary(), Some(searchParam), 1, 2)
+
+          status(result) mustEqual BAD_REQUEST
+          contentAsString(result) mustEqual
+            view(filledForm, viewModel)(request, messages).toString
+
+          verifyNoInteractions(mockDraftDepartureService)
+        }
+
         "must redirect to technical difficulties when there is an error" in {
 
-          when(draftDepartureService.getDrafts(any(), any(), any())(any()))
+          when(mockDraftDepartureService.getDrafts(any(), any(), any())(any()))
             .thenReturn(Future.successful(None))
 
           val request = FakeRequest(GET, draftDashboardGetRoute)
@@ -141,7 +167,7 @@ class DashboardControllerSpec extends SpecBase with Generators {
             )
           )
 
-        when(draftDepartureService.getDrafts(any(), any(), any())(any()))
+        when(mockDraftDepartureService.getDrafts(any(), any(), any())(any()))
           .thenReturn(Future.successful(Option(draftDeparture)))
 
         val searchParam = "lrn"
@@ -167,7 +193,7 @@ class DashboardControllerSpec extends SpecBase with Generators {
             )
           )
 
-        when(draftDepartureService.getDrafts(any(), any(), any())(any()))
+        when(mockDraftDepartureService.getDrafts(any(), any(), any())(any()))
           .thenReturn(Future.successful(Option(draftDeparture)))
 
         val request = FakeRequest(POST, draftDashboardPostRoute)
@@ -178,21 +204,6 @@ class DashboardControllerSpec extends SpecBase with Generators {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual draftDashboardGetRoute
       }
-
-      "must redirect to technical difficulties when there is an error" in {
-
-        when(draftDepartureService.getDrafts(any(), any(), any())(any()))
-          .thenReturn(Future.successful(None))
-
-        val request = FakeRequest(POST, draftDashboardPostRoute)
-          .withFormUrlEncodedBody(("value", "#"))
-
-        val result = route(app, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
-      }
-
     }
   }
 }

@@ -19,12 +19,12 @@ package controllers.departureP5.drafts
 import config.PaginationAppConfig
 import controllers.actions.*
 import forms.DeparturesSearchFormProvider
+import models.DeparturesSummary
 import models.departure.drafts.{Limit, Skip}
 import models.requests.IdentifierRequest
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import play.twirl.api.HtmlFormat
 import services.DraftDepartureService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.drafts.AllDraftDeparturesViewModel
@@ -54,9 +54,10 @@ class DashboardController @Inject() (
       implicit request =>
         val preparedForm = search match {
           case None        => form
-          case Some(value) => form.fill(value)
+          case Some(value) => form.fillAndValidate(value)
         }
-        buildView(preparedForm, pageNumber, search)(Ok(_))
+
+        buildView(preparedForm, search, pageNumber)
     }
 
   def onSubmit(): Action[AnyContent] =
@@ -65,7 +66,7 @@ class DashboardController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => buildView(formWithErrors)(BadRequest(_)),
+            formWithErrors => buildView(formWithErrors),
             {
               case lrn if lrn.trim.nonEmpty =>
                 Future.successful(Redirect(routes.DashboardController.onPageLoad(Some(lrn), None)))
@@ -77,22 +78,25 @@ class DashboardController @Inject() (
 
   private def buildView(
     form: Form[String],
-    pageNumber: Option[Int] = None,
-    search: Option[String] = None
-  )(
-    block: HtmlFormat.Appendable => Result
+    search: Option[String] = None,
+    pageNumber: Option[Int] = None
   )(implicit request: IdentifierRequest[?]): Future[Result] = {
+    val page = pageNumber.getOrElse(1)
 
-    val page  = pageNumber.getOrElse(1)
-    val skip  = Skip(page - 1)
-    val limit = Limit(pageSize)
+    if (form.hasErrors) {
+      val viewModel = AllDraftDeparturesViewModel(DeparturesSummary(), search, page, pageSize)
+      Future.successful(BadRequest(view(form, viewModel)))
+    } else {
+      val skip  = Skip(page - 1)
+      val limit = Limit(pageSize)
 
-    draftDepartureService.getDrafts(search, limit, skip).map {
-      case Some(drafts) =>
-        val viewModel = AllDraftDeparturesViewModel(drafts, search, page, pageSize)
-        block(view(form, viewModel))
-      case None =>
-        Redirect(controllers.routes.ErrorController.technicalDifficulties())
+      draftDepartureService.getDrafts(search, limit, skip).map {
+        case Some(drafts) =>
+          val viewModel = AllDraftDeparturesViewModel(drafts, search, page, pageSize)
+          Ok(view(form, viewModel))
+        case None =>
+          Redirect(controllers.routes.ErrorController.technicalDifficulties())
+      }
     }
   }
 }
