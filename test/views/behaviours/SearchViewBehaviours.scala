@@ -22,7 +22,7 @@ import play.twirl.api.HtmlFormat
 
 trait SearchViewBehaviours extends InputTextViewBehaviours[Option[String]] with ScalaCheckPropertyChecks {
 
-  implicit override val arbitraryT: Arbitrary[Option[String]] = Arbitrary(Gen.option(Gen.alphaNumStr))
+  implicit override val arbitraryT: Arbitrary[Option[String]] = Arbitrary(Gen.some(nonEmptyString))
 
   override lazy val validValueString: String = validValue.value
 

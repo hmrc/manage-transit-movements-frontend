@@ -18,17 +18,20 @@ package controllers.arrivalP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ArrivalMovementP5Connector
+import forms.ArrivalsSearchFormProvider
 import generators.Generators
 import models.MessageStatus
 import models.arrivalP5.*
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, verifyNoInteractions, when}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import services.ArrivalP5MessageService
+import viewModels.P5.arrival.ViewAllArrivalMovementsP5ViewModel
+import views.html.arrivalP5.ViewAllArrivalsP5View
 
 import java.time.LocalDateTime
 import scala.concurrent.Future
@@ -37,6 +40,9 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with AppWithDefaultMockFi
 
   private val arrivalMovementP5Connector = mock[ArrivalMovementP5Connector]
   private val arrivalP5MessageService    = mock[ArrivalP5MessageService]
+
+  private val formProvider = new ArrivalsSearchFormProvider()
+  private val form         = formProvider()
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -76,13 +82,35 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with AppWithDefaultMockFi
           )
         )
 
-      val controllerUrl = controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
+      val controllerUrl = routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
 
       val request = FakeRequest(GET, controllerUrl)
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
+    }
+
+    "must return a Bad Request and errors when invalid data is submitted" in {
+      val searchParam = "§§§"
+
+      val filledForm = form.bind(Map("value" -> searchParam))
+
+      val controllerUrl = routes.ViewAllArrivalsP5Controller.onPageLoad(None, Some(searchParam)).url
+
+      val request = FakeRequest(GET, controllerUrl)
+
+      val result = route(app, request).value
+
+      val view      = injector.instanceOf[ViewAllArrivalsP5View]
+      val viewModel = ViewAllArrivalMovementsP5ViewModel(Nil, Some(searchParam), 1, 20, 0)
+
+      status(result) mustEqual BAD_REQUEST
+      contentAsString(result) mustEqual
+        view(filledForm, viewModel)(request, messages).toString
+
+      verifyNoInteractions(arrivalMovementP5Connector)
+      verifyNoInteractions(arrivalP5MessageService)
     }
   }
 }

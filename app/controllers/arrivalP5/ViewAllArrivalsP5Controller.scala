@@ -24,7 +24,6 @@ import models.requests.IdentifierRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import play.twirl.api.HtmlFormat
 import services.ArrivalP5MessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
@@ -49,7 +48,7 @@ class ViewAllArrivalsP5Controller @Inject() (
 
   def onPageLoad(page: Option[Int], mrn: Option[String]): Action[AnyContent] = (Action andThen actions.identify()).async {
     implicit request =>
-      buildView(form.fill(mrn), page, mrn)(Ok(_))
+      buildView(form.fillAndValidate(mrn), page, mrn)
   }
 
   def onSubmit(): Action[AnyContent] = (Action andThen actions.identify()).async {
@@ -57,7 +56,7 @@ class ViewAllArrivalsP5Controller @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => buildView(formWithErrors, None, None)(BadRequest(_)),
+          formWithErrors => buildView(formWithErrors, None, None),
           value => {
             val mrn: Option[String] = value.filter(_.trim.nonEmpty)
             Future.successful(Redirect(routes.ViewAllArrivalsP5Controller.onPageLoad(None, mrn)))
@@ -65,28 +64,35 @@ class ViewAllArrivalsP5Controller @Inject() (
         )
   }
 
-  private def buildView(form: Form[Option[String]], page: Option[Int], searchParam: Option[String])(
-    block: HtmlFormat.Appendable => Result
+  private def buildView(
+    form: Form[Option[String]],
+    page: Option[Int],
+    searchParam: Option[String]
   )(implicit request: IdentifierRequest[?]): Future[Result] = {
     val currentPage = page.getOrElse(1)
-    arrivalMovementP5Connector.getAllMovementsForSearchQuery(currentPage, paginationConfig.numberOfMovements, searchParam).flatMap {
-      case Some(movements) =>
-        arrivalP5MessageService.getLatestMessagesForMovements(movements).map {
-          movementsAndMessages =>
-            val arrivals: Seq[ViewArrivalP5] = movementsAndMessages.map(ViewArrivalP5(_))
+    if (form.hasErrors) {
+      val viewModel = ViewAllArrivalMovementsP5ViewModel(searchParam, currentPage, paginationConfig.numberOfMovements)
+      Future.successful(BadRequest(view(form, viewModel)))
+    } else {
+      arrivalMovementP5Connector.getAllMovementsForSearchQuery(currentPage, paginationConfig.numberOfMovements, searchParam).flatMap {
+        case Some(movements) =>
+          arrivalP5MessageService.getLatestMessagesForMovements(movements).map {
+            movementsAndMessages =>
+              val arrivals: Seq[ViewArrivalP5] = movementsAndMessages.map(ViewArrivalP5(_))
 
-            val viewModel = ViewAllArrivalMovementsP5ViewModel(
-              arrivals,
-              searchParam,
-              currentPage,
-              paginationConfig.numberOfMovements,
-              movements.totalCount
-            )
+              val viewModel = ViewAllArrivalMovementsP5ViewModel(
+                arrivals,
+                searchParam,
+                currentPage,
+                paginationConfig.numberOfMovements,
+                movements.totalCount
+              )
 
-            block(view(form, viewModel))
-        }
-      case None =>
-        Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
+              Ok(view(form, viewModel))
+          }
+        case None =>
+          Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
+      }
     }
   }
 }
