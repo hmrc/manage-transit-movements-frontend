@@ -19,12 +19,12 @@ package controllers.departureP5.drafts
 import config.PaginationAppConfig
 import controllers.actions.*
 import forms.DeparturesSearchFormProvider
-import models.DeparturesSummary
 import models.departure.drafts.{Limit, Skip}
 import models.requests.IdentifierRequest
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.twirl.api.HtmlFormat
 import services.DraftDepartureService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewModels.drafts.AllDraftDeparturesViewModel
@@ -76,22 +76,23 @@ class DashboardController @Inject() (
     search: Option[String] = None,
     pageNumber: Option[Int] = None
   )(implicit request: IdentifierRequest[?]): Future[Result] = {
-    val page = pageNumber.getOrElse(1)
+    val page  = pageNumber.getOrElse(1)
+    val skip  = Skip(page - 1)
+    val limit = Limit(pageSize)
 
-    if (form.hasErrors) {
-      val viewModel = AllDraftDeparturesViewModel(DeparturesSummary(), search, page, pageSize)
-      Future.successful(BadRequest(view(form, viewModel)))
-    } else {
-      val skip  = Skip(page - 1)
-      val limit = Limit(pageSize)
-
+    def getDrafts(search: Option[String])(block: HtmlFormat.Appendable => Result): Future[Result] =
       draftDepartureService.getDrafts(search, limit, skip).map {
         case Some(drafts) =>
           val viewModel = AllDraftDeparturesViewModel(drafts, search, page, pageSize)
-          Ok(view(form, viewModel))
+          block(view(form, viewModel))
         case None =>
           Redirect(controllers.routes.ErrorController.technicalDifficulties())
       }
+
+    if (form.hasErrors) {
+      getDrafts(None)(BadRequest(_))
+    } else {
+      getDrafts(search)(Ok(_))
     }
   }
 }

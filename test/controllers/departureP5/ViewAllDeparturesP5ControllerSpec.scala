@@ -23,15 +23,15 @@ import forms.DeparturesSearchFormProvider
 import generators.Generators
 import models.MessageStatus
 import models.departureP5.*
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verifyNoInteractions, when}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import services.DepartureP5MessageService
-import viewModels.P5.departure.ViewAllDepartureMovementsP5ViewModel
+import viewModels.P5.departure.{ViewAllDepartureMovementsP5ViewModel, ViewDepartureP5}
 import views.html.departureP5.ViewAllDeparturesP5View
 
 import java.time.LocalDateTime
@@ -97,6 +97,37 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with AppWithDefaultMock
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
+      val movement = DepartureMovement("id", Some("mrn"), "ref", LocalDateTime.now())
+
+      val movementsAndMessages: Seq[MovementAndMessages] = Seq(
+        OtherMovementAndMessages(
+          "id",
+          "ref",
+          LocalDateTime.now(),
+          DepartureMovementMessages(
+            NonEmptyList.one(
+              DepartureMessage(
+                "messageId",
+                LocalDateTime.now(),
+                DepartureMessageType.DepartureNotification,
+                MessageStatus.Success
+              )
+            ),
+            "id"
+          )
+        )
+      )
+
+      val movements = DepartureMovements(Seq(movement), 1)
+
+      val departures = movementsAndMessages.map(ViewDepartureP5(_))
+
+      when(departureMovementP5Connector.getAllMovementsForSearchQuery(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Some(movements)))
+
+      when(departureP5MessageService.getLatestMessagesForMovements(any())(any(), any()))
+        .thenReturn(Future.successful(movementsAndMessages))
+
       val searchParam = "§§§"
 
       val filledForm = form.bind(Map("value" -> searchParam))
@@ -108,14 +139,13 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with AppWithDefaultMock
       val result = route(app, request).value
 
       val view      = injector.instanceOf[ViewAllDeparturesP5View]
-      val viewModel = ViewAllDepartureMovementsP5ViewModel(Nil, Some(searchParam), 1, 20, 0)
+      val viewModel = ViewAllDepartureMovementsP5ViewModel(departures, None, 1, 20, movements.totalCount)
 
       status(result) mustEqual BAD_REQUEST
       contentAsString(result) mustEqual
         view(filledForm, viewModel)(request, messages).toString
 
-      verifyNoInteractions(departureMovementP5Connector)
-      verifyNoInteractions(departureP5MessageService)
+      verify(departureMovementP5Connector).getAllMovementsForSearchQuery(any(), any(), eqTo(None))(any())
     }
   }
 }

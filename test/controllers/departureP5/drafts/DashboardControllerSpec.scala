@@ -20,8 +20,8 @@ import base.SpecBase
 import forms.DeparturesSearchFormProvider
 import generators.Generators
 import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verifyNoInteractions, when}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.{reset, verify, when}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
@@ -120,6 +120,19 @@ class DashboardControllerSpec extends SpecBase with Generators {
 
         "must return a Bad Request and errors when invalid data is submitted" in {
 
+          val draftDeparture =
+            DeparturesSummary(
+              2,
+              2,
+              List(
+                DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
+                DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
+              )
+            )
+
+          when(mockDraftDepartureService.getDrafts(any(), any(), any())(any()))
+            .thenReturn(Future.successful(Option(draftDeparture)))
+
           val searchParam = "§§§"
 
           val filledForm = form.bind(Map("value" -> searchParam))
@@ -130,13 +143,13 @@ class DashboardControllerSpec extends SpecBase with Generators {
           val result  = route(app, request).value
 
           val view      = injector.instanceOf[DashboardView]
-          val viewModel = AllDraftDeparturesViewModel(DeparturesSummary(), Some(searchParam), 1, 2)
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 2)
 
           status(result) mustEqual BAD_REQUEST
           contentAsString(result) mustEqual
             view(filledForm, viewModel)(request, messages).toString
 
-          verifyNoInteractions(mockDraftDepartureService)
+          verify(mockDraftDepartureService).getDrafts(eqTo(None), any(), any())(any())
         }
 
         "must redirect to technical difficulties when there is an error" in {

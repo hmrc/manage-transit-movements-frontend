@@ -72,7 +72,7 @@ class DashboardViewSpec extends SearchViewBehaviours with PaginationViewBehaviou
         },
         currentPage = currentPage,
         numberOfItemsPerPage = numberOfItemsPerPage,
-        lrn = searchParam
+        searchParam = searchParam
       )
     )
 

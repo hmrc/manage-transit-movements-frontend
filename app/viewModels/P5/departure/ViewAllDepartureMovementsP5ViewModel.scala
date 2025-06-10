@@ -38,13 +38,6 @@ case class ViewAllDepartureMovementsP5ViewModel(
 object ViewAllDepartureMovementsP5ViewModel {
 
   def apply(
-    searchParam: Option[String],
-    currentPage: Int,
-    numberOfItemsPerPage: Int
-  )(implicit messages: Messages): ViewAllDepartureMovementsP5ViewModel =
-    apply(Nil, searchParam, currentPage, numberOfItemsPerPage, 0)
-
-  def apply(
     movementsAndMessages: Seq[ViewDepartureP5],
     searchParam: Option[String],
     currentPage: Int,

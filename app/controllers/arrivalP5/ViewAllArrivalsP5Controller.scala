@@ -24,6 +24,7 @@ import models.requests.IdentifierRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.twirl.api.HtmlFormat
 import services.ArrivalP5MessageService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
@@ -70,14 +71,13 @@ class ViewAllArrivalsP5Controller @Inject() (
     searchParam: Option[String]
   )(implicit request: IdentifierRequest[?]): Future[Result] = {
     val currentPage = page.getOrElse(1)
-    if (form.hasErrors) {
-      val viewModel = ViewAllArrivalMovementsP5ViewModel(searchParam, currentPage, paginationConfig.numberOfMovements)
-      Future.successful(BadRequest(view(form, viewModel)))
-    } else {
+
+    def getMovements(searchParam: Option[String])(block: HtmlFormat.Appendable => Result): Future[Result] =
       arrivalMovementP5Connector.getAllMovementsForSearchQuery(currentPage, paginationConfig.numberOfMovements, searchParam).flatMap {
         case Some(movements) =>
           arrivalP5MessageService.getLatestMessagesForMovements(movements).map {
             movementsAndMessages =>
+              // TODO - pass `movementsAndMessages` into view model and do the mapping in there
               val arrivals: Seq[ViewArrivalP5] = movementsAndMessages.map(ViewArrivalP5(_))
 
               val viewModel = ViewAllArrivalMovementsP5ViewModel(
@@ -88,11 +88,16 @@ class ViewAllArrivalsP5Controller @Inject() (
                 movements.totalCount
               )
 
-              Ok(view(form, viewModel))
+              block(view(form, viewModel))
           }
         case None =>
           Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
       }
+
+    if (form.hasErrors) {
+      getMovements(None)(BadRequest(_))
+    } else {
+      getMovements(searchParam)(Ok(_))
     }
   }
 }

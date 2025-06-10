@@ -299,12 +299,12 @@ trait ViewModelGenerators {
     Arbitrary {
       for {
         departures           <- arbitrary[DeparturesSummary]
-        lrn                  <- Gen.option(nonEmptyString)
+        searchParam          <- Gen.option(nonEmptyString)
         currentPage          <- positiveInts
         numberOfItemsPerPage <- positiveInts
       } yield AllDraftDeparturesViewModel(
         departures = departures,
-        lrn = lrn,
+        searchParam = searchParam,
         currentPage = currentPage,
         numberOfItemsPerPage = numberOfItemsPerPage
       )

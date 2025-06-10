@@ -29,7 +29,7 @@ case class AllDraftDeparturesViewModel(
   departures: DeparturesSummary,
   currentPage: Int,
   numberOfItemsPerPage: Int,
-  lrn: Option[String]
+  override val searchParam: Option[String]
 ) extends PaginationViewModel[DepartureUserAnswerSummary] {
 
   override val totalNumberOfItems: Int = departures.totalMatchingMovements
@@ -37,12 +37,10 @@ case class AllDraftDeparturesViewModel(
   override val items: Seq[DepartureUserAnswerSummary] = departures.userAnswers
 
   override def href(page: Int): Call =
-    routes.DashboardController.onPageLoad(lrn, Some(page))
+    routes.DashboardController.onPageLoad(searchParam, Some(page))
 
   def onSubmit(): Call =
     routes.DashboardController.onSubmit()
-
-  override val searchParam: Option[String] = lrn
 
   private val numberOfItems: Int = items.length
 
@@ -57,7 +55,7 @@ case class AllDraftDeparturesViewModel(
   def isSearch: Boolean = searchParam.isDefined
 
   def deleteDraftUrl(draft: DraftDepartureRow): Call =
-    routes.DeleteDraftDepartureYesNoController.onPageLoad(LocalReferenceNumber(draft.lrn), lrn, currentPage, numberOfItems)
+    routes.DeleteDraftDepartureYesNoController.onPageLoad(LocalReferenceNumber(draft.lrn), searchParam, currentPage, numberOfItems)
 }
 
 object AllDraftDeparturesViewModel {
@@ -72,7 +70,7 @@ object AllDraftDeparturesViewModel {
 
   def apply(
     departures: DeparturesSummary,
-    lrn: Option[String],
+    searchParam: Option[String],
     currentPage: Int,
     numberOfItemsPerPage: Int
   )(implicit messages: Messages): AllDraftDeparturesViewModel = {
@@ -85,7 +83,7 @@ object AllDraftDeparturesViewModel {
       departures,
       currentPage,
       numberOfItemsPerPage,
-      lrn
+      searchParam
     )
   }
 }
