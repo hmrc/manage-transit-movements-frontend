@@ -52,7 +52,7 @@
 
     @search(
         form = form,
-        action = routes.ViewAllDeparturesP5Controller.onSubmit(),
+        action = routes.ViewAllDeparturesP5Controller.onSubmit(Some(viewModel.currentPage)),
         label = "viewDepartureDeclarationsP5.search.title"
     )
 

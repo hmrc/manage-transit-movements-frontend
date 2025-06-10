@@ -52,7 +52,7 @@
 
     @search(
         form = form,
-        action = viewModel.onSubmit(),
+        action = routes.DashboardController.onSubmit(Some(viewModel.currentPage)),
         label = "departure.drafts.dashboard.search"
     )
 

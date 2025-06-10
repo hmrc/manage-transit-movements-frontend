@@ -55,26 +55,24 @@ class DashboardController @Inject() (
         buildView(form.fillAndValidate(search), search, pageNumber)
     }
 
-  def onSubmit(): Action[AnyContent] =
+  def onSubmit(pageNumber: Option[Int]): Action[AnyContent] =
     (Action andThen actions.identify()).async {
       implicit request =>
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => buildView(formWithErrors),
-            {
-              case Some(lrn) if lrn.trim.nonEmpty =>
-                Future.successful(Redirect(routes.DashboardController.onPageLoad(Some(lrn), None)))
-              case _ =>
-                Future.successful(Redirect(routes.DashboardController.onPageLoad(None, None)))
+            formWithErrors => buildView(formWithErrors, None, pageNumber),
+            value => {
+              val lrn = value.filter(_.nonEmpty)
+              Future.successful(Redirect(routes.DashboardController.onPageLoad(lrn, None)))
             }
           )
     }
 
   private def buildView(
     form: Form[Option[String]],
-    search: Option[String] = None,
-    pageNumber: Option[Int] = None
+    search: Option[String],
+    pageNumber: Option[Int]
   )(implicit request: IdentifierRequest[?]): Future[Result] = {
     val page  = pageNumber.getOrElse(1)
     val skip  = Skip(page - 1)

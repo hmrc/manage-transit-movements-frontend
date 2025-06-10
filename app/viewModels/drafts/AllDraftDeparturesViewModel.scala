@@ -39,9 +39,6 @@ case class AllDraftDeparturesViewModel(
   override def href(page: Int): Call =
     routes.DashboardController.onPageLoad(searchParam, Some(page))
 
-  def onSubmit(): Call =
-    routes.DashboardController.onSubmit()
-
   private val numberOfItems: Int = items.length
 
   private val tableMessageKeyPrefix                                   = "departure.drafts.dashboard.table"

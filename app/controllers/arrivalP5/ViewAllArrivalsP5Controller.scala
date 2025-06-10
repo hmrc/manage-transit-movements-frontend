@@ -52,12 +52,12 @@ class ViewAllArrivalsP5Controller @Inject() (
       buildView(form.fillAndValidate(mrn), page, mrn)
   }
 
-  def onSubmit(): Action[AnyContent] = (Action andThen actions.identify()).async {
+  def onSubmit(page: Option[Int]): Action[AnyContent] = (Action andThen actions.identify()).async {
     implicit request =>
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => buildView(formWithErrors, None, None),
+          formWithErrors => buildView(formWithErrors, page, None),
           value => {
             val mrn: Option[String] = value.filter(_.trim.nonEmpty)
             Future.successful(Redirect(routes.ViewAllArrivalsP5Controller.onPageLoad(None, mrn)))

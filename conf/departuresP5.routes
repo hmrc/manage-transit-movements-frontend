@@ -1,7 +1,7 @@
 # Departure P5 live routes
 
 GET         /view-departure-declarations                                             controllers.departureP5.ViewAllDeparturesP5Controller.onPageLoad(page: Option[Int], lrn: Option[String])
-POST        /view-departure-declarations                                             controllers.departureP5.ViewAllDeparturesP5Controller.onSubmit()
+POST        /view-departure-declarations                                             controllers.departureP5.ViewAllDeparturesP5Controller.onSubmit(page: Option[Int])
 
 GET         /:departureId/goods-under-control-index/:messageId                       controllers.departureP5.GoodsUnderControlIndexController.onPageLoad(departureId: String, messageId: String)
 

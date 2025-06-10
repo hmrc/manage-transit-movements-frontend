@@ -96,7 +96,7 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with AppWithDefaultMock
       status(result) mustEqual OK
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "must return a Bad Request and errors when invalid data is submitted (GET)" in {
       val movement = DepartureMovement("id", Some("mrn"), "ref", LocalDateTime.now())
 
       val movementsAndMessages: Seq[MovementAndMessages] = Seq(
@@ -140,6 +140,60 @@ class ViewAllDeparturesP5ControllerSpec extends SpecBase with AppWithDefaultMock
 
       val view      = injector.instanceOf[ViewAllDeparturesP5View]
       val viewModel = ViewAllDepartureMovementsP5ViewModel(departures, None, 1, 20, movements.totalCount)
+
+      status(result) mustEqual BAD_REQUEST
+      contentAsString(result) mustEqual
+        view(filledForm, viewModel)(request, messages).toString
+
+      verify(departureMovementP5Connector).getAllMovementsForSearchQuery(any(), any(), eqTo(None))(any())
+    }
+
+    "must return a Bad Request and errors when invalid data is submitted (POST)" in {
+      val movement = DepartureMovement("id", Some("mrn"), "ref", LocalDateTime.now())
+
+      val movementsAndMessages: Seq[MovementAndMessages] = Seq(
+        OtherMovementAndMessages(
+          "id",
+          "ref",
+          LocalDateTime.now(),
+          DepartureMovementMessages(
+            NonEmptyList.one(
+              DepartureMessage(
+                "messageId",
+                LocalDateTime.now(),
+                DepartureMessageType.DepartureNotification,
+                MessageStatus.Success
+              )
+            ),
+            "id"
+          )
+        )
+      )
+
+      val movements = DepartureMovements(Seq(movement), 1)
+
+      val departures = movementsAndMessages.map(ViewDepartureP5(_))
+
+      when(departureMovementP5Connector.getAllMovementsForSearchQuery(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Some(movements)))
+
+      when(departureP5MessageService.getLatestMessagesForMovements(any())(any(), any()))
+        .thenReturn(Future.successful(movementsAndMessages))
+
+      val searchParam = "§§§"
+      val page        = 2
+
+      val filledForm = form.bind(Map("value" -> searchParam))
+
+      val controllerUrl = routes.ViewAllDeparturesP5Controller.onSubmit(Some(page)).url
+
+      val request = FakeRequest(POST, controllerUrl)
+        .withFormUrlEncodedBody(("value", searchParam))
+
+      val result = route(app, request).value
+
+      val view      = injector.instanceOf[ViewAllDeparturesP5View]
+      val viewModel = ViewAllDepartureMovementsP5ViewModel(departures, None, page, 20, movements.totalCount)
 
       status(result) mustEqual BAD_REQUEST
       contentAsString(result) mustEqual

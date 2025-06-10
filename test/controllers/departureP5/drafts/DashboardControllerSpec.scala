@@ -40,7 +40,7 @@ class DashboardControllerSpec extends SpecBase with Generators {
   private val formProvider                 = new DeparturesSearchFormProvider()
   private val form                         = formProvider()
   private lazy val draftDashboardGetRoute  = routes.DashboardController.onPageLoad(None, None).url
-  private lazy val draftDashboardPostRoute = routes.DashboardController.onSubmit().url
+  private lazy val draftDashboardPostRoute = routes.DashboardController.onSubmit(None).url
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -216,6 +216,40 @@ class DashboardControllerSpec extends SpecBase with Generators {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual draftDashboardGetRoute
+      }
+
+      "must return a Bad Request and errors when invalid data is submitted" in {
+
+        val draftDeparture =
+          DeparturesSummary(
+            25,
+            25,
+            List.fill(25)(DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30))
+          )
+
+        when(mockDraftDepartureService.getDrafts(any(), any(), any())(any()))
+          .thenReturn(Future.successful(Option(draftDeparture)))
+
+        val searchParam = "§§§"
+        val page        = 2
+
+        val filledForm = form.bind(Map("value" -> searchParam))
+
+        val draftDashboardPostRoute = routes.DashboardController.onSubmit(Some(page)).url
+
+        val request = FakeRequest(POST, draftDashboardPostRoute)
+          .withFormUrlEncodedBody(("value", searchParam))
+
+        val result = route(app, request).value
+
+        val view      = injector.instanceOf[DashboardView]
+        val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, page, 20)
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual
+          view(filledForm, viewModel)(request, messages).toString
+
+        verify(mockDraftDepartureService).getDrafts(eqTo(None), any(), any())(any())
       }
     }
   }

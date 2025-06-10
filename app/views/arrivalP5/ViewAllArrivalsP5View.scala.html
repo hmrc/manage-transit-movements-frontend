@@ -53,7 +53,7 @@
 
     @search(
         form = form,
-        action = routes.ViewAllArrivalsP5Controller.onSubmit(),
+        action = routes.ViewAllArrivalsP5Controller.onSubmit(Some(viewModel.currentPage)),
         label = "viewArrivalNotificationsP5.search.title"
     )
 
