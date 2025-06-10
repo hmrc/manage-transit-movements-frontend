@@ -24,7 +24,8 @@
     isStartButton: Boolean = false,
     preventDoubleClick: Boolean = false,
     attributes: Map[String, String] = Map.empty,
-    href: Option[String] = None
+    href: Option[String] = None,
+    classes: Option[String] = None
 )(implicit messages: Messages)
 
 @govukButton(
@@ -33,6 +34,7 @@
         preventDoubleClick = Some(preventDoubleClick),
         content = Text(messages(messageKey)),
         attributes = attributes,
-        href = href
+        href = href,
+        classes = classes.getOrElse("")
     )
 )

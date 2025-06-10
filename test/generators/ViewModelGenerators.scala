@@ -18,7 +18,7 @@ package generators
 
 import models.FunctionalErrors.{FunctionalErrorsWithSection, FunctionalErrorsWithoutSection}
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
-import models.{DeparturesSummary, GuaranteeReference, Sort}
+import models.{DeparturesSummary, GuaranteeReference}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.data.FormError
@@ -266,7 +266,7 @@ trait ViewModelGenerators {
         searchParam            <- Gen.option(nonEmptyString)
         currentPage            <- positiveInts
         numberOfItemsPerPage   <- positiveInts
-        totalNumberOfMovements <- positiveInts
+        totalNumberOfMovements <- Gen.choose(1, (currentPage - 1) * numberOfItemsPerPage)
       } yield ViewAllDepartureMovementsP5ViewModel(
         movementsAndMessages = movementsAndMessages,
         searchParam = searchParam,
@@ -285,7 +285,7 @@ trait ViewModelGenerators {
         searchParam            <- Gen.option(nonEmptyString)
         currentPage            <- positiveInts
         numberOfItemsPerPage   <- positiveInts
-        totalNumberOfMovements <- positiveInts
+        totalNumberOfMovements <- Gen.choose(1, (currentPage - 1) * numberOfItemsPerPage)
       } yield ViewAllArrivalMovementsP5ViewModel(
         movementsAndMessages = movementsAndMessages,
         searchParam = searchParam,
@@ -299,16 +299,14 @@ trait ViewModelGenerators {
     Arbitrary {
       for {
         departures           <- arbitrary[DeparturesSummary]
-        lrn                  <- Gen.option(nonEmptyString)
+        searchParam          <- Gen.option(nonEmptyString)
         currentPage          <- positiveInts
         numberOfItemsPerPage <- positiveInts
-        sortParams           <- Gen.option(arbitrary[Sort])
       } yield AllDraftDeparturesViewModel(
         departures = departures,
-        lrn = lrn,
+        searchParam = searchParam,
         currentPage = currentPage,
-        numberOfItemsPerPage = numberOfItemsPerPage,
-        sortParams = sortParams
+        numberOfItemsPerPage = numberOfItemsPerPage
       )
     }
 

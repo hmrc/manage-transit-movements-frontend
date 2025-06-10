@@ -1,7 +1,7 @@
 # Arrival P5 live routes
 
 GET        /view-arrival-notifications                                               controllers.arrivalP5.ViewAllArrivalsP5Controller.onPageLoad(page: Option[Int], mrn: Option[String])
-POST       /view-arrival-notifications                                               controllers.arrivalP5.ViewAllArrivalsP5Controller.onSubmit()
+POST       /view-arrival-notifications                                               controllers.arrivalP5.ViewAllArrivalsP5Controller.onSubmit(page: Option[Int])
 
 GET        /:arrivalId/notification-errors/:messageId                                controllers.arrivalP5.ArrivalNotificationWithoutFunctionalErrorsP5Controller.onPageLoad(arrivalId: String, messageId: String)
 

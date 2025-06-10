@@ -26,16 +26,15 @@
 )
 
 @(
-    form: Form[?],
+    form: Form[Option[String]],
     action: Call,
     label: String
 )(implicit request: Request[?], messages: Messages)
 
-@formHelper(action = action, Symbol("autoComplete") -> "off") {
+<div id="search">
+    @formHelper(action = action, Symbol("autoComplete") -> "off") {
 
-    @errorSummary(form.errors)
-
-    <div class="movement-search">
+        @errorSummary(form.errors)
 
         @govukInput(searchInput(form, label))
 
@@ -43,5 +42,5 @@
             messageKey = "site.search",
             attributes = Map("id" -> "submit")
         )
-    </div>
-}
+    }
+</div>

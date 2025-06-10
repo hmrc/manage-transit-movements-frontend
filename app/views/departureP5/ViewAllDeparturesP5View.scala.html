@@ -32,7 +32,7 @@
 )
 
 @(
-    form: Form[String],
+    form: Form[Option[String]],
     viewModel: ViewAllDepartureMovementsP5ViewModel
 )(implicit request: Request[?], messages: Messages)
 
@@ -52,7 +52,7 @@
 
     @search(
         form = form,
-        action = routes.ViewAllDeparturesP5Controller.onSubmit(),
+        action = routes.ViewAllDeparturesP5Controller.onSubmit(Some(viewModel.currentPage)),
         label = "viewDepartureDeclarationsP5.search.title"
     )
 
@@ -69,8 +69,6 @@
             rowHeadingStatus = messages("viewDepartureDeclarationsP5.table.status"),
             rowHeadingAction = messages("viewDepartureDeclarationsP5.table.action")
         )
-    } else {
-        @status(id = "no-results-found", classes = "govuk-body", html = messages("search.noResultsFound"))
     }
 
     <p class="govuk-body govuk-!-margin-top-3">

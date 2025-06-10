@@ -29,7 +29,7 @@ class ViewAllArrivalsP5ViewSpec
     with SearchViewBehaviours
     with PaginationViewBehaviours[ViewArrivalP5, ViewAllArrivalMovementsP5ViewModel] {
 
-  override def form: Form[String] = new DeparturesSearchFormProvider()()
+  override def form: Form[Option[String]] = new DeparturesSearchFormProvider()()
 
   override val viewModel: ViewAllArrivalMovementsP5ViewModel =
     arbitraryViewAllArrivalMovementsP5ViewModel.arbitrary.sample.value
@@ -58,7 +58,12 @@ class ViewAllArrivalsP5ViewSpec
   override def viewWithSpecificPagination(viewModel: ViewAllArrivalMovementsP5ViewModel): HtmlFormat.Appendable =
     viewWithSpecificPagination(form, viewModel)
 
-  override def viewWithSpecificSearchResults(numberOfSearchResults: Int, searchParam: String): HtmlFormat.Appendable =
+  override def viewWithSpecificSearchResults(
+    numberOfSearchResults: Int,
+    currentPage: Int,
+    numberOfItemsPerPage: Int,
+    searchParam: Option[String]
+  ): HtmlFormat.Appendable =
     viewWithSpecificPagination(
       form.fill(searchParam),
       viewModel.copy(
@@ -66,22 +71,24 @@ class ViewAllArrivalsP5ViewSpec
           def arrival: ViewArrivalP5 = arbitrary[ViewArrivalP5].sample.value
           Seq.fill(numberOfSearchResults)(arrival)
         },
-        searchParam = Some(searchParam),
+        currentPage = currentPage,
+        numberOfItemsPerPage = numberOfItemsPerPage,
+        searchParam = searchParam,
         totalNumberOfItems = numberOfSearchResults
       )
     )
 
   private def viewWithSpecificPagination(
-    form: Form[String],
+    form: Form[Option[String]],
     viewModel: ViewAllArrivalMovementsP5ViewModel
   ): HtmlFormat.Appendable =
     applyView(form, viewModel)
 
-  override def applyView(form: Form[String]): HtmlFormat.Appendable =
+  override def applyView(form: Form[Option[String]]): HtmlFormat.Appendable =
     applyView(form, viewModel)
 
   private def applyView(
-    form: Form[String],
+    form: Form[Option[String]],
     viewModel: ViewAllArrivalMovementsP5ViewModel
   ): HtmlFormat.Appendable =
     injector

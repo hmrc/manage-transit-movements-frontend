@@ -19,10 +19,9 @@ package controllers.departureP5.drafts
 import base.SpecBase
 import forms.DeparturesSearchFormProvider
 import generators.Generators
-import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber, Sort}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalacheck.Arbitrary.arbitrary
+import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.{reset, verify, when}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
@@ -36,25 +35,30 @@ import scala.concurrent.Future
 
 class DashboardControllerSpec extends SpecBase with Generators {
 
-  private val draftDepartureService = mock[DraftDepartureService]
+  private val mockDraftDepartureService = mock[DraftDepartureService]
 
   private val formProvider                 = new DeparturesSearchFormProvider()
   private val form                         = formProvider()
-  private lazy val draftDashboardGetRoute  = routes.DashboardController.onPageLoad(None, None, None).url
+  private lazy val draftDashboardGetRoute  = routes.DashboardController.onPageLoad(None, None).url
   private lazy val draftDashboardPostRoute = routes.DashboardController.onSubmit(None).url
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(
-        bind[DraftDepartureService].toInstance(draftDepartureService)
+        bind[DraftDepartureService].toInstance(mockDraftDepartureService)
       )
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockDraftDepartureService)
+  }
 
   "DashboardController" - {
 
     "GET" - {
       "must return OK and the correct view" - {
-        "when no sort param is passed" in {
+        "when no search param is passed" in {
 
           val draftDeparture =
             DeparturesSummary(
@@ -66,84 +70,91 @@ class DashboardControllerSpec extends SpecBase with Generators {
               )
             )
 
-          when(draftDepartureService.sortOrGetDrafts(any(), any(), any(), any())(any()))
+          when(mockDraftDepartureService.getDrafts(any(), any(), any())(any()))
             .thenReturn(Future.successful(Option(draftDeparture)))
+
+          val draftDashboardGetRoute = routes.DashboardController.onPageLoad(None, None).url
 
           val request = FakeRequest(GET, draftDashboardGetRoute)
           val result  = route(app, request).value
 
           val view      = injector.instanceOf[DashboardView]
-          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 2, None)
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 2)
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual
             view(form, viewModel)(request, messages).toString
         }
 
-        "when sortParam is passed" in {
-          val sortParam = arbitrary[Sort].sample.value
-
-          lazy val draftDashboardGetRoute = routes.DashboardController.onPageLoad(None, None, Some(sortParam.convertParams)).url
+        "when search param is passed" in {
 
           val draftDeparture =
             DeparturesSummary(
-              4,
-              4,
+              2,
+              2,
               List(
-                DepartureUserAnswerSummary(LocalReferenceNumber("1234"), LocalDateTime.now(), 30),
-                DepartureUserAnswerSummary(LocalReferenceNumber("2341"), LocalDateTime.now(), 29),
-                DepartureUserAnswerSummary(LocalReferenceNumber("3412"), LocalDateTime.now(), 28),
-                DepartureUserAnswerSummary(LocalReferenceNumber("4123"), LocalDateTime.now(), 27)
+                DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
+                DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
               )
             )
 
-          when(draftDepartureService.sortOrGetDrafts(any(), any(), any(), any())(any()))
+          when(mockDraftDepartureService.getDrafts(any(), any(), any())(any()))
             .thenReturn(Future.successful(Option(draftDeparture)))
+
+          val searchParam = "123"
+
+          val filledForm = form.bind(Map("value" -> searchParam))
+
+          val draftDashboardGetRoute = routes.DashboardController.onPageLoad(Some(searchParam), None).url
 
           val request = FakeRequest(GET, draftDashboardGetRoute)
           val result  = route(app, request).value
 
           val view      = injector.instanceOf[DashboardView]
-          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 4, Some(sortParam))
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, Some(searchParam), 1, 2)
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual
-            view(form, viewModel)(request, messages).toString
+            view(filledForm, viewModel)(request, messages).toString
         }
 
-        "when sortParam and LRN are passed" in {
-          val sortParam = arbitrary[Sort].sample.value
-          val lrn       = "123"
-
-          lazy val draftDashboardGetRoute = routes.DashboardController.onPageLoad(None, Some(lrn), Some(sortParam.convertParams)).url
+        "must return a Bad Request and errors when invalid data is submitted" in {
 
           val draftDeparture =
             DeparturesSummary(
               2,
               2,
               List(
-                DepartureUserAnswerSummary(LocalReferenceNumber("1235"), LocalDateTime.now(), 28),
-                DepartureUserAnswerSummary(LocalReferenceNumber("1234"), LocalDateTime.now(), 27)
+                DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
+                DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
               )
             )
 
-          when(draftDepartureService.sortOrGetDrafts(any(), any(), any(), any())(any()))
+          when(mockDraftDepartureService.getDrafts(any(), any(), any())(any()))
             .thenReturn(Future.successful(Option(draftDeparture)))
+
+          val searchParam = "§§§"
+
+          val filledForm = form.bind(Map("value" -> searchParam))
+
+          val draftDashboardGetRoute = routes.DashboardController.onPageLoad(Some(searchParam), None).url
 
           val request = FakeRequest(GET, draftDashboardGetRoute)
           val result  = route(app, request).value
 
           val view      = injector.instanceOf[DashboardView]
-          val viewModel = AllDraftDeparturesViewModel(draftDeparture, Some(lrn), 1, 4, Some(sortParam))
+          val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, 1, 2)
 
-          status(result) mustEqual OK
+          status(result) mustEqual BAD_REQUEST
           contentAsString(result) mustEqual
-            view(form, viewModel)(request, messages).toString
+            view(filledForm, viewModel)(request, messages).toString
+
+          verify(mockDraftDepartureService).getDrafts(eqTo(None), any(), any())(any())
         }
 
         "must redirect to technical difficulties when there is an error" in {
 
-          when(draftDepartureService.sortOrGetDrafts(any(), any(), any(), any())(any()))
+          when(mockDraftDepartureService.getDrafts(any(), any(), any())(any()))
             .thenReturn(Future.successful(None))
 
           val request = FakeRequest(GET, draftDashboardGetRoute)
@@ -152,72 +163,94 @@ class DashboardControllerSpec extends SpecBase with Generators {
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
         }
-      }
-
-      "POST" - {
-
-        "must return OK and the correct view when given a search LRN" in {
-
-          val draftDeparture =
-            DeparturesSummary(
-              0,
-              0,
-              List(
-                DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
-                DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
-              )
-            )
-
-          when(draftDepartureService.sortOrGetDrafts(any(), any(), any(), any())(any()))
-            .thenReturn(Future.successful(Option(draftDeparture)))
-
-          val request = FakeRequest(POST, draftDashboardPostRoute)
-            .withFormUrlEncodedBody(("value", "lrn"))
-
-          val result = route(app, request).value
-
-          status(result) mustEqual OK
-        }
-
-        "must return OK and the correct view when empty search" in {
-
-          val draftDeparture =
-            DeparturesSummary(
-              0,
-              0,
-              List(
-                DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
-                DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
-              )
-            )
-
-          when(draftDepartureService.sortOrGetDrafts(any(), any(), any(), any())(any()))
-            .thenReturn(Future.successful(Option(draftDeparture)))
-
-          val request = FakeRequest(POST, draftDashboardPostRoute)
-            .withFormUrlEncodedBody(("value", ""))
-
-          val result = route(app, request).value
-
-          status(result) mustEqual OK
-        }
-
-        "must redirect to technical difficulties when there is an error" in {
-
-          when(draftDepartureService.sortOrGetDrafts(any(), any(), any(), any())(any()))
-            .thenReturn(Future.successful(None))
-
-          val request = FakeRequest(POST, draftDashboardPostRoute)
-            .withFormUrlEncodedBody(("value", "lrn"))
-
-          val result = route(app, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
-        }
-
       }
     }
 
+    "POST" - {
+
+      "must return OK and the correct view when given a search LRN" in {
+
+        val draftDeparture =
+          DeparturesSummary(
+            0,
+            0,
+            List(
+              DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
+              DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
+            )
+          )
+
+        when(mockDraftDepartureService.getDrafts(any(), any(), any())(any()))
+          .thenReturn(Future.successful(Option(draftDeparture)))
+
+        val searchParam = "lrn"
+
+        val request = FakeRequest(POST, draftDashboardPostRoute)
+          .withFormUrlEncodedBody(("value", searchParam))
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.DashboardController.onPageLoad(Some(searchParam), None).url
+      }
+
+      "must return OK and the correct view when empty search" in {
+
+        val draftDeparture =
+          DeparturesSummary(
+            0,
+            0,
+            List(
+              DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30),
+              DepartureUserAnswerSummary(LocalReferenceNumber("67890"), LocalDateTime.now(), 29)
+            )
+          )
+
+        when(mockDraftDepartureService.getDrafts(any(), any(), any())(any()))
+          .thenReturn(Future.successful(Option(draftDeparture)))
+
+        val request = FakeRequest(POST, draftDashboardPostRoute)
+          .withFormUrlEncodedBody(("value", ""))
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual draftDashboardGetRoute
+      }
+
+      "must return a Bad Request and errors when invalid data is submitted" in {
+
+        val draftDeparture =
+          DeparturesSummary(
+            25,
+            25,
+            List.fill(25)(DepartureUserAnswerSummary(LocalReferenceNumber("12345"), LocalDateTime.now(), 30))
+          )
+
+        when(mockDraftDepartureService.getDrafts(any(), any(), any())(any()))
+          .thenReturn(Future.successful(Option(draftDeparture)))
+
+        val searchParam = "§§§"
+        val page        = 2
+
+        val filledForm = form.bind(Map("value" -> searchParam))
+
+        val draftDashboardPostRoute = routes.DashboardController.onSubmit(Some(page)).url
+
+        val request = FakeRequest(POST, draftDashboardPostRoute)
+          .withFormUrlEncodedBody(("value", searchParam))
+
+        val result = route(app, request).value
+
+        val view      = injector.instanceOf[DashboardView]
+        val viewModel = AllDraftDeparturesViewModel(draftDeparture, None, page, 20)
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual
+          view(filledForm, viewModel)(request, messages).toString
+
+        verify(mockDraftDepartureService).getDrafts(eqTo(None), any(), any())(any())
+      }
+    }
   }
 }

@@ -18,17 +18,20 @@ package controllers.arrivalP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ArrivalMovementP5Connector
+import forms.ArrivalsSearchFormProvider
 import generators.Generators
 import models.MessageStatus
 import models.arrivalP5.*
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import services.ArrivalP5MessageService
+import viewModels.P5.arrival.{ViewAllArrivalMovementsP5ViewModel, ViewArrivalP5}
+import views.html.arrivalP5.ViewAllArrivalsP5View
 
 import java.time.LocalDateTime
 import scala.concurrent.Future
@@ -37,6 +40,9 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with AppWithDefaultMockFi
 
   private val arrivalMovementP5Connector = mock[ArrivalMovementP5Connector]
   private val arrivalP5MessageService    = mock[ArrivalP5MessageService]
+
+  private val formProvider = new ArrivalsSearchFormProvider()
+  private val form         = formProvider()
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -76,13 +82,111 @@ class ViewAllArrivalsP5ControllerSpec extends SpecBase with AppWithDefaultMockFi
           )
         )
 
-      val controllerUrl = controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
+      val controllerUrl = routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url
 
       val request = FakeRequest(GET, controllerUrl)
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
+    }
+
+    "must return a Bad Request and errors when invalid data is submitted (GET)" in {
+      val movement = ArrivalMovement("arrivialId", "mrn", LocalDateTime.now())
+
+      val movementsAndMessages: Seq[ArrivalMovementAndMessage] = Seq(
+        OtherMovementAndMessage(
+          movement,
+          LatestArrivalMessage(
+            ArrivalMessage(
+              "messageId",
+              LocalDateTime.now(),
+              ArrivalMessageType.ArrivalNotification,
+              MessageStatus.Success
+            ),
+            "id"
+          )
+        )
+      )
+
+      val movements = ArrivalMovements(Seq(movement), 1)
+
+      val arrivals = movementsAndMessages.map(ViewArrivalP5(_))
+
+      when(arrivalMovementP5Connector.getAllMovementsForSearchQuery(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Some(movements)))
+
+      when(arrivalP5MessageService.getLatestMessagesForMovements(any())(any(), any()))
+        .thenReturn(Future.successful(movementsAndMessages))
+
+      val searchParam = "§§§"
+
+      val filledForm = form.bind(Map("value" -> searchParam))
+
+      val controllerUrl = routes.ViewAllArrivalsP5Controller.onPageLoad(None, Some(searchParam)).url
+
+      val request = FakeRequest(GET, controllerUrl)
+
+      val result = route(app, request).value
+
+      val view      = injector.instanceOf[ViewAllArrivalsP5View]
+      val viewModel = ViewAllArrivalMovementsP5ViewModel(arrivals, None, 1, 20, movements.totalCount)
+
+      status(result) mustEqual BAD_REQUEST
+      contentAsString(result) mustEqual
+        view(filledForm, viewModel)(request, messages).toString
+
+      verify(arrivalMovementP5Connector).getAllMovementsForSearchQuery(any(), any(), eqTo(None))(any())
+    }
+
+    "must return a Bad Request and errors when invalid data is submitted (POST)" in {
+      val movement = ArrivalMovement("arrivialId", "mrn", LocalDateTime.now())
+
+      val movementsAndMessages: Seq[ArrivalMovementAndMessage] = Seq(
+        OtherMovementAndMessage(
+          movement,
+          LatestArrivalMessage(
+            ArrivalMessage(
+              "messageId",
+              LocalDateTime.now(),
+              ArrivalMessageType.ArrivalNotification,
+              MessageStatus.Success
+            ),
+            "id"
+          )
+        )
+      )
+
+      val movements = ArrivalMovements(Seq(movement), 1)
+
+      val arrivals = movementsAndMessages.map(ViewArrivalP5(_))
+
+      when(arrivalMovementP5Connector.getAllMovementsForSearchQuery(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Some(movements)))
+
+      when(arrivalP5MessageService.getLatestMessagesForMovements(any())(any(), any()))
+        .thenReturn(Future.successful(movementsAndMessages))
+
+      val searchParam = "§§§"
+      val page        = 2
+
+      val filledForm = form.bind(Map("value" -> searchParam))
+
+      val controllerUrl = routes.ViewAllArrivalsP5Controller.onSubmit(Some(page)).url
+
+      val request = FakeRequest(POST, controllerUrl)
+        .withFormUrlEncodedBody(("value", searchParam))
+
+      val result = route(app, request).value
+
+      val view      = injector.instanceOf[ViewAllArrivalsP5View]
+      val viewModel = ViewAllArrivalMovementsP5ViewModel(arrivals, None, page, 20, movements.totalCount)
+
+      status(result) mustEqual BAD_REQUEST
+      contentAsString(result) mustEqual
+        view(filledForm, viewModel)(request, messages).toString
+
+      verify(arrivalMovementP5Connector).getAllMovementsForSearchQuery(any(), any(), eqTo(None))(any())
     }
   }
 }

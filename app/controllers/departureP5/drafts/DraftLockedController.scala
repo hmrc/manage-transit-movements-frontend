@@ -16,7 +16,7 @@
 
 package controllers.departureP5.drafts
 
-import controllers.actions._
+import controllers.actions.*
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -38,6 +38,6 @@ class DraftLockedController @Inject() (
   }
 
   def onSubmit(): Action[AnyContent] = (Action andThen actions.identify()) {
-    Redirect(controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None, None))
+    Redirect(controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None))
   }
 }

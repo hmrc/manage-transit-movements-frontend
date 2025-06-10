@@ -30,7 +30,7 @@
 )
 
 @(
-    form: Form[?],
+    form: Form[Option[String]],
     viewModel: AllDraftDeparturesViewModel
 )(implicit request: Request[?], messages: Messages)
 
@@ -44,36 +44,26 @@
 
     @if(viewModel.isSearch) {
         <p class="govuk-body">
-            <a id="go-to-view-all-movements" class="govuk-link" href="@controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None, None)">
+            <a id="go-to-view-all-movements" class="govuk-link" href="@controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None)">
             @messages("departure.drafts.dashboard.link.title")
             </a>
         </p>
     }
 
-    @if(!viewModel.noResultsFound) {
-        @search(
-            form = form,
-            action = viewModel.onSubmit(),
-            label = "departure.drafts.dashboard.search"
-        )
-    }
+    @search(
+        form = form,
+        action = routes.DashboardController.onSubmit(Some(viewModel.currentPage)),
+        label = "departure.drafts.dashboard.search"
+    )
 
     @pagination(viewModel)
 
-    @if(viewModel.resultsFound) {
+    @if(viewModel.items.nonEmpty) {
         @draftDeparturesTable(viewModel)
     }
 
-    @if(viewModel.noSearchResultsFound) {
-        @status(id = "no-search-results-found", classes = "govuk-body", html = messages("departure.drafts.dashboard.table.noSearchResults"))
-    }
-
-    @if(viewModel.noResultsFound){
-        @status(id = "no-results-found", classes = "govuk-body", html = messages("departure.drafts.dashboard.table.noResults"))
-    }
-
-    <article class="ticket-panel" aria-label="Sub navigation 1">
-        <section class="ticket-panel__content ticket-panel__content--blue" aria-label="Section 1">
+    <article class="moj-ticket-panel" aria-label="Sub navigation 1">
+        <section class="moj-ticket-panel__content moj-ticket-panel__content--blue" aria-label="Section 1">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-2">@messages("departure.drafts.dashboard.table.panel.title")</h2>
             <p class="govuk-body">@messages("departure.drafts.dashboard.table.panel.text")</p>
             <a href="@config.p5Departure" role="button" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button">

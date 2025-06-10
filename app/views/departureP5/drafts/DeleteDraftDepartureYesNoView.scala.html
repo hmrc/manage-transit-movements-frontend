@@ -28,7 +28,7 @@
     insetText : InsetText,
 )
 
-@(form: Form[Boolean], lrn: LocalReferenceNumber, pageNumber: Int, numberOfRows: Int, searchLrn: Option[String])(implicit request: Request[?], messages: Messages)
+@(form: Form[Boolean], lrn: LocalReferenceNumber, pageNumber: Int, drafts: Int, searchLrn: Option[String])(implicit request: Request[?], messages: Messages)
 
 @html = {
     <p class="govuk-body">@messages("departure.drafts.deleteDraftDepartureYesNo.paragraph")</p>
@@ -40,7 +40,7 @@
     showBackLink = true,
 ) {
 
-    @formHelper(action = routes.DeleteDraftDepartureYesNoController.onSubmit(lrn, pageNumber, numberOfRows, searchLrn), Symbol("autoComplete") -> "off") {
+    @formHelper(action = routes.DeleteDraftDepartureYesNoController.onSubmit(lrn, searchLrn, pageNumber, drafts), Symbol("autoComplete") -> "off") {
 
         @errorSummary(form.errors)
 

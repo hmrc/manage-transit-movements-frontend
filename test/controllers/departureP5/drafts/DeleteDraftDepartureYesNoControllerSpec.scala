@@ -26,7 +26,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.DraftDepartureService
 import uk.gov.hmrc.http.HttpResponse
 import views.html.departureP5.drafts.DeleteDraftDepartureYesNoView
@@ -50,7 +50,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
         bind[LockActionProvider].toInstance(mockLockActionProvider)
       )
 
-  private lazy val deleteDraftDepartureYesNoRoute = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrn, 1, 2, None).url
+  private lazy val deleteDraftDepartureYesNoRoute = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrn, None, 1, 2).url
 
   "DeleteDraftDepartureYesNo Controller" - {
 
@@ -71,7 +71,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
 
     "when yes submitted must redirect back to draft departure dashboard when on first page" in {
 
-      val routePath = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrn, 1, 2, None).url
+      val routePath = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrn, None, 1, 2).url
 
       val statusOK = 200
 
@@ -85,12 +85,12 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual
-        controllers.departureP5.drafts.routes.DashboardController.onPageLoad(Some(1), None, None).url
+        controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None).url
     }
 
     "when yes submitted must redirect back to draft departure dashboard when on page is not 1 and rows is 1" in {
 
-      val routePath = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrn, 2, 1, None).url
+      val routePath = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrn, None, 2, 1).url
 
       val statusOK = 200
 
@@ -104,12 +104,12 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual
-        controllers.departureP5.drafts.routes.DashboardController.onPageLoad(Some(1), None, None).url
+        controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, Some(1)).url
     }
 
     "when yes submitted must redirect back to draft departure dashboard when on page is not 1 and rows is not 1" in {
 
-      val routePath = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrn, 2, 2, None).url
+      val routePath = routes.DeleteDraftDepartureYesNoController.onPageLoad(lrn, None, 2, 2).url
 
       val statusOK = 200
 
@@ -123,7 +123,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual
-        controllers.departureP5.drafts.routes.DashboardController.onPageLoad(Some(2), None, None).url
+        controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, Some(2)).url
     }
 
     "when no submitted must redirect back to draft departure dashboard" in {
@@ -135,7 +135,7 @@ class DeleteDraftDepartureYesNoControllerSpec extends SpecBase with AppWithDefau
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual
-        controllers.departureP5.drafts.routes.DashboardController.onPageLoad(Some(1), None, None).url
+        controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, Some(1)).url
     }
 
     "when yes submitted must redirect to InternalServerError if status 500 is returned from connector" in {

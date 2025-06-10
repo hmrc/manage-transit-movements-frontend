@@ -18,7 +18,7 @@ package controllers.departureP5
 
 import config.{FrontendAppConfig, PaginationAppConfig}
 import connectors.DepartureMovementP5Connector
-import controllers.actions._
+import controllers.actions.*
 import forms.DeparturesSearchFormProvider
 import models.requests.IdentifierRequest
 import play.api.data.Form
@@ -49,47 +49,54 @@ class ViewAllDeparturesP5Controller @Inject() (
 
   def onPageLoad(page: Option[Int], lrn: Option[String]): Action[AnyContent] = (Action andThen actions.identify()).async {
     implicit request =>
-      val preparedForm = lrn match {
-        case Some(value) => form.fill(value)
-        case None        => form
-      }
-      buildView(preparedForm, page, lrn)(Ok(_))
+      buildView(form.fillAndValidate(lrn), page, lrn)
   }
 
-  def onSubmit(): Action[AnyContent] = (Action andThen actions.identify()).async {
+  def onSubmit(page: Option[Int]): Action[AnyContent] = (Action andThen actions.identify()).async {
     implicit request =>
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => buildView(formWithErrors, None, None)(BadRequest(_)),
+          formWithErrors => buildView(formWithErrors, page, None),
           value => {
-            val lrn: Option[String] = Option(value).filter(_.trim.nonEmpty)
+            val lrn: Option[String] = value.filter(_.trim.nonEmpty)
             Future.successful(Redirect(controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, lrn)))
           }
         )
   }
 
-  private def buildView(form: Form[String], page: Option[Int], searchParam: Option[String])(
-    block: HtmlFormat.Appendable => Result
+  private def buildView(
+    form: Form[Option[String]],
+    page: Option[Int],
+    searchParam: Option[String]
   )(implicit request: IdentifierRequest[?]): Future[Result] = {
     val currentPage = page.getOrElse(1)
-    departureMovementP5Connector.getAllMovementsForSearchQuery(currentPage, paginationConfig.numberOfMovements, searchParam).flatMap {
-      case Some(movements) =>
-        departureP5MessageService.getLatestMessagesForMovements(movements).map {
-          movementsAndMessages =>
-            val departures: Seq[ViewDepartureP5] = movementsAndMessages.map(ViewDepartureP5(_))
 
-            val viewModel = ViewAllDepartureMovementsP5ViewModel(
-              departures,
-              searchParam,
-              currentPage,
-              paginationConfig.numberOfMovements,
-              movements.totalCount
-            )
+    def getMovements(searchParam: Option[String])(block: HtmlFormat.Appendable => Result): Future[Result] =
+      departureMovementP5Connector.getAllMovementsForSearchQuery(currentPage, paginationConfig.numberOfMovements, searchParam).flatMap {
+        case Some(movements) =>
+          departureP5MessageService.getLatestMessagesForMovements(movements).map {
+            movementsAndMessages =>
+              // TODO - pass `movementsAndMessages` into view model and do the mapping in there
+              val departures: Seq[ViewDepartureP5] = movementsAndMessages.map(ViewDepartureP5(_))
 
-            block(view(form, viewModel))
-        }
-      case None => Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
+              val viewModel = ViewAllDepartureMovementsP5ViewModel(
+                departures,
+                searchParam,
+                currentPage,
+                paginationConfig.numberOfMovements,
+                movements.totalCount
+              )
+
+              block(view(form, viewModel))
+          }
+        case None => Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
+      }
+
+    if (form.hasErrors) {
+      getMovements(None)(BadRequest(_))
+    } else {
+      getMovements(searchParam)(Ok(_))
     }
   }
 }

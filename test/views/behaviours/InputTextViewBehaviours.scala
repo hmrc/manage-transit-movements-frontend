@@ -23,7 +23,8 @@ import org.scalacheck.Arbitrary.arbitrary
 trait InputTextViewBehaviours[T] extends QuestionViewBehaviours[T] with Generators {
 
   implicit val arbitraryT: Arbitrary[T]
-  private lazy val validValue: T = arbitrary[T].sample.value
+  lazy val validValue: T            = arbitrary[T].sample.value
+  lazy val validValueString: String = validValue.toString
 
   def pageWithInputText(): Unit =
     "page with an input text field" - {
@@ -44,7 +45,7 @@ trait InputTextViewBehaviours[T] extends QuestionViewBehaviours[T] with Generato
         val docWithFilledForm = parseView(applyView(form.fill(validValue)))
 
         "include the form's value in the value input" in {
-          docWithFilledForm.getElementById("value").attr("value") `mustBe` validValue.toString
+          docWithFilledForm.getElementById("value").attr("value") `mustBe` validValueString
         }
 
         behave like pageWithoutErrorSummary(docWithFilledForm)

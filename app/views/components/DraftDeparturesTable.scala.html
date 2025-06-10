@@ -23,43 +23,29 @@
     viewModel: AllDraftDeparturesViewModel
 )(implicit messages: Messages)
 
-<table class="responsive-table">
-    <caption class="govuk-visually-hidden">@viewModel.visuallyHiddenHeader</caption>
+<table class="govuk-table" data-module="moj-sortable-table">
+    <caption class="govuk-table__caption govuk-visually-hidden">@viewModel.visuallyHiddenHeader</caption>
 
-    <thead>
-        <tr>
-            <th scope="col" aria-sort="@viewModel.sortLrn">
-                <span class="govuk-visually-hidden">@viewModel.sortHiddenTextLRN</span>
-                <a href="@viewModel.sortLRNHref" aria-label="@viewModel.referenceNumber">@viewModel.referenceNumber</a>
-            </th>
-            <th scope="col" aria-sort="@viewModel.sortCreatedAt">
-                <span class="govuk-visually-hidden">@viewModel.sortHiddenTextDaysToComplete</span>
-                <a href="@viewModel.sortCreatedAtHref" aria-label="@viewModel.daysToCompleteHiddenHeader">@viewModel.daysToComplete</a>
-            </th>
-            <th scope="col"><span id="actionHidden" class="govuk-visually-hidden">@messages("departure.drafts.dashboard.table.delete.action.hidden")</span></th>
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header" aria-sort="none">@viewModel.referenceNumber</th>
+            <th scope="col" class="govuk-table__header" aria-sort="descending">@viewModel.daysToComplete</th>
+            <th scope="col" class="govuk-table__header"><span id="actionHidden" class="govuk-visually-hidden">@messages("departure.drafts.dashboard.table.delete.action.hidden")</span></th>
         </tr>
     </thead>
 
     <tbody>
         @for((row, rowIndex) <- viewModel.dataRows.zip(LazyList from 1)) {
             <tr data-testrole="draft-list_row@rowIndex">
-                <td data-testrole="draft-list_row@rowIndex-lrn">
-                    <span class="responsive-table__heading" aria-hidden="true">@viewModel.referenceNumber</span>
-                    <a href="@config.p5DepartureDraft(row.lrn)" class="govuk-link">
-                        <span class="govuk-visually-hidden">@viewModel.referenceNumber</span>
-                        @row.lrn
-                    </a>
+                <td class="govuk-table__cell" data-testrole="draft-list_row@rowIndex-lrn">
+                    <a href="@config.p5DepartureDraft(row.lrn)" class="govuk-link">@row.lrn</a>
                 </td>
 
-                <td data-testrole="draft-list_row@rowIndex-daysToComplete">
-                    <span class="responsive-table__heading" aria-hidden="true">
-                        @viewModel.daysToComplete</span>
-                    <div class="govuk-visually-hidden">@viewModel.daysToComplete</div>
+                <td class="govuk-table__cell" data-testrole="draft-list_row@rowIndex-daysToComplete">
                     @row.daysRemaining
                 </td>
 
-                <td data-testrole="draft-list_row@rowIndex-delete">
-                    <span class="responsive-table__heading" aria-hidden="true"></span>
+                <td class="govuk-table__cell" data-testrole="draft-list_row@rowIndex-delete">
                     <a href="@viewModel.deleteDraftUrl(row)" class="govuk-link">@messages("departure.drafts.dashboard.table.action.delete")
                         <span class="govuk-visually-hidden">@messages("departure.drafts.dashboard.table.action.delete.hidden", row.lrn)</span>
                     </a>

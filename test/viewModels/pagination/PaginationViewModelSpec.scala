@@ -212,62 +212,104 @@ class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
         }
       }
 
-      "searchResult" - {
-        "must show how many results found" - {
-          "when 1 result found" in {
-            val items     = Seq("value")
-            val viewModel = new FakeViewModel(items, 1, 10, None)
-            val result    = viewModel.searchResult
-            result mustBe "Showing <b>1</b> result"
+      "status" - {
+        "when not paginated" - {
+          "must show how many results found" - {
+            "when 1 result found" in {
+              val items     = Seq("value")
+              val viewModel = new FakeViewModel(items, 1, 10, None)
+              val result    = viewModel.status
+              result mustBe "Showing <b>1</b> result"
+            }
+
+            "when 1 search result found" in {
+              forAll(nonEmptyString) {
+                search =>
+                  val items     = Seq("value")
+                  val viewModel = new FakeViewModel(items, 1, 10, Some(search))
+                  val result    = viewModel.status
+                  result mustBe s"Showing <b>1</b> result matching $search"
+              }
+            }
+
+            "when multiple results found" in {
+              forAll(intGen) {
+                count =>
+                  val items     = Seq.fill(count)("value")
+                  val viewModel = new FakeViewModel(items, 1, 10, None)
+                  val result    = viewModel.status
+                  result mustBe s"Showing <b>$count</b> results"
+              }
+            }
+
+            "when multiple search results found" in {
+              forAll(intGen, nonEmptyString) {
+                (count, search) =>
+                  val items     = Seq.fill(count)("value")
+                  val viewModel = new FakeViewModel(items, 1, 10, Some(search))
+                  val result    = viewModel.status
+                  result mustBe s"Showing <b>$count</b> results matching $search"
+              }
+            }
+
+            "must show no results found" - {
+              "when 1 page of results and on second page" in {
+                val items     = Seq.fill(5: Int)("value")
+                val viewModel = new FakeViewModel(items, 2, 10, None)
+                val result    = viewModel.status
+                result mustBe "Showing <b>0</b> results"
+              }
+
+              "when 2 pages of results and on third page" in {
+                val items     = Seq.fill(12: Int)("value")
+                val viewModel = new FakeViewModel(items, 3, 10, None)
+                val result    = viewModel.status
+                result mustBe "Showing <b>0</b> results"
+              }
+            }
+          }
+        }
+
+        "when paginated" - {
+          "must show how many results found" in {
+            val items     = Seq.fill(30: Int)("value")
+            val viewModel = new FakeViewModel(items, 2, 10, None)
+            val result    = viewModel.status
+            result mustBe s"Showing <b>11</b> to <b>20</b> of <b>30</b> results"
           }
 
-          "when 1 search result found" in {
+          "must show how many search results found" in {
             forAll(nonEmptyString) {
               search =>
-                val items     = Seq("value")
-                val viewModel = new FakeViewModel(items, 1, 10, Some(search))
-                val result    = viewModel.searchResult
-                result mustBe s"Showing <b>1</b> result matching $search"
+                val items     = Seq.fill(30: Int)("value")
+                val viewModel = new FakeViewModel(items, 2, 10, Some(search))
+                val result    = viewModel.status
+                result mustBe s"Showing <b>11</b> to <b>20</b> of <b>30</b> results matching $search"
             }
           }
 
-          "when multiple results found" in {
-            forAll(intGen) {
-              count =>
-                val items     = Seq.fill(count)("value")
-                val viewModel = new FakeViewModel(items, 1, 10, None)
-                val result    = viewModel.searchResult
-                result mustBe s"Showing <b>$count</b> results"
+          "must show no results found" - {
+            "when 1 page of results and on second page" in {
+              val items     = Seq.fill(5: Int)("value")
+              val viewModel = new FakeViewModel(items, 2, 10, None)
+              val result    = viewModel.status
+              result mustBe "Showing <b>0</b> results"
             }
-          }
 
-          "when multiple search results found" in {
-            forAll(intGen, nonEmptyString) {
-              (count, search) =>
-                val items     = Seq.fill(count)("value")
-                val viewModel = new FakeViewModel(items, 1, 10, Some(search))
-                val result    = viewModel.searchResult
-                result mustBe s"Showing <b>$count</b> results matching $search"
+            "when 2 pages of results and on third page" in {
+              val items     = Seq.fill(12: Int)("value")
+              val viewModel = new FakeViewModel(items, 3, 10, None)
+              val result    = viewModel.status
+              result mustBe "Showing <b>0</b> results"
             }
           }
         }
-      }
 
-      "paginatedSearchResult" - {
-        "must show how many results found" in {
-          val items     = Seq.fill(30: Int)("value")
-          val viewModel = new FakeViewModel(items, 2, 10, None)
-          val result    = viewModel.paginatedSearchResult
-          result mustBe s"Showing <b>11</b> to <b>20</b> of <b>30</b> results"
-        }
-
-        "must show how many search results found" in {
-          forAll(nonEmptyString) {
-            search =>
-              val items     = Seq.fill(30: Int)("value")
-              val viewModel = new FakeViewModel(items, 2, 10, Some(search))
-              val result    = viewModel.paginatedSearchResult
-              result mustBe s"Showing <b>11</b> to <b>20</b> of <b>30</b> results matching $search"
+        "when no results" - {
+          "must show no results found" in {
+            val viewModel = new FakeViewModel(Seq.empty, 1, 10, None)
+            val result    = viewModel.status
+            result mustBe "No results found"
           }
         }
       }
