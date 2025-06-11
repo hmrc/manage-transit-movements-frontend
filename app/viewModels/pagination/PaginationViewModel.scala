@@ -31,7 +31,7 @@ trait PaginationViewModel[T] {
 
   def results: MetaData = MetaData(totalNumberOfItems, numberOfItemsPerPage, currentPage)
 
-  private def currentPageInvalid: Boolean = totalNumberOfItems < ((currentPage - 1) * numberOfItemsPerPage)
+  private def currentPageInvalid: Boolean = ((currentPage - 1) * numberOfItemsPerPage) >= totalNumberOfItems
 
   def paginated: Boolean = results.totalPages > 1
 
