@@ -260,6 +260,13 @@ class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
                 result mustBe "Showing <b>0</b> results"
               }
 
+              "when 1 full page of results and on second page" in {
+                val items     = Seq.fill(10: Int)("value")
+                val viewModel = new FakeViewModel(items, 2, 10, None)
+                val result    = viewModel.status
+                result mustBe "Showing <b>0</b> results"
+              }
+
               "when 2 pages of results and on third page" in {
                 val items     = Seq.fill(12: Int)("value")
                 val viewModel = new FakeViewModel(items, 3, 10, None)
