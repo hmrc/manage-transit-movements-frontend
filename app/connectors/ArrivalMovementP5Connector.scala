@@ -29,6 +29,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 import scala.xml.XML
 
 class ArrivalMovementP5Connector @Inject() (
@@ -87,7 +88,7 @@ class ArrivalMovementP5Connector @Inject() (
           }
       }
       .recover {
-        case e =>
+        case NonFatal(e) =>
           logger.error(s"[ArrivalMovementP5Connector][getMovements]: $e")
           None
       }
