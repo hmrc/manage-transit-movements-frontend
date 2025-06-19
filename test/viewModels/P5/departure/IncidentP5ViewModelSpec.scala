@@ -20,8 +20,7 @@ import base.SpecBase
 import generated.CC182CType
 import generators.Generators
 import models.departureP5.DepartureReferenceNumbers
-import models.referenceData.CustomsOffice
-import models.{Country, IdentificationType, IncidentCode, Nationality, QualifierOfIdentification}
+import models.referenceData.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary

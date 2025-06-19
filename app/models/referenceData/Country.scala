@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,29 @@
  * limitations under the License.
  */
 
-package models
+package models.referenceData
 
 import cats.Order
-import models.referenceData.RichComparison
-import play.api.libs.json.{Format, Json}
+import config.FrontendAppConfig
+import play.api.libs.functional.syntax.*
+import play.api.libs.json.{__, Json, Reads}
 
-case class Nationality(code: String, description: String) {
-
+case class Country(code: String, description: String) {
   override def toString: String = s"$description - $code"
-
 }
 
-object Nationality {
-  implicit val format: Format[Nationality] = Json.format[Nationality]
+object Country {
 
-  implicit val order: Order[Nationality] = (x: Nationality, y: Nationality) => (x, y).compareBy(_.description, _.code)
+  def reads(config: FrontendAppConfig): Reads[Country] =
+    if (config.phase6Enabled) {
+      (
+        (__ \ "key").read[String] and
+          (__ \ "value").read[String]
+      )(Country.apply)
+    } else {
+      Json.reads[Country]
+    }
+
+  implicit val order: Order[Country] = (x: Country, y: Country) => (x, y).compareBy(_.description, _.code)
+
 }

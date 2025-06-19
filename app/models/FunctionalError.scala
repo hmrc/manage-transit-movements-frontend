@@ -22,8 +22,6 @@ import play.api.libs.json.*
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 
-import scala.annotation.tailrec
-
 sealed trait FunctionalError {
   val error: String
   val businessRuleId: String

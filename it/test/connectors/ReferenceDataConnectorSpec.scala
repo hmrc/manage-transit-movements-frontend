@@ -16,12 +16,11 @@
 
 package connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, equalTo, get, okJson, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import connectors.ReferenceDataConnectorSpec.*
 import itbase.{ItSpecBase, WireMockServerHandler}
 import models.referenceData.*
-import models.{Country, IdentificationType, IncidentCode, Nationality, QualifierOfIdentification}
 import org.scalacheck.Gen
 import org.scalatest.{Assertion, EitherValues}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -83,6 +82,20 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
       val url = s"$baseUrl/lists/CustomsOffices?data.id=$code"
 
       "when phase-6-enabled" - {
+
+        val customsOfficesResponseJson: String =
+          s"""
+             |[
+             |  {
+             |    "id": "$code",
+             |    "name": "NAME001",
+             |    "languageCode": "EN",
+             |    "phoneNumber": "004412323232345",
+             |    "eMailAddress": "test123@gmail.com"
+             |  }
+             |]
+             |""".stripMargin
+
         "should handle a 200 response for customs offices" in {
           running(phase6App) {
             app =>
@@ -109,6 +122,22 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
       }
 
       "when phase-6-disabled" - {
+
+        val customsOfficesResponseJson: String =
+          s"""
+             |{
+             |  "data": [
+             |    {
+             |      "id": "$code",
+             |      "name": "NAME001",
+             |      "languageCode": "EN",
+             |      "phoneNumber": "004412323232345",
+             |      "eMailAddress": "test123@gmail.com"
+             |    }
+             |  ]
+             |}
+             |""".stripMargin
+
         "should handle a 200 response for customs offices" in {
           running(phase5App) {
             app =>
@@ -142,6 +171,20 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
       val url = s"$baseUrl/lists/CountryCodesFullList?data.code=$code"
       "when phase-6-enabled" - {
+
+        val countriesResponseJson: String =
+          s"""
+             |[
+             |  {
+             |    "key": "GB",
+             |    "value": "United Kingdom",
+             |    "properties": {
+             |      "state": "valid"
+             |    }
+             |  }
+             |]
+             |""".stripMargin
+
         "should handle a 200 response for countries" in {
           running(phase6App) {
             app =>
@@ -167,6 +210,31 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
       }
       "when phase-6-disabled" - {
+
+        val countriesResponseJson: String =
+          s"""
+             |{
+             |  "_links": {
+             |    "self": {
+             |      "href": "/customs-reference-data/lists/CountryCodesFullList"
+             |    }
+             |  },
+             |  "meta": {
+             |    "version": "fb16648c-ea06-431e-bbf6-483dc9ebed6e",
+             |    "snapshotDate": "2023-01-01"
+             |  },
+             |  "id": "CountryCodesFullList",
+             |  "data": [
+             |    {
+             |      "activeFrom": "2023-01-23",
+             |      "code": "GB",
+             |      "state": "valid",
+             |      "description": "United Kingdom"
+             |    }
+             |  ]
+             |}
+             |""".stripMargin
+
         "should handle a 200 response for countries" in {
           running(phase5App) {
             app =>
@@ -200,6 +268,17 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
       val url = s"$baseUrl/lists/QualifierOfTheIdentification?data.qualifier=$qualifier"
 
       "when phase-6-enabled" - {
+
+        val qualifierOfIdentificationResponseJson: String =
+          """
+            |[
+            |  {
+            |    "qualifier": "U",
+            |    "description": "UN/LOCODE"
+            |  }
+            |]
+            |""".stripMargin
+
         "should handle a 200 response for identifications" in {
           running(phase6App) {
             app =>
@@ -226,6 +305,19 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
       }
       "when phase-6-disabled" - {
+
+        val qualifierOfIdentificationResponseJson: String =
+          """
+            |{
+            |  "data": [
+            |    {
+            |      "qualifier": "U",
+            |      "description": "UN/LOCODE"
+            |    }
+            |  ]
+            |}
+            |""".stripMargin
+
         "should handle a 200 response for identifications" in {
           running(phase5App) {
             app =>
@@ -261,6 +353,21 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
       val url = s"$baseUrl/lists/TypeOfIdentificationOfMeansOfTransport?data.type=$idType"
 
       "when phase-6-enabled" - {
+
+        val transportIdentifiersResponseJson: String =
+          """
+            |[
+            |  {
+            |   "type": "10",
+            |   "description": "IMO Ship Identification Number"
+            |  },
+            |  {
+            |   "type": "11",
+            |   "description": "Name of the sea-going vessel"
+            |  }
+            |]
+            |""".stripMargin
+
         "should handle a 200 response for identification types" in {
           running(phase6App) {
             app =>
@@ -287,6 +394,23 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
       }
       "when phase-6-disabled" - {
+
+        val transportIdentifiersResponseJson: String =
+          """
+            |{
+            |  "data": [
+            |    {
+            |     "type": "10",
+            |     "description": "IMO Ship Identification Number"
+            |    },
+            |    {
+            |     "type": "11",
+            |     "description": "Name of the sea-going vessel"
+            |    }
+            |  ]
+            |}
+            |""".stripMargin
+
         "should handle a 200 response for identification types" in {
           running(phase5App) {
             app =>
@@ -322,6 +446,17 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
       val url = s"$baseUrl/lists/Nationality?data.code=$code"
 
       "when phase-6-enabled" - {
+
+        val nationalitiesResponseJson: String =
+          """
+            |[
+            |  {
+            |    "code":"AR",
+            |    "description":"Argentina"
+            |  }
+            |]
+            |""".stripMargin
+
         "should handle a 200 response for nationalities" in {
           running(phase6App) {
             app =>
@@ -348,6 +483,29 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
       }
       "when phase-6-disabled" - {
+
+        val nationalitiesResponseJson: String =
+          """
+            |{
+            |  "_links": {
+            |    "self": {
+            |      "href": "/customs-reference-data/lists/Nationality"
+            |    }
+            |  },
+            |  "meta": {
+            |    "version": "fb16648c-ea06-431e-bbf6-483dc9ebed6e",
+            |    "snapshotDate": "2023-01-01"
+            |  },
+            |  "id": "Nationality",
+            |  "data": [
+            |    {
+            |      "code":"AR",
+            |      "description":"Argentina"
+            |    }
+            |  ]
+            |}
+            |""".stripMargin
+
         "should handle a 200 response for nationalities" in {
           running(phase5App) {
             app =>
@@ -381,6 +539,17 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
       val url = s"$baseUrl/lists/ControlType?data.code=$typeOfControl"
 
       "when phase-6-enabled" - {
+
+        val controlTypesResponseJson: String =
+          s"""
+             |[
+             |  {
+             |    "code": "$typeOfControl",
+             |    "description": "Intrusive"
+             |  }
+             |]
+             |""".stripMargin
+
         "should handle a 200 response for control types" in {
           running(phase6App) {
             app =>
@@ -406,6 +575,19 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
       }
       "when phase-6-disabled" - {
+
+        val controlTypesResponseJson: String =
+          s"""
+             |{
+             |  "data": [
+             |    {
+             |      "code": "$typeOfControl",
+             |      "description": "Intrusive"
+             |    }
+             |  ]
+             |}
+             |""".stripMargin
+
         "should handle a 200 response for control types" in {
           running(phase5App) {
             app =>
@@ -438,6 +620,17 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
       val url = s"$baseUrl/lists/IncidentCode?data.code=$incidentCodeCode"
 
       "when-phase-6-enabled" - {
+
+        val incidentCodeResponseJson: String =
+          s"""
+             |[
+             |  {
+             |    "code": "$incidentCodeCode",
+             |    "description": "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
+             |  }
+             |]
+             |""".stripMargin
+
         "should handle a 200 response for incident codes" in {
           running(phase6App) {
             app =>
@@ -467,6 +660,19 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
       }
       "when-phase-6-disabled" - {
+
+        val incidentCodeResponseJson: String =
+          s"""
+             |{
+             |  "data": [
+             |    {
+             |      "code": "$incidentCodeCode",
+             |      "description": "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
+             |    }
+             |  ]
+             |}
+             |""".stripMargin
+
         "should handle a 200 response for incident codes" in {
           running(phase5App) {
             app =>
@@ -503,6 +709,17 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
       val url = s"$baseUrl/lists/RequestedDocumentType?data.code=$requestedDocumentType"
 
       "when phase-6-enabled" - {
+
+        val requestedDocumentTypeJson: String =
+          s"""
+             |[
+             |  {
+             |    "code": "$requestedDocumentType",
+             |    "description": "T2FL document"
+             |  }
+             |]
+             |""".stripMargin
+
         "should handle a 200 response for control types" in {
           running(phase6App) {
             app =>
@@ -528,6 +745,19 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
       }
       "when phase-6-disabled" - {
+
+        val requestedDocumentTypeJson: String =
+          s"""
+             |{
+             |  "data": [
+             |    {
+             |      "code": "$requestedDocumentType",
+             |      "description": "T2FL document"
+             |    }
+             |  ]
+             |}
+             |""".stripMargin
+
         "should handle a 200 response for control types" in {
           running(phase5App) {
             app =>
@@ -560,6 +790,17 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
       val url = s"$baseUrl/lists/FunctionalErrorCodesIeCA?data.code=$functionalError"
 
       "when phase-6-enabled" - {
+
+        val functionalErrorsResponseJson: String =
+          s"""
+             |[
+             |  {
+             |    "code": "$functionalError",
+             |    "description": "Rule violation"
+             |  }
+             |]
+             |""".stripMargin
+
         "should handle a 200 response for functional errors" in {
 
           running(phase6App) {
@@ -587,6 +828,19 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
       }
       "when phase-6-disabled" - {
+
+        val functionalErrorsResponseJson: String =
+          s"""
+             |{
+             |  "data": [
+             |    {
+             |      "code": "$functionalError",
+             |      "description": "Rule violation"
+             |    }
+             |  ]
+             |}
+             |""".stripMargin
+
         "should handle a 200 response for functional errors" in {
 
           running(phase5App) {
@@ -622,6 +876,16 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
       "when phase-6-enabled" - {
 
+        val invalidGuaranteeReasonsResponseJson: String =
+          s"""
+             |[
+             |  {
+             |    "code": "$invalidGuaranteeReasonCode",
+             |    "description": "Guarantee exists, but not valid"
+             |  }
+             |]
+             |""".stripMargin
+
         "should handle a 200 response for invalid guarantee reasons" in {
 
           running(phase6App) {
@@ -649,6 +913,18 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
       }
       "when phase-6-disabled" - {
+
+        val invalidGuaranteeReasonsResponseJson: String =
+          s"""
+             |{
+             |  "data": [
+             |    {
+             |      "code": "$invalidGuaranteeReasonCode",
+             |      "description": "Guarantee exists, but not valid"
+             |    }
+             |  ]
+             |}
+             |""".stripMargin
 
         "should handle a 200 response for invalid guarantee reasons" in {
 
@@ -692,155 +968,6 @@ object ReferenceDataConnectorSpec {
   private val invalidGuaranteeReasonCode = "G02"
 
   private val baseUrl = "/customs-reference-data/test-only"
-
-  private val customsOfficesResponseJson: String =
-    s"""
-       |{
-       |  "data": [
-       |    {
-       |      "id": "$code",
-       |      "name": "NAME001",
-       |      "languageCode": "EN",
-       |      "phoneNumber": "004412323232345",
-       |      "eMailAddress": "test123@gmail.com"
-       |    }
-       |  ]
-       |}
-       |""".stripMargin
-
-  private val qualifierOfIdentificationResponseJson: String =
-    """
-      |{
-      |  "data": [
-      |    {
-      |      "qualifier": "U",
-      |      "description": "UN/LOCODE"
-      |    }
-      |  ]
-      |}
-      |""".stripMargin
-
-  private val countriesResponseJson: String =
-    s"""
-       |{
-       |  "_links": {
-       |    "self": {
-       |      "href": "/customs-reference-data/lists/CountryCodesFullList"
-       |    }
-       |  },
-       |  "meta": {
-       |    "version": "fb16648c-ea06-431e-bbf6-483dc9ebed6e",
-       |    "snapshotDate": "2023-01-01"
-       |  },
-       |  "id": "CountryCodesFullList",
-       |  "data": [
-       |    {
-       |      "activeFrom": "2023-01-23",
-       |      "code": "GB",
-       |      "state": "valid",
-       |      "description": "United Kingdom"
-       |    }
-       |  ]
-       |}
-       |""".stripMargin
-
-  private val transportIdentifiersResponseJson: String =
-    """
-      |{
-      |  "data": [
-      |    {
-      |     "type": "10",
-      |     "description": "IMO Ship Identification Number"
-      |    },
-      |    {
-      |     "type": "11",
-      |     "description": "Name of the sea-going vessel"
-      |    }
-      |  ]
-      |}
-      |""".stripMargin
-
-  private val nationalitiesResponseJson: String =
-    """
-      |{
-      |  "_links": {
-      |    "self": {
-      |      "href": "/customs-reference-data/lists/Nationality"
-      |    }
-      |  },
-      |  "meta": {
-      |    "version": "fb16648c-ea06-431e-bbf6-483dc9ebed6e",
-      |    "snapshotDate": "2023-01-01"
-      |  },
-      |  "id": "Nationality",
-      |  "data": [
-      |    {
-      |      "code":"AR",
-      |      "description":"Argentina"
-      |    }
-      |  ]
-      |}
-      |""".stripMargin
-
-  private val controlTypesResponseJson: String =
-    s"""
-       |{
-       |  "data": [
-       |    {
-       |      "code": "$typeOfControl",
-       |      "description": "Intrusive"
-       |    }
-       |  ]
-       |}
-       |""".stripMargin
-
-  private val incidentCodeResponseJson: String =
-    s"""
-       |{
-       |  "data": [
-       |    {
-       |      "code": "$incidentCodeCode",
-       |      "description": "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
-       |    }
-       |  ]
-       |}
-       |""".stripMargin
-
-  private val requestedDocumentTypeJson: String =
-    s"""
-       |{
-       |  "data": [
-       |    {
-       |      "code": "$requestedDocumentType",
-       |      "description": "T2FL document"
-       |    }
-       |  ]
-       |}
-       |""".stripMargin
-
-  private val functionalErrorsResponseJson: String =
-    s"""
-       |{
-       |  "data": [
-       |    {
-       |      "code": "$functionalError",
-       |      "description": "Rule violation"
-       |    }
-       |  ]
-       |}
-       |""".stripMargin
-
-  private val invalidGuaranteeReasonsResponseJson: String =
-    s"""
-       |{
-       |  "data": [
-       |    {
-       |      "code": "$invalidGuaranteeReasonCode",
-       |      "description": "Guarantee exists, but not valid"
-       |    }
-       |  ]
-       |}
-       |""".stripMargin
 
   private val emptyResponseJson: String =
     """

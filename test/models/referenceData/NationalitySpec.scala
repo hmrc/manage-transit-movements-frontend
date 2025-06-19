@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.referenceData
 
 import base.SpecBase
 import cats.data.NonEmptySet

@@ -20,8 +20,7 @@ import cats.Order
 import cats.data.NonEmptySet
 import config.FrontendAppConfig
 import connectors.ReferenceDataConnector.*
-import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, InvalidGuaranteeReason, RequestedDocumentType}
-import models.{Country, IdentificationType, IncidentCode, Nationality, QualifierOfIdentification}
+import models.referenceData.*
 import play.api.Logging
 import play.api.cache.AsyncCacheApi
 import play.api.http.Status.OK
@@ -66,8 +65,9 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
   def getCountry(
     code: String
   )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[Country]] = {
-    val queryParams = Seq("data.code" -> code)
-    val url         = url"${config.customsReferenceDataUrl}/lists/CountryCodesFullList?$queryParams"
+    val queryParams                    = Seq("data.code" -> code)
+    val url                            = url"${config.customsReferenceDataUrl}/lists/CountryCodesFullList?$queryParams"
+    implicit val reads: Reads[Country] = Country.reads(config)
     getOrElseUpdate[Country](url)
   }
 
@@ -131,7 +131,8 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     (_: String, url: String, response: HttpResponse) =>
       response.status match {
         case OK =>
-          (response.json \ "data").validate[List[A]] match {
+          val json = if (config.phase6Enabled) response.json else response.json \ "data"
+          json.validate[List[A]] match {
             case JsSuccess(Nil, _) =>
               Left(NoReferenceDataFoundException(url))
             case JsSuccess(head :: tail, _) =>
