@@ -38,10 +38,15 @@ import scala.reflect.ClassTag
 
 class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpClientV2, cache: AsyncCacheApi) extends Logging {
 
+  private val versionHeader = config.phase6Enabled match {
+    case true  => "application/vnd.hmrc.2.0+json"
+    case false => "application/vnd.hmrc.1.0+json"
+  }
+
   private def get[T](url: URL)(implicit ec: ExecutionContext, hc: HeaderCarrier, reads: HttpReads[Responses[T]]): Future[Responses[T]] =
     http
       .get(url)
-      .setHeader(HeaderNames.Accept -> "application/vnd.hmrc.1.0+json")
+      .setHeader(HeaderNames.Accept -> versionHeader)
       .execute[Responses[T]]
 
   // https://www.playframework.com/documentation/2.6.x/ScalaCache#Accessing-the-Cache-API
