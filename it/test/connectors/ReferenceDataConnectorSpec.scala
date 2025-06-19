@@ -544,8 +544,8 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
           s"""
              |[
              |  {
-             |    "code": "$typeOfControl",
-             |    "description": "Intrusive"
+             |    "key": "$typeOfControl",
+             |    "value": "Intrusive"
              |  }
              |]
              |""".stripMargin

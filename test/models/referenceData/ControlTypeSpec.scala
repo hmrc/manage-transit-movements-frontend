@@ -18,48 +18,66 @@ package models.referenceData
 
 import base.SpecBase
 import cats.data.NonEmptySet
-import play.api.libs.json.{JsValue, Json}
+import config.FrontendAppConfig
+import play.api.libs.json.{JsValue, Json, Reads}
+import play.api.test.Helpers.running
 
 class ControlTypeSpec extends SpecBase {
 
   "ControlType" - {
 
-    "serialize to JSON correctly" in {
-      val controlType = ControlType(
-        code = "CT001",
-        description = "Customs Check"
-      )
+    "deserialize from JSON correctly" - {
+      "when phase 6 enabled" in {
+        running(_.configure("phase-6-enabled" -> true)) {
+          app =>
+            val config = app.injector.instanceOf[FrontendAppConfig]
 
-      val expectedJson: JsValue = Json.parse(
-        """
-          |{
-          |  "code": "CT001",
-          |  "description": "Customs Check"
-          |}
-          |""".stripMargin
-      )
+            val json: JsValue = Json.parse(
+              """
+                |{
+                |  "key": "CT001",
+                |  "value": "Customs Check"
+                |}
+                |""".stripMargin
+            )
 
-      val json = Json.toJson(controlType)
-      json mustEqual expectedJson
-    }
+            val expectedControlType = ControlType(
+              code = "CT001",
+              description = "Customs Check"
+            )
 
-    "deserialize from JSON correctly" in {
-      val json: JsValue = Json.parse(
-        """
-          |{
-          |  "code": "CT001",
-          |  "description": "Customs Check"
-          |}
-          |""".stripMargin
-      )
+            implicit val reads: Reads[ControlType] = ControlType.reads(config)
 
-      val expectedControlType = ControlType(
-        code = "CT001",
-        description = "Customs Check"
-      )
+            val result = json.as[ControlType]
+            result mustEqual expectedControlType
+        }
+      }
 
-      val result = json.as[ControlType]
-      result mustEqual expectedControlType
+      "when phase 6 disabled" in {
+        running(_.configure("phase-6-enabled" -> false)) {
+          app =>
+            val config = app.injector.instanceOf[FrontendAppConfig]
+
+            val json: JsValue = Json.parse(
+              """
+                |{
+                |  "code": "CT001",
+                |  "description": "Customs Check"
+                |}
+                |""".stripMargin
+            )
+
+            val expectedControlType = ControlType(
+              code = "CT001",
+              description = "Customs Check"
+            )
+
+            implicit val reads: Reads[ControlType] = ControlType.reads(config)
+
+            val result = json.as[ControlType]
+            result mustEqual expectedControlType
+        }
+      }
     }
 
     "correctly apply custom toString when description is non-empty" in {
@@ -98,7 +116,7 @@ class ControlTypeSpec extends SpecBase {
         .toSortedSet
         .toList
 
-      result.mustBe(orderedControls)
+      result mustEqual orderedControls
     }
   }
 }

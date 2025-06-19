@@ -104,8 +104,9 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
   }
 
   def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[ControlType]] = {
-    val queryParams = Seq("data.code" -> code)
-    val url         = url"${config.customsReferenceDataUrl}/lists/ControlType?$queryParams"
+    val queryParams                        = Seq("data.code" -> code)
+    val url                                = url"${config.customsReferenceDataUrl}/lists/ControlType?$queryParams"
+    implicit val reads: Reads[ControlType] = ControlType.reads(config)
     getOrElseUpdate[ControlType](url)
   }
 
