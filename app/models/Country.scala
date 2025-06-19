@@ -17,8 +17,10 @@
 package models
 
 import cats.Order
+import config.FrontendAppConfig
 import models.referenceData.RichComparison
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
+import play.api.libs.json.{__, Json, OFormat, OWrites, Reads}
 
 case class Country(code: String, description: String) {
   override def toString: String = s"$description - $code"
@@ -28,4 +30,5 @@ object Country {
   implicit val format: OFormat[Country] = Json.format[Country]
 
   implicit val order: Order[Country] = (x: Country, y: Country) => (x, y).compareBy(_.description, _.code)
+
 }
