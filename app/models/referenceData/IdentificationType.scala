@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,31 +18,27 @@ package models.referenceData
 
 import cats.Order
 import config.FrontendAppConfig
+import models.referenceData.RichComparison
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import play.api.libs.json.{__, Json, Reads}
+import play.api.libs.json.{__, Json, OFormat, Reads}
 
-case class InvalidGuaranteeReason(code: String, description: String) {
-
-  override def toString: String =
-    description match {
-      case "" => code
-      case _  => s"$code - $description"
-    }
-
+case class IdentificationType(`type`: String, description: String) {
+  override def toString: String = s"$description - ${`type`}"
 }
 
-object InvalidGuaranteeReason {
+object IdentificationType {
 
-  def reads(config: FrontendAppConfig): Reads[InvalidGuaranteeReason] =
+  def reads(config: FrontendAppConfig): Reads[IdentificationType] =
     if (config.phase6Enabled) {
       (
         (__ \ "key").read[String] and
           (__ \ "value").read[String]
-      )(InvalidGuaranteeReason.apply)
+      )(IdentificationType.apply)
     } else {
-      Json.reads[InvalidGuaranteeReason]
+      Json.reads[IdentificationType]
     }
 
-  implicit val order: Order[InvalidGuaranteeReason] = (x: InvalidGuaranteeReason, y: InvalidGuaranteeReason) => (x, y).compareBy(_.code)
+  implicit val format: OFormat[IdentificationType] = Json.format[IdentificationType]
 
+  implicit val order: Order[IdentificationType] = (x: IdentificationType, y: IdentificationType) => (x, y).compareBy(_.description, _.`type`)
 }

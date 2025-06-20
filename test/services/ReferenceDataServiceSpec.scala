@@ -18,8 +18,7 @@ package services
 
 import base.SpecBase
 import connectors.ReferenceDataConnector
-import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, InvalidGuaranteeReason, RequestedDocumentType}
-import models.{Country, IdentificationType, IncidentCode, Nationality, QualifierOfIdentification}
+import models.referenceData.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 

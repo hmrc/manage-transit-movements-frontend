@@ -14,18 +14,29 @@
  * limitations under the License.
  */
 
-package models
+package models.referenceData
 
 import cats.Order
-import models.referenceData.RichComparison
-import play.api.libs.json.{Json, OFormat}
+import config.FrontendAppConfig
+import play.api.libs.functional.syntax.*
+import play.api.libs.json.{__, Json, Reads}
 
-case class IdentificationType(`type`: String, description: String) {
-  override def toString: String = s"$description - ${`type`}"
+case class Country(code: String, description: String) {
+  override def toString: String = s"$description - $code"
 }
 
-object IdentificationType {
-  implicit val format: OFormat[IdentificationType] = Json.format[IdentificationType]
+object Country {
 
-  implicit val order: Order[IdentificationType] = (x: IdentificationType, y: IdentificationType) => (x, y).compareBy(_.description, _.`type`)
+  def reads(config: FrontendAppConfig): Reads[Country] =
+    if (config.phase6Enabled) {
+      (
+        (__ \ "key").read[String] and
+          (__ \ "value").read[String]
+      )(Country.apply)
+    } else {
+      Json.reads[Country]
+    }
+
+  implicit val order: Order[Country] = (x: Country, y: Country) => (x, y).compareBy(_.description, _.code)
+
 }

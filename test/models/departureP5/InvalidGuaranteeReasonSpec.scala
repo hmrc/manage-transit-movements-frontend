@@ -18,83 +18,93 @@ package models.departureP5
 
 import base.SpecBase
 import cats.data.NonEmptySet
+import config.FrontendAppConfig
 import generators.Generators
 import models.referenceData.InvalidGuaranteeReason
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Reads}
+import play.api.test.Helpers.running
 
 class InvalidGuaranteeReasonSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   "InvalidGuaranteeReason" - {
 
-    "must deserialise" in {
-      val json = Json.parse("""
-            |    {
-            |        "code": "G02",
-            |        "description": "Guarantee exists, but not valid"
-            |    }
-            |""".stripMargin)
+    "must deserialise" - {
+      "when phase-6 enabled" in {
+        running(_.configure("feature-flags.phase-6-enabled" -> true)) {
+          app =>
+            val config = app.injector.instanceOf[FrontendAppConfig]
+            val json = Json.parse("""
+                |    {
+                |        "key": "G02",
+                |        "value": "Guarantee exists, but not valid"
+                |    }
+                |""".stripMargin)
 
-      json.as[InvalidGuaranteeReason] `mustBe` InvalidGuaranteeReason("G02", "Guarantee exists, but not valid")
+            implicit val reads: Reads[InvalidGuaranteeReason] = InvalidGuaranteeReason.reads(config)
+
+            json.as[InvalidGuaranteeReason] `mustBe` InvalidGuaranteeReason("G02", "Guarantee exists, but not valid")
+        }
+
+      }
+      "when phase-6-disabled" in {
+        running(_.configure("feature-flags.phase-6-enabled" -> false)) {
+          app =>
+            val config = app.injector.instanceOf[FrontendAppConfig]
+            val json = Json.parse("""
+                |    {
+                |        "code": "G02",
+                |        "description": "Guarantee exists, but not valid"
+                |    }
+                |""".stripMargin)
+
+            implicit val reads: Reads[InvalidGuaranteeReason] = InvalidGuaranteeReason.reads(config)
+
+            json.as[InvalidGuaranteeReason] `mustBe` InvalidGuaranteeReason("G02", "Guarantee exists, but not valid")
+        }
+
+      }
     }
-  }
 
-  "serialize to JSON correctly" in {
-    val invalidGuaranteeReason = InvalidGuaranteeReason(
-      code = "G002",
-      description = "Insufficient funds"
-    )
+    "correctly apply custom toString when description is non-empty" in {
+      val invalidGuaranteeReason = InvalidGuaranteeReason(
+        code = "G002",
+        description = "Insufficient funds"
+      )
 
-    val expectedJson = Json.parse(
-      """
-        |{
-        |  "code": "G002",
-        |  "description": "Insufficient funds"
-        |}
-        |""".stripMargin
-    )
+      invalidGuaranteeReason.toString mustEqual "G002 - Insufficient funds"
+    }
 
-    val json = Json.toJson(invalidGuaranteeReason)
-    json must be(expectedJson)
-  }
+    "correctly apply custom toString when description is empty" in {
+      val invalidGuaranteeReason = InvalidGuaranteeReason(
+        code = "G002",
+        description = ""
+      )
 
-  "correctly apply custom toString when description is non-empty" in {
-    val invalidGuaranteeReason = InvalidGuaranteeReason(
-      code = "G002",
-      description = "Insufficient funds"
-    )
+      invalidGuaranteeReason.toString mustEqual "G002"
+    }
 
-    invalidGuaranteeReason.toString mustEqual "G002 - Insufficient funds"
-  }
+    "order InvalidGuaranteeReason instances by code" in {
+      val unorderedReasons = Seq(
+        InvalidGuaranteeReason("G003", "Invalid guarantee"),
+        InvalidGuaranteeReason("G001", "Insufficient funds"),
+        InvalidGuaranteeReason("G002", "Guarantee expired")
+      )
 
-  "correctly apply custom toString when description is empty" in {
-    val invalidGuaranteeReason = InvalidGuaranteeReason(
-      code = "G002",
-      description = ""
-    )
+      val orderedReasons = Seq(
+        InvalidGuaranteeReason("G001", "Insufficient funds"),
+        InvalidGuaranteeReason("G002", "Guarantee expired"),
+        InvalidGuaranteeReason("G003", "Invalid guarantee")
+      )
 
-    invalidGuaranteeReason.toString mustEqual "G002"
-  }
+      val result = NonEmptySet
+        .of(unorderedReasons.head, unorderedReasons.tail*)
+        .toSortedSet
+        .toList
 
-  "order InvalidGuaranteeReason instances by code" in {
-    val unorderedReasons = Seq(
-      InvalidGuaranteeReason("G003", "Invalid guarantee"),
-      InvalidGuaranteeReason("G001", "Insufficient funds"),
-      InvalidGuaranteeReason("G002", "Guarantee expired")
-    )
+      result.mustBe(orderedReasons)
+    }
 
-    val orderedReasons = Seq(
-      InvalidGuaranteeReason("G001", "Insufficient funds"),
-      InvalidGuaranteeReason("G002", "Guarantee expired"),
-      InvalidGuaranteeReason("G003", "Invalid guarantee")
-    )
-
-    val result = NonEmptySet
-      .of(unorderedReasons.head, unorderedReasons.tail*)
-      .toSortedSet
-      .toList
-
-    result.mustBe(orderedReasons)
   }
 
 }

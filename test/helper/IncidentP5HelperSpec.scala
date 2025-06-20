@@ -20,7 +20,8 @@ import base.SpecBase
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import generated.{AddressType18, GNSSType}
 import generators.Generators
-import models.{Country, IncidentCode, QualifierOfIdentification, RichAddressType18}
+import models.RichAddressType18
+import models.referenceData.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary

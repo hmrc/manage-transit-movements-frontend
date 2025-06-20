@@ -19,7 +19,7 @@ package helper
 import base.SpecBase
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import generators.Generators
-import models.{IdentificationType, Nationality}
+import models.referenceData.{IdentificationType, Nationality}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

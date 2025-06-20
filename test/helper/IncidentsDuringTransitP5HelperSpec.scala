@@ -20,8 +20,8 @@ import base.SpecBase
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import generated.CC182CType
 import generators.Generators
-import models.referenceData.CustomsOffice
-import models.{Country, IncidentCode, Index, Link}
+import models.referenceData.{Country, CustomsOffice, IncidentCode}
+import models.{Index, Link}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalacheck.{Arbitrary, Gen}

@@ -18,8 +18,7 @@ package services
 
 import com.google.inject.Inject
 import connectors.ReferenceDataConnector
-import models.referenceData.{ControlType, CustomsOffice, FunctionalErrorWithDesc, InvalidGuaranteeReason, RequestedDocumentType}
-import models.{Country, IdentificationType, IncidentCode, Nationality, QualifierOfIdentification}
+import models.referenceData.*
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
