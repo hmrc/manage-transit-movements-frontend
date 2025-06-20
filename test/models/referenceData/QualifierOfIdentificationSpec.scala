@@ -18,48 +18,65 @@ package models.referenceData
 
 import base.SpecBase
 import cats.data.NonEmptySet
-import play.api.libs.json.{JsValue, Json}
+import config.FrontendAppConfig
+import play.api.libs.json.{JsValue, Json, Reads}
+import play.api.test.Helpers.running
 
 class QualifierOfIdentificationSpec extends SpecBase {
 
   "QualifierOfIdentification" - {
 
-    "serialize to JSON correctly" in {
-      val qualifier = QualifierOfIdentification(
-        qualifier = "Q1",
-        description = "Primary Qualifier"
-      )
+    "deserialize from JSON correctly" - {
 
-      val expectedJson: JsValue = Json.parse(
-        """
-          |{
-          |  "qualifier": "Q1",
-          |  "description": "Primary Qualifier"
-          |}
-          |""".stripMargin
-      )
+      "when phase-6 enabled" in {
+        running(_.configure("feature-flags.phase-6-enabled" -> true)) {
+          app =>
+            val config = app.injector.instanceOf[FrontendAppConfig]
+            val json: JsValue = Json.parse(
+              """
+                |{
+                |  "key": "Q1",
+                |  "value": "Primary Qualifier"
+                |}
+                |""".stripMargin
+            )
 
-      val json = Json.toJson(qualifier)
-      json mustEqual expectedJson
-    }
+            val expectedQualifier = QualifierOfIdentification(
+              qualifier = "Q1",
+              description = "Primary Qualifier"
+            )
 
-    "deserialize from JSON correctly" in {
-      val json: JsValue = Json.parse(
-        """
-          |{
-          |  "qualifier": "Q1",
-          |  "description": "Primary Qualifier"
-          |}
-          |""".stripMargin
-      )
+            implicit val reads: Reads[QualifierOfIdentification] = QualifierOfIdentification.reads(config)
 
-      val expectedQualifier = QualifierOfIdentification(
-        qualifier = "Q1",
-        description = "Primary Qualifier"
-      )
+            val result = json.as[QualifierOfIdentification]
+            result mustEqual expectedQualifier
+        }
+      }
+      "when phase-6 disabled" in {
+        running(_.configure("feature-flags.phase-6-enabled" -> false)) {
+          app =>
+            val config = app.injector.instanceOf[FrontendAppConfig]
+            val json: JsValue = Json.parse(
+              """
+                |{
+                |  "qualifier": "Q1",
+                |  "description": "Primary Qualifier"
+                |}
+                |""".stripMargin
+            )
 
-      val result = json.as[QualifierOfIdentification]
-      result mustEqual expectedQualifier
+            val expectedQualifier = QualifierOfIdentification(
+              qualifier = "Q1",
+              description = "Primary Qualifier"
+            )
+
+            implicit val reads: Reads[QualifierOfIdentification] = QualifierOfIdentification.reads(config)
+
+            val result = json.as[QualifierOfIdentification]
+            result mustEqual expectedQualifier
+        }
+      }
+
     }
 
     "correctly apply custom toString" in {

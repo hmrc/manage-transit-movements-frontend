@@ -18,48 +18,63 @@ package models.referenceData
 
 import base.SpecBase
 import cats.data.NonEmptySet
-import play.api.libs.json.Json
+import config.FrontendAppConfig
+import play.api.libs.json.{Json, Reads}
+import play.api.test.Helpers.running
 
 class NationalitySpec extends SpecBase {
 
   "Nationality" - {
+    "deserialize from JSON correctly" - {
+      "when phase-6 enabled" in {
+        running(_.configure("feature-flags.phase-6-enabled" -> true)) {
+          app =>
+            val config = app.injector.instanceOf[FrontendAppConfig]
+            val json = Json.parse(
+              """
+                |{
+                |  "key": "UK",
+                |  "value": "United Kingdom"
+                |}
+                |""".stripMargin
+            )
 
-    "serialize to JSON correctly" in {
-      val nationality = Nationality(
-        code = "UK",
-        description = "United Kingdom"
-      )
+            val expectedNationality = Nationality(
+              code = "UK",
+              description = "United Kingdom"
+            )
 
-      val expectedJson = Json.parse(
-        """
-          |{
-          |  "code": "UK",
-          |  "description": "United Kingdom"
-          |}
-          |""".stripMargin
-      )
+            implicit val reads: Reads[Nationality] = Nationality.reads(config)
 
-      val json = Json.toJson(nationality)
-      json mustEqual expectedJson
-    }
+            val result = json.as[Nationality]
+            result mustEqual expectedNationality
+        }
+      }
+      "when phase-6-disabled" in {
+        running(_.configure("feature-flags.phase-6-enabled" -> false)) {
+          app =>
+            val config = app.injector.instanceOf[FrontendAppConfig]
+            val json = Json.parse(
+              """
+                |{
+                |  "code": "UK",
+                |  "description": "United Kingdom"
+                |}
+                |""".stripMargin
+            )
 
-    "deserialize from JSON correctly" in {
-      val json = Json.parse(
-        """
-          |{
-          |  "code": "UK",
-          |  "description": "United Kingdom"
-          |}
-          |""".stripMargin
-      )
+            val expectedNationality = Nationality(
+              code = "UK",
+              description = "United Kingdom"
+            )
 
-      val expectedNationality = Nationality(
-        code = "UK",
-        description = "United Kingdom"
-      )
+            implicit val reads: Reads[Nationality] = Nationality.reads(config)
 
-      val result = json.as[Nationality]
-      result mustEqual expectedNationality
+            val result = json.as[Nationality]
+            result mustEqual expectedNationality
+        }
+      }
+
     }
 
     "correctly apply custom toString" in {

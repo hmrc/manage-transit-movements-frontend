@@ -36,8 +36,8 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
   private lazy val asyncCacheApi: AsyncCacheApi      = app.injector.instanceOf[AsyncCacheApi]
   private lazy val connector: ReferenceDataConnector = app.injector.instanceOf[ReferenceDataConnector]
 
-  private val phase5App: GuiceApplicationBuilder => GuiceApplicationBuilder = _ => guiceApplicationBuilder().configure("phase-6-enabled" -> false)
-  private val phase6App: GuiceApplicationBuilder => GuiceApplicationBuilder = _ => guiceApplicationBuilder().configure("phase-6-enabled" -> true)
+  private val phase5App: GuiceApplicationBuilder => GuiceApplicationBuilder = _ => guiceApplicationBuilder().configure("feature-flags.phase-6-enabled" -> false)
+  private val phase6App: GuiceApplicationBuilder => GuiceApplicationBuilder = _ => guiceApplicationBuilder().configure("feature-flags.phase-6-enabled" -> true)
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -81,7 +81,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
       val url = s"$baseUrl/lists/CustomsOffices?data.id=$code"
 
-      "when phase-6-enabled" - {
+      "when phase-6 enabled" - {
 
         val customsOfficesResponseJson: String =
           s"""
@@ -170,7 +170,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
       val code = "GB"
 
       val url = s"$baseUrl/lists/CountryCodesFullList?data.code=$code"
-      "when phase-6-enabled" - {
+      "when phase-6 enabled" - {
 
         val countriesResponseJson: String =
           s"""
@@ -267,14 +267,14 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
       val url = s"$baseUrl/lists/QualifierOfTheIdentification?data.qualifier=$qualifier"
 
-      "when phase-6-enabled" - {
+      "when phase-6 enabled" - {
 
         val qualifierOfIdentificationResponseJson: String =
           """
             |[
             |  {
-            |    "qualifier": "U",
-            |    "description": "UN/LOCODE"
+            |    "key": "U",
+            |    "value": "UN/LOCODE"
             |  }
             |]
             |""".stripMargin
@@ -352,18 +352,18 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
       val url = s"$baseUrl/lists/TypeOfIdentificationOfMeansOfTransport?data.type=$idType"
 
-      "when phase-6-enabled" - {
+      "when phase-6 enabled" - {
 
         val transportIdentifiersResponseJson: String =
           """
             |[
             |  {
-            |   "type": "10",
-            |   "description": "IMO Ship Identification Number"
+            |   "key": "10",
+            |   "value": "IMO Ship Identification Number"
             |  },
             |  {
-            |   "type": "11",
-            |   "description": "Name of the sea-going vessel"
+            |   "key": "11",
+            |   "value": "Name of the sea-going vessel"
             |  }
             |]
             |""".stripMargin
@@ -445,14 +445,14 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
       val url = s"$baseUrl/lists/Nationality?data.code=$code"
 
-      "when phase-6-enabled" - {
+      "when phase-6 enabled" - {
 
         val nationalitiesResponseJson: String =
           """
             |[
             |  {
-            |    "code":"AR",
-            |    "description":"Argentina"
+            |    "key":"AR",
+            |    "value":"Argentina"
             |  }
             |]
             |""".stripMargin
@@ -538,7 +538,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
       val url = s"$baseUrl/lists/ControlType?data.code=$typeOfControl"
 
-      "when phase-6-enabled" - {
+      "when phase-6 enabled" - {
 
         val controlTypesResponseJson: String =
           s"""
@@ -619,14 +619,14 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
       val url = s"$baseUrl/lists/IncidentCode?data.code=$incidentCodeCode"
 
-      "when-phase-6-enabled" - {
+      "when-phase-6 enabled" - {
 
         val incidentCodeResponseJson: String =
           s"""
              |[
              |  {
-             |    "code": "$incidentCodeCode",
-             |    "description": "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
+             |    "key": "$incidentCodeCode",
+             |    "value": "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
              |  }
              |]
              |""".stripMargin
@@ -708,14 +708,14 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
       val url = s"$baseUrl/lists/RequestedDocumentType?data.code=$requestedDocumentType"
 
-      "when phase-6-enabled" - {
+      "when phase-6 enabled" - {
 
         val requestedDocumentTypeJson: String =
           s"""
              |[
              |  {
-             |    "code": "$requestedDocumentType",
-             |    "description": "T2FL document"
+             |    "key": "$requestedDocumentType",
+             |    "value": "T2FL document"
              |  }
              |]
              |""".stripMargin
@@ -789,14 +789,14 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
       val url = s"$baseUrl/lists/FunctionalErrorCodesIeCA?data.code=$functionalError"
 
-      "when phase-6-enabled" - {
+      "when phase-6 enabled" - {
 
         val functionalErrorsResponseJson: String =
           s"""
              |[
              |  {
-             |    "code": "$functionalError",
-             |    "description": "Rule violation"
+             |    "key": "$functionalError",
+             |    "value": "Rule violation"
              |  }
              |]
              |""".stripMargin
@@ -874,14 +874,14 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
       val url = s"$baseUrl/lists/InvalidGuaranteeReason?data.code=$invalidGuaranteeReasonCode"
 
-      "when phase-6-enabled" - {
+      "when phase-6 enabled" - {
 
         val invalidGuaranteeReasonsResponseJson: String =
           s"""
              |[
              |  {
-             |    "code": "$invalidGuaranteeReasonCode",
-             |    "description": "Guarantee exists, but not valid"
+             |    "key": "$invalidGuaranteeReasonCode",
+             |    "value": "Guarantee exists, but not valid"
              |  }
              |]
              |""".stripMargin

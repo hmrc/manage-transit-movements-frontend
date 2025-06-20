@@ -18,48 +18,68 @@ package models.referenceData
 
 import base.SpecBase
 import cats.data.NonEmptySet
-import play.api.libs.json.Json
+import config.FrontendAppConfig
+import play.api.libs.json.{Json, Reads}
+import play.api.test.Helpers.running
 
 class IncidentCodeSpec extends SpecBase {
 
   "IncidentCode" - {
 
-    "serialize to JSON correctly" in {
-      val incidentCode = IncidentCode(
-        code = "IC001",
-        description = "Accident"
-      )
+    "deserialize from JSON correctly" - {
+      "when phase-6 enabled" in {
+        running(_.configure("feature-flags.phase-6-enabled" -> true)) {
+          app =>
+            val config = app.injector.instanceOf[FrontendAppConfig]
 
-      val expectedJson = Json.parse(
-        """
-          |{
-          |  "code": "IC001",
-          |  "description": "Accident"
-          |}
-          |""".stripMargin
-      )
+            val json = Json.parse(
+              """
+                |{
+                |  "key": "IC001",
+                |  "value": "Accident"
+                |}
+                |""".stripMargin
+            )
 
-      val json = Json.toJson(incidentCode)
-      json mustEqual expectedJson
-    }
+            val expectedIncidentCode = IncidentCode(
+              code = "IC001",
+              description = "Accident"
+            )
 
-    "deserialize from JSON correctly" in {
-      val json = Json.parse(
-        """
-          |{
-          |  "code": "IC001",
-          |  "description": "Accident"
-          |}
-          |""".stripMargin
-      )
+            implicit val reads: Reads[IncidentCode] = IncidentCode.reads(config)
 
-      val expectedIncidentCode = IncidentCode(
-        code = "IC001",
-        description = "Accident"
-      )
+            val result = json.as[IncidentCode]
+            result mustEqual expectedIncidentCode
+        }
 
-      val result = json.as[IncidentCode]
-      result mustEqual expectedIncidentCode
+      }
+      "when phase-6-disabled" in {
+        running(_.configure("feature-flags.phase-6-enabled" -> false)) {
+          app =>
+            val config = app.injector.instanceOf[FrontendAppConfig]
+
+            val json = Json.parse(
+              """
+                |{
+                |  "code": "IC001",
+                |  "description": "Accident"
+                |}
+                |""".stripMargin
+            )
+
+            val expectedIncidentCode = IncidentCode(
+              code = "IC001",
+              description = "Accident"
+            )
+
+            implicit val reads: Reads[IncidentCode] = IncidentCode.reads(config)
+
+            val result = json.as[IncidentCode]
+            result mustEqual expectedIncidentCode
+        }
+
+      }
+
     }
 
     "correctly apply custom toString" in {

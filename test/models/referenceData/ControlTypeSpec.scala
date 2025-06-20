@@ -28,7 +28,7 @@ class ControlTypeSpec extends SpecBase {
 
     "deserialize from JSON correctly" - {
       "when phase 6 enabled" in {
-        running(_.configure("phase-6-enabled" -> true)) {
+        running(_.configure("feature-flags.phase-6-enabled" -> true)) {
           app =>
             val config = app.injector.instanceOf[FrontendAppConfig]
 
@@ -54,7 +54,7 @@ class ControlTypeSpec extends SpecBase {
       }
 
       "when phase 6 disabled" in {
-        running(_.configure("phase-6-enabled" -> false)) {
+        running(_.configure("feature-flags.phase-6-enabled" -> false)) {
           app =>
             val config = app.injector.instanceOf[FrontendAppConfig]
 

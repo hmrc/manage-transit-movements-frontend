@@ -17,7 +17,9 @@
 package models.referenceData
 
 import cats.Order
-import play.api.libs.json.{Json, OWrites, Reads}
+import config.FrontendAppConfig
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
+import play.api.libs.json.{__, Json, OWrites, Reads}
 
 case class RequestedDocumentType(code: String, description: String) {
 
@@ -30,6 +32,16 @@ case class RequestedDocumentType(code: String, description: String) {
 }
 
 object RequestedDocumentType {
+
+  def reads(config: FrontendAppConfig): Reads[RequestedDocumentType] =
+    if (config.phase6Enabled) {
+      (
+        (__ \ "key").read[String] and
+          (__ \ "value").read[String]
+      )(RequestedDocumentType.apply)
+    } else {
+      Json.reads[RequestedDocumentType]
+    }
 
   implicit val writes: OWrites[RequestedDocumentType] = Json.writes[RequestedDocumentType]
 

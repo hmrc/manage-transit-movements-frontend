@@ -18,48 +18,69 @@ package models.referenceData
 
 import base.SpecBase
 import cats.data.NonEmptySet
-import play.api.libs.json.{JsValue, Json}
+import config.FrontendAppConfig
+import play.api.libs.json.{JsValue, Json, Reads}
+import play.api.test.Helpers.running
 
 class IdentificationTypeSpec extends SpecBase {
 
   "IdentificationType" - {
+    "deserialize from JSON correctly " - {
+      "when phase-6 enabled" in {
+        running(_.configure("feature-flags.phase-6-enabled" -> true)) {
+          app =>
+            val config = app.injector.instanceOf[FrontendAppConfig]
 
-    "serialize to JSON correctly" in {
-      val identificationType = IdentificationType(
-        `type` = "ID001",
-        description = "Id"
-      )
+            val json: JsValue = Json.parse(
+              """
+                |{
+                |  "key": "ID001",
+                |  "value": "Id"
+                |}
+                |""".stripMargin
+            )
 
-      val expectedJson: JsValue = Json.parse(
-        """
-          |{
-          |  "type": "ID001",
-          |  "description": "Id"
-          |}
-          |""".stripMargin
-      )
+            val expectedIdentificationType = IdentificationType(
+              `type` = "ID001",
+              description = "Id"
+            )
 
-      val json = Json.toJson(identificationType)
-      json mustEqual expectedJson
-    }
+            implicit val reads: Reads[IdentificationType] = IdentificationType.reads(config)
 
-    "deserialize from JSON correctly" in {
-      val json: JsValue = Json.parse(
-        """
-          |{
-          |  "type": "ID001",
-          |  "description": "Id"
-          |}
-          |""".stripMargin
-      )
+            val result = json.as[IdentificationType]
+            result mustEqual expectedIdentificationType
 
-      val expectedIdentificationType = IdentificationType(
-        `type` = "ID001",
-        description = "Id"
-      )
+        }
 
-      val result = json.as[IdentificationType]
-      result mustEqual expectedIdentificationType
+      }
+      "when phase-6 disabled" in {
+        running(_.configure("feature-flags.phase-6-enabled" -> false)) {
+          app =>
+            val config = app.injector.instanceOf[FrontendAppConfig]
+
+            val json: JsValue = Json.parse(
+              """
+                |{
+                |  "type": "ID001",
+                |  "description": "Id"
+                |}
+                |""".stripMargin
+            )
+
+            val expectedIdentificationType = IdentificationType(
+              `type` = "ID001",
+              description = "Id"
+            )
+
+            implicit val reads: Reads[IdentificationType] = IdentificationType.reads(config)
+
+            val result = json.as[IdentificationType]
+            result mustEqual expectedIdentificationType
+
+        }
+
+      }
+
     }
 
     "correctly apply custom toString" in {

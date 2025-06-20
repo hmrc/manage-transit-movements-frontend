@@ -27,7 +27,7 @@ class CountrySpec extends SpecBase {
 
     "deserialize from JSON" - {
       "when phase 5" in {
-        running(_.configure("phase-6-enabled" -> false)) {
+        running(_.configure("feature-flags.phase-6-enabled" -> false)) {
           app =>
             val config = app.injector.instanceOf[FrontendAppConfig]
 
@@ -44,7 +44,7 @@ class CountrySpec extends SpecBase {
       }
 
       "when phase 6" in {
-        running(_.configure("phase-6-enabled" -> true)) {
+        running(_.configure("feature-flags.phase-6-enabled" -> true)) {
           app =>
             val config = app.injector.instanceOf[FrontendAppConfig]
 

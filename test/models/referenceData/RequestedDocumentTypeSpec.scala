@@ -18,9 +18,11 @@ package models.referenceData
 
 import base.SpecBase
 import cats.data.NonEmptySet
+import config.FrontendAppConfig
 import generators.Generators
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Reads}
+import play.api.test.Helpers.running
 
 class RequestedDocumentTypeSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -36,35 +38,43 @@ class RequestedDocumentTypeSpec extends SpecBase with ScalaCheckPropertyChecks w
     }
 
     "must deserialise" - {
-      "when there is a requested document type" in {
-        val json = Json.parse("""
-              |    {
-              |        "code": "C620",
-              |        "description": "T2LF document"
-              |    }
-              |""".stripMargin)
+      "when there is a requested document type" - {
+        "when phase-6 enabled" in {
+          running(_.configure("feature-flags.phase-6-enabled" -> true)) {
+            app =>
+              val config = app.injector.instanceOf[FrontendAppConfig]
+              val json = Json.parse("""
+                  |    {
+                  |        "key": "C620",
+                  |        "value": "T2LF document"
+                  |    }
+                  |""".stripMargin)
 
-        json.as[RequestedDocumentType] `mustBe` RequestedDocumentType("C620", "T2LF document")
+              implicit val reads: Reads[RequestedDocumentType] = RequestedDocumentType.reads(config)
+
+              json.as[RequestedDocumentType] `mustBe` RequestedDocumentType("C620", "T2LF document")
+          }
+
+        }
+        "when phase-6 disabled" in {
+          running(_.configure("feature-flags.phase-6-enabled" -> false)) {
+            app =>
+              val config = app.injector.instanceOf[FrontendAppConfig]
+              val json = Json.parse("""
+                  |    {
+                  |        "code": "C620",
+                  |        "description": "T2LF document"
+                  |    }
+                  |""".stripMargin)
+
+              implicit val reads: Reads[RequestedDocumentType] = RequestedDocumentType.reads(config)
+
+              json.as[RequestedDocumentType] `mustBe` RequestedDocumentType("C620", "T2LF document")
+          }
+
+        }
+
       }
-    }
-
-    "serialize to JSON correctly" in {
-      val requestedDocumentType = RequestedDocumentType(
-        code = "DOC001",
-        description = "Support doc"
-      )
-
-      val expectedJson = Json.parse(
-        """
-          |{
-          |  "code": "DOC001",
-          |  "description": "Support doc"
-          |}
-          |""".stripMargin
-      )
-
-      val json = Json.toJson(requestedDocumentType)
-      json mustEqual expectedJson
     }
 
     "order RequestedDocumentType instances by code" in {
