@@ -65,7 +65,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
   def getCountry(
     code: String
   )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[Country]] = {
-    val queryParams                    = Seq("data.code" -> code)
+    val queryParams                    = Country.queryParams(code)(config)
     val url                            = url"${config.customsReferenceDataUrl}/lists/CountryCodesFullList?$queryParams"
     implicit val reads: Reads[Country] = Country.reads(config)
     getOrElseUpdate[Country](url)

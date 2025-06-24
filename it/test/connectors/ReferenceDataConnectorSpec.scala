@@ -49,10 +49,10 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
     asyncCacheApi.removeAll().futureValue
   }
 
-  private def checkNoReferenceDataFoundResponse(url: String, result: => Future[Either[Exception, ?]]): Assertion = {
+  private def checkNoReferenceDataFoundResponse(url: String, json: String, result: => Future[Either[Exception, ?]]): Assertion = {
     server.stubFor(
       get(urlEqualTo(url))
-        .willReturn(okJson(emptyResponseJson))
+        .willReturn(okJson(json))
     )
 
     result.futureValue.left.value mustBe a[NoReferenceDataFoundException]
@@ -113,7 +113,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
         }
         "should throw a NoReferenceDataFoundException for an empty response " in {
-          checkNoReferenceDataFoundResponse(url, connector.getCustomsOffice(code))
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getCustomsOffice(code))
         }
 
         "should handle client and server errors for customs offices" in {
@@ -155,7 +155,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
         }
         "should throw a NoReferenceDataFoundException for an empty response " in {
-          checkNoReferenceDataFoundResponse(url, connector.getCustomsOffice(code))
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getCustomsOffice(code))
         }
 
         "should handle client and server errors for customs offices" in {
@@ -169,8 +169,8 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
       val code = "GB"
 
-      val url = s"$baseUrl/lists/CountryCodesFullList?data.code=$code"
       "when phase-6 enabled" - {
+        val url = s"$baseUrl/lists/CountryCodesFullList?keys=$code"
 
         val countriesResponseJson: String =
           s"""
@@ -202,14 +202,24 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, connector.getCountry(code))
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getCountry(code))
+          }
         }
 
         "should handle client and server errors for customs offices" in {
-          checkErrorResponse(url, connector.getCountry(code))
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkErrorResponse(url, connector.getCountry(code))
+          }
         }
       }
+
       "when phase-6-disabled" - {
+        val url = s"$baseUrl/lists/CountryCodesFullList?data.code=$code"
 
         val countriesResponseJson: String =
           s"""
@@ -251,11 +261,19 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, connector.getCountry(code))
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getCountry(code))
+          }
         }
 
         "should handle client and server errors for customs offices" in {
-          checkErrorResponse(url, connector.getCountry(code))
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkErrorResponse(url, connector.getCountry(code))
+          }
         }
       }
 
@@ -297,7 +315,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, connector.getQualifierOfIdentification(qualifier))
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getQualifierOfIdentification(qualifier))
         }
 
         "should handle client and server errors for customs offices" in {
@@ -336,7 +354,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, connector.getQualifierOfIdentification(qualifier))
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getQualifierOfIdentification(qualifier))
         }
 
         "should handle client and server errors for customs offices" in {
@@ -386,7 +404,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, connector.getIdentificationType(idType))
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getIdentificationType(idType))
         }
 
         "should handle client and server errors for customs offices" in {
@@ -429,7 +447,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, connector.getIdentificationType(idType))
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getIdentificationType(idType))
         }
 
         "should handle client and server errors for customs offices" in {
@@ -475,7 +493,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, connector.getNationality(code))
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getNationality(code))
         }
 
         "should handle client and server errors for customs offices" in {
@@ -524,7 +542,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, connector.getNationality(code))
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getNationality(code))
         }
 
         "should handle client and server errors for customs offices" in {
@@ -567,7 +585,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, connector.getControlType(typeOfControl))
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getControlType(typeOfControl))
         }
 
         "should handle client and server errors for control types" in {
@@ -605,7 +623,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, connector.getControlType(typeOfControl))
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getControlType(typeOfControl))
         }
 
         "should handle client and server errors for control types" in {
@@ -652,7 +670,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, connector.getIncidentCode(incidentCodeCode))
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getIncidentCode(incidentCodeCode))
         }
 
         "should handle client and server errors for incident codes" in {
@@ -694,7 +712,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, connector.getIncidentCode(incidentCodeCode))
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getIncidentCode(incidentCodeCode))
         }
 
         "should handle client and server errors for incident codes" in {
@@ -737,7 +755,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, connector.getRequestedDocumentType(requestedDocumentType))
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getRequestedDocumentType(requestedDocumentType))
         }
 
         "should handle client and server errors for control types" in {
@@ -775,7 +793,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, connector.getRequestedDocumentType(requestedDocumentType))
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getRequestedDocumentType(requestedDocumentType))
         }
 
         "should handle client and server errors for control types" in {
@@ -820,7 +838,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, connector.getFunctionalError(functionalError))
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getFunctionalError(functionalError))
         }
 
         "should handle client and server errors for functional errors" in {
@@ -860,7 +878,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, connector.getFunctionalError(functionalError))
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getFunctionalError(functionalError))
         }
 
         "should handle client and server errors for functional errors" in {
@@ -905,7 +923,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, connector.getInvalidGuaranteeReason(invalidGuaranteeReasonCode))
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getInvalidGuaranteeReason(invalidGuaranteeReasonCode))
         }
 
         "should handle client and server errors for invalid guarantee reasons" in {
@@ -945,7 +963,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, connector.getInvalidGuaranteeReason(invalidGuaranteeReasonCode))
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getInvalidGuaranteeReason(invalidGuaranteeReasonCode))
         }
 
         "should handle client and server errors for invalid guarantee reasons" in {
@@ -969,11 +987,15 @@ object ReferenceDataConnectorSpec {
 
   private val baseUrl = "/customs-reference-data/test-only"
 
-  private val emptyResponseJson: String =
+  private val emptyPhase5ResponseJson: String =
     """
       |{
       |  "data": []
       |}
       |""".stripMargin
 
+  private val emptyPhase6ResponseJson: String =
+    """
+      |[]
+      |""".stripMargin
 }
