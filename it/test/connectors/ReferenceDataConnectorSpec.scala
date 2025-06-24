@@ -283,9 +283,9 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
       val qualifier = "U"
 
-      val url = s"$baseUrl/lists/QualifierOfTheIdentification?data.qualifier=$qualifier"
-
       "when phase-6 enabled" - {
+
+        val url = s"$baseUrl/lists/QualifierOfTheIdentification?keys=$qualifier"
 
         val qualifierOfIdentificationResponseJson: String =
           """
@@ -315,7 +315,12 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getQualifierOfIdentification(qualifier))
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getQualifierOfIdentification(qualifier))
+          }
+
         }
 
         "should handle client and server errors for customs offices" in {
@@ -323,6 +328,8 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
       }
       "when phase-6-disabled" - {
+
+        val url = s"$baseUrl/lists/QualifierOfTheIdentification?data.qualifier=$qualifier"
 
         val qualifierOfIdentificationResponseJson: String =
           """
@@ -368,9 +375,9 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
       val idType = "10"
 
-      val url = s"$baseUrl/lists/TypeOfIdentificationOfMeansOfTransport?data.type=$idType"
-
       "when phase-6 enabled" - {
+
+        val url = s"$baseUrl/lists/TypeOfIdentificationOfMeansOfTransport?keys=$idType"
 
         val transportIdentifiersResponseJson: String =
           """
@@ -404,7 +411,12 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getIdentificationType(idType))
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getIdentificationType(idType))
+          }
+
         }
 
         "should handle client and server errors for customs offices" in {
@@ -412,6 +424,8 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
       }
       "when phase-6-disabled" - {
+
+        val url = s"$baseUrl/lists/TypeOfIdentificationOfMeansOfTransport?data.type=$idType"
 
         val transportIdentifiersResponseJson: String =
           """
@@ -461,10 +475,9 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
       val code = "AR"
 
-      val url = s"$baseUrl/lists/Nationality?data.code=$code"
-
       "when phase-6 enabled" - {
 
+        val url = s"$baseUrl/lists/Nationality?keys=$code"
         val nationalitiesResponseJson: String =
           """
             |[
@@ -493,7 +506,12 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getNationality(code))
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getNationality(code))
+          }
+
         }
 
         "should handle client and server errors for customs offices" in {
@@ -501,6 +519,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
       }
       "when phase-6-disabled" - {
+        val url = s"$baseUrl/lists/Nationality?data.code=$code"
 
         val nationalitiesResponseJson: String =
           """
@@ -554,9 +573,9 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
     "getControlType" - {
 
-      val url = s"$baseUrl/lists/ControlType?data.code=$typeOfControl"
-
       "when phase-6 enabled" - {
+
+        val url = s"$baseUrl/lists/ControlType?keys=$typeOfControl"
 
         val controlTypesResponseJson: String =
           s"""
@@ -585,7 +604,12 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getControlType(typeOfControl))
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getControlType(typeOfControl))
+          }
+
         }
 
         "should handle client and server errors for control types" in {
@@ -593,6 +617,8 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
       }
       "when phase-6-disabled" - {
+
+        val url = s"$baseUrl/lists/ControlType?data.code=$typeOfControl"
 
         val controlTypesResponseJson: String =
           s"""
@@ -635,9 +661,8 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
     "getIncidentCode" - {
 
-      val url = s"$baseUrl/lists/IncidentCode?data.code=$incidentCodeCode"
-
       "when-phase-6 enabled" - {
+        val url = s"$baseUrl/lists/IncidentCode?keys=$incidentCodeCode"
 
         val incidentCodeResponseJson: String =
           s"""
@@ -670,7 +695,11 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getIncidentCode(incidentCodeCode))
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getIncidentCode(incidentCodeCode))
+          }
         }
 
         "should handle client and server errors for incident codes" in {
@@ -678,6 +707,8 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
       }
       "when-phase-6-disabled" - {
+
+        val url = s"$baseUrl/lists/IncidentCode?data.code=$incidentCodeCode"
 
         val incidentCodeResponseJson: String =
           s"""
@@ -724,9 +755,9 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
     "getRequestedDocumentType" - {
 
-      val url = s"$baseUrl/lists/RequestedDocumentType?data.code=$requestedDocumentType"
-
       "when phase-6 enabled" - {
+
+        val url = s"$baseUrl/lists/RequestedDocumentType?keys=$requestedDocumentType"
 
         val requestedDocumentTypeJson: String =
           s"""
@@ -755,7 +786,11 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getRequestedDocumentType(requestedDocumentType))
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getRequestedDocumentType(requestedDocumentType))
+          }
         }
 
         "should handle client and server errors for control types" in {
@@ -763,6 +798,8 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
       }
       "when phase-6-disabled" - {
+
+        val url = s"$baseUrl/lists/RequestedDocumentType?data.code=$requestedDocumentType"
 
         val requestedDocumentTypeJson: String =
           s"""
@@ -805,9 +842,9 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
     "getFunctionalError" - {
 
-      val url = s"$baseUrl/lists/FunctionalErrorCodesIeCA?data.code=$functionalError"
-
       "when phase-6 enabled" - {
+
+        val url = s"$baseUrl/lists/FunctionalErrorCodesIeCA?keys=$functionalError"
 
         val functionalErrorsResponseJson: String =
           s"""
@@ -838,7 +875,12 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getFunctionalError(functionalError))
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getFunctionalError(functionalError))
+          }
+
         }
 
         "should handle client and server errors for functional errors" in {
@@ -846,6 +888,8 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
       }
       "when phase-6-disabled" - {
+
+        val url = s"$baseUrl/lists/FunctionalErrorCodesIeCA?data.code=$functionalError"
 
         val functionalErrorsResponseJson: String =
           s"""
@@ -889,10 +933,8 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
     }
 
     "getInvalidGuaranteeReason" - {
-
-      val url = s"$baseUrl/lists/InvalidGuaranteeReason?data.code=$invalidGuaranteeReasonCode"
-
       "when phase-6 enabled" - {
+        val url = s"$baseUrl/lists/InvalidGuaranteeReason?keys=$invalidGuaranteeReasonCode"
 
         val invalidGuaranteeReasonsResponseJson: String =
           s"""
@@ -923,7 +965,12 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getInvalidGuaranteeReason(invalidGuaranteeReasonCode))
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getInvalidGuaranteeReason(invalidGuaranteeReasonCode))
+          }
+
         }
 
         "should handle client and server errors for invalid guarantee reasons" in {
@@ -931,7 +978,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
       }
       "when phase-6-disabled" - {
-
+        val url = s"$baseUrl/lists/InvalidGuaranteeReason?data.code=$invalidGuaranteeReasonCode"
         val invalidGuaranteeReasonsResponseJson: String =
           s"""
              |{

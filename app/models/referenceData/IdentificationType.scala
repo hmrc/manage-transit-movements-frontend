@@ -41,4 +41,9 @@ object IdentificationType {
   implicit val format: OFormat[IdentificationType] = Json.format[IdentificationType]
 
   implicit val order: Order[IdentificationType] = (x: IdentificationType, y: IdentificationType) => (x, y).compareBy(_.description, _.`type`)
+
+  def queryParams(`type`: String)(config: FrontendAppConfig): Seq[(String, String)] = {
+    val key = if (config.phase6Enabled) "keys" else "data.type"
+    Seq(key -> `type`)
+  }
 }

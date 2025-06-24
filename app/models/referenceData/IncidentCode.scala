@@ -42,4 +42,9 @@ object IncidentCode {
 
   implicit val order: Order[IncidentCode] = (x: IncidentCode, y: IncidentCode) => (x, y).compareBy(_.code)
 
+  def queryParams(code: String)(config: FrontendAppConfig): Seq[(String, String)] = {
+    val key = if (config.phase6Enabled) "keys" else "data.code"
+    Seq(key -> code)
+  }
+
 }

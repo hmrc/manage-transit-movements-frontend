@@ -45,4 +45,9 @@ object InvalidGuaranteeReason {
 
   implicit val order: Order[InvalidGuaranteeReason] = (x: InvalidGuaranteeReason, y: InvalidGuaranteeReason) => (x, y).compareBy(_.code)
 
+  def queryParams(code: String)(config: FrontendAppConfig): Seq[(String, String)] = {
+    val key = if (config.phase6Enabled) "keys" else "data.code"
+    Seq(key -> code)
+  }
+
 }

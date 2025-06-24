@@ -45,4 +45,9 @@ object FunctionalErrorWithDesc {
 
   implicit val order: Order[FunctionalErrorWithDesc] = (x: FunctionalErrorWithDesc, y: FunctionalErrorWithDesc) => (x, y).compareBy(_.code)
 
+  def queryParams(code: String)(config: FrontendAppConfig): Seq[(String, String)] = {
+    val key = if (config.phase6Enabled) "keys" else "data.code"
+    Seq(key -> code)
+  }
+
 }
