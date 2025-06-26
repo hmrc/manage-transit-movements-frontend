@@ -14,18 +14,36 @@
  * limitations under the License.
  */
 
-package models
+package models.referenceData
 
 import cats.Order
+import config.FrontendAppConfig
 import models.referenceData.RichComparison
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
+import play.api.libs.json.{__, Json, OFormat, Reads}
 
 case class IdentificationType(`type`: String, description: String) {
   override def toString: String = s"$description - ${`type`}"
 }
 
 object IdentificationType {
+
+  def reads(config: FrontendAppConfig): Reads[IdentificationType] =
+    if (config.phase6Enabled) {
+      (
+        (__ \ "key").read[String] and
+          (__ \ "value").read[String]
+      )(IdentificationType.apply)
+    } else {
+      Json.reads[IdentificationType]
+    }
+
   implicit val format: OFormat[IdentificationType] = Json.format[IdentificationType]
 
   implicit val order: Order[IdentificationType] = (x: IdentificationType, y: IdentificationType) => (x, y).compareBy(_.description, _.`type`)
+
+  def queryParams(`type`: String)(config: FrontendAppConfig): Seq[(String, String)] = {
+    val key = if (config.phase6Enabled) "keys" else "data.type"
+    Seq(key -> `type`)
+  }
 }

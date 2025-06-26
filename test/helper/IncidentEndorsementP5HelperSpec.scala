@@ -18,7 +18,7 @@ package helper
 
 import base.SpecBase
 import generators.Generators
-import models.Country
+import models.referenceData.Country
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

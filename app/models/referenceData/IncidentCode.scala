@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package models
+package models.referenceData
 
 import cats.Order
+import config.FrontendAppConfig
 import models.referenceData.RichComparison
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
+import play.api.libs.json.{__, Json, Reads}
 
 case class IncidentCode(code: String, description: String) {
 
@@ -27,8 +29,22 @@ case class IncidentCode(code: String, description: String) {
 }
 
 object IncidentCode {
-  implicit val format: OFormat[IncidentCode] = Json.format[IncidentCode]
+
+  def reads(config: FrontendAppConfig): Reads[IncidentCode] =
+    if (config.phase6Enabled) {
+      (
+        (__ \ "key").read[String] and
+          (__ \ "value").read[String]
+      )(IncidentCode.apply)
+    } else {
+      Json.reads[IncidentCode]
+    }
 
   implicit val order: Order[IncidentCode] = (x: IncidentCode, y: IncidentCode) => (x, y).compareBy(_.code)
+
+  def queryParams(code: String)(config: FrontendAppConfig): Seq[(String, String)] = {
+    val key = if (config.phase6Enabled) "keys" else "data.code"
+    Seq(key -> code)
+  }
 
 }

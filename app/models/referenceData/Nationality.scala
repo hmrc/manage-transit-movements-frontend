@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package models
+package models.referenceData
 
 import cats.Order
+import config.FrontendAppConfig
 import models.referenceData.RichComparison
-import play.api.libs.json.{Format, Json}
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
+import play.api.libs.json.{__, Json, Reads}
 
 case class Nationality(code: String, description: String) {
 
@@ -27,7 +29,21 @@ case class Nationality(code: String, description: String) {
 }
 
 object Nationality {
-  implicit val format: Format[Nationality] = Json.format[Nationality]
+
+  def reads(config: FrontendAppConfig): Reads[Nationality] =
+    if (config.phase6Enabled) {
+      (
+        (__ \ "key").read[String] and
+          (__ \ "value").read[String]
+      )(Nationality.apply)
+    } else {
+      Json.reads[Nationality]
+    }
 
   implicit val order: Order[Nationality] = (x: Nationality, y: Nationality) => (x, y).compareBy(_.description, _.code)
+
+  def queryParams(code: String)(config: FrontendAppConfig): Seq[(String, String)] = {
+    val key = if (config.phase6Enabled) "keys" else "data.code"
+    Seq(key -> code)
+  }
 }

@@ -17,7 +17,9 @@
 package models.referenceData
 
 import cats.Order
-import play.api.libs.json.{Format, Json}
+import config.FrontendAppConfig
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
+import play.api.libs.json.{__, Json, Reads}
 
 case class InvalidGuaranteeReason(code: String, description: String) {
 
@@ -31,8 +33,21 @@ case class InvalidGuaranteeReason(code: String, description: String) {
 
 object InvalidGuaranteeReason {
 
-  implicit val format: Format[InvalidGuaranteeReason] = Json.format[InvalidGuaranteeReason]
+  def reads(config: FrontendAppConfig): Reads[InvalidGuaranteeReason] =
+    if (config.phase6Enabled) {
+      (
+        (__ \ "key").read[String] and
+          (__ \ "value").read[String]
+      )(InvalidGuaranteeReason.apply)
+    } else {
+      Json.reads[InvalidGuaranteeReason]
+    }
 
   implicit val order: Order[InvalidGuaranteeReason] = (x: InvalidGuaranteeReason, y: InvalidGuaranteeReason) => (x, y).compareBy(_.code)
+
+  def queryParams(code: String)(config: FrontendAppConfig): Seq[(String, String)] = {
+    val key = if (config.phase6Enabled) "keys" else "data.code"
+    Seq(key -> code)
+  }
 
 }

@@ -16,17 +16,17 @@
 
 package connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, equalTo, get, okJson, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import connectors.ReferenceDataConnectorSpec.*
 import itbase.{ItSpecBase, WireMockServerHandler}
 import models.referenceData.*
-import models.{Country, IdentificationType, IncidentCode, Nationality, QualifierOfIdentification}
 import org.scalacheck.Gen
 import org.scalatest.{Assertion, EitherValues}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.cache.AsyncCacheApi
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.test.Helpers.running
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -35,6 +35,9 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
   private lazy val asyncCacheApi: AsyncCacheApi      = app.injector.instanceOf[AsyncCacheApi]
   private lazy val connector: ReferenceDataConnector = app.injector.instanceOf[ReferenceDataConnector]
+
+  private val phase5App: GuiceApplicationBuilder => GuiceApplicationBuilder = _ => guiceApplicationBuilder().configure("feature-flags.phase-6-enabled" -> false)
+  private val phase6App: GuiceApplicationBuilder => GuiceApplicationBuilder = _ => guiceApplicationBuilder().configure("feature-flags.phase-6-enabled" -> true)
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -46,11 +49,10 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
     asyncCacheApi.removeAll().futureValue
   }
 
-  private def checkNoReferenceDataFoundResponse(url: String, result: => Future[Either[Exception, ?]]): Assertion = {
+  private def checkNoReferenceDataFoundResponse(url: String, json: String, result: => Future[Either[Exception, ?]]): Assertion = {
     server.stubFor(
       get(urlEqualTo(url))
-        .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
-        .willReturn(okJson(emptyResponseJson))
+        .willReturn(okJson(json))
     )
 
     result.futureValue.left.value mustBe a[NoReferenceDataFoundException]
@@ -63,7 +65,6 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
       errorResponse =>
         server.stubFor(
           get(urlEqualTo(url))
-            .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
             .willReturn(
               aResponse()
                 .withStatus(errorResponse)
@@ -80,261 +81,943 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
       val url = s"$baseUrl/lists/CustomsOffices?data.id=$code"
 
-      "should handle a 200 response for customs offices" in {
-        server.stubFor(
-          get(urlEqualTo(url))
-            .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
-            .willReturn(okJson(customsOfficesResponseJson))
-        )
+      "when phase-6 enabled" - {
 
-        val expectedResult = CustomsOffice(code, "NAME001", Some("004412323232345"), Some("test123@gmail.com"))
+        val customsOfficesResponseJson: String =
+          s"""
+             |[
+             |  {
+             |    "id": "$code",
+             |    "name": "NAME001",
+             |    "languageCode": "EN",
+             |    "phoneNumber": "004412323232345",
+             |    "eMailAddress": "test123@gmail.com"
+             |  }
+             |]
+             |""".stripMargin
 
-        connector.getCustomsOffice(code).futureValue.value mustEqual expectedResult
+        "should handle a 200 response for customs offices" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.2.0+json"))
+                  .willReturn(okJson(customsOfficesResponseJson))
+              )
+
+              val expectedResult = CustomsOffice(code, "NAME001", Some("004412323232345"), Some("test123@gmail.com"))
+
+              connector.getCustomsOffice(code).futureValue.value mustEqual expectedResult
+          }
+
+        }
+        "should throw a NoReferenceDataFoundException for an empty response " in {
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getCustomsOffice(code))
+        }
+
+        "should handle client and server errors for customs offices" in {
+          checkErrorResponse(url, connector.getCustomsOffice(code))
+        }
       }
 
-      "should throw a NoReferenceDataFoundException for an empty response" in {
-        checkNoReferenceDataFoundResponse(url, connector.getCustomsOffice(code))
+      "when phase-6-disabled" - {
+
+        val customsOfficesResponseJson: String =
+          s"""
+             |{
+             |  "data": [
+             |    {
+             |      "id": "$code",
+             |      "name": "NAME001",
+             |      "languageCode": "EN",
+             |      "phoneNumber": "004412323232345",
+             |      "eMailAddress": "test123@gmail.com"
+             |    }
+             |  ]
+             |}
+             |""".stripMargin
+
+        "should handle a 200 response for customs offices" in {
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
+                  .willReturn(okJson(customsOfficesResponseJson))
+              )
+
+              val expectedResult = CustomsOffice(code, "NAME001", Some("004412323232345"), Some("test123@gmail.com"))
+
+              connector.getCustomsOffice(code).futureValue.value mustEqual expectedResult
+          }
+
+        }
+        "should throw a NoReferenceDataFoundException for an empty response " in {
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getCustomsOffice(code))
+        }
+
+        "should handle client and server errors for customs offices" in {
+          checkErrorResponse(url, connector.getCustomsOffice(code))
+        }
       }
 
-      "should handle client and server errors for customs offices" in {
-        checkErrorResponse(url, connector.getCustomsOffice(code))
-      }
     }
 
     "getCountry" - {
 
       val code = "GB"
 
-      val url = s"$baseUrl/lists/CountryCodesFullList?data.code=$code"
+      "when phase-6 enabled" - {
+        val url = s"$baseUrl/lists/CountryCodesFullList?keys=$code"
 
-      "should handle a 200 response for countries" in {
-        server.stubFor(
-          get(urlEqualTo(url))
-            .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
-            .willReturn(okJson(countriesResponseJson))
-        )
+        val countriesResponseJson: String =
+          s"""
+             |[
+             |  {
+             |    "key": "GB",
+             |    "value": "United Kingdom",
+             |    "properties": {
+             |      "state": "valid"
+             |    }
+             |  }
+             |]
+             |""".stripMargin
 
-        val expectedResult = Country(code, "United Kingdom")
+        "should handle a 200 response for countries" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.2.0+json"))
+                  .willReturn(okJson(countriesResponseJson))
+              )
+              val expectedResult = Country(code, "United Kingdom")
 
-        connector.getCountry(code).futureValue.value mustEqual expectedResult
+              connector.getCountry(code).futureValue.value mustEqual expectedResult
+          }
+
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getCountry(code))
+          }
+        }
+
+        "should handle client and server errors for customs offices" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkErrorResponse(url, connector.getCountry(code))
+          }
+        }
       }
 
-      "should throw a NoReferenceDataFoundException for an empty response" in {
-        checkNoReferenceDataFoundResponse(url, connector.getCountry(code))
+      "when phase-6-disabled" - {
+        val url = s"$baseUrl/lists/CountryCodesFullList?data.code=$code"
+
+        val countriesResponseJson: String =
+          s"""
+             |{
+             |  "_links": {
+             |    "self": {
+             |      "href": "/customs-reference-data/lists/CountryCodesFullList"
+             |    }
+             |  },
+             |  "meta": {
+             |    "version": "fb16648c-ea06-431e-bbf6-483dc9ebed6e",
+             |    "snapshotDate": "2023-01-01"
+             |  },
+             |  "id": "CountryCodesFullList",
+             |  "data": [
+             |    {
+             |      "activeFrom": "2023-01-23",
+             |      "code": "GB",
+             |      "state": "valid",
+             |      "description": "United Kingdom"
+             |    }
+             |  ]
+             |}
+             |""".stripMargin
+
+        "should handle a 200 response for countries" in {
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
+                  .willReturn(okJson(countriesResponseJson))
+              )
+              val expectedResult = Country(code, "United Kingdom")
+
+              connector.getCountry(code).futureValue.value mustEqual expectedResult
+          }
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getCountry(code))
+          }
+        }
+
+        "should handle client and server errors for customs offices" in {
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkErrorResponse(url, connector.getCountry(code))
+          }
+        }
       }
 
-      "should handle client and server errors for customs offices" in {
-        checkErrorResponse(url, connector.getCountry(code))
-      }
     }
 
     "getQualifierOfIdentifications" - {
 
       val qualifier = "U"
 
-      val url = s"$baseUrl/lists/QualifierOfTheIdentification?data.qualifier=$qualifier"
+      "when phase-6 enabled" - {
 
-      "should handle a 200 response for identifications" in {
-        server.stubFor(
-          get(urlEqualTo(url))
-            .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
-            .willReturn(okJson(qualifierOfIdentificationResponseJson))
-        )
+        val url = s"$baseUrl/lists/QualifierOfTheIdentification?keys=$qualifier"
 
-        val expectedResult = QualifierOfIdentification("U", "UN/LOCODE")
+        val qualifierOfIdentificationResponseJson: String =
+          """
+            |[
+            |  {
+            |    "key": "U",
+            |    "value": "UN/LOCODE"
+            |  }
+            |]
+            |""".stripMargin
 
-        connector.getQualifierOfIdentification(qualifier).futureValue.value mustEqual expectedResult
+        "should handle a 200 response for identifications" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.2.0+json"))
+                  .willReturn(okJson(qualifierOfIdentificationResponseJson))
+              )
+
+              val expectedResult = QualifierOfIdentification("U", "UN/LOCODE")
+
+              connector.getQualifierOfIdentification(qualifier).futureValue.value mustEqual expectedResult
+
+          }
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getQualifierOfIdentification(qualifier))
+          }
+
+        }
+
+        "should handle client and server errors for customs offices" in {
+          checkErrorResponse(url, connector.getQualifierOfIdentification(qualifier))
+        }
+      }
+      "when phase-6-disabled" - {
+
+        val url = s"$baseUrl/lists/QualifierOfTheIdentification?data.qualifier=$qualifier"
+
+        val qualifierOfIdentificationResponseJson: String =
+          """
+            |{
+            |  "data": [
+            |    {
+            |      "qualifier": "U",
+            |      "description": "UN/LOCODE"
+            |    }
+            |  ]
+            |}
+            |""".stripMargin
+
+        "should handle a 200 response for identifications" in {
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
+                  .willReturn(okJson(qualifierOfIdentificationResponseJson))
+              )
+
+              val expectedResult = QualifierOfIdentification("U", "UN/LOCODE")
+
+              connector.getQualifierOfIdentification(qualifier).futureValue.value mustEqual expectedResult
+
+          }
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getQualifierOfIdentification(qualifier))
+        }
+
+        "should handle client and server errors for customs offices" in {
+          checkErrorResponse(url, connector.getQualifierOfIdentification(qualifier))
+        }
       }
 
-      "should throw a NoReferenceDataFoundException for an empty response" in {
-        checkNoReferenceDataFoundResponse(url, connector.getQualifierOfIdentification(qualifier))
-      }
-
-      "should handle client and server errors for customs offices" in {
-        checkErrorResponse(url, connector.getQualifierOfIdentification(qualifier))
-      }
     }
 
     "getIdentificationTypes" - {
 
       val idType = "10"
 
-      val url = s"$baseUrl/lists/TypeOfIdentificationOfMeansOfTransport?data.type=$idType"
+      "when phase-6 enabled" - {
 
-      "should handle a 200 response for identification types" in {
-        server.stubFor(
-          get(urlEqualTo(url))
-            .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
-            .willReturn(okJson(transportIdentifiersResponseJson))
-        )
+        val url = s"$baseUrl/lists/TypeOfIdentificationOfMeansOfTransport?keys=$idType"
 
-        val expectedResult = IdentificationType(idType, "IMO Ship Identification Number")
+        val transportIdentifiersResponseJson: String =
+          """
+            |[
+            |  {
+            |   "key": "10",
+            |   "value": "IMO Ship Identification Number"
+            |  },
+            |  {
+            |   "key": "11",
+            |   "value": "Name of the sea-going vessel"
+            |  }
+            |]
+            |""".stripMargin
 
-        connector.getIdentificationType(idType).futureValue.value mustEqual expectedResult
+        "should handle a 200 response for identification types" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.2.0+json"))
+                  .willReturn(okJson(transportIdentifiersResponseJson))
+              )
+              val expectedResult = IdentificationType(idType, "IMO Ship Identification Number")
+
+              connector.getIdentificationType(idType).futureValue.value mustEqual expectedResult
+
+          }
+
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getIdentificationType(idType))
+          }
+
+        }
+
+        "should handle client and server errors for customs offices" in {
+          checkErrorResponse(url, connector.getIdentificationType(idType))
+        }
+      }
+      "when phase-6-disabled" - {
+
+        val url = s"$baseUrl/lists/TypeOfIdentificationOfMeansOfTransport?data.type=$idType"
+
+        val transportIdentifiersResponseJson: String =
+          """
+            |{
+            |  "data": [
+            |    {
+            |     "type": "10",
+            |     "description": "IMO Ship Identification Number"
+            |    },
+            |    {
+            |     "type": "11",
+            |     "description": "Name of the sea-going vessel"
+            |    }
+            |  ]
+            |}
+            |""".stripMargin
+
+        "should handle a 200 response for identification types" in {
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
+                  .willReturn(okJson(transportIdentifiersResponseJson))
+              )
+              val expectedResult = IdentificationType(idType, "IMO Ship Identification Number")
+
+              connector.getIdentificationType(idType).futureValue.value mustEqual expectedResult
+
+          }
+
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getIdentificationType(idType))
+        }
+
+        "should handle client and server errors for customs offices" in {
+          checkErrorResponse(url, connector.getIdentificationType(idType))
+        }
       }
 
-      "should throw a NoReferenceDataFoundException for an empty response" in {
-        checkNoReferenceDataFoundResponse(url, connector.getIdentificationType(idType))
-      }
-
-      "should handle client and server errors for customs offices" in {
-        checkErrorResponse(url, connector.getIdentificationType(idType))
-      }
     }
 
     "getNationality" - {
 
       val code = "AR"
 
-      val url = s"$baseUrl/lists/Nationality?data.code=$code"
+      "when phase-6 enabled" - {
 
-      "should handle a 200 response for nationalities" in {
-        server.stubFor(
-          get(urlEqualTo(url))
-            .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
-            .willReturn(okJson(nationalitiesResponseJson))
-        )
+        val url = s"$baseUrl/lists/Nationality?keys=$code"
+        val nationalitiesResponseJson: String =
+          """
+            |[
+            |  {
+            |    "key":"AR",
+            |    "value":"Argentina"
+            |  }
+            |]
+            |""".stripMargin
 
-        val expectedResult = Nationality(code, "Argentina")
+        "should handle a 200 response for nationalities" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.2.0+json"))
+                  .willReturn(okJson(nationalitiesResponseJson))
+              )
+              val expectedResult = Nationality(code, "Argentina")
 
-        connector.getNationality(code).futureValue.value mustEqual expectedResult
+              connector.getNationality(code).futureValue.value mustEqual expectedResult
+
+          }
+
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getNationality(code))
+          }
+
+        }
+
+        "should handle client and server errors for customs offices" in {
+          checkErrorResponse(url, connector.getNationality(code))
+        }
+      }
+      "when phase-6-disabled" - {
+        val url = s"$baseUrl/lists/Nationality?data.code=$code"
+
+        val nationalitiesResponseJson: String =
+          """
+            |{
+            |  "_links": {
+            |    "self": {
+            |      "href": "/customs-reference-data/lists/Nationality"
+            |    }
+            |  },
+            |  "meta": {
+            |    "version": "fb16648c-ea06-431e-bbf6-483dc9ebed6e",
+            |    "snapshotDate": "2023-01-01"
+            |  },
+            |  "id": "Nationality",
+            |  "data": [
+            |    {
+            |      "code":"AR",
+            |      "description":"Argentina"
+            |    }
+            |  ]
+            |}
+            |""".stripMargin
+
+        "should handle a 200 response for nationalities" in {
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
+                  .willReturn(okJson(nationalitiesResponseJson))
+              )
+              val expectedResult = Nationality(code, "Argentina")
+
+              connector.getNationality(code).futureValue.value mustEqual expectedResult
+
+          }
+
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getNationality(code))
+        }
+
+        "should handle client and server errors for customs offices" in {
+          checkErrorResponse(url, connector.getNationality(code))
+        }
       }
 
-      "should throw a NoReferenceDataFoundException for an empty response" in {
-        checkNoReferenceDataFoundResponse(url, connector.getNationality(code))
-      }
-
-      "should handle client and server errors for customs offices" in {
-        checkErrorResponse(url, connector.getNationality(code))
-      }
     }
 
     "getControlType" - {
 
-      val url = s"$baseUrl/lists/ControlType?data.code=$typeOfControl"
+      "when phase-6 enabled" - {
 
-      "should handle a 200 response for control types" in {
-        server.stubFor(
-          get(urlEqualTo(url))
-            .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
-            .willReturn(okJson(controlTypesResponseJson))
-        )
+        val url = s"$baseUrl/lists/ControlType?keys=$typeOfControl"
 
-        val expectedResult = ControlType(typeOfControl, "Intrusive")
+        val controlTypesResponseJson: String =
+          s"""
+             |[
+             |  {
+             |    "key": "$typeOfControl",
+             |    "value": "Intrusive"
+             |  }
+             |]
+             |""".stripMargin
 
-        connector.getControlType(typeOfControl).futureValue.value mustEqual expectedResult
+        "should handle a 200 response for control types" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.2.0+json"))
+                  .willReturn(okJson(controlTypesResponseJson))
+              )
+              val expectedResult = ControlType(typeOfControl, "Intrusive")
+
+              connector.getControlType(typeOfControl).futureValue.value mustEqual expectedResult
+
+          }
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getControlType(typeOfControl))
+          }
+
+        }
+
+        "should handle client and server errors for control types" in {
+          checkErrorResponse(url, connector.getControlType(typeOfControl))
+        }
+      }
+      "when phase-6-disabled" - {
+
+        val url = s"$baseUrl/lists/ControlType?data.code=$typeOfControl"
+
+        val controlTypesResponseJson: String =
+          s"""
+             |{
+             |  "data": [
+             |    {
+             |      "code": "$typeOfControl",
+             |      "description": "Intrusive"
+             |    }
+             |  ]
+             |}
+             |""".stripMargin
+
+        "should handle a 200 response for control types" in {
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
+                  .willReturn(okJson(controlTypesResponseJson))
+              )
+              val expectedResult = ControlType(typeOfControl, "Intrusive")
+
+              connector.getControlType(typeOfControl).futureValue.value mustEqual expectedResult
+
+          }
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getControlType(typeOfControl))
+        }
+
+        "should handle client and server errors for control types" in {
+          checkErrorResponse(url, connector.getControlType(typeOfControl))
+        }
       }
 
-      "should throw a NoReferenceDataFoundException for an empty response" in {
-        checkNoReferenceDataFoundResponse(url, connector.getControlType(typeOfControl))
-      }
-
-      "should handle client and server errors for control types" in {
-        checkErrorResponse(url, connector.getControlType(typeOfControl))
-      }
     }
 
     "getIncidentCode" - {
 
-      val url = s"$baseUrl/lists/IncidentCode?data.code=$incidentCodeCode"
+      "when-phase-6 enabled" - {
+        val url = s"$baseUrl/lists/IncidentCode?keys=$incidentCodeCode"
 
-      "should handle a 200 response for incident codes" in {
-        server.stubFor(
-          get(urlEqualTo(url))
-            .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
-            .willReturn(okJson(incidentCodeResponseJson))
-        )
+        val incidentCodeResponseJson: String =
+          s"""
+             |[
+             |  {
+             |    "key": "$incidentCodeCode",
+             |    "value": "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
+             |  }
+             |]
+             |""".stripMargin
 
-        val expectedResult = IncidentCode(
-          incidentCodeCode,
-          "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
-        )
+        "should handle a 200 response for incident codes" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.2.0+json"))
+                  .willReturn(okJson(incidentCodeResponseJson))
+              )
+              val expectedResult = IncidentCode(
+                incidentCodeCode,
+                "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
+              )
 
-        connector.getIncidentCode(incidentCodeCode).futureValue.value mustEqual expectedResult
+              connector.getIncidentCode(incidentCodeCode).futureValue.value mustEqual expectedResult
+
+          }
+
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getIncidentCode(incidentCodeCode))
+          }
+        }
+
+        "should handle client and server errors for incident codes" in {
+          checkErrorResponse(url, connector.getIncidentCode(incidentCodeCode))
+        }
+      }
+      "when-phase-6-disabled" - {
+
+        val url = s"$baseUrl/lists/IncidentCode?data.code=$incidentCodeCode"
+
+        val incidentCodeResponseJson: String =
+          s"""
+             |{
+             |  "data": [
+             |    {
+             |      "code": "$incidentCodeCode",
+             |      "description": "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
+             |    }
+             |  ]
+             |}
+             |""".stripMargin
+
+        "should handle a 200 response for incident codes" in {
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
+                  .willReturn(okJson(incidentCodeResponseJson))
+              )
+              val expectedResult = IncidentCode(
+                incidentCodeCode,
+                "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
+              )
+
+              connector.getIncidentCode(incidentCodeCode).futureValue.value mustEqual expectedResult
+
+          }
+
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getIncidentCode(incidentCodeCode))
+        }
+
+        "should handle client and server errors for incident codes" in {
+          checkErrorResponse(url, connector.getIncidentCode(incidentCodeCode))
+        }
       }
 
-      "should throw a NoReferenceDataFoundException for an empty response" in {
-        checkNoReferenceDataFoundResponse(url, connector.getIncidentCode(incidentCodeCode))
-      }
-
-      "should handle client and server errors for incident codes" in {
-        checkErrorResponse(url, connector.getIncidentCode(incidentCodeCode))
-      }
     }
 
     "getRequestedDocumentType" - {
 
-      val url = s"$baseUrl/lists/RequestedDocumentType?data.code=$requestedDocumentType"
+      "when phase-6 enabled" - {
 
-      "should handle a 200 response for control types" in {
-        server.stubFor(
-          get(urlEqualTo(url))
-            .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
-            .willReturn(okJson(requestedDocumentTypeJson))
-        )
+        val url = s"$baseUrl/lists/RequestedDocumentType?keys=$requestedDocumentType"
 
-        val expectedResult = RequestedDocumentType(requestedDocumentType, "T2FL document")
+        val requestedDocumentTypeJson: String =
+          s"""
+             |[
+             |  {
+             |    "key": "$requestedDocumentType",
+             |    "value": "T2FL document"
+             |  }
+             |]
+             |""".stripMargin
 
-        connector.getRequestedDocumentType(requestedDocumentType).futureValue.value mustEqual expectedResult
+        "should handle a 200 response for control types" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.2.0+json"))
+                  .willReturn(okJson(requestedDocumentTypeJson))
+              )
+              val expectedResult = RequestedDocumentType(requestedDocumentType, "T2FL document")
+
+              connector.getRequestedDocumentType(requestedDocumentType).futureValue.value mustEqual expectedResult
+
+          }
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getRequestedDocumentType(requestedDocumentType))
+          }
+        }
+
+        "should handle client and server errors for control types" in {
+          checkErrorResponse(url, connector.getRequestedDocumentType(requestedDocumentType))
+        }
+      }
+      "when phase-6-disabled" - {
+
+        val url = s"$baseUrl/lists/RequestedDocumentType?data.code=$requestedDocumentType"
+
+        val requestedDocumentTypeJson: String =
+          s"""
+             |{
+             |  "data": [
+             |    {
+             |      "code": "$requestedDocumentType",
+             |      "description": "T2FL document"
+             |    }
+             |  ]
+             |}
+             |""".stripMargin
+
+        "should handle a 200 response for control types" in {
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
+                  .willReturn(okJson(requestedDocumentTypeJson))
+              )
+              val expectedResult = RequestedDocumentType(requestedDocumentType, "T2FL document")
+
+              connector.getRequestedDocumentType(requestedDocumentType).futureValue.value mustEqual expectedResult
+
+          }
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getRequestedDocumentType(requestedDocumentType))
+        }
+
+        "should handle client and server errors for control types" in {
+          checkErrorResponse(url, connector.getRequestedDocumentType(requestedDocumentType))
+        }
       }
 
-      "should throw a NoReferenceDataFoundException for an empty response" in {
-        checkNoReferenceDataFoundResponse(url, connector.getRequestedDocumentType(requestedDocumentType))
-      }
-
-      "should handle client and server errors for control types" in {
-        checkErrorResponse(url, connector.getRequestedDocumentType(requestedDocumentType))
-      }
     }
 
     "getFunctionalError" - {
 
-      val url = s"$baseUrl/lists/FunctionalErrorCodesIeCA?data.code=$functionalError"
+      "when phase-6 enabled" - {
 
-      "should handle a 200 response for functional errors" in {
-        server.stubFor(
-          get(urlEqualTo(url))
-            .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
-            .willReturn(okJson(functionalErrorsResponseJson))
-        )
+        val url = s"$baseUrl/lists/FunctionalErrorCodesIeCA?keys=$functionalError"
 
-        val expectedResult = FunctionalErrorWithDesc(functionalError, "Rule violation")
+        val functionalErrorsResponseJson: String =
+          s"""
+             |[
+             |  {
+             |    "key": "$functionalError",
+             |    "value": "Rule violation"
+             |  }
+             |]
+             |""".stripMargin
 
-        connector.getFunctionalError(functionalError).futureValue.value mustEqual expectedResult
+        "should handle a 200 response for functional errors" in {
+
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.2.0+json"))
+                  .willReturn(okJson(functionalErrorsResponseJson))
+              )
+              val expectedResult = FunctionalErrorWithDesc(functionalError, "Rule violation")
+
+              connector.getFunctionalError(functionalError).futureValue.value mustEqual expectedResult
+
+          }
+
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getFunctionalError(functionalError))
+          }
+
+        }
+
+        "should handle client and server errors for functional errors" in {
+          checkErrorResponse(url, connector.getFunctionalError(functionalError))
+        }
+      }
+      "when phase-6-disabled" - {
+
+        val url = s"$baseUrl/lists/FunctionalErrorCodesIeCA?data.code=$functionalError"
+
+        val functionalErrorsResponseJson: String =
+          s"""
+             |{
+             |  "data": [
+             |    {
+             |      "code": "$functionalError",
+             |      "description": "Rule violation"
+             |    }
+             |  ]
+             |}
+             |""".stripMargin
+
+        "should handle a 200 response for functional errors" in {
+
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
+                  .willReturn(okJson(functionalErrorsResponseJson))
+              )
+              val expectedResult = FunctionalErrorWithDesc(functionalError, "Rule violation")
+
+              connector.getFunctionalError(functionalError).futureValue.value mustEqual expectedResult
+
+          }
+
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getFunctionalError(functionalError))
+        }
+
+        "should handle client and server errors for functional errors" in {
+          checkErrorResponse(url, connector.getFunctionalError(functionalError))
+        }
       }
 
-      "should throw a NoReferenceDataFoundException for an empty response" in {
-        checkNoReferenceDataFoundResponse(url, connector.getFunctionalError(functionalError))
-      }
-
-      "should handle client and server errors for functional errors" in {
-        checkErrorResponse(url, connector.getFunctionalError(functionalError))
-      }
     }
 
     "getInvalidGuaranteeReason" - {
+      "when phase-6 enabled" - {
+        val url = s"$baseUrl/lists/InvalidGuaranteeReason?keys=$invalidGuaranteeReasonCode"
 
-      val url = s"$baseUrl/lists/InvalidGuaranteeReason?data.code=$invalidGuaranteeReasonCode"
+        val invalidGuaranteeReasonsResponseJson: String =
+          s"""
+             |[
+             |  {
+             |    "key": "$invalidGuaranteeReasonCode",
+             |    "value": "Guarantee exists, but not valid"
+             |  }
+             |]
+             |""".stripMargin
 
-      "should handle a 200 response for invalid guarantee reasons" in {
-        server.stubFor(
-          get(urlEqualTo(url))
-            .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
-            .willReturn(okJson(invalidGuaranteeReasonsResponseJson))
-        )
+        "should handle a 200 response for invalid guarantee reasons" in {
 
-        val expectedResult = InvalidGuaranteeReason(invalidGuaranteeReasonCode, "Guarantee exists, but not valid")
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.2.0+json"))
+                  .willReturn(okJson(invalidGuaranteeReasonsResponseJson))
+              )
+              val expectedResult = InvalidGuaranteeReason(invalidGuaranteeReasonCode, "Guarantee exists, but not valid")
 
-        connector.getInvalidGuaranteeReason(invalidGuaranteeReasonCode).futureValue.value mustEqual expectedResult
+              connector.getInvalidGuaranteeReason(invalidGuaranteeReasonCode).futureValue.value mustEqual expectedResult
+
+          }
+
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getInvalidGuaranteeReason(invalidGuaranteeReasonCode))
+          }
+
+        }
+
+        "should handle client and server errors for invalid guarantee reasons" in {
+          checkErrorResponse(url, connector.getInvalidGuaranteeReason(invalidGuaranteeReasonCode))
+        }
+      }
+      "when phase-6-disabled" - {
+        val url = s"$baseUrl/lists/InvalidGuaranteeReason?data.code=$invalidGuaranteeReasonCode"
+        val invalidGuaranteeReasonsResponseJson: String =
+          s"""
+             |{
+             |  "data": [
+             |    {
+             |      "code": "$invalidGuaranteeReasonCode",
+             |      "description": "Guarantee exists, but not valid"
+             |    }
+             |  ]
+             |}
+             |""".stripMargin
+
+        "should handle a 200 response for invalid guarantee reasons" in {
+
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
+                  .willReturn(okJson(invalidGuaranteeReasonsResponseJson))
+              )
+              val expectedResult = InvalidGuaranteeReason(invalidGuaranteeReasonCode, "Guarantee exists, but not valid")
+
+              connector.getInvalidGuaranteeReason(invalidGuaranteeReasonCode).futureValue.value mustEqual expectedResult
+
+          }
+
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getInvalidGuaranteeReason(invalidGuaranteeReasonCode))
+        }
+
+        "should handle client and server errors for invalid guarantee reasons" in {
+          checkErrorResponse(url, connector.getInvalidGuaranteeReason(invalidGuaranteeReasonCode))
+        }
       }
 
-      "should throw a NoReferenceDataFoundException for an empty response" in {
-        checkNoReferenceDataFoundResponse(url, connector.getInvalidGuaranteeReason(invalidGuaranteeReasonCode))
-      }
-
-      "should handle client and server errors for invalid guarantee reasons" in {
-        checkErrorResponse(url, connector.getInvalidGuaranteeReason(invalidGuaranteeReasonCode))
-      }
     }
   }
 
@@ -351,160 +1034,15 @@ object ReferenceDataConnectorSpec {
 
   private val baseUrl = "/customs-reference-data/test-only"
 
-  private val customsOfficesResponseJson: String =
-    s"""
-       |{
-       |  "data": [
-       |    {
-       |      "id": "$code",
-       |      "name": "NAME001",
-       |      "languageCode": "EN",
-       |      "phoneNumber": "004412323232345",
-       |      "eMailAddress": "test123@gmail.com"
-       |    }
-       |  ]
-       |}
-       |""".stripMargin
-
-  private val qualifierOfIdentificationResponseJson: String =
-    """
-      |{
-      |  "data": [
-      |    {
-      |      "qualifier": "U",
-      |      "description": "UN/LOCODE"
-      |    }
-      |  ]
-      |}
-      |""".stripMargin
-
-  private val countriesResponseJson: String =
-    s"""
-       |{
-       |  "_links": {
-       |    "self": {
-       |      "href": "/customs-reference-data/lists/CountryCodesFullList"
-       |    }
-       |  },
-       |  "meta": {
-       |    "version": "fb16648c-ea06-431e-bbf6-483dc9ebed6e",
-       |    "snapshotDate": "2023-01-01"
-       |  },
-       |  "id": "CountryCodesFullList",
-       |  "data": [
-       |    {
-       |      "activeFrom": "2023-01-23",
-       |      "code": "GB",
-       |      "state": "valid",
-       |      "description": "United Kingdom"
-       |    }
-       |  ]
-       |}
-       |""".stripMargin
-
-  private val transportIdentifiersResponseJson: String =
-    """
-      |{
-      |  "data": [
-      |    {
-      |     "type": "10",
-      |     "description": "IMO Ship Identification Number"
-      |    },
-      |    {
-      |     "type": "11",
-      |     "description": "Name of the sea-going vessel"
-      |    }
-      |  ]
-      |}
-      |""".stripMargin
-
-  private val nationalitiesResponseJson: String =
-    """
-      |{
-      |  "_links": {
-      |    "self": {
-      |      "href": "/customs-reference-data/lists/Nationality"
-      |    }
-      |  },
-      |  "meta": {
-      |    "version": "fb16648c-ea06-431e-bbf6-483dc9ebed6e",
-      |    "snapshotDate": "2023-01-01"
-      |  },
-      |  "id": "Nationality",
-      |  "data": [
-      |    {
-      |      "code":"AR",
-      |      "description":"Argentina"
-      |    }
-      |  ]
-      |}
-      |""".stripMargin
-
-  private val controlTypesResponseJson: String =
-    s"""
-       |{
-       |  "data": [
-       |    {
-       |      "code": "$typeOfControl",
-       |      "description": "Intrusive"
-       |    }
-       |  ]
-       |}
-       |""".stripMargin
-
-  private val incidentCodeResponseJson: String =
-    s"""
-       |{
-       |  "data": [
-       |    {
-       |      "code": "$incidentCodeCode",
-       |      "description": "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
-       |    }
-       |  ]
-       |}
-       |""".stripMargin
-
-  private val requestedDocumentTypeJson: String =
-    s"""
-       |{
-       |  "data": [
-       |    {
-       |      "code": "$requestedDocumentType",
-       |      "description": "T2FL document"
-       |    }
-       |  ]
-       |}
-       |""".stripMargin
-
-  private val functionalErrorsResponseJson: String =
-    s"""
-       |{
-       |  "data": [
-       |    {
-       |      "code": "$functionalError",
-       |      "description": "Rule violation"
-       |    }
-       |  ]
-       |}
-       |""".stripMargin
-
-  private val invalidGuaranteeReasonsResponseJson: String =
-    s"""
-       |{
-       |  "data": [
-       |    {
-       |      "code": "$invalidGuaranteeReasonCode",
-       |      "description": "Guarantee exists, but not valid"
-       |    }
-       |  ]
-       |}
-       |""".stripMargin
-
-  private val emptyResponseJson: String =
+  private val emptyPhase5ResponseJson: String =
     """
       |{
       |  "data": []
       |}
       |""".stripMargin
 
+  private val emptyPhase6ResponseJson: String =
+    """
+      |[]
+      |""".stripMargin
 }
