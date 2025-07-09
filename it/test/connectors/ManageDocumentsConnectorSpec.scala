@@ -50,15 +50,13 @@ class ManageDocumentsConnectorSpec extends ItSpecBase with WireMockServerHandler
         val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
-            .willReturn(
-              aResponse()
-                .withStatus(200)
-            )
+            .withHeader("API-Version", equalTo("2.1"))
+            .willReturn(ok())
         )
 
         val result: Future[HttpResponse] = connector.getTAD(departureId, messageId)
 
-        result.futureValue.status `mustBe` 200
+        result.futureValue.status mustEqual 200
       }
 
       "must return other error status codes without exceptions" in {
@@ -66,6 +64,7 @@ class ManageDocumentsConnectorSpec extends ItSpecBase with WireMockServerHandler
 
         server.stubFor(
           get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
+            .withHeader("API-Version", equalTo("2.1"))
             .willReturn(
               aResponse()
                 .withStatus(genErrorResponse)
@@ -74,7 +73,7 @@ class ManageDocumentsConnectorSpec extends ItSpecBase with WireMockServerHandler
 
         val result: Future[HttpResponse] = connector.getTAD(departureId, messageId)
 
-        result.futureValue.status `mustBe` genErrorResponse
+        result.futureValue.status mustEqual genErrorResponse
       }
 
       "getUnloadingPermission" - {
@@ -85,15 +84,13 @@ class ManageDocumentsConnectorSpec extends ItSpecBase with WireMockServerHandler
         "must return status Ok" in {
           server.stubFor(
             get(urlEqualTo(s"/$startUrl/$arrivalId/unloading-permission-document/$messageId"))
-              .willReturn(
-                aResponse()
-                  .withStatus(200)
-              )
+              .withHeader("API-Version", equalTo("2.1"))
+              .willReturn(ok())
           )
 
           val result: Future[HttpResponse] = connector.getUnloadingPermission(arrivalId, messageId)
 
-          result.futureValue.status `mustBe` 200
+          result.futureValue.status mustEqual 200
         }
 
         "must return other error status codes without exceptions" in {
@@ -101,6 +98,7 @@ class ManageDocumentsConnectorSpec extends ItSpecBase with WireMockServerHandler
 
           server.stubFor(
             get(urlEqualTo(s"/$startUrl/$arrivalId/unloading-permission-document/$messageId"))
+              .withHeader("API-Version", equalTo("2.1"))
               .willReturn(
                 aResponse()
                   .withStatus(genErrorResponse)
@@ -109,7 +107,7 @@ class ManageDocumentsConnectorSpec extends ItSpecBase with WireMockServerHandler
 
           val result: Future[HttpResponse] = connector.getUnloadingPermission(arrivalId, messageId)
 
-          result.futureValue.status `mustBe` genErrorResponse
+          result.futureValue.status mustEqual genErrorResponse
         }
       }
     }

@@ -17,7 +17,7 @@
 package connectors
 
 import cats.data.NonEmptyList
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, okJson, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import generators.Generators
 import itbase.{ItSpecBase, WireMockServerHandler}
 import models.departureP5.*
@@ -147,6 +147,7 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
 
         server.stubFor(
           get(urlEqualTo(s"/movements/departures"))
+            .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
             .willReturn(okJson(responseJson.toString()))
         )
 
@@ -168,17 +169,18 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
           totalCount = 2
         )
 
-        connector.getAllMovements().futureValue `mustBe` Some(expectedResult)
+        connector.getAllMovements().futureValue.value mustEqual expectedResult
       }
 
       "must return empty DepartureMovements when 404 is returned" in {
 
         server.stubFor(
           get(urlEqualTo(s"/movements/departures"))
+            .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
             .willReturn(aResponse().withStatus(404))
         )
 
-        connector.getAllMovements().futureValue `mustBe` Some(DepartureMovements(Seq.empty, 0))
+        connector.getAllMovements().futureValue.value mustEqual DepartureMovements(Seq.empty, 0)
       }
 
       "must return None when an error is returned" in {
@@ -186,10 +188,11 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
           error =>
             server.stubFor(
               get(urlEqualTo(s"/movements/departures"))
+                .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
                 .willReturn(aResponse().withStatus(error))
             )
 
-            connector.getAllMovements().futureValue `mustBe` None
+            connector.getAllMovements().futureValue must not be defined
         }
       }
     }
@@ -230,6 +233,7 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
           val searchParam = "LRN123"
           server.stubFor(
             get(urlEqualTo(s"/movements/departures?page=1&count=20&localReferenceNumber=$searchParam"))
+              .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
               .willReturn(okJson(responseJson.toString()))
           )
 
@@ -245,7 +249,7 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
             totalCount = 1
           )
 
-          connector.getAllMovementsForSearchQuery(1, 20, Some(searchParam)).futureValue `mustBe` Some(expectedResult)
+          connector.getAllMovementsForSearchQuery(1, 20, Some(searchParam)).futureValue.value mustEqual expectedResult
         }
       }
 
@@ -253,6 +257,7 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
         "must add values to request url" in {
           server.stubFor(
             get(urlEqualTo("/movements/departures?page=1&count=20"))
+              .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
               .willReturn(okJson(responseJson.toString()))
           )
 
@@ -268,7 +273,7 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
             totalCount = 1
           )
 
-          connector.getAllMovementsForSearchQuery(1, 20, None).futureValue `mustBe` Some(expectedResult)
+          connector.getAllMovementsForSearchQuery(1, 20, None).futureValue.value mustEqual expectedResult
         }
       }
     }
@@ -308,10 +313,11 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
 
           server.stubFor(
             get(urlEqualTo("/movements/departures?count=1"))
+              .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
               .willReturn(okJson(responseJson.toString()))
           )
 
-          connector.getAvailability().futureValue `mustBe` Availability.NonEmpty
+          connector.getAvailability().futureValue mustEqual Availability.NonEmpty
         }
       }
 
@@ -331,10 +337,11 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
 
           server.stubFor(
             get(urlEqualTo("/movements/departures?count=1"))
+              .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
               .willReturn(okJson(responseJson.toString()))
           )
 
-          connector.getAvailability().futureValue `mustBe` Availability.Empty
+          connector.getAvailability().futureValue mustEqual Availability.Empty
         }
       }
 
@@ -344,10 +351,11 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
             error =>
               server.stubFor(
                 get(urlEqualTo("/movements/departures?count=1"))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
                   .willReturn(aResponse().withStatus(error))
               )
 
-              connector.getAvailability().futureValue `mustBe` Availability.Unavailable
+              connector.getAvailability().futureValue mustEqual Availability.Unavailable
           }
         }
       }
@@ -373,12 +381,13 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
 
         server.stubFor(
           get(urlEqualTo(s"/movements/departures/$departureIdP5"))
+            .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
             .willReturn(okJson(responseJson.toString()))
         )
 
         val expectedResult = DepartureReferenceNumbers("DEF456", Some("ABC123"))
 
-        connector.getDepartureReferenceNumbers(departureIdP5).futureValue `mustBe` expectedResult
+        connector.getDepartureReferenceNumbers(departureIdP5).futureValue mustEqual expectedResult
       }
 
       "must return departure reference numbers when MRN is not defined" in {
@@ -398,12 +407,13 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
 
         server.stubFor(
           get(urlEqualTo(s"/movements/departures/$departureIdP5"))
+            .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
             .willReturn(okJson(responseJson.toString()))
         )
 
         val expectedResult = DepartureReferenceNumbers("DEF456", None)
 
-        connector.getDepartureReferenceNumbers(departureIdP5).futureValue `mustBe` expectedResult
+        connector.getDepartureReferenceNumbers(departureIdP5).futureValue mustEqual expectedResult
       }
     }
 
@@ -445,10 +455,11 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
 
           server.stubFor(
             get(urlEqualTo(s"/movements/departures/$departureIdP5/messages?count=500"))
+              .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
               .willReturn(okJson(responseJson.toString()))
           )
 
-          connector.getMessages(departureIdP5).futureValue mustBe
+          connector.getMessages(departureIdP5).futureValue mustEqual
             DepartureMovementMessages(
               messages = NonEmptyList.one(
                 DepartureMessage(
