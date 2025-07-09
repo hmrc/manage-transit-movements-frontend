@@ -26,22 +26,25 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ManageDocumentsConnector @Inject() (
-  appConfig: FrontendAppConfig,
+  override val config: FrontendAppConfig,
   http: HttpClientV2
 )(implicit ec: ExecutionContext)
-    extends Logging {
+    extends ConnectorHelper
+    with Logging {
 
   def getTAD(departureId: String, messageId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    val url: URL = url"${appConfig.manageDocumentsUrl}/$departureId/transit-accompanying-document/$messageId"
+    val url: URL = url"${config.manageDocumentsUrl}/$departureId/transit-accompanying-document/$messageId"
     http
       .get(url)
+      .setHeader("API-Version" -> version)
       .stream
   }
 
   def getUnloadingPermission(arrivalId: String, messageId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    val url: URL = url"${appConfig.manageDocumentsUrl}/$arrivalId/unloading-permission-document/$messageId"
+    val url: URL = url"${config.manageDocumentsUrl}/$arrivalId/unloading-permission-document/$messageId"
     http
       .get(url)
+      .setHeader("API-Version" -> version)
       .stream
   }
 

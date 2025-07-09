@@ -17,7 +17,7 @@
 package connectors.testOnly
 
 import config.FrontendAppConfig
-import connectors.MovementP5Connector
+import connectors.ConnectorHelper
 import play.api.libs.json.JsValue
 import play.api.libs.ws.XMLBodyWritables.*
 import play.api.mvc.Headers
@@ -31,9 +31,9 @@ import scala.xml.NodeSeq
 
 class TestOnlyP5ArrivalsAPIConnector @Inject() (
   http: HttpClientV2,
-  config: FrontendAppConfig
+  override val config: FrontendAppConfig
 )(implicit ec: ExecutionContext)
-    extends MovementP5Connector {
+    extends ConnectorHelper {
 
   def arrivalOutbound(requestData: NodeSeq, headers: Headers)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 

@@ -33,10 +33,10 @@ import scala.util.control.NonFatal
 import scala.xml.XML
 
 class DepartureMovementP5Connector @Inject() (
-  config: FrontendAppConfig,
+  override val config: FrontendAppConfig,
   http: HttpClientV2
 )(implicit ec: ExecutionContext)
-    extends MovementP5Connector {
+    extends ConnectorHelper {
 
   def getAllMovements()(implicit hc: HeaderCarrier): Future[Option[DepartureMovements]] =
     getMovements()

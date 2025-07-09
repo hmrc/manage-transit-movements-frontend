@@ -16,13 +16,20 @@
 
 package connectors
 
+import config.FrontendAppConfig
 import play.api.Logging
 import sttp.model.HeaderNames
 
-trait MovementP5Connector extends Logging {
+trait ConnectorHelper extends Logging {
+
+  val config: FrontendAppConfig
+
+  final val version: String = config.phase6Enabled match {
+    case _ => "2.1"
+  }
 
   private def acceptHeader(format: String): (String, String) =
-    HeaderNames.Accept -> s"application/vnd.hmrc.2.1+$format"
+    HeaderNames.Accept -> s"application/vnd.hmrc.$version+$format"
 
   def authorizationHeader(authorization: String): (String, String) =
     HeaderNames.Authorization -> authorization
