@@ -18,9 +18,9 @@ package helper
 
 import base.SpecBase
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
-import generated.{AddressType18, GNSSType}
+import generated.{AddressType21, GNSSType}
 import generators.Generators
-import models.RichAddressType18
+import models.RichAddressType21
 import models.referenceData.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -47,7 +47,7 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
   "IncidentAnswersHelper" - {
 
-    val incidentType03 = arbitraryIncidentType03.arbitrary.sample.value
+    val IncidentType02 = arbitraryIncidentType02.arbitrary.sample.value
 
     "rows" - {
 
@@ -60,7 +60,7 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
                 "The carrier is obliged to deviate from the itinerary prescribed in accordance with Article 298 of UCC/IA Regulation due to circumstances beyond his control."
               )
 
-              val incidentType = incidentType03.copy(code = value)
+              val incidentType = IncidentType02.copy(code = value)
 
               when(refDataService.getIncidentCode(any())(any(), any()))
                 .thenReturn(Future.successful(incidentCode))
@@ -80,7 +80,7 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
         "must return a row" in {
           forAll(Gen.alphaNumStr) {
             value =>
-              val incidentType = incidentType03.copy(text = value)
+              val incidentType = IncidentType02.copy(text = value)
 
               val helper = new IncidentP5Helper(incidentType, refDataService)
               val result = helper.incidentDescriptionRow.value
@@ -96,13 +96,13 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
         "must return a row with description when ref data look up is successful" in {
 
           val description      = "description"
-          val countryCode      = incidentType03.Location.country
+          val countryCode      = IncidentType02.Location.country
           val expectedResponse = s"$description - $countryCode"
 
           when(refDataService.getCountry(any())(any(), any()))
             .thenReturn(Future.successful(Country(countryCode, description)))
 
-          val helper = new IncidentP5Helper(incidentType03, refDataService)
+          val helper = new IncidentP5Helper(IncidentType02, refDataService)
           val result = helper.countryRow.futureValue.value
 
           result.key.value `mustBe` "Country"
@@ -114,7 +114,7 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           when(refDataService.getCountry(any())(any(), any()))
             .thenReturn(Future.failed(new NoReferenceDataFoundException("")))
 
-          val helper = new IncidentP5Helper(incidentType03, refDataService)
+          val helper = new IncidentP5Helper(IncidentType02, refDataService)
 
           whenReady(helper.countryRow.failed) {
             result => result mustBe a[NoReferenceDataFoundException]
@@ -125,12 +125,12 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
       "identifierTypeRow" - {
         "must return a row with description when ref data look up is successful" in {
           val description = "description"
-          val qualifier   = incidentType03.Location.qualifierOfIdentification
+          val qualifier   = IncidentType02.Location.qualifierOfIdentification
 
           when(refDataService.getQualifierOfIdentification(any())(any(), any()))
             .thenReturn(Future.successful(QualifierOfIdentification(qualifier, description)))
 
-          val helper = new IncidentP5Helper(incidentType03, refDataService)
+          val helper = new IncidentP5Helper(IncidentType02, refDataService)
           val result = helper.identifierTypeRow.futureValue.value
 
           result.key.value `mustBe` "Identifier type"
@@ -144,7 +144,7 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           when(refDataService.getQualifierOfIdentification(any())(any(), any()))
             .thenReturn(Future.failed(new NoReferenceDataFoundException("")))
 
-          val helper = new IncidentP5Helper(incidentType03, refDataService)
+          val helper = new IncidentP5Helper(IncidentType02, refDataService)
 
           whenReady(helper.identifierTypeRow.failed) {
             result => result mustBe a[NoReferenceDataFoundException]
@@ -154,9 +154,9 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
       "coordinatesRow" - {
         "must return a row" in {
-          val locationType = arbitraryLocationType02.arbitrary.sample.value.copy(GNSS = Some(GNSSType("90.1", "90.2")))
+          val locationType = arbitraryLocationType.arbitrary.sample.value.copy(GNSS = Some(GNSSType("90.1", "90.2")))
 
-          val helper = new IncidentP5Helper(incidentType03.copy(Location = locationType), refDataService)
+          val helper = new IncidentP5Helper(IncidentType02.copy(Location = locationType), refDataService)
           val result = helper.coordinatesRow.value
 
           result.key.value `mustBe` "Coordinates"
@@ -167,10 +167,10 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
       "addressRow" - {
         "must return a row" in {
-          forAll(arbitrary[AddressType18]) {
+          forAll(arbitrary[AddressType21]) {
             address =>
-              val modifiedIncidentType03 = incidentType03.copy(Location = incidentType03.Location.copy(Address = Some(address)))
-              val helper                 = new IncidentP5Helper(modifiedIncidentType03, refDataService)
+              val modifiedIncidentType02 = IncidentType02.copy(Location = IncidentType02.Location.copy(Address = Some(address)))
+              val helper                 = new IncidentP5Helper(modifiedIncidentType02, refDataService)
               val result                 = helper.addressRow.value
 
               result.key.value `mustBe` "Address"
@@ -183,8 +183,8 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
       "unLocodeRow" - {
         "must return a row" in {
 
-          val incidentType = incidentType03.copy(
-            Location = incidentType03.Location.copy(
+          val incidentType = IncidentType02.copy(
+            Location = IncidentType02.Location.copy(
               UNLocode = Some("UNLocode")
             )
           )
@@ -206,10 +206,10 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           val country      = Country("code", "description")
           val incidentCode = IncidentCode("code", "text")
 
-          val location = arbitraryLocationType02.arbitrary.sample.value.copy(
+          val location = arbitraryLocationType.arbitrary.sample.value.copy(
             UNLocode = Some("unlocode"),
             GNSS = Some(GNSSType("50.1", "50.2")),
-            Address = Some(AddressType18("streetAndNumber", None, "city"))
+            Address = Some(AddressType21("streetAndNumber", None, "city"))
           )
 
           when(refDataService.getCountry(any())(any(), any()))
@@ -217,7 +217,7 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
           when(refDataService.getIncidentCode(any())(any(), any()))
             .thenReturn(Future.successful(incidentCode))
 
-          val incident = incidentType03.copy(Location = location)
+          val incident = IncidentType02.copy(Location = location)
           val helper   = new IncidentP5Helper(incident, refDataService)
           val result   = helper.incidentInformationSection.futureValue
 
@@ -228,10 +228,10 @@ class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with G
 
       "transportEquipmentsSection" - {
         "must return a static section" in {
-          val transportEquipment1 = arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(sequenceNumber = 1)
-          val transportEquipment2 = arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(sequenceNumber = 2)
+          val transportEquipment1 = arbitraryTransportEquipmentType06.arbitrary.sample.value.copy(sequenceNumber = 1)
+          val transportEquipment2 = arbitraryTransportEquipmentType06.arbitrary.sample.value.copy(sequenceNumber = 2)
           val transportEquipments = Seq(transportEquipment1, transportEquipment2)
-          val helper              = new IncidentP5Helper(incidentType03.copy(TransportEquipment = transportEquipments), refDataService)
+          val helper              = new IncidentP5Helper(IncidentType02.copy(TransportEquipment = transportEquipments), refDataService)
           val result              = helper.transportEquipmentsSection
 
           result `mustBe` a[StaticSection]

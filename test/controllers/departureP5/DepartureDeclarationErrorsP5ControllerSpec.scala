@@ -18,10 +18,10 @@ package controllers.departureP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
-import generated.{CC056CType, FunctionalErrorType04}
+import generated.{CC056CType, FunctionalErrorType02}
 import generators.Generators
-import models.departureP5._
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import models.departureP5.*
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -29,7 +29,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.DepartureP5MessageService
 import viewModels.P5.departure.DepartureDeclarationErrorsP5ViewModel
 import viewModels.P5.departure.DepartureDeclarationErrorsP5ViewModel.DepartureDeclarationErrorsP5ViewModelProvider
@@ -95,7 +95,7 @@ class DepartureDeclarationErrorsP5ControllerSpec extends SpecBase with AppWithDe
     }
 
     "must redirect to technical difficulties page when functionalErrors is between 1 to 10" in {
-      forAll(listWithMaxLength[FunctionalErrorType04](), Gen.option(nonEmptyString)) {
+      forAll(listWithMaxLength[FunctionalErrorType02](), Gen.option(nonEmptyString)) {
         (functionalErrors, mrn) =>
           forAll(arbitrary[CC056CType].map(_.copy(FunctionalError = functionalErrors))) {
             message =>

@@ -21,8 +21,8 @@ import connectors.DepartureCacheConnector
 import generated.*
 import models.FunctionalError.{FunctionalErrorWithSection, FunctionalErrorWithoutSection}
 import models.FunctionalErrors.{FunctionalErrorsWithSection, FunctionalErrorsWithoutSection}
-import models.{GuaranteeReference, InvalidDataItem}
 import models.referenceData.{FunctionalErrorWithDesc, InvalidGuaranteeReason}
+import models.{FunctionalErrorType, GuaranteeReference, InvalidDataItem}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{reset, when}
 import play.api.inject.bind
@@ -55,17 +55,17 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
 
   "FunctionalErrorsService" - {
     "convertErrorsWithSection" - {
-      "must convert a series of FunctionalErrorType04 values to FunctionalErrorsWithSection" in {
+      "must convert a series of FunctionalErrorType07 values to FunctionalErrorsWithSection" in {
         val input = Seq(
-          FunctionalErrorType04(
+          FunctionalErrorType(
             errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
-            errorCode = Number12,
+            errorCode = Number12.toString,
             errorReason = "BR20004",
             originalAttributeValue = Some("GB635733627000")
           ),
-          FunctionalErrorType04(
+          FunctionalErrorType(
             errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
-            errorCode = Number14,
+            errorCode = Number14.toString,
             errorReason = "BR20005",
             originalAttributeValue = None
           )
@@ -125,17 +125,17 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
     }
 
     "convertErrorsWithoutSection" - {
-      "must convert a series of FunctionalErrorType04 values to FunctionalErrorsWithoutSection" in {
+      "must convert a series of FunctionalErrorType07 values to FunctionalErrorsWithoutSection" in {
         val input = Seq(
-          FunctionalErrorType04(
+          FunctionalErrorType(
             errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
-            errorCode = Number12,
+            errorCode = Number12.toString,
             errorReason = "BR20004",
             originalAttributeValue = Some("GB635733627000")
           ),
-          FunctionalErrorType04(
+          FunctionalErrorType(
             errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
-            errorCode = Number14,
+            errorCode = Number14.toString,
             errorReason = "BR20005",
             originalAttributeValue = None
           )
@@ -171,9 +171,9 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
     }
 
     "convertGuaranteeReferences" - {
-      "must convert a series of GuaranteeReferenceType08 values to a series of GuaranteeReference" in {
+      "must convert a series of GuaranteeReferenceType07 values to a series of GuaranteeReference" in {
         val input = Seq(
-          GuaranteeReferenceType08(
+          GuaranteeReferenceType07(
             sequenceNumber = 1,
             GRN = "GRN 1",
             InvalidGuaranteeReason = Seq(
@@ -189,7 +189,7 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
               )
             )
           ),
-          GuaranteeReferenceType08(
+          GuaranteeReferenceType07(
             sequenceNumber = 2,
             GRN = "GRN 2",
             InvalidGuaranteeReason = Seq(

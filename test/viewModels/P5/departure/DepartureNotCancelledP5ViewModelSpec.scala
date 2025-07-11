@@ -17,7 +17,7 @@
 package viewModels.P5.departure
 
 import base.SpecBase
-import generated.{CC009CType, CustomsOfficeOfDepartureType03}
+import generated.{CC009CType, CustomsOfficeOfDepartureType05}
 import generators.Generators
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -56,7 +56,7 @@ class DepartureNotCancelledP5ViewModelSpec extends SpecBase with ScalaCheckPrope
           justification = Some("some justification")
         )
       )
-      .copy(CustomsOfficeOfDeparture = CustomsOfficeOfDepartureType03(customsReferenceId))
+      .copy(CustomsOfficeOfDeparture = CustomsOfficeOfDepartureType05(customsReferenceId))
 
     val viewModelProvider = new DepartureNotCancelledP5ViewModelProvider(mockReferenceDataService)
 

@@ -17,7 +17,7 @@
 package models
 
 import base.SpecBase
-import generated._
+import generated.*
 
 class PhaseIdSpec extends SpecBase {
 
@@ -28,18 +28,23 @@ class PhaseIdSpec extends SpecBase {
       "when NCTS5.1" - {
         "with a space" in {
           val result = PhaseIDtype.fromString(" NCTS5.1", namespaceBinding)
-          result `mustBe` NCTS5u461
+          result `mustBe` NCTS5u461Value
         }
 
         "without a space" in {
           val result = PhaseIDtype.fromString("NCTS5.1", namespaceBinding)
-          result `mustBe` NCTS5u461Value
+          result `mustBe` NCTS5u461
         }
       }
 
       "when NCTS5.0" in {
         val result = PhaseIDtype.fromString("NCTS5.0", namespaceBinding)
         result `mustBe` NCTS5u460
+      }
+
+      "when NCTS6" in {
+        val result = PhaseIDtype.fromString("NCTS6", namespaceBinding)
+        result `mustBe` NCTS6
       }
     }
   }

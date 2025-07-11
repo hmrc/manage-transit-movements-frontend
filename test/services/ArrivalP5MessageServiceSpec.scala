@@ -125,8 +125,8 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
         )
 
         val functionalErrors = Seq(
-          FunctionalErrorType04("1", Number12, "Codelist violation", None),
-          FunctionalErrorType04("2", Number14, "Rule violation", None)
+          FunctionalErrorType07("1", Number12, "Codelist violation", None),
+          FunctionalErrorType07("2", Number14, "Rule violation", None)
         )
 
         val x = arbitrary[CC057CType].sample.value

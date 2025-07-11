@@ -19,6 +19,7 @@ package controllers.departureP5
 import config.PaginationAppConfig
 import controllers.actions.*
 import generated.{CC056CType, Generated_CC056CTypeFormat}
+import models.FunctionalErrorType
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.FunctionalErrorsService
@@ -43,7 +44,7 @@ class ReviewPrelodgedDeclarationErrorsP5Controller @Inject() (
   def onPageLoad(page: Option[Int], departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.identify() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
-        functionalErrorsService.convertErrorsWithoutSection(request.messageData.FunctionalError).map {
+        functionalErrorsService.convertErrorsWithoutSection(request.messageData.FunctionalError.map(FunctionalErrorType(_))).map {
           functionalErrors =>
             val viewModel = ReviewPrelodgedDeclarationErrorsP5ViewModel(
               functionalErrors = functionalErrors,

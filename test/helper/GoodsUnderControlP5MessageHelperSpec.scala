@@ -368,7 +368,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
                   controlNotificationDateAndTime = XMLCalendar("2014-06-09T16:15:04")
                 )
               )
-              .copy(CustomsOfficeOfDeparture = CustomsOfficeOfDepartureType03("22323323"))
+              .copy(CustomsOfficeOfDeparture = CustomsOfficeOfDepartureType05("22323323"))
         }) {
           message =>
             when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(fakeCustomsOffice))

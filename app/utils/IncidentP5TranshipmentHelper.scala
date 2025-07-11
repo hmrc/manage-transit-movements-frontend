@@ -16,7 +16,7 @@
 
 package utils
 
-import generated.TranshipmentType02
+import generated.TranshipmentType
 import play.api.Logging
 import play.api.i18n.Messages
 import services.ReferenceDataService
@@ -27,7 +27,7 @@ import viewModels.sections.Section.StaticSection
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncidentP5TranshipmentHelper(
-  transhipment: TranshipmentType02,
+  transhipment: TranshipmentType,
   refDataService: ReferenceDataService
 )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier)
     extends DeparturesP5MessageHelper

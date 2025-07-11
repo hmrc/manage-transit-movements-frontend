@@ -24,7 +24,8 @@ import generators.Generators
 import models.departureP5.DepartureMessageType.*
 import models.departureP5.*
 import models.departureP5.BusinessRejectionType.*
-import models.{LocalReferenceNumber, MessageStatus, RichCC015Type, RichCC182Type}
+import models.IE015
+import models.{LocalReferenceNumber, MessageStatus, RichCC182Type}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary
@@ -261,13 +262,13 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           totalCount = 1
         )
 
-        val ie015 = arbitrary[CC015CType].sample.value
+        val ie015 = arbitrary[IE015].sample.value
 
         when(mockMovementConnector.getMessages(any())(any())).thenReturn(
           Future.successful(latestDepartureMessage)
         )
 
-        when(mockMovementConnector.getMessage[CC015CType](any(), any())(any(), any(), any())).thenReturn(
+        when(mockMovementConnector.getMessage[IE015](any(), any())(any(), any(), any())).thenReturn(
           Future.successful(ie015)
         )
 
@@ -375,13 +376,13 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
                 totalCount = 1
               )
 
-              val ie015 = arbitrary[CC015CType].sample.value
+              val ie015 = arbitrary[IE015].sample.value
 
               when(mockMovementConnector.getMessages(any())(any())).thenReturn(
                 Future.successful(latestDepartureMessage)
               )
 
-              when(mockMovementConnector.getMessage[CC015CType](any(), any())(any(), any(), any())).thenReturn(
+              when(mockMovementConnector.getMessage[IE015](any(), any())(any(), any(), any())).thenReturn(
                 Future.successful(ie015)
               )
 

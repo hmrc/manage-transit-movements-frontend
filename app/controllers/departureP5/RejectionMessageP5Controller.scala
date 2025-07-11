@@ -19,6 +19,7 @@ package controllers.departureP5
 import config.PaginationAppConfig
 import controllers.actions.*
 import generated.{CC056CType, Generated_CC056CTypeFormat}
+import models.FunctionalErrorType
 import models.departureP5.Rejection.IE056Rejection
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -53,7 +54,7 @@ class RejectionMessageP5Controller @Inject() (
 
         service.isRejectionAmendable(lrn, rejection).flatMap {
           case true =>
-            functionalErrorsService.convertErrorsWithSection(request.messageData.FunctionalError).map {
+            functionalErrorsService.convertErrorsWithSection(request.messageData.FunctionalError.map(FunctionalErrorType(_))).map {
               functionalErrors =>
                 val viewModel = RejectionMessageP5ViewModel(
                   functionalErrors = functionalErrors,

@@ -15,7 +15,6 @@
  */
 
 import cats.data.NonEmptyList
-import config.Constants.AdditionalDeclarationType.PreLodged
 import config.Constants.NotificationType.AdditionalDocumentsRequest
 import generated.*
 import play.api.libs.json.*
@@ -191,17 +190,12 @@ package object models {
 
   }
 
-  implicit class RichCC015Type(value: CC015CType) {
-
-    def isPreLodged: Boolean = value.TransitOperation.additionalDeclarationType == PreLodged
-  }
-
   implicit class RichCC182Type(value: CC182CType) {
 
     def hasMultipleIncidents: Boolean = value.Consignment.Incident.length > 1
   }
 
-  implicit class RichAddressType18(value: AddressType18) {
+  implicit class RichAddressType21(value: AddressType21) {
 
     def toDynamicAddress: DynamicAddress = DynamicAddress(
       numberAndStreet = value.streetAndNumber,

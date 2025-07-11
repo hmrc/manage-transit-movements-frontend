@@ -16,8 +16,8 @@
 
 package utils
 
-import generated.{GNSSType, IncidentType03}
-import models.{DynamicAddress, RichAddressType18}
+import generated.{GNSSType, IncidentType02}
+import models.{DynamicAddress, RichAddressType21}
 import play.api.Logging
 import play.api.i18n.Messages
 import services.ReferenceDataService
@@ -28,7 +28,7 @@ import viewModels.sections.Section.StaticSection
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncidentP5Helper(
-  data: IncidentType03,
+  data: IncidentType02,
   refDataService: ReferenceDataService
 )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier)
     extends DeparturesP5MessageHelper

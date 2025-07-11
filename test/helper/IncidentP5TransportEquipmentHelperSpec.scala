@@ -17,7 +17,7 @@
 package helper
 
 import base.SpecBase
-import generated.{GoodsReferenceType01, SealType04}
+import generated.{GoodsReferenceType03, SealType01}
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -31,7 +31,7 @@ class IncidentP5TransportEquipmentHelperSpec extends SpecBase with ScalaCheckPro
     "rows" - {
       "containerIdentificationNumberRow" - {
         "must return a row" in {
-          val transportEquipment = arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(containerIdentificationNumber = Some("12345"))
+          val transportEquipment = arbitraryTransportEquipmentType06.arbitrary.sample.value.copy(containerIdentificationNumber = Some("12345"))
 
           val helper = new IncidentP5TransportEquipmentHelper(transportEquipment)
           val result = helper.containerIdentificationNumberRow.value
@@ -47,9 +47,9 @@ class IncidentP5TransportEquipmentHelperSpec extends SpecBase with ScalaCheckPro
 
           forAll(nonEmptyString) {
             sealId =>
-              val seal = SealType04(1, sealId)
+              val seal = SealType01(1, sealId)
               val transportEquipment =
-                arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(
+                arbitraryTransportEquipmentType06.arbitrary.sample.value.copy(
                   Seal = Seq(seal)
                 )
 
@@ -68,9 +68,9 @@ class IncidentP5TransportEquipmentHelperSpec extends SpecBase with ScalaCheckPro
 
           forAll(arbitrary[BigInt]) {
             referenceNumber =>
-              val goodsReference = GoodsReferenceType01(1, referenceNumber)
+              val goodsReference = GoodsReferenceType03(1, referenceNumber)
               val transportEquipment =
-                arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(
+                arbitraryTransportEquipmentType06.arbitrary.sample.value.copy(
                   GoodsReference = Seq(goodsReference)
                 )
 
@@ -90,11 +90,11 @@ class IncidentP5TransportEquipmentHelperSpec extends SpecBase with ScalaCheckPro
       "transportEquipmentSection" - {
         "must return an accordion section with correct children" in {
           val transportEquipment =
-            arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(
+            arbitraryTransportEquipmentType06.arbitrary.sample.value.copy(
               sequenceNumber = 1,
               containerIdentificationNumber = Some("12345"),
-              Seal = Seq(SealType04(1, "id1"), SealType04(2, "id2")),
-              GoodsReference = Seq(GoodsReferenceType01(1, 1), GoodsReferenceType01(2, 2))
+              Seal = Seq(SealType01(1, "id1"), SealType01(2, "id2")),
+              GoodsReference = Seq(GoodsReferenceType03(1, 1), GoodsReferenceType03(2, 2))
             )
 
           val helper = new IncidentP5TransportEquipmentHelper(transportEquipment)
@@ -116,8 +116,8 @@ class IncidentP5TransportEquipmentHelperSpec extends SpecBase with ScalaCheckPro
 
       "sealSection" - {
         "must return a accordion section with seal rows" in {
-          val transportEquipment = arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(
-            Seal = Seq(SealType04(1, "id1"), SealType04(2, "id2"))
+          val transportEquipment = arbitraryTransportEquipmentType06.arbitrary.sample.value.copy(
+            Seal = Seq(SealType01(1, "id1"), SealType01(2, "id2"))
           )
 
           val helper = new IncidentP5TransportEquipmentHelper(transportEquipment)
@@ -131,8 +131,8 @@ class IncidentP5TransportEquipmentHelperSpec extends SpecBase with ScalaCheckPro
 
       "goodsReferenceSection" - {
         "must return a accordion section with goodsReference rows" in {
-          val transportEquipment = arbitraryTransportEquipmentType07.arbitrary.sample.value.copy(
-            GoodsReference = Seq(GoodsReferenceType01(1, 1), GoodsReferenceType01(2, 2))
+          val transportEquipment = arbitraryTransportEquipmentType06.arbitrary.sample.value.copy(
+            GoodsReference = Seq(GoodsReferenceType03(1, 1), GoodsReferenceType03(2, 2))
           )
 
           val helper = new IncidentP5TransportEquipmentHelper(transportEquipment)

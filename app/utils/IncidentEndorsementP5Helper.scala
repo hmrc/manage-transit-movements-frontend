@@ -16,7 +16,7 @@
 
 package utils
 
-import generated.EndorsementType03
+import generated.EndorsementType02
 import play.api.Logging
 import play.api.i18n.Messages
 import services.ReferenceDataService
@@ -28,7 +28,7 @@ import javax.xml.datatype.XMLGregorianCalendar
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncidentEndorsementP5Helper(
-  endorsementType: EndorsementType03,
+  endorsementType: EndorsementType02,
   refDataService: ReferenceDataService
 )(implicit messages: Messages, ec: ExecutionContext, hc: HeaderCarrier)
     extends DeparturesP5MessageHelper

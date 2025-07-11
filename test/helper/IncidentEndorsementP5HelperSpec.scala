@@ -17,10 +17,12 @@
 package helper
 
 import base.SpecBase
+import generated.EndorsementType02
 import generators.Generators
 import models.referenceData.Country
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -43,7 +45,7 @@ class IncidentEndorsementP5HelperSpec extends SpecBase with ScalaCheckPropertyCh
 
   "IncidentEndorsementAnswersHelper" - {
 
-    val endorsementType03 = arbitraryEndorsement03.arbitrary.sample.value
+    val endorsementType03 = arbitrary[EndorsementType02].sample.value
 
     "rows" - {
       "endorsementDateRow" - {

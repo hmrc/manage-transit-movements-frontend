@@ -17,7 +17,7 @@
 package controllers.arrivalP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
-import generated.{CC057CType, FunctionalErrorType04}
+import generated.{CC057CType, FunctionalErrorType07}
 import generators.Generators
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -79,7 +79,7 @@ class ArrivalNotificationWithoutFunctionalErrorsP5ControllerSpec
     }
 
     "must redirect to technical difficulties page when functionalErrors are defined" in {
-      forAll(listWithMaxLength[FunctionalErrorType04]()) {
+      forAll(listWithMaxLength[FunctionalErrorType07]()) {
         functionalErrors =>
           forAll(arbitrary[CC057CType].map(_.copy(FunctionalError = functionalErrors))) {
             message =>

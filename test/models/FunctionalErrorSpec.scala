@@ -17,7 +17,7 @@
 package models
 
 import base.SpecBase
-import generated.{FunctionalErrorType04, Number12}
+import generated.{FunctionalErrorType07, Number12}
 import generators.Generators
 import models.FunctionalError.FunctionalErrorWithSection
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -76,17 +76,17 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
     }
   }
 
-  "FunctionalErrorType04" - {
+  "FunctionalErrorType" - {
     "must serailise" - {
 
-      import models.FunctionalError.writes
-
       "when options defined" in {
-        val functionalError = FunctionalErrorType04(
-          errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
-          errorCode = Number12,
-          errorReason = "BR20004",
-          originalAttributeValue = Some("GB635733627000")
+        val functionalError = FunctionalErrorType(
+          FunctionalErrorType07(
+            errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            errorCode = Number12,
+            errorReason = "BR20004",
+            originalAttributeValue = Some("GB635733627000")
+          )
         )
 
         val expectedResult = Json.parse("""
@@ -103,11 +103,13 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
       }
 
       "when options undefined" in {
-        val functionalError = FunctionalErrorType04(
-          errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
-          errorCode = Number12,
-          errorReason = "BR20005",
-          originalAttributeValue = None
+        val functionalError = FunctionalErrorType(
+          FunctionalErrorType07(
+            errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            errorCode = Number12,
+            errorReason = "BR20005",
+            originalAttributeValue = None
+          )
         )
 
         val expectedResult = Json.parse("""

@@ -19,6 +19,7 @@ package controllers.arrivalP5
 import config.{FrontendAppConfig, PaginationAppConfig}
 import controllers.actions.*
 import generated.{CC057CType, Generated_CC057CTypeFormat}
+import models.FunctionalErrorType
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.FunctionalErrorsService
@@ -44,7 +45,7 @@ class ArrivalNotificationWithFunctionalErrorsP5Controller @Inject() (
     (Action andThen actions.identify() andThen messageRetrievalAction[CC057CType](arrivalId, messageId)).async {
       implicit request =>
         if (request.messageData.FunctionalError.nonEmpty) {
-          functionalErrorsService.convertErrorsWithoutSection(request.messageData.FunctionalError).map {
+          functionalErrorsService.convertErrorsWithoutSection(request.messageData.FunctionalError.map(FunctionalErrorType(_))).map {
             functionalErrors =>
               val viewModel = ArrivalNotificationWithFunctionalErrorsP5ViewModel(
                 functionalErrors = functionalErrors,

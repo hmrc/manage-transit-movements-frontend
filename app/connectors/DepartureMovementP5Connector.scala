@@ -21,8 +21,6 @@ import models.Availability
 import models.departureP5.*
 import play.api.http.Status.*
 import play.api.libs.json.{JsError, JsSuccess}
-import scalaxb.XMLFormat
-import scalaxb.`package`.fromXML
 import uk.gov.hmrc.http.*
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -30,7 +28,7 @@ import uk.gov.hmrc.http.client.HttpClientV2
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
-import scala.xml.XML
+import scala.xml.{Node, XML}
 
 class DepartureMovementP5Connector @Inject() (
   override val config: FrontendAppConfig,
@@ -107,7 +105,7 @@ class DepartureMovementP5Connector @Inject() (
   def getMessage[T](
     departureId: String,
     messageId: String
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier, format: XMLFormat[T]): Future[T] = {
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier, reads: Node => T): Future[T] = {
     val url = url"${config.commonTransitConventionTradersUrl}movements/departures/$departureId/messages/$messageId/body"
 
     http
@@ -116,7 +114,7 @@ class DepartureMovementP5Connector @Inject() (
       .execute[HttpResponse]
       .map(_.body)
       .map(XML.loadString)
-      .map(fromXML(_))
+      .map(reads(_))
   }
 
   def getDepartureReferenceNumbers(departureId: String)(implicit
