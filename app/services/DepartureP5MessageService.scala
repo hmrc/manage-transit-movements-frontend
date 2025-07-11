@@ -18,23 +18,19 @@ package services
 
 import cats.implicits.*
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
-import generated.{CC015CType, CC056CType, CC182CType, Generated_CC015CTypeFormat, Generated_CC056CTypeFormat, Generated_CC182CTypeFormat}
+import generated.{CC056CType, CC182CType, Generated_CC056CTypeFormat, Generated_CC182CTypeFormat}
 import models.departureP5.*
 import models.departureP5.BusinessRejectionType.*
-import models.departureP5.DepartureMessageType.{
-  DeclarationAmendmentAccepted,
-  DeclarationSent,
-  GoodsUnderControl,
-  IncidentDuringTransit,
-  RejectedByOfficeOfDeparture
-}
+import models.departureP5.DepartureMessageType.*
 import models.departureP5.Rejection.IE056Rejection
-import models.{RichCC015Type, RichCC182Type}
+import models.{IE015, RichCC182Type}
 import scalaxb.XMLFormat
+import scalaxb.`package`.fromXML
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.xml.Node
 
 class DepartureP5MessageService @Inject() (
   departureMovementP5Connector: DepartureMovementP5Connector,
@@ -46,8 +42,7 @@ class DepartureP5MessageService @Inject() (
     message: DepartureMovementMessages
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MovementAndMessages] = {
     val departureId = movement.departureId
-    // TODO - consider creating custom IE105 class
-    getMessage[CC015CType](departureId, message.ie015MessageId).map {
+    departureMovementP5Connector.getMessage[IE015](departureId, message.ie015MessageId).map {
       ie015 =>
         DepartureMovementAndMessages(
           departureId,
@@ -161,8 +156,10 @@ class DepartureP5MessageService @Inject() (
   def getMessage[T](
     departureId: String,
     messageId: String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext, format: XMLFormat[T]): Future[T] =
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext, format: XMLFormat[T]): Future[T] = {
+    implicit val reads: Node => T = fromXML[T](_)
     departureMovementP5Connector.getMessage(departureId, messageId)
+  }
 
   def getDepartureReferenceNumbers(departureId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[DepartureReferenceNumbers] =
     departureMovementP5Connector.getDepartureReferenceNumbers(departureId)

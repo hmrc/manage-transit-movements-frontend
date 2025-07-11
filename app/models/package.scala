@@ -15,7 +15,6 @@
  */
 
 import cats.data.NonEmptyList
-import config.Constants.AdditionalDeclarationType.PreLodged
 import config.Constants.NotificationType.AdditionalDocumentsRequest
 import generated.*
 import play.api.libs.json.*
@@ -189,11 +188,6 @@ package object models {
       value.RequestedDocument.nonEmpty ||
         value.TransitOperation.notificationType == AdditionalDocumentsRequest
 
-  }
-
-  implicit class RichCC015Type(value: CC015CType) {
-
-    def isPreLodged: Boolean = value.TransitOperation.additionalDeclarationType == PreLodged
   }
 
   implicit class RichCC182Type(value: CC182CType) {

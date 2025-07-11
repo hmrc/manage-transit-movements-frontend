@@ -16,7 +16,7 @@
 
 package generators
 
-import generated._
+import generated.*
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -41,31 +41,6 @@ trait MessagesModelGenerators {
         Invalidation = invalidation,
         CustomsOfficeOfDeparture = customsOfficeOfDeparture,
         HolderOfTheTransitProcedure = holderOfTheTransitProcedure,
-        attributes = Map.empty
-      )
-    }
-
-  implicit lazy val arbitraryCC015CType: Arbitrary[CC015CType] =
-    Arbitrary {
-      for {
-        messageSequence1                         <- arbitrary[MESSAGESequence]
-        transitOperation                         <- arbitrary[TransitOperationType03]
-        customsOfficeOfDeparture                 <- arbitrary[CustomsOfficeOfDepartureType05]
-        customsOfficeOfDestinationDeclaredType01 <- arbitrary[CustomsOfficeOfDestinationDeclaredType01]
-        holderOfTheTransitProcedure              <- arbitrary[HolderOfTheTransitProcedureType23]
-        consignment                              <- arbitrary[ConsignmentType23]
-      } yield CC015CType(
-        messageSequence1 = messageSequence1,
-        TransitOperation = transitOperation,
-        Authorisation = Nil,
-        CustomsOfficeOfDeparture = customsOfficeOfDeparture,
-        CustomsOfficeOfDestinationDeclared = customsOfficeOfDestinationDeclaredType01,
-        CustomsOfficeOfTransitDeclared = Nil,
-        CustomsOfficeOfExitForTransitDeclared = Nil,
-        HolderOfTheTransitProcedure = holderOfTheTransitProcedure,
-        Representative = None,
-        Guarantee = Nil,
-        Consignment = consignment,
         attributes = Map.empty
       )
     }
@@ -247,39 +222,6 @@ trait MessagesModelGenerators {
       Gen.oneOf(MessageTypes.values)
     }
 
-  implicit lazy val arbitraryConsignmentType23: Arbitrary[ConsignmentType23] =
-    Arbitrary {
-      for {
-        grossMass <- arbitrary[BigDecimal]
-      } yield ConsignmentType23(
-        countryOfDispatch = None,
-        countryOfDestination = None,
-        containerIndicator = None,
-        inlandModeOfTransport = None,
-        modeOfTransportAtTheBorder = None,
-        grossMass = grossMass,
-        referenceNumberUCR = None,
-        Carrier = None,
-        Consignor = None,
-        Consignee = None,
-        AdditionalSupplyChainActor = Nil,
-        TransportEquipment = Nil,
-        LocationOfGoods = None,
-        DepartureTransportMeans = Nil,
-        CountryOfRoutingOfConsignment = Nil,
-        ActiveBorderTransportMeans = Nil,
-        PlaceOfLoading = None,
-        PlaceOfUnloading = None,
-        PreviousDocument = Nil,
-        SupportingDocument = Nil,
-        TransportDocument = Nil,
-        AdditionalReference = Nil,
-        AdditionalInformation = Nil,
-        TransportCharges = None,
-        HouseConsignment = Nil
-      )
-    }
-
   implicit lazy val arbitraryConsignmentType28: Arbitrary[ConsignmentType28] =
     Arbitrary {
       for {
@@ -297,30 +239,6 @@ trait MessagesModelGenerators {
       } yield TransitOperationType56(
         LRN = lrn,
         MRN = mrn
-      )
-    }
-
-  implicit lazy val arbitraryTransitOperationType03: Arbitrary[TransitOperationType03] =
-    Arbitrary {
-      for {
-        lrn                       <- nonEmptyString
-        declarationType           <- nonEmptyString
-        additionalDeclarationType <- nonEmptyString
-        security                  <- nonEmptyString
-        reducedDatasetIndicator   <- arbitrary[Flag]
-        bindingItinerary          <- arbitrary[Flag]
-      } yield TransitOperationType03(
-        LRN = lrn,
-        declarationType = declarationType,
-        additionalDeclarationType = additionalDeclarationType,
-        TIRCarnetNumber = None,
-        presentationOfTheGoodsDateAndTime = None,
-        security = security,
-        reducedDatasetIndicator = reducedDatasetIndicator,
-        specificCircumstanceIndicator = None,
-        communicationLanguageAtDeparture = None,
-        bindingItinerary = bindingItinerary,
-        limitDate = None
       )
     }
 
@@ -448,15 +366,6 @@ trait MessagesModelGenerators {
       for {
         referenceNumber <- nonEmptyString
       } yield CustomsOfficeOfRecoveryAtDepartureType01(
-        referenceNumber = referenceNumber
-      )
-    }
-
-  implicit lazy val arbitraryCustomsOfficeOfDestinationDeclaredType01: Arbitrary[CustomsOfficeOfDestinationDeclaredType01] =
-    Arbitrary {
-      for {
-        referenceNumber <- nonEmptyString
-      } yield CustomsOfficeOfDestinationDeclaredType01(
         referenceNumber = referenceNumber
       )
     }
