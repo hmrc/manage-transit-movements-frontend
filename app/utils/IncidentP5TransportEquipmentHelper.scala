@@ -16,19 +16,19 @@
 
 package utils
 
-import generated.{GoodsReferenceType01, SealType04, TransportEquipmentType07}
+import generated.{GoodsReferenceType03, SealType01, TransportEquipmentType06}
 import play.api.Logging
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewModels.sections.Section.AccordionSection
 
 class IncidentP5TransportEquipmentHelper(
-  data: TransportEquipmentType07
+  data: TransportEquipmentType06
 )(implicit messages: Messages)
     extends DeparturesP5MessageHelper
     with Logging {
 
-  import data._
+  import data.*
 
   def containerIdentificationNumberRow: Option[SummaryListRow] =
     buildRowFromAnswer[String](
@@ -39,7 +39,7 @@ class IncidentP5TransportEquipmentHelper(
       call = None
     )
 
-  def sealIdentificationNumber(seal: SealType04): Option[SummaryListRow] = buildRowFromAnswer[String](
+  def sealIdentificationNumber(seal: SealType01): Option[SummaryListRow] = buildRowFromAnswer[String](
     answer = Some(seal.identifier),
     formatAnswer = formatAsText,
     prefix = "departure.notification.incident.index.transportEquipment.seal.identificationNumber",
@@ -60,7 +60,7 @@ class IncidentP5TransportEquipmentHelper(
     )
   }
 
-  def goodsReferenceNumber(goodsReference: GoodsReferenceType01): Option[SummaryListRow] = buildRowFromAnswer[BigInt](
+  def goodsReferenceNumber(goodsReference: GoodsReferenceType03): Option[SummaryListRow] = buildRowFromAnswer[BigInt](
     answer = Some(goodsReference.declarationGoodsItemNumber),
     formatAnswer = formatAsText,
     prefix = "departure.notification.incident.index.goodsReference.referenceNumber",

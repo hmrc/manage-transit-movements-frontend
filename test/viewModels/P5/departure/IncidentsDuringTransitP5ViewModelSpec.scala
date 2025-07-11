@@ -77,7 +77,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
     "viewModel must have correct sections" in {
       forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
         (code, text) =>
-          val updatedIncident = arbitraryIncidentType03.arbitrary.sample.value.copy(
+          val updatedIncident = arbitraryIncidentType02.arbitrary.sample.value.copy(
             code = code,
             text = text
           )

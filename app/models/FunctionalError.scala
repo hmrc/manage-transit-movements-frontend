@@ -16,8 +16,6 @@
 
 package models
 
-import generated.FunctionalErrorType04
-import play.api.libs.functional.syntax.*
 import play.api.libs.json.*
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
@@ -72,21 +70,12 @@ object FunctionalError {
 
   object FunctionalErrorWithoutSection {
 
-    def apply(error: FunctionalErrorType04): FunctionalErrorWithoutSection =
+    def apply(error: FunctionalErrorType): FunctionalErrorWithoutSection =
       new FunctionalErrorWithoutSection(
-        error = error.errorCode.toString,
+        error = error.errorCode,
         businessRuleId = error.errorReason,
         invalidDataItem = InvalidDataItem(error.errorPointer),
         invalidAnswer = error.originalAttributeValue
       )
   }
-
-  implicit val writes: Writes[FunctionalErrorType04] = (
-    (__ \ "errorPointer").write[String] and
-      (__ \ "errorCode").write[String] and
-      (__ \ "errorReason").write[String] and
-      (__ \ "originalAttributeValue").writeNullable[String]
-  )(
-    functionalError => (functionalError.errorPointer, functionalError.errorCode.toString, functionalError.errorReason, functionalError.originalAttributeValue)
-  )
 }

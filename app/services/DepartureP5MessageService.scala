@@ -46,6 +46,7 @@ class DepartureP5MessageService @Inject() (
     message: DepartureMovementMessages
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MovementAndMessages] = {
     val departureId = movement.departureId
+    // TODO - consider creating custom IE105 class
     getMessage[CC015CType](departureId, message.ie015MessageId).map {
       ie015 =>
         DepartureMovementAndMessages(

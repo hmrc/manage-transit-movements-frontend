@@ -243,7 +243,7 @@ class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChe
                   justification = Some("some justification")
                 )
               )
-              .copy(CustomsOfficeOfDeparture = CustomsOfficeOfDepartureType03("22323323"))
+              .copy(CustomsOfficeOfDeparture = CustomsOfficeOfDepartureType05("22323323"))
         }) {
           message =>
             when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(fakeCustomsOffice))

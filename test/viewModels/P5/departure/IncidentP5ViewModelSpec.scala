@@ -84,7 +84,7 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .futureValue
 
     "viewModel must have all sections when all defined in incident" in {
-      val updatedIncident = arbitraryIncidentType03.arbitrary.sample.value.copy(
+      val updatedIncident = arbitraryIncidentType02.arbitrary.sample.value.copy(
         code = incident.code,
         text = "text"
       )
@@ -105,7 +105,7 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
     }
 
     "viewModel must not have transhipment section if incident doesn't have it" in {
-      val incident = arbitraryIncidentType03.arbitrary.sample.value.copy(Transhipment = None)
+      val incident = arbitraryIncidentType02.arbitrary.sample.value.copy(Transhipment = None)
       val vewModel = viewModel(cc182Data.copy(Consignment = cc182Data.Consignment.copy(Incident = Seq(incident))))
 
       val sections = vewModel.sections

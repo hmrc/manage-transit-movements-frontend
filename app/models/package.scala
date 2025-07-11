@@ -201,7 +201,7 @@ package object models {
     def hasMultipleIncidents: Boolean = value.Consignment.Incident.length > 1
   }
 
-  implicit class RichAddressType18(value: AddressType18) {
+  implicit class RichAddressType21(value: AddressType21) {
 
     def toDynamicAddress: DynamicAddress = DynamicAddress(
       numberAndStreet = value.streetAndNumber,

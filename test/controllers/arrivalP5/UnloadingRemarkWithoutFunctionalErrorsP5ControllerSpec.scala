@@ -81,7 +81,7 @@ class UnloadingRemarkWithoutFunctionalErrorsP5ControllerSpec extends SpecBase wi
     }
 
     "must redirect to technical difficulties page when functionalErrors is greater than 0" in {
-      forAll(listWithMaxLength[FunctionalErrorType04]()) {
+      forAll(listWithMaxLength[FunctionalErrorType07]()) {
         functionalErrors =>
           forAll(arbitrary[CC057CType].map(_.copy(FunctionalError = functionalErrors))) {
             message =>

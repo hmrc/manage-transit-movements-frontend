@@ -17,8 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import generated.FunctionalErrorType04
-import models.{FunctionalError, FunctionalErrors}
+import models.FunctionalErrorType
 import models.FunctionalErrors.FunctionalErrorsWithSection
 import models.departureP5.Rejection
 import play.api.Logging
@@ -63,9 +62,7 @@ class DepartureCacheConnector @Inject() (
       .execute[HttpResponse]
   }
 
-  def convertErrors(errors: Seq[FunctionalErrorType04])(implicit hc: HeaderCarrier): Future[FunctionalErrorsWithSection] = {
-    import models.FunctionalError.writes
-
+  def convertErrors(errors: Seq[FunctionalErrorType])(implicit hc: HeaderCarrier): Future[FunctionalErrorsWithSection] = {
     val url = url"$baseUrl/messages/rejection"
     http
       .post(url)
