@@ -34,6 +34,19 @@ import java.time.*
 trait ModelGenerators {
   self: Generators =>
 
+  implicit lazy val arbitraryIE015: Arbitrary[IE015] = {
+    import models.IE015.*
+    Arbitrary {
+      for {
+        additionalDeclarationType <- nonEmptyString
+      } yield IE015(
+        transitOperation = TransitOperation(
+          additionalDeclarationType = additionalDeclarationType
+        )
+      )
+    }
+  }
+
   implicit val arbitraryLocalDate: Arbitrary[LocalDate] =
     Arbitrary {
       for {

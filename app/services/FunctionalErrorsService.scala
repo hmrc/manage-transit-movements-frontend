@@ -20,7 +20,7 @@ import connectors.DepartureCacheConnector
 import generated.*
 import models.FunctionalError.*
 import models.FunctionalErrors.*
-import models.{GuaranteeReference, InvalidGuaranteeReason}
+import models.{FunctionalErrorType, GuaranteeReference, InvalidGuaranteeReason}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -32,7 +32,7 @@ class FunctionalErrorsService @Inject() (
 ) {
 
   def convertErrorsWithSection(
-    functionalErrors: Seq[FunctionalErrorType04]
+    functionalErrors: Seq[FunctionalErrorType]
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[FunctionalErrorsWithSection] =
     departureCacheConnector
       .convertErrors(functionalErrors)
@@ -51,7 +51,7 @@ class FunctionalErrorsService @Inject() (
       }
 
   def convertErrorsWithoutSection(
-    functionalErrors: Seq[FunctionalErrorType04]
+    functionalErrors: Seq[FunctionalErrorType]
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[FunctionalErrorsWithoutSection] =
     Future
       .sequence {
@@ -65,7 +65,7 @@ class FunctionalErrorsService @Inject() (
       .map(FunctionalErrorsWithoutSection.apply)
 
   def convertGuaranteeReferences(
-    guaranteeReferences: Seq[GuaranteeReferenceType08]
+    guaranteeReferences: Seq[GuaranteeReferenceType07]
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[GuaranteeReference]] =
     Future
       .sequence {

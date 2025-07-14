@@ -207,7 +207,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               when(mockReferenceDataService.getIncidentCode(any())(any(), any()))
                 .thenReturn(Future.successful(incident))
 
-              val updatedIncident = arbitraryIncidentType03.arbitrary.sample.value.copy(
+              val updatedIncident = arbitraryIncidentType02.arbitrary.sample.value.copy(
                 code = code,
                 text = text
               )
@@ -238,7 +238,7 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               when(mockReferenceDataService.getIncidentCode(any())(any(), any()))
                 .thenReturn(Future.successful(incident))
 
-              val updatedIncident = arbitraryIncidentType03.arbitrary.sample.value.copy(
+              val updatedIncident = arbitraryIncidentType02.arbitrary.sample.value.copy(
                 code = code,
                 text = text
               )

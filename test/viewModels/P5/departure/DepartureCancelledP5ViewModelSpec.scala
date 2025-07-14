@@ -17,7 +17,7 @@
 package viewModels.P5.departure
 
 import base.SpecBase
-import generated.{CC009CType, CustomsOfficeOfDepartureType03}
+import generated.{CC009CType, CustomsOfficeOfDepartureType05}
 import generators.Generators
 import models.referenceData.CustomsOffice
 import org.mockito.ArgumentMatchers.any
@@ -59,7 +59,7 @@ class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckProperty
                 decisionDateAndTime = Some(XMLCalendar("2022-07-15")),
                 justification = Some("some justification")
               ),
-              CustomsOfficeOfDeparture = CustomsOfficeOfDepartureType03(customsReferenceId)
+              CustomsOfficeOfDeparture = CustomsOfficeOfDepartureType05(customsReferenceId)
             )
       }
       .sample

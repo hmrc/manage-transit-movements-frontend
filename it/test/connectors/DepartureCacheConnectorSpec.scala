@@ -17,13 +17,13 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.*
-import generated.{FunctionalErrorType04, Number12}
+import generated.Number12
 import itbase.{ItSpecBase, WireMockServerHandler}
 import models.FunctionalError.FunctionalErrorWithSection
 import models.FunctionalErrors.FunctionalErrorsWithSection
-import models.InvalidDataItem
 import models.departureP5.BusinessRejectionType.AmendmentRejection
 import models.departureP5.Rejection.{IE055Rejection, IE056Rejection}
+import models.{FunctionalErrorType, InvalidDataItem}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsArray, JsBoolean, Json}
 import play.api.test.Helpers.*
@@ -107,20 +107,18 @@ class DepartureCacheConnectorSpec extends ItSpecBase with WireMockServerHandler 
     }
 
     "convertErrors" - {
-      import models.FunctionalError.writes
-
       val url = s"/manage-transit-movements-departure-cache/messages/rejection"
 
       val input = Seq(
-        FunctionalErrorType04(
+        FunctionalErrorType(
           errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
-          errorCode = Number12,
+          errorCode = Number12.toString,
           errorReason = "BR20004",
           originalAttributeValue = Some("GB635733627000")
         ),
-        FunctionalErrorType04(
+        FunctionalErrorType(
           errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
-          errorCode = Number12,
+          errorCode = Number12.toString,
           errorReason = "BR20005",
           originalAttributeValue = None
         )

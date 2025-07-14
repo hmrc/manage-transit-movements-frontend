@@ -43,7 +43,7 @@ class IncidentP5TranshipmentHelperSpec extends SpecBase with ScalaCheckPropertyC
 
   "IncidentAnswersHelper" - {
 
-    val transhipment = arbitraryIncidentType03.arbitrary.sample.value.Transhipment.get
+    val transhipment = arbitraryIncidentType02.arbitrary.sample.value.Transhipment.get
 
     "rows" - {
       "registeredCountryRow" - {

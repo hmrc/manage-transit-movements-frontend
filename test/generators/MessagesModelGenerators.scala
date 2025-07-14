@@ -16,7 +16,7 @@
 
 package generators
 
-import generated._
+import generated.*
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -31,10 +31,10 @@ trait MessagesModelGenerators {
     Arbitrary {
       for {
         messageSequence1            <- arbitrary[MESSAGESequence]
-        transitOperation            <- arbitrary[TransitOperationType03]
-        invalidation                <- arbitrary[InvalidationType01]
-        customsOfficeOfDeparture    <- arbitrary[CustomsOfficeOfDepartureType03]
-        holderOfTheTransitProcedure <- arbitrary[HolderOfTheTransitProcedureType13]
+        transitOperation            <- arbitrary[TransitOperationType56]
+        invalidation                <- arbitrary[InvalidationType02]
+        customsOfficeOfDeparture    <- arbitrary[CustomsOfficeOfDepartureType05]
+        holderOfTheTransitProcedure <- arbitrary[HolderOfTheTransitProcedureType23]
       } yield CC009CType(
         messageSequence1 = messageSequence1,
         TransitOperation = transitOperation,
@@ -45,40 +45,15 @@ trait MessagesModelGenerators {
       )
     }
 
-  implicit lazy val arbitraryCC015CType: Arbitrary[CC015CType] =
-    Arbitrary {
-      for {
-        messageSequence1                         <- arbitrary[MESSAGESequence]
-        transitOperation                         <- arbitrary[TransitOperationType06]
-        customsOfficeOfDeparture                 <- arbitrary[CustomsOfficeOfDepartureType03]
-        customsOfficeOfDestinationDeclaredType01 <- arbitrary[CustomsOfficeOfDestinationDeclaredType01]
-        holderOfTheTransitProcedure              <- arbitrary[HolderOfTheTransitProcedureType14]
-        consignment                              <- arbitrary[ConsignmentType20]
-      } yield CC015CType(
-        messageSequence1 = messageSequence1,
-        TransitOperation = transitOperation,
-        Authorisation = Nil,
-        CustomsOfficeOfDeparture = customsOfficeOfDeparture,
-        CustomsOfficeOfDestinationDeclared = customsOfficeOfDestinationDeclaredType01,
-        CustomsOfficeOfTransitDeclared = Nil,
-        CustomsOfficeOfExitForTransitDeclared = Nil,
-        HolderOfTheTransitProcedure = holderOfTheTransitProcedure,
-        Representative = None,
-        Guarantee = Nil,
-        Consignment = consignment,
-        attributes = Map.empty
-      )
-    }
-
   implicit lazy val arbitraryCC035CType: Arbitrary[CC035CType] =
     Arbitrary {
       for {
         messageSequence1                   <- arbitrary[MESSAGESequence]
-        transitOperation                   <- arbitrary[TransitOperationType48]
+        transitOperation                   <- arbitrary[TransitOperationType60]
         recoveryNotification               <- arbitrary[RecoveryNotificationType]
-        customsOfficeOfDeparture           <- arbitrary[CustomsOfficeOfDepartureType03]
+        customsOfficeOfDeparture           <- arbitrary[CustomsOfficeOfDepartureType05]
         customsOfficeOfRecoveryAtDeparture <- arbitrary[CustomsOfficeOfRecoveryAtDepartureType01]
-        holderOfTheTransitProcedure        <- arbitrary[HolderOfTheTransitProcedureType20]
+        holderOfTheTransitProcedure        <- arbitrary[HolderOfTheTransitProcedureType13]
         guarantor                          <- Gen.option(arbitrary[GuarantorType06])
       } yield CC035CType(
         messageSequence1 = messageSequence1,
@@ -96,9 +71,9 @@ trait MessagesModelGenerators {
     Arbitrary {
       for {
         messageSequence1            <- arbitrary[MESSAGESequence]
-        transitOperation            <- arbitrary[TransitOperationType18]
-        customsOfficeOfDeparture    <- arbitrary[CustomsOfficeOfDepartureType03]
-        holderOfTheTransitProcedure <- arbitrary[HolderOfTheTransitProcedureType15]
+        transitOperation            <- arbitrary[TransitOperationType14]
+        customsOfficeOfDeparture    <- arbitrary[CustomsOfficeOfDepartureType05]
+        holderOfTheTransitProcedure <- arbitrary[HolderOfTheTransitProcedureType13]
         representative              <- Gen.option(arbitrary[RepresentativeType03])
       } yield CC051CType(
         messageSequence1 = messageSequence1,
@@ -114,10 +89,10 @@ trait MessagesModelGenerators {
     Arbitrary {
       for {
         messageSequence1            <- arbitrary[MESSAGESequence]
-        transitOperation            <- arbitrary[TransitOperationType48]
-        customsOfficeOfDeparture    <- arbitrary[CustomsOfficeOfDepartureType03]
+        transitOperation            <- arbitrary[TransitOperationType60]
+        customsOfficeOfDeparture    <- arbitrary[CustomsOfficeOfDepartureType05]
         holderOfTheTransitProcedure <- arbitrary[HolderOfTheTransitProcedureType07]
-        guaranteeReferences         <- arbitrary[Seq[GuaranteeReferenceType08]]
+        guaranteeReferences         <- arbitrary[Seq[GuaranteeReferenceType07]]
       } yield CC055CType(
         messageSequence1 = messageSequence1,
         TransitOperation = transitOperation,
@@ -132,11 +107,11 @@ trait MessagesModelGenerators {
     Arbitrary {
       for {
         messageSequence1            <- arbitrary[MESSAGESequence]
-        transitOperation            <- arbitrary[TransitOperationType20]
-        customsOfficeOfDeparture    <- arbitrary[CustomsOfficeOfDepartureType03]
-        holderOfTheTransitProcedure <- arbitrary[HolderOfTheTransitProcedureType08]
+        transitOperation            <- arbitrary[TransitOperationType16]
+        customsOfficeOfDeparture    <- arbitrary[CustomsOfficeOfDepartureType05]
+        holderOfTheTransitProcedure <- arbitrary[HolderOfTheTransitProcedureType15]
         representative              <- Gen.option(arbitrary[RepresentativeType01])
-        functionalErrors            <- listWithMaxLength[FunctionalErrorType04]()
+        functionalErrors            <- listWithMaxLength[FunctionalErrorType02]()
       } yield CC056CType(
         messageSequence1 = messageSequence1,
         TransitOperation = transitOperation,
@@ -152,9 +127,9 @@ trait MessagesModelGenerators {
     Arbitrary {
       for {
         messageSequence1                 <- arbitrary[MESSAGESequence]
-        transitOperation                 <- arbitrary[TransitOperationType10]
+        transitOperation                 <- arbitrary[TransitOperationType07]
         customsOfficeOfDestinationActual <- arbitrary[CustomsOfficeOfDestinationActualType03]
-        traderAtDestination              <- arbitrary[TraderAtDestinationType03]
+        traderAtDestination              <- arbitrary[TraderAtDestinationType02]
       } yield CC025CType(
         messageSequence1 = messageSequence1,
         TransitOperation = transitOperation,
@@ -169,10 +144,10 @@ trait MessagesModelGenerators {
     Arbitrary {
       for {
         messageSequence1                 <- arbitrary[MESSAGESequence]
-        transitOperation                 <- arbitrary[TransitOperationType21]
+        transitOperation                 <- arbitrary[TransitOperationType18]
         customsOfficeOfDestinationActual <- arbitrary[CustomsOfficeOfDestinationActualType03]
-        traderAtDestination              <- arbitrary[TraderAtDestinationType03]
-        functionalErrors                 <- listWithMaxLength[FunctionalErrorType04]()
+        traderAtDestination              <- arbitrary[TraderAtDestinationType02]
+        functionalErrors                 <- listWithMaxLength[FunctionalErrorType07]()
       } yield CC057CType(
         messageSequence1 = messageSequence1,
         TransitOperation = transitOperation,
@@ -187,10 +162,10 @@ trait MessagesModelGenerators {
     Arbitrary {
       for {
         messageSequence1            <- arbitrary[MESSAGESequence]
-        transitOperation            <- arbitrary[TransitOperationType22]
-        customsOfficeOfDeparture    <- arbitrary[CustomsOfficeOfDepartureType03]
-        holderOfTheTransitProcedure <- arbitrary[HolderOfTheTransitProcedureType13]
-        representative              <- Gen.option(arbitrary[RepresentativeType04])
+        transitOperation            <- arbitrary[TransitOperationType20]
+        customsOfficeOfDeparture    <- arbitrary[CustomsOfficeOfDepartureType05]
+        holderOfTheTransitProcedure <- arbitrary[HolderOfTheTransitProcedureType23]
+        representative              <- Gen.option(arbitrary[RepresentativeType06])
         typeOfControls              <- arbitrary[Seq[TypeOfControlsType]]
         requestedDocuments          <- arbitrary[Seq[RequestedDocumentType]]
       } yield CC060CType(
@@ -209,10 +184,10 @@ trait MessagesModelGenerators {
     Arbitrary {
       for {
         messageSequence1                    <- arbitrary[MESSAGESequence]
-        transitOperation                    <- arbitrary[TransitOperationType47]
-        customsOfficeOfDeparture            <- arbitrary[CustomsOfficeOfDepartureType03]
+        transitOperation                    <- arbitrary[TransitOperationType57]
+        customsOfficeOfDeparture            <- arbitrary[CustomsOfficeOfDepartureType05]
         customsOfficeOfIncidentRegistration <- arbitrary[CustomsOfficeOfIncidentRegistrationType02]
-        consignment                         <- arbitrary[ConsignmentType22]
+        consignment                         <- arbitrary[ConsignmentType28]
       } yield CC182CType(
         messageSequence1 = messageSequence1,
         TransitOperation = transitOperation,
@@ -247,90 +222,33 @@ trait MessagesModelGenerators {
       Gen.oneOf(MessageTypes.values)
     }
 
-  implicit lazy val arbitraryConsignmentType20: Arbitrary[ConsignmentType20] =
+  implicit lazy val arbitraryConsignmentType28: Arbitrary[ConsignmentType28] =
     Arbitrary {
       for {
-        grossMass <- arbitrary[BigDecimal]
-      } yield ConsignmentType20(
-        countryOfDispatch = None,
-        countryOfDestination = None,
-        containerIndicator = None,
-        inlandModeOfTransport = None,
-        modeOfTransportAtTheBorder = None,
-        grossMass = grossMass,
-        referenceNumberUCR = None,
-        Carrier = None,
-        Consignor = None,
-        Consignee = None,
-        AdditionalSupplyChainActor = Nil,
-        TransportEquipment = Nil,
-        LocationOfGoods = None,
-        DepartureTransportMeans = Nil,
-        CountryOfRoutingOfConsignment = Nil,
-        ActiveBorderTransportMeans = Nil,
-        PlaceOfLoading = None,
-        PlaceOfUnloading = None,
-        PreviousDocument = Nil,
-        SupportingDocument = Nil,
-        TransportDocument = Nil,
-        AdditionalReference = Nil,
-        AdditionalInformation = Nil,
-        TransportCharges = None,
-        HouseConsignment = Nil
-      )
-    }
-
-  implicit lazy val arbitraryConsignmentType22: Arbitrary[ConsignmentType22] =
-    Arbitrary {
-      for {
-        incident <- listWithMaxLength[IncidentType03]()
-      } yield ConsignmentType22(
+        incident <- listWithMaxLength[IncidentType02]()
+      } yield ConsignmentType28(
         Incident = incident
       )
     }
 
-  implicit lazy val arbitraryTransitOperationType03: Arbitrary[TransitOperationType03] =
+  implicit lazy val arbitraryTransitOperationType56: Arbitrary[TransitOperationType56] =
     Arbitrary {
       for {
         lrn <- Gen.option(nonEmptyString)
         mrn <- Gen.option(nonEmptyString)
-      } yield TransitOperationType03(
+      } yield TransitOperationType56(
         LRN = lrn,
         MRN = mrn
       )
     }
 
-  implicit lazy val arbitraryTransitOperationType06: Arbitrary[TransitOperationType06] =
-    Arbitrary {
-      for {
-        lrn                       <- nonEmptyString
-        declarationType           <- nonEmptyString
-        additionalDeclarationType <- nonEmptyString
-        security                  <- nonEmptyString
-        reducedDatasetIndicator   <- arbitrary[Flag]
-        bindingItinerary          <- arbitrary[Flag]
-      } yield TransitOperationType06(
-        LRN = lrn,
-        declarationType = declarationType,
-        additionalDeclarationType = additionalDeclarationType,
-        TIRCarnetNumber = None,
-        presentationOfTheGoodsDateAndTime = None,
-        security = security,
-        reducedDatasetIndicator = reducedDatasetIndicator,
-        specificCircumstanceIndicator = None,
-        communicationLanguageAtDeparture = None,
-        bindingItinerary = bindingItinerary,
-        limitDate = None
-      )
-    }
-
-  implicit lazy val arbitraryTransitOperationType10: Arbitrary[TransitOperationType10] =
+  implicit lazy val arbitraryTransitOperationType07: Arbitrary[TransitOperationType07] =
     Arbitrary {
       for {
         mrn              <- nonEmptyString
         releaseDate      <- arbitrary[XMLGregorianCalendar]
         releaseIndicator <- nonEmptyString
-      } yield TransitOperationType10(
+      } yield TransitOperationType07(
         MRN = mrn,
         releaseDate = releaseDate,
         releaseIndicator = releaseIndicator
@@ -340,28 +258,11 @@ trait MessagesModelGenerators {
   implicit lazy val arbitraryTransitOperationType14: Arbitrary[TransitOperationType14] =
     Arbitrary {
       for {
-        mrn                       <- nonEmptyString
-        declarationType           <- Gen.option(nonEmptyString)
-        declarationAcceptanceDate <- Gen.option(arbitrary[XMLGregorianCalendar])
-        security                  <- nonEmptyString
-        reducedDatasetIndicator   <- arbitrary[Flag]
-      } yield TransitOperationType14(
-        MRN = mrn,
-        declarationType = declarationType,
-        declarationAcceptanceDate = declarationAcceptanceDate,
-        security = security,
-        reducedDatasetIndicator = reducedDatasetIndicator
-      )
-    }
-
-  implicit lazy val arbitraryTransitOperationType18: Arbitrary[TransitOperationType18] =
-    Arbitrary {
-      for {
         mrn                              <- nonEmptyString
         declarationSubmissionDateAndTime <- arbitrary[XMLGregorianCalendar]
         noReleaseMotivationCode          <- nonEmptyString
         noReleaseMotivationText          <- nonEmptyString
-      } yield TransitOperationType18(
+      } yield TransitOperationType14(
         MRN = mrn,
         declarationSubmissionDateAndTime = declarationSubmissionDateAndTime,
         noReleaseMotivationCode = noReleaseMotivationCode,
@@ -369,7 +270,7 @@ trait MessagesModelGenerators {
       )
     }
 
-  implicit lazy val arbitraryTransitOperationType20: Arbitrary[TransitOperationType20] =
+  implicit lazy val arbitraryTransitOperationType16: Arbitrary[TransitOperationType16] =
     Arbitrary {
       for {
         lrn                   <- Gen.option(nonEmptyString)
@@ -378,7 +279,7 @@ trait MessagesModelGenerators {
         rejectionDateAndTime  <- arbitrary[XMLGregorianCalendar]
         rejectionCode         <- nonEmptyString
         rejectionReason       <- Gen.option(nonEmptyString)
-      } yield TransitOperationType20(
+      } yield TransitOperationType16(
         LRN = lrn,
         MRN = mrn,
         businessRejectionType = businessRejectionType,
@@ -388,7 +289,7 @@ trait MessagesModelGenerators {
       )
     }
 
-  implicit lazy val arbitraryTransitOperationType21: Arbitrary[TransitOperationType21] =
+  implicit lazy val arbitraryTransitOperationType18: Arbitrary[TransitOperationType18] =
     Arbitrary {
       for {
         mrn                   <- nonEmptyString
@@ -396,7 +297,7 @@ trait MessagesModelGenerators {
         rejectionDateAndTime  <- arbitrary[XMLGregorianCalendar]
         rejectionCode         <- nonEmptyString
         rejectionReason       <- Gen.option(nonEmptyString)
-      } yield TransitOperationType21(
+      } yield TransitOperationType18(
         MRN = mrn,
         businessRejectionType = businessRejectionType,
         rejectionDateAndTime = rejectionDateAndTime,
@@ -405,14 +306,14 @@ trait MessagesModelGenerators {
       )
     }
 
-  implicit lazy val arbitraryTransitOperationType22: Arbitrary[TransitOperationType22] =
+  implicit lazy val arbitraryTransitOperationType20: Arbitrary[TransitOperationType20] =
     Arbitrary {
       for {
         lrn                            <- Gen.option(nonEmptyString)
         mrn                            <- Gen.option(nonEmptyString)
         controlNotificationDateAndTime <- arbitrary[XMLGregorianCalendar]
         notificationType               <- nonEmptyString
-      } yield TransitOperationType22(
+      } yield TransitOperationType20(
         LRN = lrn,
         MRN = mrn,
         controlNotificationDateAndTime = controlNotificationDateAndTime,
@@ -420,23 +321,23 @@ trait MessagesModelGenerators {
       )
     }
 
-  implicit lazy val arbitraryTransitOperationType47: Arbitrary[TransitOperationType47] =
+  implicit lazy val arbitraryTransitOperationType57: Arbitrary[TransitOperationType57] =
     Arbitrary {
       for {
         mrn                             <- nonEmptyString
         incidentNotificationDateAndTime <- arbitrary[XMLGregorianCalendar]
-      } yield TransitOperationType47(
+      } yield TransitOperationType57(
         MRN = mrn,
         incidentNotificationDateAndTime = incidentNotificationDateAndTime
       )
     }
 
-  implicit lazy val arbitraryTransitOperationType48: Arbitrary[TransitOperationType48] =
+  implicit lazy val arbitraryTransitOperationType60: Arbitrary[TransitOperationType60] =
     Arbitrary {
       for {
         mrn                       <- nonEmptyString
         declarationAcceptanceDate <- arbitrary[XMLGregorianCalendar]
-      } yield TransitOperationType48(
+      } yield TransitOperationType60(
         MRN = mrn,
         declarationAcceptanceDate = declarationAcceptanceDate
       )
@@ -451,11 +352,11 @@ trait MessagesModelGenerators {
       )
     }
 
-  implicit lazy val arbitraryCustomsOfficeOfDepartureType03: Arbitrary[CustomsOfficeOfDepartureType03] =
+  implicit lazy val arbitraryCustomsOfficeOfDepartureType05: Arbitrary[CustomsOfficeOfDepartureType05] =
     Arbitrary {
       for {
         referenceNumber <- nonEmptyString
-      } yield CustomsOfficeOfDepartureType03(
+      } yield CustomsOfficeOfDepartureType05(
         referenceNumber = referenceNumber
       )
     }
@@ -469,89 +370,16 @@ trait MessagesModelGenerators {
       )
     }
 
-  implicit lazy val arbitraryCustomsOfficeOfDestinationDeclaredType01: Arbitrary[CustomsOfficeOfDestinationDeclaredType01] =
-    Arbitrary {
-      for {
-        referenceNumber <- nonEmptyString
-      } yield CustomsOfficeOfDestinationDeclaredType01(
-        referenceNumber = referenceNumber
-      )
-    }
-
-  implicit lazy val arbitraryHolderOfTheTransitProcedureType06: Arbitrary[HolderOfTheTransitProcedureType06] =
-    Arbitrary {
-      for {
-        identificationNumber          <- Gen.option(nonEmptyString)
-        tirHolderIdentificationNumber <- Gen.option(nonEmptyString)
-        name                          <- nonEmptyString
-        address                       <- arbitrary[AddressType10]
-      } yield HolderOfTheTransitProcedureType06(
-        identificationNumber = identificationNumber,
-        TIRHolderIdentificationNumber = tirHolderIdentificationNumber,
-        name = name,
-        Address = address
-      )
-    }
-
   implicit lazy val arbitraryHolderOfTheTransitProcedureType07: Arbitrary[HolderOfTheTransitProcedureType07] =
     Arbitrary {
       for {
         identificationNumber <- Gen.option(nonEmptyString)
         name                 <- Gen.option(nonEmptyString)
-        address              <- Gen.option(arbitrary[AddressType03])
+        address              <- Gen.option(arbitrary[AddressType02])
       } yield HolderOfTheTransitProcedureType07(
         identificationNumber = identificationNumber,
         name = name,
         Address = address
-      )
-    }
-
-  implicit lazy val arbitraryHolderOfTheTransitProcedureType08: Arbitrary[HolderOfTheTransitProcedureType08] =
-    Arbitrary {
-      for {
-        identificationNumber          <- Gen.option(nonEmptyString)
-        tirHolderIdentificationNumber <- Gen.option(nonEmptyString)
-        name                          <- Gen.option(nonEmptyString)
-        address                       <- Gen.option(arbitrary[AddressType07])
-      } yield HolderOfTheTransitProcedureType08(
-        identificationNumber = identificationNumber,
-        TIRHolderIdentificationNumber = tirHolderIdentificationNumber,
-        name = name,
-        Address = address
-      )
-    }
-
-  implicit lazy val arbitraryHolderOfTheTransitProcedureType13: Arbitrary[HolderOfTheTransitProcedureType13] =
-    Arbitrary {
-      for {
-        identificationNumber          <- Gen.option(nonEmptyString)
-        tirHolderIdentificationNumber <- Gen.option(nonEmptyString)
-        name                          <- Gen.option(nonEmptyString)
-        address                       <- Gen.option(arbitrary[AddressType07])
-        contactPerson                 <- Gen.option(arbitrary[ContactPersonType04])
-      } yield HolderOfTheTransitProcedureType13(
-        identificationNumber = identificationNumber,
-        TIRHolderIdentificationNumber = tirHolderIdentificationNumber,
-        name = name,
-        Address = address,
-        ContactPerson = contactPerson
-      )
-    }
-
-  implicit lazy val arbitraryHolderOfTheTransitProcedureType14: Arbitrary[HolderOfTheTransitProcedureType14] =
-    Arbitrary {
-      for {
-        identificationNumber          <- Gen.option(nonEmptyString)
-        tirHolderIdentificationNumber <- Gen.option(nonEmptyString)
-        name                          <- Gen.option(nonEmptyString)
-        address                       <- Gen.option(arbitrary[AddressType17])
-        contactPerson                 <- Gen.option(arbitrary[ContactPersonType05])
-      } yield HolderOfTheTransitProcedureType14(
-        identificationNumber = identificationNumber,
-        TIRHolderIdentificationNumber = tirHolderIdentificationNumber,
-        name = name,
-        Address = address,
-        ContactPerson = contactPerson
       )
     }
 
@@ -561,7 +389,7 @@ trait MessagesModelGenerators {
         identificationNumber          <- Gen.option(nonEmptyString)
         tirHolderIdentificationNumber <- Gen.option(nonEmptyString)
         name                          <- Gen.option(nonEmptyString)
-        address                       <- Gen.option(arbitrary[AddressType15])
+        address                       <- Gen.option(arbitrary[AddressType14])
       } yield HolderOfTheTransitProcedureType15(
         identificationNumber = identificationNumber,
         TIRHolderIdentificationNumber = tirHolderIdentificationNumber,
@@ -570,14 +398,31 @@ trait MessagesModelGenerators {
       )
     }
 
-  implicit lazy val arbitraryHolderOfTheTransitProcedureType20: Arbitrary[HolderOfTheTransitProcedureType20] =
+  implicit lazy val arbitraryHolderOfTheTransitProcedureType23: Arbitrary[HolderOfTheTransitProcedureType23] =
     Arbitrary {
       for {
         identificationNumber          <- Gen.option(nonEmptyString)
         tirHolderIdentificationNumber <- Gen.option(nonEmptyString)
         name                          <- Gen.option(nonEmptyString)
-        address                       <- Gen.option(arbitrary[AddressType07])
-      } yield HolderOfTheTransitProcedureType20(
+        address                       <- Gen.option(arbitrary[AddressType14])
+        contactPerson                 <- Gen.option(arbitrary[ContactPersonType03])
+      } yield HolderOfTheTransitProcedureType23(
+        identificationNumber = identificationNumber,
+        TIRHolderIdentificationNumber = tirHolderIdentificationNumber,
+        name = name,
+        Address = address,
+        ContactPerson = contactPerson
+      )
+    }
+
+  implicit lazy val arbitraryHolderOfTheTransitProcedureType13: Arbitrary[HolderOfTheTransitProcedureType13] =
+    Arbitrary {
+      for {
+        identificationNumber          <- Gen.option(nonEmptyString)
+        tirHolderIdentificationNumber <- Gen.option(nonEmptyString)
+        name                          <- Gen.option(nonEmptyString)
+        address                       <- Gen.option(arbitrary[AddressType14])
+      } yield HolderOfTheTransitProcedureType13(
         identificationNumber = identificationNumber,
         TIRHolderIdentificationNumber = tirHolderIdentificationNumber,
         name = name,
@@ -600,31 +445,31 @@ trait MessagesModelGenerators {
     Arbitrary {
       for {
         identificationNumber <- nonEmptyString
-        contactPerson        <- Gen.option(arbitrary[ContactPersonType01])
+        contactPerson        <- Gen.option(arbitrary[ContactPersonType03])
       } yield RepresentativeType03(
         identificationNumber = identificationNumber,
         ContactPerson = contactPerson
       )
     }
 
-  implicit lazy val arbitraryRepresentativeType04: Arbitrary[RepresentativeType04] =
+  implicit lazy val arbitraryRepresentativeType06: Arbitrary[RepresentativeType06] =
     Arbitrary {
       for {
         identificationNumber <- nonEmptyString
         status               <- nonEmptyString
-        contactPerson        <- Gen.option(arbitrary[ContactPersonType04])
-      } yield RepresentativeType04(
+        contactPerson        <- Gen.option(arbitrary[ContactPersonType03])
+      } yield RepresentativeType06(
         identificationNumber = identificationNumber,
         status = status,
         ContactPerson = contactPerson
       )
     }
 
-  implicit lazy val arbitraryTraderAtDestinationType03: Arbitrary[TraderAtDestinationType03] =
+  implicit lazy val arbitraryTraderAtDestinationType02: Arbitrary[TraderAtDestinationType02] =
     Arbitrary {
       for {
         identificationNumber <- nonEmptyString
-      } yield TraderAtDestinationType03(
+      } yield TraderAtDestinationType02(
         identificationNumber = identificationNumber
       )
     }
@@ -638,154 +483,15 @@ trait MessagesModelGenerators {
       )
     }
 
-  implicit lazy val arbitraryConsignmentType05: Arbitrary[ConsignmentType05] =
-    Arbitrary {
-      for {
-        countryOfDestination  <- Gen.option(nonEmptyString)
-        containerIndicator    <- arbitrary[Flag]
-        inlandModeOfTransport <- Gen.option(nonEmptyString)
-        grossMass             <- Gen.option(positiveBigDecimals)
-        consignor             <- Gen.option(arbitrary[ConsignorType05])
-        consignee             <- Gen.option(arbitrary[ConsigneeType04])
-        transportEquipment    <- arbitrary[Seq[TransportEquipmentType05]]
-        incidents             <- arbitrary[Seq[IncidentType04]]
-      } yield ConsignmentType05(
-        countryOfDestination = countryOfDestination,
-        containerIndicator = containerIndicator,
-        inlandModeOfTransport = inlandModeOfTransport,
-        grossMass = grossMass,
-        Consignor = consignor,
-        Consignee = consignee,
-        TransportEquipment = transportEquipment,
-        DepartureTransportMeans = Nil,
-        PreviousDocument = Nil,
-        SupportingDocument = Nil,
-        TransportDocument = Nil,
-        AdditionalReference = Nil,
-        AdditionalInformation = Nil,
-        Incident = incidents,
-        HouseConsignment = Nil
-      )
-    }
-
-  implicit lazy val arbitraryHouseConsignmentType04: Arbitrary[HouseConsignmentType04] =
-    Arbitrary {
-      for {
-        sequenceNumber          <- arbitrary[BigInt]
-        grossMass               <- positiveBigDecimals
-        consignor               <- Gen.option(arbitrary[ConsignorType06])
-        consignee               <- Gen.option(arbitrary[ConsigneeType04])
-        departureTransportMeans <- arbitrary[Seq[DepartureTransportMeansType02]]
-        consignmentItems        <- arbitrary[Seq[ConsignmentItemType04]]
-        securityIndicator       <- Gen.some(nonEmptyString)
-      } yield HouseConsignmentType04(
-        sequenceNumber = sequenceNumber,
-        grossMass = grossMass,
-        securityIndicatorFromExportDeclaration = securityIndicator,
-        Consignor = consignor,
-        Consignee = consignee,
-        DepartureTransportMeans = departureTransportMeans,
-        PreviousDocument = Nil,
-        SupportingDocument = Nil,
-        TransportDocument = Nil,
-        AdditionalReference = Nil,
-        AdditionalInformation = Nil,
-        ConsignmentItem = consignmentItems
-      )
-    }
-
-  implicit lazy val arbitraryConsignorType05: Arbitrary[ConsignorType05] =
-    Arbitrary {
-      for {
-        identificationNumber <- Gen.option(nonEmptyString)
-        name                 <- Gen.option(nonEmptyString)
-        address              <- Gen.option(arbitrary[AddressType07])
-      } yield ConsignorType05(
-        identificationNumber = identificationNumber,
-        name = name,
-        Address = address
-      )
-    }
-
-  implicit lazy val arbitraryConsigneeType03: Arbitrary[ConsigneeType03] =
-    Arbitrary {
-      for {
-        identificationNumber <- Gen.option(nonEmptyString)
-        name                 <- Gen.option(nonEmptyString)
-        address              <- Gen.option(arbitrary[AddressType09])
-      } yield ConsigneeType03(
-        identificationNumber = identificationNumber,
-        name = name,
-        Address = address
-      )
-    }
-
-  implicit lazy val arbitraryConsigneeType04: Arbitrary[ConsigneeType04] =
-    Arbitrary {
-      for {
-        identificationNumber <- Gen.option(nonEmptyString)
-        name                 <- Gen.option(nonEmptyString)
-        address              <- Gen.option(arbitrary[AddressType07])
-      } yield ConsigneeType04(
-        identificationNumber = identificationNumber,
-        name = name,
-        Address = address
-      )
-    }
-
-  implicit lazy val arbitraryConsignorType06: Arbitrary[ConsignorType06] =
-    Arbitrary {
-      for {
-        identificationNumber <- Gen.option(nonEmptyString)
-        name                 <- Gen.option(nonEmptyString)
-        address              <- Gen.option(arbitrary[AddressType07])
-      } yield ConsignorType06(
-        identificationNumber = identificationNumber,
-        name = name,
-        Address = address
-      )
-    }
-
-  implicit lazy val arbitraryDepartureTransportMeansType02: Arbitrary[DepartureTransportMeansType02] =
-    Arbitrary {
-      for {
-        sequenceNumber       <- arbitrary[BigInt]
-        typeOfIdentification <- nonEmptyString
-        identificationNumber <- nonEmptyString
-        nationality          <- nonEmptyString
-      } yield DepartureTransportMeansType02(
-        sequenceNumber = sequenceNumber,
-        typeOfIdentification = typeOfIdentification,
-        identificationNumber = identificationNumber,
-        nationality = nationality
-      )
-    }
-
-  implicit lazy val arbitraryTransportEquipmentType05: Arbitrary[TransportEquipmentType05] =
+  implicit lazy val arbitraryTransportEquipmentType06: Arbitrary[TransportEquipmentType06] =
     Arbitrary {
       for {
         sequenceNumber                <- arbitrary[BigInt]
         containerIdentificationNumber <- Gen.option(nonEmptyString)
-        seals                         <- arbitrary[Seq[SealType04]]
-        goodsReferences               <- arbitrary[Seq[GoodsReferenceType02]]
-      } yield TransportEquipmentType05(
-        sequenceNumber = sequenceNumber,
-        containerIdentificationNumber = containerIdentificationNumber,
-        numberOfSeals = seals.length,
-        Seal = seals,
-        GoodsReference = goodsReferences
-      )
-    }
-
-  implicit lazy val arbitraryTransportEquipmentType07: Arbitrary[TransportEquipmentType07] =
-    Arbitrary {
-      for {
-        sequenceNumber                <- arbitrary[BigInt]
-        containerIdentificationNumber <- Gen.option(nonEmptyString)
-        seals                         <- arbitrary[Seq[SealType04]]
+        seals                         <- arbitrary[Seq[SealType01]]
         numberOfSeals                 <- Gen.option(positiveBigInts)
-        goodsReferences               <- arbitrary[Seq[GoodsReferenceType01]]
-      } yield TransportEquipmentType07(
+        goodsReferences               <- arbitrary[Seq[GoodsReferenceType03]]
+      } yield TransportEquipmentType06(
         sequenceNumber = sequenceNumber,
         containerIdentificationNumber = containerIdentificationNumber,
         numberOfSeals = numberOfSeals,
@@ -794,80 +500,14 @@ trait MessagesModelGenerators {
       )
     }
 
-  implicit lazy val arbitraryAdditionalReferenceType02: Arbitrary[AdditionalReferenceType02] =
-    Arbitrary {
-      for {
-        sequenceNumber <- arbitrary[BigInt]
-        typeVal        <- nonEmptyString
-        refNum         <- Gen.option(nonEmptyString)
-      } yield AdditionalReferenceType02(
-        sequenceNumber = sequenceNumber,
-        typeValue = typeVal,
-        referenceNumber = refNum
-      )
-    }
-
-  implicit lazy val arbitraryAdditionalReferenceType03: Arbitrary[AdditionalReferenceType03] =
-    Arbitrary {
-      for {
-        sequenceNumber <- arbitrary[BigInt]
-        typeVal        <- nonEmptyString
-        refNum         <- Gen.option(nonEmptyString)
-      } yield AdditionalReferenceType03(
-        sequenceNumber = sequenceNumber,
-        typeValue = typeVal,
-        referenceNumber = refNum
-      )
-    }
-
-  implicit lazy val arbitraryAdditionalInformationType02: Arbitrary[AdditionalInformationType02] =
-    Arbitrary {
-      for {
-        sequenceNumber <- arbitrary[BigInt]
-        code           <- nonEmptyString
-        text           <- Gen.option(nonEmptyString)
-      } yield AdditionalInformationType02(
-        sequenceNumber = sequenceNumber,
-        code = code,
-        text = text
-      )
-    }
-
-  implicit lazy val arbitrarySealType04: Arbitrary[SealType04] =
+  implicit lazy val arbitrarySealType01: Arbitrary[SealType01] =
     Arbitrary {
       for {
         sequenceNumber <- arbitrary[BigInt]
         identifier     <- nonEmptyString
-      } yield SealType04(
+      } yield SealType01(
         sequenceNumber = sequenceNumber,
         identifier = identifier
-      )
-    }
-
-  implicit lazy val arbitraryPackageType04: Arbitrary[PackagingType02] =
-    Arbitrary {
-      for {
-        sequenceNumber   <- arbitrary[BigInt]
-        typeOfPackages   <- nonEmptyString
-        numberOfPackages <- Gen.option(positiveBigInts)
-        shippingMarks    <- Gen.option(nonEmptyString)
-
-      } yield PackagingType02(
-        sequenceNumber = sequenceNumber,
-        typeOfPackages,
-        numberOfPackages,
-        shippingMarks
-      )
-    }
-
-  implicit lazy val arbitraryGoodsReferenceType02: Arbitrary[GoodsReferenceType02] =
-    Arbitrary {
-      for {
-        sequenceNumber             <- arbitrary[BigInt]
-        declarationGoodsItemNumber <- positiveBigInts
-      } yield GoodsReferenceType02(
-        sequenceNumber = sequenceNumber,
-        declarationGoodsItemNumber = declarationGoodsItemNumber
       )
     }
 
@@ -882,145 +522,78 @@ trait MessagesModelGenerators {
       )
     }
 
-  implicit lazy val arbitraryCommodityType08: Arbitrary[CommodityType08] =
+  implicit lazy val arbitraryGoodsReferenceType03: Arbitrary[GoodsReferenceType03] =
     Arbitrary {
       for {
-        descriptionOfGoods <- nonEmptyString
-        cusCode            <- Gen.option(nonEmptyString)
-        commodityCode      <- Gen.option(arbitrary[CommodityCodeType05])
-        dangerousGoods     <- arbitrary[Seq[DangerousGoodsType01]]
-        goodsMeasure       <- arbitrary[GoodsMeasureType03]
-      } yield CommodityType08(
-        descriptionOfGoods = descriptionOfGoods,
-        cusCode = cusCode,
-        CommodityCode = commodityCode,
-        DangerousGoods = dangerousGoods,
-        GoodsMeasure = goodsMeasure
-      )
-    }
-
-  implicit lazy val arbitraryCommodityCodeType05: Arbitrary[CommodityCodeType05] =
-    Arbitrary {
-      for {
-        harmonizedSystemSubHeadingCode <- nonEmptyString
-        combinedNomenclatureCode       <- Gen.option(nonEmptyString)
-      } yield CommodityCodeType05(
-        harmonizedSystemSubHeadingCode = harmonizedSystemSubHeadingCode,
-        combinedNomenclatureCode = combinedNomenclatureCode
-      )
-    }
-
-  implicit lazy val arbitraryDangerousGoodsType01: Arbitrary[DangerousGoodsType01] =
-    Arbitrary {
-      for {
-        sequenceNumber <- arbitrary[BigInt]
-        unNumber       <- nonEmptyString
-      } yield DangerousGoodsType01(
+        sequenceNumber             <- arbitrary[BigInt]
+        declarationGoodsItemNumber <- positiveBigInts
+      } yield GoodsReferenceType03(
         sequenceNumber = sequenceNumber,
-        UNNumber = unNumber
+        declarationGoodsItemNumber = declarationGoodsItemNumber
       )
     }
 
-  implicit lazy val arbitraryGoodsMeasureType03: Arbitrary[GoodsMeasureType03] =
-    Arbitrary {
-      for {
-        grossMass <- positiveBigDecimals
-        netMass   <- Gen.option(positiveBigDecimals)
-      } yield GoodsMeasureType03(
-        grossMass = grossMass,
-        netMass = netMass
-      )
-    }
-
-  implicit lazy val arbitraryEndorsement03: Arbitrary[generated.EndorsementType03] = Arbitrary {
+  implicit lazy val arbitraryEndorsementType02: Arbitrary[EndorsementType02] = Arbitrary {
     for {
-      date      <- arbitraryXMLGregorianCalendar.arbitrary
+      date      <- arbitrary[XMLGregorianCalendar]
       authority <- nonEmptyString
       place     <- nonEmptyString
       country   <- nonEmptyString
-    } yield EndorsementType03(date, authority, place, country)
+    } yield EndorsementType02(date, authority, place, country)
   }
 
-  implicit lazy val arbTranshipment02: Arbitrary[TranshipmentType02] = Arbitrary {
+  implicit lazy val arbitraryTranshipmentType: Arbitrary[TranshipmentType] = Arbitrary {
     for {
-      flag            <- arbitraryFlag.arbitrary
+      containerIndicator <- arbitrary[Flag]
+      transportMeans     <- arbitrary[TransportMeansType]
+    } yield TranshipmentType(
+      containerIndicator = containerIndicator,
+      TransportMeans = transportMeans
+    )
+  }
+
+  implicit lazy val arbitraryTransportMeansType: Arbitrary[TransportMeansType] = Arbitrary {
+    for {
       sequenceNumber  <- nonEmptyString
       typeValue       <- nonEmptyString
       referenceNumber <- nonEmptyString
-    } yield TranshipmentType02(flag, TransportMeansType02(sequenceNumber, typeValue, referenceNumber))
+    } yield TransportMeansType(
+      typeOfIdentification = sequenceNumber,
+      identificationNumber = typeValue,
+      nationality = referenceNumber
+    )
   }
 
-  implicit lazy val arbitraryIncidentType03: Arbitrary[generated.IncidentType03] =
+  implicit lazy val arbitraryIncidentType02: Arbitrary[IncidentType02] =
     Arbitrary {
       for {
         sequenceNumber     <- arbitrary[BigInt]
         code               <- nonEmptyString
         text               <- nonEmptyString
-        loc                <- arbitraryLocationType02.arbitrary
-        endorsement        <- arbitraryEndorsement03.arbitrary
-        transportEquipment <- arbitrary[Seq[TransportEquipmentType07]]
+        loc                <- arbitrary[LocationType]
+        endorsement        <- arbitrary[EndorsementType02]
+        transportEquipment <- arbitrary[Seq[TransportEquipmentType06]]
         containerIndicator <- arbitrary[Flag]
-        transportmeans     <- arbitraryTransportMeansType02.arbitrary
-      } yield generated.IncidentType03(
+        transhipment       <- Gen.option(arbitrary[TranshipmentType])
+      } yield IncidentType02(
         sequenceNumber = sequenceNumber,
         code = code,
         text = text,
         Endorsement = Some(endorsement),
         Location = loc,
         TransportEquipment = transportEquipment,
-        Transhipment = Some(TranshipmentType02(containerIndicator, transportmeans))
+        Transhipment = transhipment
       )
     }
 
-  implicit lazy val arbitraryIncidentType04: Arbitrary[generated.IncidentType04] =
-    Arbitrary {
-      for {
-        sequenceNumber <- arbitrary[BigInt]
-        code           <- nonEmptyString
-        text           <- nonEmptyString
-        loc            <- arbitraryLocationType02.arbitrary
-
-      } yield generated.IncidentType04(
-        sequenceNumber = sequenceNumber,
-        code = code,
-        text = text,
-        Endorsement = None,
-        Location = loc,
-        TransportEquipment = Nil,
-        Transhipment = None
-      )
-    }
-
-  implicit lazy val arbitraryConsignmentItemType04: Arbitrary[ConsignmentItemType04] =
-    Arbitrary {
-      for {
-        goodsItemNumber            <- arbitrary[BigInt]
-        declarationGoodsItemNumber <- positiveBigInts
-        commodity                  <- arbitrary[CommodityType08]
-      } yield ConsignmentItemType04(
-        goodsItemNumber = goodsItemNumber,
-        declarationGoodsItemNumber = declarationGoodsItemNumber,
-        declarationType = None,
-        countryOfDestination = None,
-        Consignee = None,
-        Commodity = commodity,
-        Packaging = Nil,
-        PreviousDocument = Nil,
-        SupportingDocument = Nil,
-        TransportDocument = Nil,
-        AdditionalReference = Nil,
-        AdditionalInformation = Nil
-      )
-    }
-
-  implicit lazy val arbitraryAddressType03: Arbitrary[AddressType03] =
+  implicit lazy val arbitraryAddressType02: Arbitrary[AddressType02] =
     Arbitrary {
       for {
         streetAndNumber <- nonEmptyString
         postcode        <- Gen.option(nonEmptyString)
         city            <- nonEmptyString
         country         <- nonEmptyString
-      } yield AddressType03(
+      } yield AddressType02(
         streetAndNumber = streetAndNumber,
         postcode = postcode,
         city = city,
@@ -1028,14 +601,14 @@ trait MessagesModelGenerators {
       )
     }
 
-  implicit lazy val arbitraryAddressType07: Arbitrary[AddressType07] =
+  implicit lazy val arbitraryAddressType14: Arbitrary[AddressType14] =
     Arbitrary {
       for {
         streetAndNumber <- nonEmptyString
         postcode        <- Gen.option(nonEmptyString)
         city            <- nonEmptyString
         country         <- nonEmptyString
-      } yield AddressType07(
+      } yield AddressType14(
         streetAndNumber = streetAndNumber,
         postcode = postcode,
         city = city,
@@ -1043,14 +616,14 @@ trait MessagesModelGenerators {
       )
     }
 
-  implicit lazy val arbitraryAddressType09: Arbitrary[AddressType09] =
+  implicit lazy val arbitraryAddressType20: Arbitrary[AddressType20] =
     Arbitrary {
       for {
         streetAndNumber <- nonEmptyString
         postcode        <- Gen.option(nonEmptyString)
         city            <- nonEmptyString
         country         <- nonEmptyString
-      } yield AddressType09(
+      } yield AddressType20(
         streetAndNumber = streetAndNumber,
         postcode = postcode,
         city = city,
@@ -1058,173 +631,46 @@ trait MessagesModelGenerators {
       )
     }
 
-  implicit lazy val arbitraryAddressType10: Arbitrary[AddressType10] =
+  implicit lazy val arbitraryAddressType21: Arbitrary[AddressType21] =
     Arbitrary {
       for {
         streetAndNumber <- nonEmptyString
         postcode        <- Gen.option(nonEmptyString)
         city            <- nonEmptyString
-        country         <- nonEmptyString
-      } yield AddressType10(
-        streetAndNumber = streetAndNumber,
-        postcode = postcode,
-        city = city,
-        country = country
-      )
-    }
-
-  implicit lazy val arbitraryAddressType15: Arbitrary[AddressType15] =
-    Arbitrary {
-      for {
-        streetAndNumber <- nonEmptyString
-        postcode        <- Gen.option(nonEmptyString)
-        city            <- nonEmptyString
-        country         <- nonEmptyString
-      } yield AddressType15(
-        streetAndNumber = streetAndNumber,
-        postcode = postcode,
-        city = city,
-        country = country
-      )
-    }
-
-  implicit lazy val arbitraryAddressType16: Arbitrary[AddressType16] =
-    Arbitrary {
-      for {
-        streetAndNumber <- nonEmptyString
-        postcode        <- Gen.option(nonEmptyString)
-        city            <- nonEmptyString
-        country         <- Gen.oneOf(CountryCodesCustomsOfficeLists.values)
-      } yield AddressType16(
-        streetAndNumber = streetAndNumber,
-        postcode = postcode,
-        city = city,
-        country = country
-      )
-    }
-
-  implicit lazy val arbitraryAddressType17: Arbitrary[AddressType17] =
-    Arbitrary {
-      for {
-        streetAndNumber <- nonEmptyString
-        postcode        <- Gen.option(nonEmptyString)
-        city            <- nonEmptyString
-        country         <- nonEmptyString
-      } yield AddressType17(
-        streetAndNumber = streetAndNumber,
-        postcode = postcode,
-        city = city,
-        country = country
-      )
-    }
-
-  implicit lazy val arbitraryAddressType18: Arbitrary[AddressType18] =
-    Arbitrary {
-      for {
-        streetAndNumber <- nonEmptyString
-        postcode        <- Gen.option(nonEmptyString)
-        city            <- nonEmptyString
-      } yield AddressType18(
+      } yield AddressType21(
         streetAndNumber = streetAndNumber,
         postcode = postcode,
         city = city
       )
     }
 
-  implicit lazy val arbitraryContactPersonType01: Arbitrary[ContactPersonType01] =
+  implicit lazy val arbitraryContactPersonType03: Arbitrary[ContactPersonType03] =
     Arbitrary {
       for {
         name         <- nonEmptyString
         phoneNumber  <- nonEmptyString
         eMailAddress <- Gen.option(nonEmptyString)
-      } yield ContactPersonType01(
+      } yield ContactPersonType03(
         name = name,
         phoneNumber = phoneNumber,
         eMailAddress = eMailAddress
       )
     }
 
-  implicit lazy val arbitraryContactPersonType04: Arbitrary[ContactPersonType04] =
-    Arbitrary {
-      for {
-        name         <- nonEmptyString
-        phoneNumber  <- nonEmptyString
-        eMailAddress <- Gen.option(nonEmptyString)
-      } yield ContactPersonType04(
-        name = name,
-        phoneNumber = phoneNumber,
-        eMailAddress = eMailAddress
-      )
-    }
-
-  implicit lazy val arbitraryContactPersonType05: Arbitrary[ContactPersonType05] =
-    Arbitrary {
-      for {
-        name         <- nonEmptyString
-        phoneNumber  <- nonEmptyString
-        eMailAddress <- Gen.option(nonEmptyString)
-      } yield ContactPersonType05(
-        name = name,
-        phoneNumber = phoneNumber,
-        eMailAddress = eMailAddress
-      )
-    }
-
-  implicit lazy val arbitrarySupportingDocumentType02: Arbitrary[SupportingDocumentType02] =
-    Arbitrary {
-      for {
-        sequenceNumber          <- arbitrary[BigInt]
-        typeValue               <- nonEmptyString
-        referenceNumber         <- nonEmptyString
-        complementOfInformation <- Gen.option(nonEmptyString)
-      } yield SupportingDocumentType02(
-        sequenceNumber = sequenceNumber,
-        typeValue = typeValue,
-        referenceNumber = referenceNumber,
-        complementOfInformation = complementOfInformation
-      )
-    }
-
-  implicit lazy val arbitraryTransportDocumentType02: Arbitrary[TransportDocumentType02] =
-    Arbitrary {
-      for {
-        sequenceNumber  <- arbitrary[BigInt]
-        typeValue       <- nonEmptyString
-        referenceNumber <- nonEmptyString
-      } yield TransportDocumentType02(
-        sequenceNumber = sequenceNumber,
-        typeValue = typeValue,
-        referenceNumber = referenceNumber
-      )
-    }
-
-  implicit lazy val arbitraryLocationType02: Arbitrary[LocationType02] =
+  implicit lazy val arbitraryLocationType: Arbitrary[LocationType] =
     Arbitrary {
       for {
         qualifierOfIdentification <- Gen.oneOf(Seq("W", "U", "Z"))
         unLocode                  <- Gen.option(nonEmptyString)
         country                   <- nonEmptyString
         gnss                      <- Gen.option(arbitrary[GNSSType])
-        address                   <- Gen.option(arbitrary[AddressType18])
-      } yield LocationType02(
+        address                   <- Gen.option(arbitrary[AddressType21])
+      } yield LocationType(
         qualifierOfIdentification = qualifierOfIdentification,
         UNLocode = unLocode,
         country = country,
         GNSS = gnss,
         Address = address
-      )
-    }
-
-  implicit lazy val arbitraryTransportMeansType02: Arbitrary[TransportMeansType02] =
-    Arbitrary {
-      for {
-        typeOfIdentification <- nonEmptyString
-        identificationNumber <- nonEmptyString
-        nationality          <- nonEmptyString
-      } yield TransportMeansType02(
-        typeOfIdentification,
-        identificationNumber,
-        nationality
       )
     }
 
@@ -1249,14 +695,14 @@ trait MessagesModelGenerators {
       Gen.oneOf(Number0, Number1)
     }
 
-  implicit lazy val arbitraryFunctionalErrorType04: Arbitrary[FunctionalErrorType04] =
+  implicit lazy val arbitraryFunctionalErrorType02: Arbitrary[FunctionalErrorType02] =
     Arbitrary {
       for {
         errorPointer           <- nonEmptyString
-        errorCode              <- Gen.oneOf(AesNctsP5FunctionalErrorCodes.values)
+        errorCode              <- nonEmptyString
         errorReason            <- nonEmptyString
         originalAttributeValue <- Gen.option(nonEmptyString)
-      } yield FunctionalErrorType04(
+      } yield FunctionalErrorType02(
         errorPointer = errorPointer,
         errorCode = errorCode,
         errorReason = errorReason,
@@ -1264,7 +710,22 @@ trait MessagesModelGenerators {
       )
     }
 
-  implicit lazy val arbitraryInvalidationType01: Arbitrary[InvalidationType01] =
+  implicit lazy val arbitraryFunctionalErrorType07: Arbitrary[FunctionalErrorType07] =
+    Arbitrary {
+      for {
+        errorPointer           <- nonEmptyString
+        errorCode              <- Gen.oneOf(AesNctsP5FunctionalErrorCodes.values)
+        errorReason            <- nonEmptyString
+        originalAttributeValue <- Gen.option(nonEmptyString)
+      } yield FunctionalErrorType07(
+        errorPointer = errorPointer,
+        errorCode = errorCode,
+        errorReason = errorReason,
+        originalAttributeValue = originalAttributeValue
+      )
+    }
+
+  implicit lazy val arbitraryInvalidationType02: Arbitrary[InvalidationType02] =
     Arbitrary {
       for {
         requestDateAndTime  <- Gen.option(arbitrary[XMLGregorianCalendar])
@@ -1272,7 +733,7 @@ trait MessagesModelGenerators {
         decision            <- Gen.option(arbitrary[Flag])
         initiatedByCustoms  <- arbitrary[Flag]
         justification       <- Gen.option(nonEmptyString)
-      } yield InvalidationType01(
+      } yield InvalidationType02(
         requestDateAndTime = requestDateAndTime,
         decisionDateAndTime = decisionDateAndTime,
         decision = decision,
@@ -1307,13 +768,13 @@ trait MessagesModelGenerators {
       )
     }
 
-  implicit lazy val arbitraryGuaranteeReferenceType08: Arbitrary[GuaranteeReferenceType08] =
+  implicit lazy val arbitraryGuaranteeReferenceType07: Arbitrary[GuaranteeReferenceType07] =
     Arbitrary {
       for {
         sequenceNumber         <- arbitrary[BigInt]
         grn                    <- nonEmptyString
         invalidGuaranteeReason <- arbitrary[Seq[InvalidGuaranteeReasonType01]]
-      } yield GuaranteeReferenceType08(
+      } yield GuaranteeReferenceType07(
         sequenceNumber = sequenceNumber,
         GRN = grn,
         InvalidGuaranteeReason = invalidGuaranteeReason
@@ -1353,7 +814,7 @@ trait MessagesModelGenerators {
       for {
         identificationNumber <- Gen.option(nonEmptyString)
         name                 <- Gen.option(nonEmptyString)
-        address              <- Gen.option(arbitrary[AddressType16])
+        address              <- Gen.option(arbitrary[AddressType20])
       } yield GuarantorType06(
         identificationNumber = identificationNumber,
         name = name,

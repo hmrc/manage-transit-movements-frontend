@@ -18,7 +18,7 @@ package controllers.departureP5
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
-import generated.{CC056CType, FunctionalErrorType04}
+import generated.{CC056CType, FunctionalErrorType02}
 import generators.Generators
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -81,7 +81,7 @@ class CancellationNotificationErrorsP5ControllerSpec extends SpecBase with AppWi
     }
 
     "must redirect to technical difficulties page when functionalErrors is between 1 to 10" in {
-      forAll(listWithMaxLength[FunctionalErrorType04]()) {
+      forAll(listWithMaxLength[FunctionalErrorType02]()) {
         functionalErrors =>
           forAll(arbitrary[CC056CType].map(_.copy(FunctionalError = functionalErrors))) {
             message =>
