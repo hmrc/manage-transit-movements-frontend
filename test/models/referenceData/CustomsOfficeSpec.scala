@@ -35,7 +35,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks with Gene
       )
 
       val json = Json.toJson(customsOffice)
-      json mustBe expectedJson
+      json mustEqual expectedJson
     }
 
     "deserialize from JSON" in {
@@ -48,11 +48,11 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks with Gene
 
       val expectedCustomsOffice = CustomsOffice("ID123", "Customs Office Name", Some("123456789"), Some("test@email.com"))
 
-      json.validate[CustomsOffice] mustBe JsSuccess(expectedCustomsOffice)
+      json.validate[CustomsOffice] mustEqual JsSuccess(expectedCustomsOffice)
     }
 
     "nameAndCode must return correct string" in {
-      CustomsOffice("GB00006", "BOSTON", None, None).toString `mustBe` "BOSTON (GB00006)"
+      CustomsOffice("GB00006", "BOSTON", None, None).toString mustEqual "BOSTON (GB00006)"
     }
 
     "must deserialise" - {
@@ -67,7 +67,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks with Gene
               |    }
               |""".stripMargin)
 
-          json.as[CustomsOffice] `mustBe` CustomsOffice("GB00006", "BOSTON", Some("01234567890"), Some("test@email.com"))
+          json.as[CustomsOffice] mustEqual CustomsOffice("GB00006", "BOSTON", Some("01234567890"), Some("test@email.com"))
         }
         "without a phone number" in {
           val json = Json.parse("""
@@ -78,7 +78,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks with Gene
               |    }
               |""".stripMargin)
 
-          json.as[CustomsOffice] `mustBe` CustomsOffice("GB00006", "BOSTON", None, Some("test@email.com"))
+          json.as[CustomsOffice] mustEqual CustomsOffice("GB00006", "BOSTON", None, Some("test@email.com"))
         }
         "without an email" in {
           val json = Json.parse("""
@@ -89,7 +89,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks with Gene
               |    }
               |""".stripMargin)
 
-          json.as[CustomsOffice] `mustBe` CustomsOffice("GB00006", "BOSTON", Some("01234567890"), None)
+          json.as[CustomsOffice] mustEqual CustomsOffice("GB00006", "BOSTON", Some("01234567890"), None)
         }
       }
     }
@@ -122,7 +122,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks with Gene
 
           val result = json.as[List[CustomsOffice]]
 
-          result `mustBe` List(
+          result mustEqual List(
             CustomsOffice("AD000001", "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA", None, None),
             CustomsOffice("AD000002", "DCNJ PORTA", None, None),
             CustomsOffice("IT261101", "PASSO NUOVO", None, None)
@@ -179,7 +179,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks with Gene
 
           val result = json.as[List[CustomsOffice]]
 
-          result `mustBe` List(
+          result mustEqual List(
             CustomsOffice("AD000001", "CUSTOMS OFFICE SANT JULIÀ DE LÒRIA", None, None),
             CustomsOffice("AD000002", "DCNJ PORTA", None, None),
             CustomsOffice("IT261101", "PASSO NUOVO", None, None)
@@ -197,7 +197,7 @@ class CustomsOfficeSpec extends SpecBase with ScalaCheckPropertyChecks with Gene
 
           val result = json.validate[List[CustomsOffice]]
 
-          result `mustBe` JsError("Expected customs offices to be in a JsArray")
+          result mustEqual JsError("Expected customs offices to be in a JsArray")
         }
       }
     }

@@ -68,7 +68,7 @@ class DeparturesDraftsP5ConnectorSpec extends ItSpecBase with WireMockServerHand
             .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
-        connector.lrnFuzzySearch(partialLRN, Limit(maxSearchResults)).futureValue.value `mustBe` expectedResult
+        connector.lrnFuzzySearch(partialLRN, Limit(maxSearchResults)).futureValue.value mustEqual expectedResult
       }
 
       "must return none for 4xx/5xx response" in {
@@ -83,7 +83,7 @@ class DeparturesDraftsP5ConnectorSpec extends ItSpecBase with WireMockServerHand
             )
 
             val expectedResult = None
-            connector.lrnFuzzySearch(partialLRN, Limit(maxSearchResults)).futureValue `mustBe` expectedResult
+            connector.lrnFuzzySearch(partialLRN, Limit(maxSearchResults)).futureValue mustEqual expectedResult
         }
       }
     }
@@ -101,7 +101,7 @@ class DeparturesDraftsP5ConnectorSpec extends ItSpecBase with WireMockServerHand
             )
         )
 
-        connector.deleteDraftDeparture(lrn).futureValue.status `mustBe` 200
+        connector.deleteDraftDeparture(lrn).futureValue.status mustEqual 200
       }
 
       "must return 500 on a failed deletion" in {
@@ -113,7 +113,7 @@ class DeparturesDraftsP5ConnectorSpec extends ItSpecBase with WireMockServerHand
             )
         )
 
-        connector.deleteDraftDeparture(lrn).futureValue.status `mustBe` 500
+        connector.deleteDraftDeparture(lrn).futureValue.status mustEqual 500
       }
     }
 
@@ -135,7 +135,7 @@ class DeparturesDraftsP5ConnectorSpec extends ItSpecBase with WireMockServerHand
             .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
-        connector.getDraftDeparturesAvailability().futureValue `mustBe` Availability.NonEmpty
+        connector.getDraftDeparturesAvailability().futureValue mustEqual Availability.NonEmpty
       }
 
       "must return Empty when given a not found response" in {
@@ -147,7 +147,7 @@ class DeparturesDraftsP5ConnectorSpec extends ItSpecBase with WireMockServerHand
             .willReturn(okJson(Json.prettyPrint(Json.toJson(expectedResult))))
         )
 
-        connector.getDraftDeparturesAvailability().futureValue `mustBe` Availability.Empty
+        connector.getDraftDeparturesAvailability().futureValue mustEqual Availability.Empty
       }
 
       "must return unavailable for 4xx/5xx response" in {
@@ -161,7 +161,7 @@ class DeparturesDraftsP5ConnectorSpec extends ItSpecBase with WireMockServerHand
                 )
             )
 
-            connector.getDraftDeparturesAvailability().futureValue `mustBe` Availability.Unavailable
+            connector.getDraftDeparturesAvailability().futureValue mustEqual Availability.Unavailable
         }
       }
     }
@@ -174,7 +174,7 @@ class DeparturesDraftsP5ConnectorSpec extends ItSpecBase with WireMockServerHand
 
         val result: LockCheck = connector.checkLock(lrn.value).futureValue
 
-        result `mustBe` LockCheck.Unlocked
+        result mustEqual LockCheck.Unlocked
       }
 
       "must return Locked when status is Locked (423)" in {
@@ -182,7 +182,7 @@ class DeparturesDraftsP5ConnectorSpec extends ItSpecBase with WireMockServerHand
 
         val result: LockCheck = connector.checkLock(lrn.value).futureValue
 
-        result `mustBe` LockCheck.Locked
+        result mustEqual LockCheck.Locked
       }
 
       "return LockCheckFailure for other 4xx/5xx responses" in {
@@ -193,7 +193,7 @@ class DeparturesDraftsP5ConnectorSpec extends ItSpecBase with WireMockServerHand
 
             val result: LockCheck = connector.checkLock(lrn.value).futureValue
 
-            result `mustBe` LockCheck.LockCheckFailure
+            result mustEqual LockCheck.LockCheckFailure
         }
       }
     }

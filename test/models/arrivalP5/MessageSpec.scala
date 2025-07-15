@@ -60,7 +60,7 @@ class MessageSpec extends SpecBase {
 
           val result: ArrivalMessage = json.validate[ArrivalMessage].asOpt.value
 
-          result `mustBe` expectedResult
+          result mustEqual expectedResult
       }
     }
   }

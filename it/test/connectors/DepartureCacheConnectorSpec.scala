@@ -54,7 +54,7 @@ class DepartureCacheConnectorSpec extends ItSpecBase with WireMockServerHandler 
 
         val result: Boolean = await(connector.isRejectionAmendable(lrn.toString, rejection))
 
-        result `mustBe` true
+        result mustEqual true
       }
 
       "must return false when response body contains false" in {
@@ -66,7 +66,7 @@ class DepartureCacheConnectorSpec extends ItSpecBase with WireMockServerHandler 
 
         val result: Boolean = await(connector.isRejectionAmendable(lrn.toString, rejection))
 
-        result `mustBe` false
+        result mustEqual false
       }
     }
 
@@ -86,7 +86,7 @@ class DepartureCacheConnectorSpec extends ItSpecBase with WireMockServerHandler 
 
         val result: HttpResponse = await(connector.handleErrors(lrn.toString, rejection))
 
-        result.status `mustBe` OK
+        result.status mustEqual OK
       }
     }
 
@@ -102,7 +102,7 @@ class DepartureCacheConnectorSpec extends ItSpecBase with WireMockServerHandler 
 
         val result: HttpResponse = await(connector.prepareForAmendment(lrn.toString, departureIdP5))
 
-        result.status `mustBe` OK
+        result.status mustEqual OK
       }
     }
 
@@ -171,7 +171,7 @@ class DepartureCacheConnectorSpec extends ItSpecBase with WireMockServerHandler 
           )
         )
 
-        result.mustBe(expectedResult)
+        result mustEqual expectedResult
       }
     }
   }

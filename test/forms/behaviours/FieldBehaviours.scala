@@ -30,20 +30,20 @@ trait FieldBehaviours extends FormSpec with ScalaCheckPropertyChecks with Genera
       forAll(validDataGenerator -> "validDataItem") {
         (dataItem: String) =>
           val result = form.bind(Map(fieldName -> dataItem)).apply(fieldName)
-          result.value.value `mustBe` dataItem
+          result.value.value mustEqual dataItem
       }
     }
 
   def allowsHyphensAndUnderscores(form: Form[?], fieldName: String): Unit =
     "must bind hyphens and underscores" in {
       val result = form.bind(Map(fieldName -> "-_")).apply(fieldName)
-      result.value.value `mustBe` "-_"
+      result.value.value mustEqual "-_"
     }
 
   def nonMandatoryField(form: Form[?], fieldName: String): Unit =
     "must bind blank data" in {
       val result = form.bind(Map(fieldName -> "")).apply(fieldName)
-      result.value.value `mustBe` ""
+      result.value.value mustEqual ""
     }
 
   def mandatoryField(form: Form[?], fieldName: String, requiredError: FormError): Unit = {
