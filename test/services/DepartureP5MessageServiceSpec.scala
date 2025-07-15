@@ -108,7 +108,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             )
           )
 
-          result `mustBe` expectedResult
+          result mustEqual expectedResult
         }
 
         "must return RejectedMovementAndMessage when rejection type is 014" in {
@@ -166,7 +166,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             )
           )
 
-          result `mustBe` expectedResult
+          result mustEqual expectedResult
         }
 
         "must return RejectedMovementAndMessage when rejection type is 013 or 015" in {
@@ -229,7 +229,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
             )
           )
 
-          result `mustBe` expectedResult
+          result mustEqual expectedResult
         }
 
       }
@@ -284,7 +284,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           )
         )
 
-        result `mustBe` expectedResult
+        result mustEqual expectedResult
       }
 
       "must return IncidentMovementAndMessage when IncidentDuringTransit" in {
@@ -335,7 +335,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
           )
         )
 
-        result `mustBe` expectedResult
+        result mustEqual expectedResult
       }
 
       "must return OtherMovementAndMessage for any other message" in {
@@ -397,7 +397,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
                 )
               )
 
-              result `mustBe` expectedResult
+              result mustEqual expectedResult
           }
       }
     }
@@ -413,7 +413,7 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
 
         val result = departureP5MessageService.getDepartureReferenceNumbers(departureId).futureValue
 
-        result `mustBe` expectedReferenceNumbers
+        result mustEqual expectedReferenceNumbers
 
         verify(mockMovementConnector).getDepartureReferenceNumbers(departureId)
       }

@@ -94,48 +94,48 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
 
           val sections = modifiedViewModel.sections
 
-          sections.length `mustBe` 2
+          sections.length mustEqual 2
       }
     }
 
     "when multiple incident" - {
       "title" - {
         "must return correct message" in {
-          viewModel().title `mustBe` "Incidents during transit"
+          viewModel().title mustEqual "Incidents during transit"
         }
       }
 
       "heading" - {
         "must return correct message" in {
-          viewModel().title `mustBe` "Incidents during transit"
+          viewModel().title mustEqual "Incidents during transit"
         }
       }
 
       "paragraph1" - {
         "must return correct message" in {
-          viewModel().paragraph1 mustBe
+          viewModel().paragraph1 mustEqual
             "Multiple incidents have been reported by the customs office of incident."
         }
       }
 
       "inset" - {
         "must return correct message" in {
-          viewModel().inset mustBe
+          viewModel().inset mustEqual
             "This information is just for your reference - you do not need to take any further action."
         }
       }
 
       "paragraph2" - {
         "must return correct message" in {
-          viewModel().paragraph2 mustBe
+          viewModel().paragraph2 mustEqual
             "If you have any questions, you can contact the carrier for more information."
         }
       }
 
       "paragraph3" - {
         "must return correct message" in {
-          viewModel().paragraph3HyperLink `mustBe` "Check your departure declarations"
-          viewModel().paragraph3End `mustBe` "for further updates."
+          viewModel().paragraph3HyperLink mustEqual "Check your departure declarations"
+          viewModel().paragraph3End mustEqual "for further updates."
         }
       }
     }
@@ -143,47 +143,47 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
     "when 1 incident" - {
       "title" - {
         "must return correct message" in {
-          viewModel(isMultipleIncidents = false).title `mustBe` "Incident during transit"
+          viewModel(isMultipleIncidents = false).title mustEqual "Incident during transit"
         }
       }
 
       "heading" - {
         "must return correct message" in {
-          viewModel(isMultipleIncidents = false).title `mustBe` "Incident during transit"
+          viewModel(isMultipleIncidents = false).title mustEqual "Incident during transit"
         }
       }
 
       "paragraph1" - {
         "must return correct message" in {
-          viewModel(isMultipleIncidents = false).paragraph1 mustBe
+          viewModel(isMultipleIncidents = false).paragraph1 mustEqual
             "An incident has been reported by the customs office of incident."
         }
       }
 
       "inset" - {
         "must return correct message" in {
-          viewModel(isMultipleIncidents = false).inset mustBe
+          viewModel(isMultipleIncidents = false).inset mustEqual
             "This information is just for your reference - you do not need to take any further action."
         }
       }
 
       "paragraph2" - {
         "must return correct message" in {
-          viewModel(isMultipleIncidents = false).paragraph2 mustBe
+          viewModel(isMultipleIncidents = false).paragraph2 mustEqual
             "If you have any questions, you can contact the carrier for more information."
         }
       }
 
       "paragraph3" - {
         "must return correct message" in {
-          viewModel(isMultipleIncidents = false).paragraph3HyperLink `mustBe` "Check your departure declarations"
-          viewModel(isMultipleIncidents = false).paragraph3End `mustBe` "for further updates."
+          viewModel(isMultipleIncidents = false).paragraph3HyperLink mustEqual "Check your departure declarations"
+          viewModel(isMultipleIncidents = false).paragraph3End mustEqual "for further updates."
         }
       }
     }
 
     "must have correct message for what happens next section" in {
-      viewModel().whatHappensNextHeader `mustBe` "What happens next"
+      viewModel().whatHappensNextHeader mustEqual "What happens next"
     }
 
     "customsOfficeContent" - {
@@ -194,7 +194,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
           val telephoneNo       = Some("123")
           val result            = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo, None)).customsOfficeContent
 
-          result `mustBe` s"For further help, contact the carrier or Customs at $customsOfficeName on ${telephoneNo.get}."
+          result mustEqual s"For further help, contact the carrier or Customs at $customsOfficeName on ${telephoneNo.get}."
         }
       }
 
@@ -203,7 +203,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
           val customsOfficeName = "custName"
           val result            = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, None, None)).customsOfficeContent
 
-          result `mustBe` s"For further help, contact Customs at $customsOfficeName."
+          result mustEqual s"For further help, contact Customs at $customsOfficeName."
         }
       }
 
@@ -213,7 +213,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
           val telephoneNo       = Some("123")
           val result            = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo, None)).customsOfficeContent
 
-          result `mustBe` s"For further help, contact Customs office $customsReferenceId on ${telephoneNo.get}."
+          result mustEqual s"For further help, contact Customs office $customsReferenceId on ${telephoneNo.get}."
         }
       }
 
@@ -222,7 +222,7 @@ class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckProp
           val customsOfficeName = ""
           val result            = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, None, None)).customsOfficeContent
 
-          result `mustBe` s"For further help, contact Customs office $customsReferenceId."
+          result mustEqual s"For further help, contact Customs office $customsReferenceId."
         }
       }
     }

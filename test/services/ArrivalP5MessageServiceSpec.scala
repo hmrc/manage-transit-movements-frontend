@@ -96,7 +96,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
           )
         )
 
-        result `mustBe` expectedResult
+        result mustEqual expectedResult
       }
 
       "must return RejectedMovementAndMessage when RejectedByOfficeOfDestination" in {
@@ -153,7 +153,7 @@ class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
           )
         )
 
-        result `mustBe` expectedResult
+        result mustEqual expectedResult
       }
     }
   }

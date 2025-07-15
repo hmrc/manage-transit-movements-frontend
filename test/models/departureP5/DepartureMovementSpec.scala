@@ -56,7 +56,7 @@ class DepartureMovementSpec extends SpecBase {
 
       val result: DepartureMovement = json.validate[DepartureMovement].asOpt.value
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
   }
 

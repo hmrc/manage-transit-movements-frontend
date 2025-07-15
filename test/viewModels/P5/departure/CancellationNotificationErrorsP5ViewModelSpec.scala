@@ -36,19 +36,19 @@ class CancellationNotificationErrorsP5ViewModelSpec extends SpecBase with ScalaC
 
     "title" - {
       "must return correct message" in {
-        viewModel().title `mustBe` "Cancellation errors"
+        viewModel().title mustEqual "Cancellation errors"
       }
     }
 
     "heading" - {
       "must return correct message" in {
-        viewModel().title `mustBe` "Cancellation errors"
+        viewModel().title mustEqual "Cancellation errors"
       }
     }
 
     "paragraph1" - {
       "must return correct message when no error" in {
-        viewModel().paragraph1 `mustBe` s"There are one or more errors with the cancellation of this declaration."
+        viewModel().paragraph1 mustEqual s"There are one or more errors with the cancellation of this declaration."
       }
     }
 
@@ -60,7 +60,7 @@ class CancellationNotificationErrorsP5ViewModelSpec extends SpecBase with ScalaC
           val telephoneNo       = Some("123")
           val result            = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo, None)).customsOfficeContent
 
-          result `mustBe` s"Try cancelling the declaration again. Or for more information, contact Customs at $customsOfficeName on ${telephoneNo.get}."
+          result mustEqual s"Try cancelling the declaration again. Or for more information, contact Customs at $customsOfficeName on ${telephoneNo.get}."
         }
       }
 
@@ -69,7 +69,7 @@ class CancellationNotificationErrorsP5ViewModelSpec extends SpecBase with ScalaC
           val customsOfficeName = "custName"
           val result            = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, None, None)).customsOfficeContent
 
-          result `mustBe` s"Try cancelling the declaration again. Or for more information, contact Customs at $customsOfficeName."
+          result mustEqual s"Try cancelling the declaration again. Or for more information, contact Customs at $customsOfficeName."
         }
       }
 
@@ -79,7 +79,7 @@ class CancellationNotificationErrorsP5ViewModelSpec extends SpecBase with ScalaC
           val telephoneNo       = Some("123")
           val result            = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, telephoneNo, None)).customsOfficeContent
 
-          result `mustBe` s"Try cancelling the declaration again. Or for more information, contact Customs office $customsReferenceId on ${telephoneNo.get}."
+          result mustEqual s"Try cancelling the declaration again. Or for more information, contact Customs office $customsReferenceId on ${telephoneNo.get}."
         }
       }
 
@@ -88,14 +88,14 @@ class CancellationNotificationErrorsP5ViewModelSpec extends SpecBase with ScalaC
           val customsOfficeName = ""
           val result            = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, None, None)).customsOfficeContent
 
-          result `mustBe` s"Try cancelling the declaration again. Or for more information, contact Customs office $customsReferenceId."
+          result mustEqual s"Try cancelling the declaration again. Or for more information, contact Customs office $customsReferenceId."
         }
       }
     }
 
     "hyperlink" - {
       "must return correct message" in {
-        viewModel().hyperlink `mustBe` "View departure declarations"
+        viewModel().hyperlink mustEqual "View departure declarations"
       }
     }
   }

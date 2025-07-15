@@ -114,7 +114,7 @@ class DepartureMovementMessagesSpec extends SpecBase {
 
       val result = json.validate[DepartureMovementMessages].asOpt.value
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "must deserialize and sort by date and time" in {
@@ -186,7 +186,7 @@ class DepartureMovementMessagesSpec extends SpecBase {
 
       val result = json.validate[DepartureMovementMessages].asOpt.value
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "must not deserialize when empty list" in {
@@ -202,7 +202,7 @@ class DepartureMovementMessagesSpec extends SpecBase {
 
       val result = json.validate[DepartureMovementMessages].leftSide
 
-      result.isError `mustBe` true
+      result.isError mustEqual true
     }
 
     "must not deserialize when no IE015 is found" in {
@@ -241,7 +241,7 @@ class DepartureMovementMessagesSpec extends SpecBase {
 
       val result = json.validate[DepartureMovementMessages].leftSide
 
-      result.isError `mustBe` true
+      result.isError mustEqual true
     }
   }
 

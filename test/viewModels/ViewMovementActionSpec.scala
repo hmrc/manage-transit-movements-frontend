@@ -27,7 +27,7 @@ class ViewMovementActionSpec extends SpecBase with ScalaCheckPropertyChecks {
       forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
         (href, ref) =>
           val action = ViewMovementAction(href, "random message key")
-          action.id(ref) `mustBe` s"random-message-key-$ref"
+          action.id(ref) mustEqual s"random-message-key-$ref"
       }
     }
   }

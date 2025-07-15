@@ -63,18 +63,18 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
     val result            = viewModelProvider.apply(message, customsOffice)
 
     "must return correct section length" in {
-      result.sections.length `mustBe` 1
+      result.sections.length mustEqual 1
     }
 
     "must return correct title and heading" in {
-      result.title `mustBe` messages("departure.ie060.message.prelodged.title")
-      result.heading `mustBe` messages("departure.ie060.message.prelodged.heading")
+      result.title mustEqual messages("departure.ie060.message.prelodged.title")
+      result.heading mustEqual messages("departure.ie060.message.prelodged.heading")
     }
 
     "must return correct paragraphs" in {
-      result.paragraph1 `mustBe` messages("departure.ie060.message.prelodged.paragraph1")
-      result.paragraph2 `mustBe` messages("departure.ie060.message.prelodged.paragraph2")
-      result.paragraph3 `mustBe` messages("departure.ie060.message.prelodged.paragraph3")
+      result.paragraph1 mustEqual messages("departure.ie060.message.prelodged.paragraph1")
+      result.paragraph2 mustEqual messages("departure.ie060.message.prelodged.paragraph2")
+      result.paragraph3 mustEqual messages("departure.ie060.message.prelodged.paragraph3")
     }
 
     "customsOfficeContent" - {
@@ -107,7 +107,7 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
 
           val result = viewModel(customsOffice).customsOfficeContent
 
-          result `mustBe` s"You must share the requested documentation with the customs office of departure. Contact Customs at Dover (CD123) on 00443243543 or test123@gmail.com."
+          result mustEqual s"You must share the requested documentation with the customs office of departure. Contact Customs at Dover (CD123) on 00443243543 or test123@gmail.com."
         }
       }
 
@@ -122,7 +122,7 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
           when(mockReferenceDataService.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(customsOffice))
           val result = viewModel(customsOffice).customsOfficeContent
 
-          result `mustBe` s"You must share the requested documentation with the customs office of departure. Contact Customs at Dover (CD123) on test123@gmail.com."
+          result mustEqual s"You must share the requested documentation with the customs office of departure. Contact Customs at Dover (CD123) on test123@gmail.com."
         }
       }
 
@@ -138,7 +138,7 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
 
           val result = viewModel(customsOffice).customsOfficeContent
 
-          result `mustBe` s"You must share the requested documentation with the customs office of departure. Contact Customs at Dover (CD123) on 00443243543."
+          result mustEqual s"You must share the requested documentation with the customs office of departure. Contact Customs at Dover (CD123) on 00443243543."
         }
       }
 
@@ -153,7 +153,7 @@ class IntentionToControlP5ViewModelSpec extends SpecBase with AppWithDefaultMock
 
           val result = viewModel(customsOffice = CustomsOffice(customsReferenceId, customsOfficeName, None, None)).customsOfficeContent
 
-          result `mustBe` s"You must share the requested documentation with the customs office of departure. Contact Customs at Dover (CD123)."
+          result mustEqual s"You must share the requested documentation with the customs office of departure. Contact Customs at Dover (CD123)."
         }
       }
     }
