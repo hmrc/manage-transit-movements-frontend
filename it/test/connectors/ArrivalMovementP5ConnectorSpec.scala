@@ -114,7 +114,7 @@ class ArrivalMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHandl
           totalCount = 2
         )
 
-        connector.getAllMovements().futureValue `mustBe` Some(expectedResult)
+        connector.getAllMovements().futureValue.value mustEqual expectedResult
       }
 
       "must return empty ArrivalMovements when 404 is returned" in {
@@ -124,7 +124,7 @@ class ArrivalMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHandl
             .willReturn(aResponse().withStatus(404))
         )
 
-        connector.getAllMovements().futureValue `mustBe` Some(ArrivalMovements(Seq.empty, 0))
+        connector.getAllMovements().futureValue.value mustEqual ArrivalMovements(Seq.empty, 0)
       }
 
       "must return None when an error is returned" in {
@@ -135,7 +135,7 @@ class ArrivalMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHandl
                 .willReturn(aResponse().withStatus(error))
             )
 
-            connector.getAllMovements().futureValue `mustBe` None
+            connector.getAllMovements().futureValue must not be defined
         }
       }
     }
@@ -190,7 +190,7 @@ class ArrivalMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHandl
             totalCount = 1
           )
 
-          connector.getAllMovementsForSearchQuery(1, 20, Some(searchParam)).futureValue `mustBe` Some(expectedResult)
+          connector.getAllMovementsForSearchQuery(1, 20, Some(searchParam)).futureValue.value mustEqual expectedResult
         }
       }
 
@@ -212,7 +212,7 @@ class ArrivalMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHandl
             totalCount = 1
           )
 
-          connector.getAllMovementsForSearchQuery(1, 20, None).futureValue `mustBe` Some(expectedResult)
+          connector.getAllMovementsForSearchQuery(1, 20, None).futureValue.value mustEqual expectedResult
         }
       }
     }
@@ -270,7 +270,7 @@ class ArrivalMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHandl
               .willReturn(okJson(responseJson.toString()))
           )
 
-          connector.getAvailability().futureValue `mustBe` Availability.NonEmpty
+          connector.getAvailability().futureValue mustEqual Availability.NonEmpty
         }
       }
 
@@ -293,7 +293,7 @@ class ArrivalMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHandl
               .willReturn(okJson(responseJson.toString()))
           )
 
-          connector.getAvailability().futureValue `mustBe` Availability.Empty
+          connector.getAvailability().futureValue mustEqual Availability.Empty
         }
       }
 
@@ -306,7 +306,7 @@ class ArrivalMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHandl
                   .willReturn(aResponse().withStatus(error))
               )
 
-              connector.getAvailability().futureValue `mustBe` Availability.Unavailable
+              connector.getAvailability().futureValue mustEqual Availability.Unavailable
           }
         }
       }
@@ -353,7 +353,7 @@ class ArrivalMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHandl
               .willReturn(okJson(responseJson.toString()))
           )
 
-          connector.getLatestMessageForMovement(arrivalIdP5).futureValue mustBe
+          connector.getLatestMessageForMovement(arrivalIdP5).futureValue mustEqual
             LatestArrivalMessage(
               latestMessage = ArrivalMessage(
                 messageId = messageId,

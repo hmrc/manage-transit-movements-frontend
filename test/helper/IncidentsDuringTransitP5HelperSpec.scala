@@ -62,8 +62,8 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
               val result = helper.mrnRow.value
 
-              result.key.value `mustBe` "Movement Reference Number (MRN)"
-              result.value.value `mustBe` value
+              result.key.value mustEqual "Movement Reference Number (MRN)"
+              result.value.value mustEqual value
               result.actions must not be defined
           }
         }
@@ -78,8 +78,8 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
 
             val result = helper.dateTimeIncidentReportedRow.value
 
-            result.key.value `mustBe` "Date and time incident reported"
-            result.value.value `mustBe` "14 July 2024 20:59"
+            result.key.value mustEqual "Date and time incident reported"
+            result.value.value mustEqual "14 July 2024 20:59"
             result.actions must not be defined
           }
 
@@ -91,8 +91,8 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
 
             val result = helper.dateTimeIncidentReportedRow.value
 
-            result.key.value `mustBe` "Date and time incidents reported"
-            result.value.value `mustBe` "8 July 2024 20:59"
+            result.key.value mustEqual "Date and time incidents reported"
+            result.value.value mustEqual "8 July 2024 20:59"
             result.actions must not be defined
           }
         }
@@ -113,8 +113,8 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
               val result = helper.customsOfficeOfIncidentRow.futureValue.value
 
-              result.key.value `mustBe` "Customs office of incident"
-              result.value.value `mustBe` "Belfast (XI000142)"
+              result.key.value mustEqual "Customs office of incident"
+              result.value.value mustEqual "Belfast (XI000142)"
               result.actions must not be defined
           }
         }
@@ -154,8 +154,8 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
               val result = helper.officeOfDepartureRow.futureValue.value
 
-              result.key.value `mustBe` "Office of departure"
-              result.value.value `mustBe` "Belfast (XI000142)"
+              result.key.value mustEqual "Office of departure"
+              result.value.value mustEqual "Belfast (XI000142)"
               result.actions must not be defined
           }
         }
@@ -195,8 +195,8 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
           val helper = new IncidentsDuringTransitP5Helper(CC182CType, isMultipleIncidents = true, mockReferenceDataService)
           val result = helper.incidentInformationSection.futureValue
 
-          result `mustBe` a[StaticSection]
-          result.rows.size `mustBe` 4
+          result mustBe a[StaticSection]
+          result.rows.size mustEqual 4
         }
       }
 
@@ -223,10 +223,10 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
               val result = helper.incidentSection(departureIdP5, incidentIndex, messageId).futureValue
 
-              result `mustBe` a[AccordionSection]
-              result.sectionTitle `mustBe` Some("Incident 1")
-              result.isOpen `mustBe` true
-              result.rows.size `mustBe` 2
+              result mustBe a[AccordionSection]
+              result.sectionTitle mustEqual Some("Incident 1")
+              result.isOpen mustEqual true
+              result.rows.size mustEqual 2
           }
         }
       }
@@ -254,24 +254,24 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropert
               val helper = new IncidentsDuringTransitP5Helper(modifiedCC182CType, isMultipleIncidents = true, mockReferenceDataService)
               val result = helper.incidentsSection(departureIdP5, messageId).futureValue
 
-              result `mustBe` a[AccordionSection]
-              result.sectionTitle `mustBe` Some("Incidents")
-              result.children.size `mustBe` 2
+              result mustBe a[AccordionSection]
+              result.sectionTitle mustEqual Some("Incidents")
+              result.children.size mustEqual 2
 
-              result.children.head `mustBe` a[AccordionSection]
-              result.children.head.isOpen `mustBe` true
+              result.children.head mustBe a[AccordionSection]
+              result.children.head.isOpen mustEqual true
 
-              result.children(1) `mustBe` a[AccordionSection]
-              result.children(1).isOpen `mustBe` false
+              result.children(1) mustBe a[AccordionSection]
+              result.children(1).isOpen mustEqual false
 
-              result.children.head.viewLinks.head `mustBe` Link(
+              result.children.head.viewLinks.head mustEqual Link(
                 id = s"more-details-incident-${1}",
                 text = "More details",
                 href = controllers.departureP5.routes.IncidentP5Controller.onPageLoad(departureIdP5, Index(0), messageId).url,
                 visuallyHidden = Some("more details on incident 1")
               )
 
-              result.children(1).viewLinks.head `mustBe` Link(
+              result.children(1).viewLinks.head mustEqual Link(
                 id = s"more-details-incident-${2}",
                 text = "More details",
                 href = controllers.departureP5.routes.IncidentP5Controller.onPageLoad(departureIdP5, Index(1), messageId).url,

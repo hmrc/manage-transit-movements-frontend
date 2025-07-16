@@ -48,14 +48,14 @@ trait SearchViewBehaviours extends InputTextViewBehaviours[Option[String]] with 
         "when there are no results" in {
           val doc = parseView(viewWithSpecificSearchResults(0, 1, 20, Some(searchParam)))
           val p   = doc.getElementById("results-count")
-          p.text() `mustBe` expectedNumberOfResultsFound
+          p.text() mustEqual expectedNumberOfResultsFound
         }
 
         "when there is a single result" in {
           val doc = parseView(viewWithSpecificSearchResults(1, 1, 20, Some(searchParam)))
           val p   = doc.getElementById("results-count")
-          p.text() `mustBe` s"Showing 1 result matching $searchParam"
-          boldWords(p) `mustBe` Seq("1")
+          p.text() mustEqual s"Showing 1 result matching $searchParam"
+          boldWords(p) mustEqual Seq("1")
         }
 
         "when there are multiple results" in {
@@ -63,8 +63,8 @@ trait SearchViewBehaviours extends InputTextViewBehaviours[Option[String]] with 
             retrieved =>
               val doc = parseView(viewWithSpecificSearchResults(retrieved, 1, numberOfItemsPerPage, Some(searchParam)))
               val p   = doc.getElementById("results-count")
-              p.text() `mustBe` s"Showing $retrieved results matching $searchParam"
-              boldWords(p) `mustBe` Seq(retrieved.toString)
+              p.text() mustEqual s"Showing $retrieved results matching $searchParam"
+              boldWords(p) mustEqual Seq(retrieved.toString)
           }
         }
       }

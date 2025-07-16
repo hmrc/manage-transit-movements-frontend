@@ -65,35 +65,35 @@ class DepartureNotCancelledP5ViewModelSpec extends SpecBase with ScalaCheckPrope
     val viewModel: DepartureNotCancelledP5ViewModel = viewModelProvider.apply(message, departureIdP5, lrn).futureValue
 
     "must return correct section" in {
-      viewModel.sections.size `mustBe` 1
-      viewModel.sections.head.sectionTitle `mustBe` None
+      viewModel.sections.size mustEqual 1
+      viewModel.sections.head.sectionTitle must not be defined
     }
 
     "title" - {
       "must return correct message" in {
-        viewModel.title `mustBe` "Declaration not cancelled"
+        viewModel.title mustEqual "Declaration not cancelled"
       }
     }
 
     "heading" - {
       "must return correct message" in {
-        viewModel.title `mustBe` "Declaration not cancelled"
+        viewModel.title mustEqual "Declaration not cancelled"
       }
     }
 
     "paragraph" in {
-      viewModel.paragraph `mustBe` s"The office of departure could not cancel the declaration for LRN $lrn as requested."
+      viewModel.paragraph mustEqual s"The office of departure could not cancel the declaration for LRN $lrn as requested."
     }
 
     "hyperlink" - {
       "must return correct message" in {
-        viewModel.hyperlink `mustBe` "Make another departure declaration"
+        viewModel.hyperlink mustEqual "Make another departure declaration"
       }
     }
 
     "tryAgainUrl" - {
       "must return correct url" in {
-        viewModel.tryAgainUrl `mustBe` s"http://localhost:10122/manage-transit-movements/cancellation/$departureIdP5/index/$lrn"
+        viewModel.tryAgainUrl mustEqual s"http://localhost:10122/manage-transit-movements/cancellation/$departureIdP5/index/$lrn"
       }
     }
   }

@@ -41,19 +41,19 @@ class GoodsNotReleasedP5ViewModelSpec extends SpecBase with ScalaCheckPropertyCh
       viewModelProvider.apply(message, lrn)
 
     "must return correct section" in {
-      viewModel.sections.head.sectionTitle `mustBe` None
-      viewModel.sections.head.rows.size `mustBe` 4
+      viewModel.sections.head.sectionTitle must not be defined
+      viewModel.sections.head.rows.size mustEqual 4
     }
 
     "title and heading" - {
       "must return correct message" in {
-        viewModel.title mustBe "Goods not released"
-        viewModel.heading mustBe "Goods not released"
+        viewModel.title mustEqual "Goods not released"
+        viewModel.heading mustEqual "Goods not released"
       }
     }
 
     "paragraph" in {
-      viewModel.paragraph mustBe
+      viewModel.paragraph mustEqual
         "Customs have reviewed this declaration and decided not to release the goods for transit. This means the movement has now ended."
     }
   }

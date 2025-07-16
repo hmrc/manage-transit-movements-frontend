@@ -54,22 +54,22 @@ class ArrivalNotificationWithoutFunctionalErrorP5ViewModelSpec extends SpecBase 
       val result            = viewModelProvider.apply(mrnString)
 
       "must return correct title" in {
-        result.title `mustBe` "Notification errors"
+        result.title mustEqual "Notification errors"
       }
       "must return correct heading" in {
-        result.heading `mustBe` "Notification errors"
+        result.heading mustEqual "Notification errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1 `mustBe` "There are one or more errors in this notification that cannot be amended. Make a new notification with the right information."
+        result.paragraph1 mustEqual "There are one or more errors in this notification that cannot be amended. Make a new notification with the right information."
       }
       "must return correct paragraph 2" in {
-        result.paragraph2 `mustBe` "We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated."
+        result.paragraph2 mustEqual "We will keep your previous answers for 30 days - so if you use the same MRN within this time, your answers will be pre-populated."
       }
       "must return correct link 1 text" in {
-        result.link1 `mustBe` "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)"
+        result.link1 mustEqual "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)"
       }
       "must return correct link 2 text" in {
-        result.link2 `mustBe` "Make another arrival notification"
+        result.link2 mustEqual "Make another arrival notification"
       }
     }
   }

@@ -30,7 +30,7 @@ class ArrivalIdSpec extends SpecBase {
       val value        = "456"
 
       val bindResult = pathBindable.bind(key, value)
-      bindResult mustBe Right(ArrivalId(456))
+      bindResult.value mustEqual ArrivalId(456)
     }
 
     "unbind a path parameter correctly" in {
@@ -39,7 +39,8 @@ class ArrivalIdSpec extends SpecBase {
       val arrivalId    = ArrivalId(789)
 
       val unbindResult = pathBindable.unbind(key, arrivalId)
-      unbindResult mustBe "789"
+      unbindResult mustEqual
+        "789"
     }
 
   }

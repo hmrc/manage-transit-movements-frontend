@@ -30,10 +30,10 @@ class RequestedDocumentTypeSpec extends SpecBase with ScalaCheckPropertyChecks w
 
     "toString must return correct string when" - {
       "description is empty" in {
-        RequestedDocumentType("C620", "").toString `mustBe` "C620"
+        RequestedDocumentType("C620", "").toString mustEqual "C620"
       }
       "description is not empty" in {
-        RequestedDocumentType("C620", "T2LF document").toString `mustBe` "C620 - T2LF document"
+        RequestedDocumentType("C620", "T2LF document").toString mustEqual "C620 - T2LF document"
       }
     }
 
@@ -52,7 +52,7 @@ class RequestedDocumentTypeSpec extends SpecBase with ScalaCheckPropertyChecks w
 
               implicit val reads: Reads[RequestedDocumentType] = RequestedDocumentType.reads(config)
 
-              json.as[RequestedDocumentType] `mustBe` RequestedDocumentType("C620", "T2LF document")
+              json.as[RequestedDocumentType] mustEqual RequestedDocumentType("C620", "T2LF document")
           }
 
         }
@@ -69,7 +69,7 @@ class RequestedDocumentTypeSpec extends SpecBase with ScalaCheckPropertyChecks w
 
               implicit val reads: Reads[RequestedDocumentType] = RequestedDocumentType.reads(config)
 
-              json.as[RequestedDocumentType] `mustBe` RequestedDocumentType("C620", "T2LF document")
+              json.as[RequestedDocumentType] mustEqual RequestedDocumentType("C620", "T2LF document")
           }
 
         }
@@ -95,7 +95,7 @@ class RequestedDocumentTypeSpec extends SpecBase with ScalaCheckPropertyChecks w
         .toSortedSet
         .toList
 
-      result.mustBe(orderedDocs)
+      result.mustEqual(orderedDocs)
     }
   }
 

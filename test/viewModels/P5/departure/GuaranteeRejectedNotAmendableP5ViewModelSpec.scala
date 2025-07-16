@@ -72,16 +72,16 @@ class GuaranteeRejectedNotAmendableP5ViewModelSpec extends SpecBase with ScalaCh
       }
 
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe
+        result.paragraph1 mustEqual
           "There is a problem with the guarantee in this declaration. Review the error and make a new declaration with the right information."
       }
 
       "must return correct paragraph 2" in {
-        result.paragraph2 `mustBe` "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)."
+        result.paragraph2 mustEqual "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)."
       }
 
       "must return link content" in {
-        result.link `mustBe` "Make another departure declaration"
+        result.link mustEqual "Make another departure declaration"
       }
     }
 
@@ -134,16 +134,16 @@ class GuaranteeRejectedNotAmendableP5ViewModelSpec extends SpecBase with ScalaCh
       }
 
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe
+        result.paragraph1 mustEqual
           "There is a problem with the guarantee in this declaration. Review the errors and make a new declaration with the right information."
       }
 
       "must return correct paragraph 2" in {
-        result.paragraph2 `mustBe` "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)."
+        result.paragraph2 mustEqual "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)."
       }
 
       "must return link content" in {
-        result.link `mustBe` "Make another departure declaration"
+        result.link mustEqual "Make another departure declaration"
       }
     }
 
@@ -231,16 +231,16 @@ class GuaranteeRejectedNotAmendableP5ViewModelSpec extends SpecBase with ScalaCh
       }
 
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe
+        result.paragraph1 mustEqual
           "There is a problem with the guarantees in this declaration. Review the errors and make a new declaration with the right information."
       }
 
       "must return correct paragraph 2" in {
-        result.paragraph2 `mustBe` "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)."
+        result.paragraph2 mustEqual "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)."
       }
 
       "must return link content" in {
-        result.link `mustBe` "Make another departure declaration"
+        result.link mustEqual "Make another departure declaration"
       }
     }
   }

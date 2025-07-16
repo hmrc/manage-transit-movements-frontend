@@ -58,8 +58,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
             val helper = new GoodsUnderControlP5MessageHelper(message, mockReferenceDataService)
 
             val result = helper.buildLRNRow
-
-            result `mustBe` None
+            result must not be defined
         }
       }
 
@@ -75,8 +74,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
                 val result = helper.buildLRNRow
 
-                result mustBe
-                  Some(SummaryListRow(key = Key("Local Reference Number (LRN)".toText), value = Value(lrn.toText)))
+                result.value mustEqual SummaryListRow(key = Key("Local Reference Number (LRN)".toText), value = Value(lrn.toText))
             }
         }
       }
@@ -93,7 +91,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
             val result = helper.buildMRNRow
 
-            result `mustBe` None
+            result must not be defined
         }
       }
 
@@ -109,8 +107,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
                 val result = helper.buildMRNRow
 
-                result mustBe
-                  Some(SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value(mrn.toText)))
+                result.value mustEqual SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value(mrn.toText))
             }
         }
       }
@@ -130,8 +127,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
             val result = helper.buildDateTimeControlRow
 
-            result mustBe
-              Some(SummaryListRow(key = Key("Date and time of control".toText), value = Value("09 June 2014 at 4:15pm".toText)))
+            result.value mustEqual SummaryListRow(key = Key("Date and time of control".toText), value = Value("09 June 2014 at 4:15pm".toText))
         }
       }
     }
@@ -154,8 +150,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
                   val result = helper.buildOfficeOfDepartureRow.futureValue
 
-                  result mustBe
-                    Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("Office (22323323)".toText)))
+                  result.value mustEqual SummaryListRow(key = Key("Office of departure".toText), value = Value("Office (22323323)".toText))
               }
           }
         }
@@ -191,7 +186,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
             val result = helper.controlInformationSection().futureValue
 
-            result `mustBe` Seq.empty
+            result mustEqual Seq.empty
         }
       }
 
@@ -226,7 +221,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
             val seqSummaryRow = Seq(StaticSection(Some("Control information 1"), firstRow), StaticSection(Some("Control information 2"), secondRow))
 
-            result `mustBe` seqSummaryRow
+            result mustEqual seqSummaryRow
         }
       }
 
@@ -261,7 +256,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
             val seqSummaryRow = Seq(StaticSection(Some("Control information 1"), firstRow), StaticSection(Some("Control information 2"), secondRow))
 
-            result `mustBe` seqSummaryRow
+            result mustEqual seqSummaryRow
         }
       }
     }
@@ -277,7 +272,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
             val result = helper.documentSection().futureValue
 
-            result `mustBe` Seq.empty
+            result mustEqual Seq.empty
         }
       }
 
@@ -313,7 +308,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
             val seqSummaryRow = Seq(StaticSection(Some("Requested document 1"), firstRow), StaticSection(Some("Requested document 2"), secondRow))
 
-            result `mustBe` seqSummaryRow
+            result mustEqual seqSummaryRow
         }
       }
 
@@ -349,7 +344,7 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
             val seqSummaryRow = Seq(StaticSection(Some("Requested document 1"), firstRow), StaticSection(Some("Requested document 2"), secondRow))
 
-            result `mustBe` seqSummaryRow
+            result mustEqual seqSummaryRow
         }
       }
 
@@ -379,10 +374,10 @@ class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPrope
 
             result.sectionTitle must not be defined
 
-            result.rows.head `mustBe` SummaryListRow(key = Key("Local Reference Number (LRN)".toText), value = Value("LRN1".toText))
-            result.rows(1) `mustBe` SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value("MRN1".toText))
-            result.rows(2) `mustBe` SummaryListRow(key = Key("Date and time of control".toText), value = Value("09 June 2014 at 4:15pm".toText))
-            result.rows(3) `mustBe` SummaryListRow(key = Key("Office of departure".toText), value = Value("Customs Office (1234)".toText))
+            result.rows.head mustEqual SummaryListRow(key = Key("Local Reference Number (LRN)".toText), value = Value("LRN1".toText))
+            result.rows(1) mustEqual SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value("MRN1".toText))
+            result.rows(2) mustEqual SummaryListRow(key = Key("Date and time of control".toText), value = Value("09 June 2014 at 4:15pm".toText))
+            result.rows(3) mustEqual SummaryListRow(key = Key("Office of departure".toText), value = Value("Customs Office (1234)".toText))
         }
       }
     }

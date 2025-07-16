@@ -129,7 +129,7 @@ class EnrolmentStoreConnectorSpec extends ItSpecBase with WireMockServerHandler 
 
         val result: Future[Boolean] = connector.checkGroupEnrolments(groupId, "HMCE-NCTS-ORG")
 
-        await(result) `mustBe` true
+        await(result) mustEqual true
       }
 
       "return false when no NCTS enrolment is present" in {
@@ -140,7 +140,7 @@ class EnrolmentStoreConnectorSpec extends ItSpecBase with WireMockServerHandler 
 
         val result: Future[Boolean] = connector.checkGroupEnrolments(groupId, "HMCE-NCTS-ORG")
 
-        await(result) `mustBe` false
+        await(result) mustEqual false
       }
 
       "return false when the API call returns a no content" in {
@@ -150,7 +150,7 @@ class EnrolmentStoreConnectorSpec extends ItSpecBase with WireMockServerHandler 
 
         val result: Future[Boolean] = connector.checkGroupEnrolments(groupId, "HMCE-NCTS-ORG")
 
-        await(result) `mustBe` false
+        await(result) mustEqual false
       }
 
       "return false when the API call returns 404 NOT_FOUND" in {
@@ -160,7 +160,7 @@ class EnrolmentStoreConnectorSpec extends ItSpecBase with WireMockServerHandler 
 
         val result: Future[Boolean] = connector.checkGroupEnrolments(groupId, "HMCE-NCTS-ORG")
 
-        await(result) `mustBe` false
+        await(result) mustEqual false
       }
 
       "return false when the API call returns 400 BAD_REQUEST with message INVALID_GROUP_ID" in {
@@ -177,7 +177,7 @@ class EnrolmentStoreConnectorSpec extends ItSpecBase with WireMockServerHandler 
 
         val result: Future[Boolean] = connector.checkGroupEnrolments(groupId, "HMCE-NCTS-ORG")
 
-        await(result) `mustBe` false
+        await(result) mustEqual false
       }
 
       "throw exception when the API call returns another 4xx/5xx" in {
@@ -191,7 +191,7 @@ class EnrolmentStoreConnectorSpec extends ItSpecBase with WireMockServerHandler 
 
             val result: Future[Boolean] = connector.checkGroupEnrolments(groupId, "HMCE-NCTS-ORG")
 
-            an[Exception] `mustBe` thrownBy(result.futureValue)
+            an[Exception] mustBe thrownBy(result.futureValue)
         }
       }
 
@@ -208,7 +208,7 @@ class EnrolmentStoreConnectorSpec extends ItSpecBase with WireMockServerHandler 
 
         val result: Future[Boolean] = connector.checkGroupEnrolments(groupId, "HMCE-NCTS-ORG")
 
-        an[Exception] `mustBe` thrownBy(result.futureValue)
+        an[Exception] mustBe thrownBy(result.futureValue)
       }
     }
   }

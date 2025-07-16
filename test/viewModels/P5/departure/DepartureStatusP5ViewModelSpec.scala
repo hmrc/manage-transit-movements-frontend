@@ -64,7 +64,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         Nil
       )
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "when given Message with head is Failed DepartureDeclaration" in {
@@ -83,7 +83,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         )
       )
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "when given Message with head of CancellationRequested" in {
@@ -97,7 +97,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         Nil
       )
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "when given Message with head of Failed CancellationRequested" in {
@@ -116,7 +116,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         )
       )
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "when given Message with head of AmendmentSubmitted" in {
@@ -130,7 +130,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         Nil
       )
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "when given Message with head of Failed AmendmentSubmitted" in {
@@ -149,7 +149,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         )
       )
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "when given Message with head of PrelodgedDeclarationSent" in {
@@ -163,7 +163,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         Nil
       )
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "when given Message with head of Failed PrelodgedDeclarationSent" in {
@@ -182,7 +182,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         )
       )
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "when given Message with head of movementNotArrivedResponseSent" in {
@@ -196,7 +196,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         Nil
       )
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "when given Message with head of movementNotArrived" in {
@@ -210,7 +210,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         Nil
       )
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "when given Message with head of declarationAmendmentAccepted" - {
@@ -255,7 +255,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           )
         )
 
-        result `mustBe` expectedResult
+        result mustEqual expectedResult
       }
 
       "when not prelodged" in {
@@ -290,7 +290,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           )
         )
 
-        result `mustBe` expectedResult
+        result mustEqual expectedResult
       }
 
     }
@@ -311,7 +311,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         )
       )
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "when given Message with head of discrepancies" in {
@@ -325,7 +325,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         Nil
       )
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "when given Message with head of invalidMRN" in {
@@ -339,7 +339,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         Nil
       )
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "when given Message with head of allocatedMRN" in {
@@ -377,7 +377,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         )
       )
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "when given Message with head of releasedForTransit" in {
@@ -396,7 +396,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         )
       )
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "when given Message with head of goodsNotReleased" in {
@@ -415,7 +415,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         )
       )
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "when given Message with head of guaranteeRejected" in {
@@ -438,7 +438,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         )
       )
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "when given Message with head of rejectedByOfficeOfDeparture" - {
@@ -481,7 +481,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             )
           )
 
-          result `mustBe` expectedResult
+          result mustEqual expectedResult
         }
 
         "and cache exists for LRN with no functional errors" in {
@@ -518,7 +518,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             )
           )
 
-          result `mustBe` expectedResult
+          result mustEqual expectedResult
         }
 
         "and cache does not exists for LRN and no errors" in {
@@ -555,7 +555,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             )
           )
 
-          result `mustBe` expectedResult
+          result mustEqual expectedResult
         }
 
         "and cache does not exists for LRN with errors" in {
@@ -594,7 +594,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             )
           )
 
-          result `mustBe` expectedResult
+          result mustEqual expectedResult
         }
       }
 
@@ -635,7 +635,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             )
           )
 
-          result `mustBe` expectedResult
+          result mustEqual expectedResult
         }
 
         "and declaration is not amendable with errors in range 2 to 10" in {
@@ -671,7 +671,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             )
           )
 
-          result `mustBe` expectedResult
+          result mustEqual expectedResult
         }
 
         "and declaration is not amendable with one error" in {
@@ -707,7 +707,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             )
           )
 
-          result `mustBe` expectedResult
+          result mustEqual expectedResult
         }
 
         "and declaration is not amendable and no FunctionalErrors" in {
@@ -743,7 +743,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             )
           )
 
-          result `mustBe` expectedResult
+          result mustEqual expectedResult
         }
       }
 
@@ -784,7 +784,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             )
           )
 
-          result `mustBe` expectedResult
+          result mustEqual expectedResult
         }
 
         "with one error " in {
@@ -820,7 +820,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             )
           )
 
-          result `mustBe` expectedResult
+          result mustEqual expectedResult
         }
 
         "with no FunctionalErrors" in {
@@ -856,7 +856,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             )
           )
 
-          result `mustBe` expectedResult
+          result mustEqual expectedResult
         }
 
       }
@@ -894,7 +894,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             )
           )
 
-          result `mustBe` expectedResult
+          result mustEqual expectedResult
         }
 
         "with one error " in {
@@ -928,7 +928,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             )
           )
 
-          result `mustBe` expectedResult
+          result mustEqual expectedResult
         }
 
         "with no FunctionalErrors" in {
@@ -961,7 +961,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               )
             )
           )
-          result `mustBe` expectedResult
+          result mustEqual expectedResult
         }
       }
     }
@@ -1010,7 +1010,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             )
           )
 
-          result `mustBe` expectedResult
+          result mustEqual expectedResult
         }
 
         "and IE170 already submitted" in {
@@ -1055,7 +1055,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             )
           )
 
-          result `mustBe` expectedResult
+          result mustEqual expectedResult
         }
       }
 
@@ -1095,7 +1095,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           )
         )
 
-        result `mustBe` expectedResult
+        result mustEqual expectedResult
       }
     }
 
@@ -1138,7 +1138,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
               )
             )
 
-            result `mustBe` expectedResult
+            result mustEqual expectedResult
           }
         }
 
@@ -1174,7 +1174,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
             )
           )
 
-          result `mustBe` expectedResult
+          result mustEqual expectedResult
         }
       }
 
@@ -1212,7 +1212,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
                 Seq.empty
               )
 
-              result `mustBe` expectedResult
+              result mustEqual expectedResult
           }
         }
       }
@@ -1260,7 +1260,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           )
         )
 
-        result `mustBe` expectedResult
+        result mustEqual expectedResult
       }
 
       "when not prelodged" in {
@@ -1290,7 +1290,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
           Nil
         )
 
-        result `mustBe` expectedResult
+        result mustEqual expectedResult
       }
     }
 
@@ -1310,7 +1310,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         )
       )
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "when given Message with head of movementEnded" in {
@@ -1324,7 +1324,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         Nil
       )
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "when given Message with head of UnknownMessageType" in {
@@ -1338,7 +1338,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
         Nil
       )
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "when errors are more than one " in {
@@ -1347,7 +1347,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       val result = DepartureStatusP5ViewModel.errorsActionText(Seq("body/path", "body/path", "body/path"))
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
 
     }
 
@@ -1357,7 +1357,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with Scala
 
       val result = DepartureStatusP5ViewModel.errorsActionText(Seq("body/path"))
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
 
     }
 

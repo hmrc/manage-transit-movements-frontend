@@ -43,7 +43,7 @@ class FunctionalErrorWithDescSpec extends SpecBase with ScalaCheckPropertyChecks
 
             implicit val reads: Reads[FunctionalErrorWithDesc] = FunctionalErrorWithDesc.reads(config)
 
-            json.as[FunctionalErrorWithDesc] `mustBe` FunctionalErrorWithDesc("12", "Invalid MRN")
+            json.as[FunctionalErrorWithDesc] mustEqual FunctionalErrorWithDesc("12", "Invalid MRN")
         }
 
       }
@@ -60,7 +60,7 @@ class FunctionalErrorWithDescSpec extends SpecBase with ScalaCheckPropertyChecks
 
             implicit val reads: Reads[FunctionalErrorWithDesc] = FunctionalErrorWithDesc.reads(config)
 
-            json.as[FunctionalErrorWithDesc] `mustBe` FunctionalErrorWithDesc("12", "Invalid MRN")
+            json.as[FunctionalErrorWithDesc] mustEqual FunctionalErrorWithDesc("12", "Invalid MRN")
         }
 
       }
@@ -104,7 +104,7 @@ class FunctionalErrorWithDescSpec extends SpecBase with ScalaCheckPropertyChecks
       .toSortedSet
       .toList
 
-    result.mustBe(orderedErrors)
+    result.mustEqual(orderedErrors)
   }
 
 }

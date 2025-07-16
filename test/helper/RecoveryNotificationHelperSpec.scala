@@ -47,7 +47,7 @@ class RecoveryNotificationHelperSpec extends SpecBase with ScalaCheckPropertyChe
 
                 val result = helper.buildMRNRow
 
-                result mustBe
+                result mustEqual
                   Some(SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value(mrn.toText)))
             }
         }
@@ -68,7 +68,7 @@ class RecoveryNotificationHelperSpec extends SpecBase with ScalaCheckPropertyChe
 
             val result = helper.buildDeclarationAcceptanceDateRow
 
-            result mustBe
+            result mustEqual
               Some(SummaryListRow(key = Key("Declaration acceptance date".toText), value = Value("09 June 2014".toText)))
         }
       }
@@ -88,7 +88,7 @@ class RecoveryNotificationHelperSpec extends SpecBase with ScalaCheckPropertyChe
 
             val result = helper.buildRecoveryDateRow
 
-            result mustBe
+            result mustEqual
               Some(SummaryListRow(key = Key("Recovery date".toText), value = Value("09 June 2014".toText)))
         }
       }
@@ -108,7 +108,7 @@ class RecoveryNotificationHelperSpec extends SpecBase with ScalaCheckPropertyChe
 
                 val result = helper.buildFurtherInformationRow
 
-                result mustBe
+                result mustEqual
                   Some(SummaryListRow(key = Key("Further information".toText), value = Value(recoveryNotificationText.toText)))
             }
         }
@@ -132,7 +132,7 @@ class RecoveryNotificationHelperSpec extends SpecBase with ScalaCheckPropertyChe
 
               val result = helper.buildAmountRow
 
-              result mustBe
+              result mustEqual
                 Some(SummaryListRow(key = Key("Amount claimed".toText), value = Value("€1000".toText)))
           }
         }
@@ -154,7 +154,7 @@ class RecoveryNotificationHelperSpec extends SpecBase with ScalaCheckPropertyChe
 
               val result = helper.buildAmountRow
 
-              result mustBe
+              result mustEqual
                 Some(SummaryListRow(key = Key("Amount claimed".toText), value = Value("1000 FOO".toText)))
           }
         }
@@ -189,11 +189,11 @@ class RecoveryNotificationHelperSpec extends SpecBase with ScalaCheckPropertyChe
 
             result.sectionTitle must not be defined
 
-            result.rows.head `mustBe` SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value(mrn.toText))
-            result.rows(1) `mustBe` SummaryListRow(key = Key("Declaration acceptance date".toText), value = Value("09 June 2014".toText))
-            result.rows(2) `mustBe` SummaryListRow(key = Key("Recovery date".toText), value = Value("09 June 2014".toText))
-            result.rows(3) `mustBe` SummaryListRow(key = Key("Further information".toText), value = Value("text".toText))
-            result.rows(4) `mustBe` SummaryListRow(key = Key("Amount claimed".toText), value = Value("€1000".toText))
+            result.rows.head mustEqual SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value(mrn.toText))
+            result.rows(1) mustEqual SummaryListRow(key = Key("Declaration acceptance date".toText), value = Value("09 June 2014".toText))
+            result.rows(2) mustEqual SummaryListRow(key = Key("Recovery date".toText), value = Value("09 June 2014".toText))
+            result.rows(3) mustEqual SummaryListRow(key = Key("Further information".toText), value = Value("text".toText))
+            result.rows(4) mustEqual SummaryListRow(key = Key("Amount claimed".toText), value = Value("€1000".toText))
         }
       }
     }

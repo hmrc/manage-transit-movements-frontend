@@ -45,7 +45,7 @@ class ReferenceDataServiceSpec extends SpecBase {
       "should return a valid customs office" in {
         when(mockConnector.getCustomsOffice(any())(any(), any())).thenReturn(Future.successful(Right(customsOffice1)))
 
-        service.getCustomsOffice(customsOfficeId).futureValue `mustBe` customsOffice1
+        service.getCustomsOffice(customsOfficeId).futureValue mustEqual customsOffice1
 
         verify(mockConnector).getCustomsOffice(any())(any(), any())
       }
@@ -59,7 +59,7 @@ class ReferenceDataServiceSpec extends SpecBase {
       "should return a valid country" in {
         when(mockConnector.getCountry(any())(any(), any())).thenReturn(Future.successful(Right(country1)))
 
-        service.getCountry(countryCode1).futureValue `mustBe` country1
+        service.getCountry(countryCode1).futureValue mustEqual country1
 
         verify(mockConnector).getCountry(any())(any(), any())
       }
@@ -73,7 +73,7 @@ class ReferenceDataServiceSpec extends SpecBase {
       "should return the qualifier of identification" in {
         when(mockConnector.getQualifierOfIdentification(any())(any(), any())).thenReturn(Future.successful(Right(identification)))
 
-        service.getQualifierOfIdentification(identificationCode).futureValue `mustBe` identification
+        service.getQualifierOfIdentification(identificationCode).futureValue mustEqual identification
 
         verify(mockConnector).getQualifierOfIdentification(any())(any(), any())
       }
@@ -87,7 +87,7 @@ class ReferenceDataServiceSpec extends SpecBase {
       "should return identification type" in {
         when(mockConnector.getIdentificationType(any())(any(), any())).thenReturn(Future.successful(Right(identificationType)))
 
-        service.getIdentificationType(identificationTypeCode).futureValue `mustBe` identificationType
+        service.getIdentificationType(identificationTypeCode).futureValue mustEqual identificationType
 
         verify(mockConnector).getIdentificationType(any())(any(), any())
       }
@@ -100,7 +100,7 @@ class ReferenceDataServiceSpec extends SpecBase {
       "should return nationalities" in {
         when(mockConnector.getNationality(any())(any(), any())).thenReturn(Future.successful(Right(nationality)))
 
-        service.getNationality(nationalityCode).futureValue `mustBe` nationality
+        service.getNationality(nationalityCode).futureValue mustEqual nationality
 
         verify(mockConnector).getNationality(any())(any(), any())
       }
@@ -114,7 +114,7 @@ class ReferenceDataServiceSpec extends SpecBase {
       "should return a control type" in {
         when(mockConnector.getControlType(any())(any(), any())).thenReturn(Future.successful(Right(controlType)))
 
-        service.getControlType(controlTypeCode).futureValue `mustBe` controlType
+        service.getControlType(controlTypeCode).futureValue mustEqual controlType
 
         verify(mockConnector).getControlType(any())(any(), any())
       }
@@ -135,7 +135,7 @@ class ReferenceDataServiceSpec extends SpecBase {
         when(mockConnector.getIncidentCode(any())(any(), any()))
           .thenReturn(Future.successful(Right(incidentCode)))
 
-        service.getIncidentCode(incidentCodeCode).futureValue `mustBe` incidentCode
+        service.getIncidentCode(incidentCodeCode).futureValue mustEqual incidentCode
 
         verify(mockConnector).getIncidentCode(any())(any(), any())
       }
@@ -151,7 +151,7 @@ class ReferenceDataServiceSpec extends SpecBase {
         when(mockConnector.getRequestedDocumentType(any())(any(), any()))
           .thenReturn(Future.successful(Right(requestedDocumentType)))
 
-        service.getRequestedDocumentType(requestedDocumentTypeCode).futureValue `mustBe` requestedDocumentType
+        service.getRequestedDocumentType(requestedDocumentTypeCode).futureValue mustEqual requestedDocumentType
 
         verify(mockConnector).getRequestedDocumentType(any())(any(), any())
       }
@@ -165,7 +165,7 @@ class ReferenceDataServiceSpec extends SpecBase {
       "should return a functional error" in {
         when(mockConnector.getFunctionalError(any())(any(), any())).thenReturn(Future.successful(Right(functionalError)))
 
-        service.getFunctionalError(functionalErrorCode).futureValue `mustBe` functionalError
+        service.getFunctionalError(functionalErrorCode).futureValue mustEqual functionalError
 
         verify(mockConnector).getFunctionalError(any())(any(), any())
       }
@@ -180,7 +180,7 @@ class ReferenceDataServiceSpec extends SpecBase {
       "should return a invalid guarantee reason" in {
         when(mockConnector.getInvalidGuaranteeReason(any())(any(), any())).thenReturn(Future.successful(Right(invalidGuaranteeReason)))
 
-        service.getInvalidGuaranteeReason(invalidGuaranteeReasonCode).futureValue `mustBe` invalidGuaranteeReason
+        service.getInvalidGuaranteeReason(invalidGuaranteeReasonCode).futureValue mustEqual invalidGuaranteeReason
 
         verify(mockConnector).getInvalidGuaranteeReason(any())(any(), any())
       }

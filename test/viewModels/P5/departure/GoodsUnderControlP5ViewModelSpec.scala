@@ -90,30 +90,30 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
       val result            = viewModelProvider.apply(message, fakeCustomsOffice).futureValue
 
       "must render correct number of sections" in {
-        result.sections.length `mustBe` 3
+        result.sections.length mustEqual 3
 
-        result.sections(1).sectionTitle.value `mustBe` "Control information 1"
-        result.sections(1).rows.size `mustBe` 1
+        result.sections(1).sectionTitle.value mustEqual "Control information 1"
+        result.sections(1).rows.size mustEqual 1
 
-        result.sections(2).sectionTitle.value `mustBe` "Control information 2"
-        result.sections(2).rows.size `mustBe` 2
+        result.sections(2).sectionTitle.value mustEqual "Control information 2"
+        result.sections(2).rows.size mustEqual 2
       }
 
       "must return correct title" in {
-        result.title `mustBe` "Goods under control"
+        result.title mustEqual "Goods under control"
       }
       "must return correct heading" in {
-        result.heading `mustBe` "Goods under control"
+        result.heading mustEqual "Goods under control"
       }
       "must return correct paragraphs" in {
-        result.paragraph1 `mustBe` "Customs have placed this declaration under control while they carry out further checks. This is because of a possible discrepancy or risk to health and safety."
-        result.paragraph2 `mustBe` "While under control, the goods will remain under supervision at the office of departure."
-        result.paragraph3 `mustBe` "Once Customs have completed their checks, they will notify you with the outcome."
+        result.paragraph1 mustEqual "Customs have placed this declaration under control while they carry out further checks. This is because of a possible discrepancy or risk to health and safety."
+        result.paragraph2 mustEqual "While under control, the goods will remain under supervision at the office of departure."
+        result.paragraph3 mustEqual "Once Customs have completed their checks, they will notify you with the outcome."
       }
       "must return correct end paragraph" in {
-        result.type0LinkPrefix `mustBe` "You must wait for the outcome of Customs’ checks."
-        result.type0LinkText `mustBe` "Check your departure declarations"
-        result.type0LinkTextSuffix `mustBe` "for further updates."
+        result.type0LinkPrefix mustEqual "You must wait for the outcome of Customs’ checks."
+        result.type0LinkText mustEqual "Check your departure declarations"
+        result.type0LinkTextSuffix mustEqual "for further updates."
       }
     }
 
@@ -132,19 +132,19 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
       val result            = viewModelProvider.apply(message, fakeCustomsOffice).futureValue
 
       "must render correct number of sections" in {
-        result.sections.length `mustBe` 1
+        result.sections.length mustEqual 1
       }
 
       "must return correct title" in {
-        result.title `mustBe` "Goods under control - document requested"
+        result.title mustEqual "Goods under control - document requested"
       }
       "must return correct heading" in {
-        result.heading `mustBe` "Goods under control - document requested"
+        result.heading mustEqual "Goods under control - document requested"
       }
       "must return correct paragraphs" in {
-        result.paragraph1 `mustBe` "Customs have placed this declaration under control and requested further documentation. This is because of a possible discrepancy or risk to health and safety."
-        result.paragraph2 `mustBe` "While awaiting the documentation, the goods will remain under supervision at the customs office of departure."
-        result.paragraph3 `mustBe` "You must contact the customs office of departure directly to share the requested documentation."
+        result.paragraph1 mustEqual "Customs have placed this declaration under control and requested further documentation. This is because of a possible discrepancy or risk to health and safety."
+        result.paragraph2 mustEqual "While awaiting the documentation, the goods will remain under supervision at the customs office of departure."
+        result.paragraph3 mustEqual "You must contact the customs office of departure directly to share the requested documentation."
       }
     }
 
@@ -164,19 +164,19 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
       val result            = viewModelProvider.apply(message, fakeCustomsOffice).futureValue
 
       "must render correct number of sections" in {
-        result.sections.length `mustBe` 2
-        result.sections(1).sectionTitle.value `mustBe` "Requested document 1"
+        result.sections.length mustEqual 2
+        result.sections(1).sectionTitle.value mustEqual "Requested document 1"
       }
       "must return correct title" in {
-        result.title `mustBe` "Goods under control - document requested"
+        result.title mustEqual "Goods under control - document requested"
       }
       "must return correct heading" in {
-        result.heading `mustBe` "Goods under control - document requested"
+        result.heading mustEqual "Goods under control - document requested"
       }
       "must return correct paragraphs" in {
-        result.paragraph1 `mustBe` "Customs have placed this declaration under control and requested further documentation. This is because of a possible discrepancy or risk to health and safety."
-        result.paragraph2 `mustBe` "While awaiting the documentation, the goods will remain under supervision at the customs office of departure."
-        result.paragraph3 `mustBe` "You must contact the customs office of departure directly to share the requested documentation."
+        result.paragraph1 mustEqual "Customs have placed this declaration under control and requested further documentation. This is because of a possible discrepancy or risk to health and safety."
+        result.paragraph2 mustEqual "While awaiting the documentation, the goods will remain under supervision at the customs office of departure."
+        result.paragraph3 mustEqual "You must contact the customs office of departure directly to share the requested documentation."
       }
     }
 
@@ -196,19 +196,19 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
       val result            = viewModelProvider.apply(message, fakeCustomsOffice).futureValue
 
       "must render correct number of sections" in {
-        result.sections.length `mustBe` 2
-        result.sections(1).sectionTitle.value `mustBe` "Requested document 1"
+        result.sections.length mustEqual 2
+        result.sections(1).sectionTitle.value mustEqual "Requested document 1"
       }
       "must return correct title" in {
-        result.title `mustBe` "Goods under control - document requested"
+        result.title mustEqual "Goods under control - document requested"
       }
       "must return correct heading" in {
-        result.heading `mustBe` "Goods under control - document requested"
+        result.heading mustEqual "Goods under control - document requested"
       }
       "must return correct paragraphs" in {
-        result.paragraph1 `mustBe` "Customs have placed this declaration under control and requested further documentation. This is because of a possible discrepancy or risk to health and safety."
-        result.paragraph2 `mustBe` "While awaiting the documentation, the goods will remain under supervision at the customs office of departure."
-        result.paragraph3 `mustBe` "You must contact the customs office of departure directly to share the requested documentation."
+        result.paragraph1 mustEqual "Customs have placed this declaration under control and requested further documentation. This is because of a possible discrepancy or risk to health and safety."
+        result.paragraph2 mustEqual "While awaiting the documentation, the goods will remain under supervision at the customs office of departure."
+        result.paragraph3 mustEqual "You must contact the customs office of departure directly to share the requested documentation."
       }
     }
 
@@ -241,7 +241,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
           val result = viewModel(customsOffice).customsOfficeContent
 
-          result `mustBe` s"You must share the requested documentation with the customs office of departure. Contact Customs at Dover (CD123) on 00443243543 or test123@gmail.com."
+          result mustEqual s"You must share the requested documentation with the customs office of departure. Contact Customs at Dover (CD123) on 00443243543 or test123@gmail.com."
         }
       }
 
@@ -257,7 +257,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
           val result = viewModel(customsOffice).customsOfficeContent
 
-          result `mustBe` s"You must share the requested documentation with the customs office of departure. Contact Customs at Dover (CD123) on test123@gmail.com."
+          result mustEqual s"You must share the requested documentation with the customs office of departure. Contact Customs at Dover (CD123) on test123@gmail.com."
         }
       }
 
@@ -273,7 +273,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
           val result = viewModel(customsOffice).customsOfficeContent
 
-          result `mustBe` s"You must share the requested documentation with the customs office of departure. Contact Customs at Dover (CD123) on 00443243543."
+          result mustEqual s"You must share the requested documentation with the customs office of departure. Contact Customs at Dover (CD123) on 00443243543."
         }
       }
 
@@ -288,7 +288,7 @@ class GoodsUnderControlP5ViewModelSpec extends SpecBase with AppWithDefaultMockF
 
           val result = viewModel(customsOffice).customsOfficeContent
 
-          result `mustBe` s"You must share the requested documentation with the customs office of departure. Contact Customs at Dover (CD123)."
+          result mustEqual s"You must share the requested documentation with the customs office of departure. Contact Customs at Dover (CD123)."
         }
       }
     }

@@ -30,27 +30,27 @@ class AvailabilitySpec extends SpecBase with ScalaCheckPropertyChecks with Gener
       "when non-empty list of departures" in {
         forAll(listWithMaxLength[Seq[DepartureMovement]]()) {
           departures =>
-            Availability.apply(Some(departures)) `mustBe` Availability.NonEmpty
+            Availability.apply(Some(departures)) mustEqual Availability.NonEmpty
         }
       }
 
       "when non-empty list of arrivals" in {
         forAll(listWithMaxLength[Seq[ArrivalMovement]]()) {
           arrivals =>
-            Availability.apply(Some(arrivals)) `mustBe` Availability.NonEmpty
+            Availability.apply(Some(arrivals)) mustEqual Availability.NonEmpty
         }
       }
     }
 
     "must return Empty" - {
       "when empty list" in {
-        Availability.apply(Some(Nil)) `mustBe` Availability.Empty
+        Availability.apply(Some(Nil)) mustEqual Availability.Empty
       }
     }
 
     "must return Unavailable" - {
       "when no list of movements" in {
-        Availability.apply(None) `mustBe` Availability.Unavailable
+        Availability.apply(None) mustEqual Availability.Unavailable
       }
     }
   }

@@ -38,7 +38,7 @@ trait RadioViewBehaviours[T] extends QuestionViewBehaviours[T] {
 
         "must contain a legend for the question" in {
           val legends = getElementsByTag(doc, "legend")
-          legends.size `mustBe` 1
+          legends.size mustEqual 1
           if (legendIsHeading) {
             assertElementIncludesText(legends.first(), messages(s"$prefix.heading", args*))
           } else {

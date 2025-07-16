@@ -82,7 +82,7 @@ class LatestArrivalMessageSpec extends SpecBase {
 
       val result = json.validate[LatestArrivalMessage].asOpt.value
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
 
     "must not deserialize when empty list" in {
@@ -98,7 +98,7 @@ class LatestArrivalMessageSpec extends SpecBase {
 
       val result = json.validate[LatestArrivalMessage].leftSide
 
-      result.isError `mustBe` true
+      result.isError mustEqual true
     }
 
     "must not deserialize when no IE007 is found" in {
@@ -137,7 +137,7 @@ class LatestArrivalMessageSpec extends SpecBase {
 
       val result = json.validate[LatestArrivalMessage].leftSide
 
-      result.isError `mustBe` true
+      result.isError mustEqual true
     }
   }
 

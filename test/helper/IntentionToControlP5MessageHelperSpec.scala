@@ -50,7 +50,7 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
 
             val result = helper.buildLRNRow
 
-            result `mustBe` None
+            result must not be defined
         }
       }
 
@@ -66,7 +66,7 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
 
                 val result = helper.buildLRNRow
 
-                result mustBe
+                result mustEqual
                   Some(SummaryListRow(key = Key("Local Reference Number (LRN)".toText), value = Value(lrn.toText)))
             }
         }
@@ -84,7 +84,7 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
 
             val result = helper.buildMRNRow
 
-            result `mustBe` None
+            result must not be defined
         }
       }
 
@@ -100,7 +100,7 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
 
                 val result = helper.buildMRNRow
 
-                result mustBe
+                result mustEqual
                   Some(SummaryListRow(key = Key("Movement Reference Number (MRN)".toText), value = Value(mrn.toText)))
             }
         }
@@ -121,7 +121,7 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
 
             val result = helper.buildDateTimeControlRow
 
-            result mustBe
+            result mustEqual
               Some(SummaryListRow(key = Key("Date and time of control notification".toText), value = Value("09 June 2014 at 4:15pm".toText)))
         }
       }
@@ -137,7 +137,7 @@ class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckProp
 
             val result = helper.buildOfficeOfDepartureRow
 
-            result mustBe
+            result mustEqual
               Some(SummaryListRow(key = Key("Office of departure".toText), value = Value("Customs Office (1234)".toText)))
         }
       }

@@ -93,7 +93,7 @@ class ArrivalMovementsSpec extends SpecBase {
 
       val result: ArrivalMovements = json.validate[ArrivalMovements].asOpt.value
 
-      result `mustBe` expectedResult
+      result mustEqual expectedResult
     }
   }
 

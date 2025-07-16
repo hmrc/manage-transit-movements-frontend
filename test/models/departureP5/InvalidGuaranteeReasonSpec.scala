@@ -43,7 +43,7 @@ class InvalidGuaranteeReasonSpec extends SpecBase with ScalaCheckPropertyChecks 
 
             implicit val reads: Reads[InvalidGuaranteeReason] = InvalidGuaranteeReason.reads(config)
 
-            json.as[InvalidGuaranteeReason] `mustBe` InvalidGuaranteeReason("G02", "Guarantee exists, but not valid")
+            json.as[InvalidGuaranteeReason] mustEqual InvalidGuaranteeReason("G02", "Guarantee exists, but not valid")
         }
 
       }
@@ -60,7 +60,7 @@ class InvalidGuaranteeReasonSpec extends SpecBase with ScalaCheckPropertyChecks 
 
             implicit val reads: Reads[InvalidGuaranteeReason] = InvalidGuaranteeReason.reads(config)
 
-            json.as[InvalidGuaranteeReason] `mustBe` InvalidGuaranteeReason("G02", "Guarantee exists, but not valid")
+            json.as[InvalidGuaranteeReason] mustEqual InvalidGuaranteeReason("G02", "Guarantee exists, but not valid")
         }
 
       }
@@ -102,7 +102,7 @@ class InvalidGuaranteeReasonSpec extends SpecBase with ScalaCheckPropertyChecks 
         .toSortedSet
         .toList
 
-      result.mustBe(orderedReasons)
+      result.mustEqual(orderedReasons)
     }
 
   }
