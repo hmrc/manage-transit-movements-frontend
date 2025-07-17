@@ -17,6 +17,7 @@
 package models.referenceData
 
 import cats.Order
+import config.FrontendAppConfig
 import models.RichSeq
 import play.api.libs.functional.syntax.*
 import play.api.libs.json.*
@@ -28,35 +29,56 @@ case class CustomsOffice(id: String, name: String, phoneNumber: Option[String], 
 object CustomsOffice {
   implicit val format: OFormat[CustomsOffice] = Json.format[CustomsOffice]
 
+  def reads(config: FrontendAppConfig): Reads[CustomsOffice] =
+    if (config.phase6Enabled) {
+      (
+        (__ \ "referenceNumber").read[String] and
+          (__ \ "customsOfficeLsd" \ "customsOfficeUsualName").read[String] and
+          (__ \ "phoneNumber").readNullable[String] and
+          (__ \ "emailAddress").readNullable[String]
+      )(CustomsOffice.apply)
+    } else {
+      Json.reads[CustomsOffice]
+    }
+
   implicit val order: Order[CustomsOffice] = (x: CustomsOffice, y: CustomsOffice) => (x, y).compareBy(_.name, _.id)
 
-  implicit val listReads: Reads[List[CustomsOffice]] = {
+  def listReads(config: FrontendAppConfig): Reads[List[CustomsOffice]] =
+    if (config.phase6Enabled) {
+      Reads.list(reads(config))
+    } else {
+      case class TempCustomsOffice(customsOffice: CustomsOffice, languageCode: String)
 
-    case class TempCustomsOffice(customsOffice: CustomsOffice, languageCode: String)
+      implicit val reads: Reads[TempCustomsOffice] = (
+        __.read[CustomsOffice] and
+          (__ \ "languageCode").read[String]
+      )(TempCustomsOffice.apply)
 
-    implicit val reads: Reads[TempCustomsOffice] = (
-      __.read[CustomsOffice] and
-        (__ \ "languageCode").read[String]
-    )(TempCustomsOffice.apply)
-
-    Reads {
-      case JsArray(customsOffices) =>
-        JsSuccess {
-          customsOffices
-            .flatMap(_.asOpt[TempCustomsOffice])
-            .toSeq
-            .groupByPreserveOrder(_.customsOffice.id)
-            .flatMap {
-              case (_, customsOffices) =>
-                customsOffices
-                  .find(_.languageCode == "EN")
-                  .orElse(customsOffices.headOption)
-            }
-            .map(_.customsOffice)
-            .toList
-        }
-      case _ => JsError("Expected customs offices to be in a JsArray")
+      Reads {
+        case JsArray(values) =>
+          JsSuccess {
+            values
+              .flatMap(_.asOpt[TempCustomsOffice])
+              .toSeq
+              .groupByPreserveOrder(_.customsOffice.id)
+              .flatMap {
+                case (_, customsOffices) =>
+                  customsOffices
+                    .find(_.languageCode == "EN")
+                    .orElse(customsOffices.headOption)
+              }
+              .map(_.customsOffice)
+              .toList
+          }
+        case _ =>
+          JsError("Expected customs offices to be in a JsArray")
+      }
     }
-  }
 
+  def queryParameters(referenceNumber: String)(config: FrontendAppConfig): Seq[(String, String)] =
+    if (config.phase6Enabled) {
+      Seq("referenceNumbers" -> referenceNumber)
+    } else {
+      Seq("data.id" -> referenceNumber)
+    }
 }

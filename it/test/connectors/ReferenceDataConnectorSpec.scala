@@ -79,19 +79,20 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
     "getCustomsOffice" - {
 
-      val url = s"$baseUrl/lists/CustomsOffices?data.id=$code"
-
       "when phase-6 enabled" - {
+        val url = s"$baseUrl/lists/CustomsOffices?referenceNumbers=$code"
 
         val customsOfficesResponseJson: String =
           s"""
              |[
              |  {
-             |    "id": "$code",
-             |    "name": "NAME001",
-             |    "languageCode": "EN",
+             |    "referenceNumber": "$code",
+             |    "customsOfficeLsd" : {
+             |      "customsOfficeUsualName" : "NAME001",
+             |      "languageCode" : "EN"
+             |    },
              |    "phoneNumber": "004412323232345",
-             |    "eMailAddress": "test123@gmail.com"
+             |    "emailAddress": "test123@gmail.com"
              |  }
              |]
              |""".stripMargin
@@ -113,15 +114,24 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
         }
         "should throw a NoReferenceDataFoundException for an empty response " in {
-          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getCustomsOffice(code))
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getCustomsOffice(code))
+          }
         }
 
         "should handle client and server errors for customs offices" in {
-          checkErrorResponse(url, connector.getCustomsOffice(code))
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkErrorResponse(url, connector.getCustomsOffice(code))
+          }
         }
       }
 
       "when phase-6-disabled" - {
+        val url = s"$baseUrl/lists/CustomsOffices?data.id=$code"
 
         val customsOfficesResponseJson: String =
           s"""
@@ -155,14 +165,21 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
         }
         "should throw a NoReferenceDataFoundException for an empty response " in {
-          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getCustomsOffice(code))
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getCustomsOffice(code))
+          }
         }
 
         "should handle client and server errors for customs offices" in {
-          checkErrorResponse(url, connector.getCustomsOffice(code))
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkErrorResponse(url, connector.getCustomsOffice(code))
+          }
         }
       }
-
     }
 
     "getCountry" - {
