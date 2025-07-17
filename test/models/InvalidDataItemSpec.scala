@@ -29,7 +29,7 @@ class InvalidDataItemSpec extends SpecBase {
           val json           = JsString("/CC015C/HolderOfTheTransitProcedure/identificationNumber")
           val result         = json.validate[InvalidDataItem]
           val expectedResult = "Holder of the transit procedure: Identification number"
-          result.get.value.mustBe(expectedResult)
+          result.get.value.mustEqual(expectedResult)
         }
       }
 
@@ -47,7 +47,7 @@ class InvalidDataItemSpec extends SpecBase {
         "must return Holder of the transit procedure: Identification number" in {
           val errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber"
           val result       = InvalidDataItem(errorPointer)
-          result.value.mustBe("Holder of the transit procedure: Identification number")
+          result.value.mustEqual("Holder of the transit procedure: Identification number")
         }
       }
 
@@ -55,7 +55,7 @@ class InvalidDataItemSpec extends SpecBase {
         "must return House consignment 50: Consignment item 10: Consignor" in {
           val errorPointer = "/CC015C/Consignment/HouseConsignment[50]/ConsignmentItem[10]/consignor"
           val result       = InvalidDataItem(errorPointer)
-          result.value.mustBe("House consignment 50: Consignment item 10: Consignor")
+          result.value.mustEqual("House consignment 50: Consignment item 10: Consignor")
         }
       }
 
@@ -63,7 +63,7 @@ class InvalidDataItemSpec extends SpecBase {
         "must return House consignment 5: Consignment item 10: Supporting document 22: Type" in {
           val errorPointer = "/CC015C/Consignment/HouseConsignment[5]/ConsignmentItem[10]/SupportingDocument[22]/type"
           val result       = InvalidDataItem(errorPointer)
-          result.value.mustBe("House consignment 5: Consignment item 10: Supporting document 22: Type")
+          result.value.mustEqual("House consignment 5: Consignment item 10: Supporting document 22: Type")
         }
       }
 
@@ -71,7 +71,7 @@ class InvalidDataItemSpec extends SpecBase {
         "must return Location of goods" in {
           val errorPointer = "//Consignment/LocationOfGoods"
           val result       = InvalidDataItem(errorPointer)
-          result.value.mustBe("Location of goods")
+          result.value.mustEqual("Location of goods")
         }
       }
 
@@ -79,7 +79,7 @@ class InvalidDataItemSpec extends SpecBase {
         "must return Reference number UCR" in {
           val errorPointer = "/CC015C/Consignment/referenceNumberUCR"
           val result       = InvalidDataItem(errorPointer)
-          result.value.mustBe("Reference number UCR")
+          result.value.mustEqual("Reference number UCR")
         }
       }
 
@@ -87,7 +87,7 @@ class InvalidDataItemSpec extends SpecBase {
         "must return Authorisation 1: Reference number" in {
           val errorPointer = "/CC007C/Authorisation[1]/referenceNumber"
           val result       = InvalidDataItem(errorPointer)
-          result.value.mustBe("Authorisation 1: Reference number")
+          result.value.mustEqual("Authorisation 1: Reference number")
         }
       }
 
@@ -95,7 +95,7 @@ class InvalidDataItemSpec extends SpecBase {
         "must return Holder of the transit procedure: TIR holder identification number" in {
           val errorPointer = "/CC015C/HolderOfTheTransitProcedure/TIRHolderIdentificationNumber"
           val result       = InvalidDataItem(errorPointer)
-          result.value.mustBe("Holder of the transit procedure: TIR holder identification number")
+          result.value.mustEqual("Holder of the transit procedure: TIR holder identification number")
         }
       }
     }

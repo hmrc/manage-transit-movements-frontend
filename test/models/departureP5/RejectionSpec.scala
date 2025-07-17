@@ -39,7 +39,7 @@ class RejectionSpec extends SpecBase {
 
         val result = Json.toJson(rejection)
 
-        result.mustBe(expectedResult)
+        result.mustEqual(expectedResult)
       }
     }
 
@@ -68,7 +68,7 @@ class RejectionSpec extends SpecBase {
 
         val result = Json.toJson(rejection)
 
-        result.mustBe(expectedResult)
+        result.mustEqual(expectedResult)
       }
     }
   }

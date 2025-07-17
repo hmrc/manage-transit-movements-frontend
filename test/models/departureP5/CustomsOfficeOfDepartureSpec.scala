@@ -30,7 +30,7 @@ class CustomsOfficeOfDepartureSpec extends SpecBase {
       )
 
       val json = Json.toJson(customsOffice)
-      json mustBe expectedJson
+      json mustEqual expectedJson
     }
 
     "deserialize from JSON" in {
@@ -40,7 +40,7 @@ class CustomsOfficeOfDepartureSpec extends SpecBase {
 
       val expectedCustomsOffice = CustomsOfficeOfDeparture("ABC123")
 
-      json.validate[CustomsOfficeOfDeparture] mustBe JsSuccess(expectedCustomsOffice)
+      json.validate[CustomsOfficeOfDeparture] mustEqual JsSuccess(expectedCustomsOffice)
     }
 
     "handle missing referenceNumber during deserialization" in {
@@ -48,7 +48,7 @@ class CustomsOfficeOfDepartureSpec extends SpecBase {
 
       // Since referenceNumber is required, this should result in an error
       val result = json.validate[CustomsOfficeOfDeparture]
-      result.isError mustBe true
+      result.isError mustEqual true
     }
 
   }

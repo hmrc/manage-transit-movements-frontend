@@ -28,31 +28,31 @@ class MessageStatusSpec extends SpecBase with ScalaCheckPropertyChecks with Gene
       "when Received" in {
         val json   = JsString("Received")
         val result = json.validate[MessageStatus]
-        result.get mustBe MessageStatus.Received
+        result.get mustEqual MessageStatus.Received
       }
 
       "when Pending" in {
         val json   = JsString("Pending")
         val result = json.validate[MessageStatus]
-        result.get mustBe MessageStatus.Pending
+        result.get mustEqual MessageStatus.Pending
       }
 
       "when Processing" in {
         val json   = JsString("Processing")
         val result = json.validate[MessageStatus]
-        result.get mustBe MessageStatus.Processing
+        result.get mustEqual MessageStatus.Processing
       }
 
       "when Success" in {
         val json   = JsString("Success")
         val result = json.validate[MessageStatus]
-        result.get mustBe MessageStatus.Success
+        result.get mustEqual MessageStatus.Success
       }
 
       "when Failed" in {
         val json   = JsString("Failed")
         val result = json.validate[MessageStatus]
-        result.get mustBe MessageStatus.Failed
+        result.get mustEqual MessageStatus.Failed
       }
     }
 

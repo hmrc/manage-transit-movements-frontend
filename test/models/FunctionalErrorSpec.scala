@@ -49,7 +49,7 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
           invalidAnswer = Some("GB635733627000")
         )
 
-        result.get.mustBe(expectedResult)
+        result.get.mustEqual(expectedResult)
       }
 
       "when options are undefined" in {
@@ -71,7 +71,7 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
           invalidAnswer = None
         )
 
-        result.get.mustBe(expectedResult)
+        result.get.mustEqual(expectedResult)
       }
     }
   }
@@ -99,7 +99,7 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
             |""".stripMargin)
 
         val result = Json.toJson(functionalError)
-        result.mustBe(expectedResult)
+        result.mustEqual(expectedResult)
       }
 
       "when options undefined" in {
@@ -121,7 +121,7 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
             |""".stripMargin)
 
         val result = Json.toJson(functionalError)
-        result.mustBe(expectedResult)
+        result.mustEqual(expectedResult)
       }
     }
   }

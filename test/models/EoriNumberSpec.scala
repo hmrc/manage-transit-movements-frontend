@@ -30,7 +30,7 @@ class EoriNumberSpec extends SpecBase {
       )
 
       val json = Json.toJson(eoriNumber)
-      json mustBe expectedJson
+      json mustEqual expectedJson
     }
 
     "deserialize from JSON" in {
@@ -40,7 +40,7 @@ class EoriNumberSpec extends SpecBase {
 
       val expectedEoriNumber = EoriNumber("GB123456789000")
 
-      json.validate[EoriNumber] mustBe JsSuccess(expectedEoriNumber)
+      json.validate[EoriNumber] mustEqual JsSuccess(expectedEoriNumber)
     }
   }
 }

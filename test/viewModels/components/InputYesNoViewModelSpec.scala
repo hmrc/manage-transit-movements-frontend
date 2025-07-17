@@ -48,7 +48,7 @@ class InputYesNoViewModelSpec extends SpecBase {
 
       viewModel.heading must be(heading)
       viewModel.caption must be(caption)
-      viewModel.additionalHtml mustBe additionalHtml
+      viewModel.additionalHtml mustEqual additionalHtml
     }
 
     "create a YesNoWithLegend with a legend" in {

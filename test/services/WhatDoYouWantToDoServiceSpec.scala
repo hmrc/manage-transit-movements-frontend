@@ -59,7 +59,7 @@ class WhatDoYouWantToDoServiceSpec extends SpecBase with ScalaCheckPropertyCheck
 
             when(mockArrivalMovementsP5Connector.getAvailability()(any())).thenReturn(Future.successful(availability))
 
-            whatDoYouWantToDoService.fetchArrivalsFeature().futureValue mustBe
+            whatDoYouWantToDoService.fetchArrivalsFeature().futureValue mustEqual
               Feature(availability, controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url)
 
             verify(mockArrivalMovementsP5Connector).getAvailability()
@@ -75,7 +75,7 @@ class WhatDoYouWantToDoServiceSpec extends SpecBase with ScalaCheckPropertyCheck
 
             when(mockDepartureMovementsP5Connector.getAvailability()(any())).thenReturn(Future.successful(availability))
 
-            whatDoYouWantToDoService.fetchDeparturesFeature().futureValue mustBe
+            whatDoYouWantToDoService.fetchDeparturesFeature().futureValue mustEqual
               Feature(availability, controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url)
 
             verify(mockDepartureMovementsP5Connector).getAvailability()
@@ -91,7 +91,7 @@ class WhatDoYouWantToDoServiceSpec extends SpecBase with ScalaCheckPropertyCheck
 
             when(mockDepartureDraftsP5Connector.getDraftDeparturesAvailability()(any())).thenReturn(Future.successful(availability))
 
-            whatDoYouWantToDoService.fetchDraftDepartureFeature().futureValue mustBe
+            whatDoYouWantToDoService.fetchDraftDepartureFeature().futureValue mustEqual
               Feature(availability, controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None).url)
 
             verify(mockDepartureDraftsP5Connector).getDraftDeparturesAvailability()(any())
