@@ -88,8 +88,8 @@ object IncidentP5ViewModel {
 
       for {
         incidentInformationSection <- incidentInformationSectionFuture
-        transhipmentSection        <- transhipmentSectionFuture
         endorsementSection         <- endorsementSectionFuture
+        transhipmentSection        <- transhipmentSectionFuture
       } yield {
         val sections = Seq(
           Some(incidentInformationSection),
