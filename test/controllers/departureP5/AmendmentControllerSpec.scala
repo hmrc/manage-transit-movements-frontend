@@ -66,7 +66,7 @@ class AmendmentControllerSpec extends SpecBase with AppWithDefaultMockFixtures w
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value `mustBe` frontendAppConfig.departureFrontendTaskListUrl(lrn.value)
+        redirectLocation(result).value mustEqual frontendAppConfig.departureFrontendTaskListUrl(lrn.value)
       }
 
       "must redirect to tech difficulties on failure" in {
@@ -82,7 +82,7 @@ class AmendmentControllerSpec extends SpecBase with AppWithDefaultMockFixtures w
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value `mustBe` controllers.routes.ErrorController.technicalDifficulties().url
+        redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
       }
     }
   }

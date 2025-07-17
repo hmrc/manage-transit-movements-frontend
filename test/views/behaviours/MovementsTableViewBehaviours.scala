@@ -45,19 +45,19 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours {
               val headers = table.getElementsByClass("govuk-table__header").toList
 
               "must display correct value for first column" in {
-                headers.head.text() mustBe "Updated"
+                headers.head.text() mustEqual "Updated"
               }
 
               "must display correct value for second column" in {
-                headers(1).text() mustBe referenceNumberColumnHeader
+                headers(1).text() mustEqual referenceNumberColumnHeader
               }
 
               "must display correct value for third column" in {
-                headers(2).text() mustBe "Status"
+                headers(2).text() mustEqual "Status"
               }
 
               "must display correct value for fourth column" in {
-                headers(3).text() mustBe "Actions"
+                headers(3).text() mustEqual "Actions"
               }
             }
 
@@ -70,15 +70,15 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours {
 
                   s"when row $rowIndex" - {
                     "must display correct value for first column" in {
-                      cells.head.text() mustBe movement.updatedTimeFormatted
+                      cells.head.text() mustEqual movement.updatedTimeFormatted
                     }
 
                     "must display correct value for second column" in {
-                      cells(1).text() mustBe movement.referenceNumber
+                      cells(1).text() mustEqual movement.referenceNumber
                     }
 
                     "must display correct value for third column" in {
-                      cells(2).text() mustBe movement.status
+                      cells(2).text() mustEqual movement.status
                     }
 
                     "fourth column" - {
@@ -91,20 +91,20 @@ trait MovementsTableViewBehaviours[T <: ViewMovement] extends ViewBehaviours {
                           s"when action ${linkIndex + 1}" - {
 
                             "must display correct text" in {
-                              link.text() mustBe s"${action.key} for ${movement.referenceNumber}"
+                              link.text() mustEqual s"${action.key} for ${movement.referenceNumber}"
 
-                              link.ownText() mustBe action.key
+                              link.ownText() mustEqual action.key
 
                               val hiddenText = link.getElementsByClass("govuk-visually-hidden").head
-                              hiddenText.text() mustBe s"for ${movement.referenceNumber}"
+                              hiddenText.text() mustEqual s"for ${movement.referenceNumber}"
                             }
 
                             "must have correct id" in {
-                              link.attr("id") mustBe s"${action.key}-${movement.referenceNumber}"
+                              link.attr("id") mustEqual s"${action.key}-${movement.referenceNumber}"
                             }
 
                             "must have correct href" in {
-                              link.attr("href") mustBe action.href
+                              link.attr("href") mustEqual action.href
                             }
                           }
                       }

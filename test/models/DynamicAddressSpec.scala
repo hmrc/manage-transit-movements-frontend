@@ -31,7 +31,7 @@ class DynamicAddressSpec extends SpecBase {
       )
 
       val json = Json.toJson(address)
-      json mustBe expectedJson
+      json mustEqual expectedJson
     }
 
     "deserialize from JSON" in {
@@ -43,7 +43,7 @@ class DynamicAddressSpec extends SpecBase {
 
       val expectedAddress = DynamicAddress("123 Main St", "London", Some("10001"))
 
-      json.validate[DynamicAddress] mustBe JsSuccess(expectedAddress)
+      json.validate[DynamicAddress] mustEqual JsSuccess(expectedAddress)
     }
 
     "deserialize from JSON with missing postalCode" in {
@@ -54,19 +54,19 @@ class DynamicAddressSpec extends SpecBase {
 
       val expectedAddress = DynamicAddress("123 Main St", "London", None)
 
-      json.validate[DynamicAddress] mustBe JsSuccess(expectedAddress)
+      json.validate[DynamicAddress] mustEqual JsSuccess(expectedAddress)
     }
 
     "return the correct string representation with postalCode" in {
       val address = DynamicAddress("123 Main St", "London", Some("10001"))
 
-      address.toString mustBe "123 Main St<br>London<br>10001"
+      address.toString mustEqual "123 Main St<br>London<br>10001"
     }
 
     "return the correct string representation without postalCode" in {
       val address = DynamicAddress("123 Main St", "London", None)
 
-      address.toString mustBe "123 Main St<br>London"
+      address.toString mustEqual "123 Main St<br>London"
     }
 
   }

@@ -74,7 +74,7 @@ class UnloadingPermissionControllerSpec extends SpecBase with AppWithDefaultMock
       status(result) mustEqual OK
       contentType(result).value mustEqual cntntType
       contentLength(result).value mustEqual cntntLength
-      headers(result).get(CONTENT_DISPOSITION).value `mustBe` cntntDisposition
+      headers(result).get(CONTENT_DISPOSITION).value mustEqual cntntDisposition
     }
 
     "must redirect to TechnicalDifficultiesController if connector returns error" in {

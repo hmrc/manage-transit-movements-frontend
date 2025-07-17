@@ -50,7 +50,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with S
         result.heading mustEqual "Review unloading remarks errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe
+        result.paragraph1 mustEqual
           s"There is a problem with the unloading remarks for this notification. Review the error and try making the unloading remarks again."
       }
       "must return correct paragraph 2" in {
@@ -88,7 +88,7 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with S
         result.heading mustEqual "Review unloading remarks errors"
       }
       "must return correct paragraph 1" in {
-        result.paragraph1 mustBe
+        result.paragraph1 mustEqual
           s"There is a problem with the unloading remarks for this notification. Review the errors and try making the unloading remarks again."
       }
       "must return correct paragraph 2" in {

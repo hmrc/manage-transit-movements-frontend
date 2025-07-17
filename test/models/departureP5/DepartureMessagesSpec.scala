@@ -65,7 +65,7 @@ class DepartureMessagesSpec extends SpecBase {
         )
       )
 
-      json.validate[DepartureMessages] mustBe JsSuccess(expectedMessages)
+      json.validate[DepartureMessages] mustEqual JsSuccess(expectedMessages)
     }
   }
 }

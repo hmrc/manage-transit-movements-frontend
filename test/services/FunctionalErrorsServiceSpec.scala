@@ -120,7 +120,7 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
 
         val result = service.convertErrorsWithSection(input).futureValue
 
-        result mustBe expectedResult
+        result mustEqual expectedResult
       }
     }
 
@@ -166,7 +166,7 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
 
         val result = service.convertErrorsWithoutSection(input).futureValue
 
-        result mustBe expectedResult
+        result mustEqual expectedResult
       }
     }
 
@@ -250,7 +250,7 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
 
         val result = service.convertGuaranteeReferences(input).futureValue
 
-        result mustBe expectedResult
+        result mustEqual expectedResult
       }
     }
   }

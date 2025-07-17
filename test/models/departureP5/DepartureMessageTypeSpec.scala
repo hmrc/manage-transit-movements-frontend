@@ -44,7 +44,7 @@ class DepartureMessageTypeSpec extends SpecBase with Generators {
   "must not deserialize" - {
     "when not given a JsString" in {
       val json = Json.obj("foo" -> "bar")
-      json.validate[DepartureMessageType] `mustBe` a[JsError]
+      json.validate[DepartureMessageType] mustBe a[JsError]
     }
   }
 

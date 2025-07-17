@@ -84,7 +84,7 @@ class TransitAccompanyingDocumentControllerSpec extends SpecBase with Generators
         status(result) mustEqual OK
         contentType(result).value mustEqual thisContentType
         contentLength(result).value mustEqual thisContentLength
-        headers(result).get(CONTENT_DISPOSITION).value `mustBe` thisContentDisposition
+        headers(result).get(CONTENT_DISPOSITION).value mustEqual thisContentDisposition
 
         verify(mockManageDocumentsConnector).getTAD(eqTo(departureIdP5), eqTo(messageId))(any())
       }

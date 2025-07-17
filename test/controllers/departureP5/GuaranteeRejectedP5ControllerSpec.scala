@@ -122,7 +122,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
 
               status(result) mustEqual SEE_OTHER
 
-              redirectLocation(result).value `mustBe`
+              redirectLocation(result).value mustEqual
                 controllers.departureP5.routes.GuaranteeRejectedNotAmendableP5Controller.onPageLoad(departureIdP5, messageId).url
           }
         }
@@ -150,7 +150,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
             val result = route(app, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value `mustBe` frontendAppConfig.departureFrontendTaskListUrl(lrn.value)
+            redirectLocation(result).value mustEqual frontendAppConfig.departureFrontendTaskListUrl(lrn.value)
         }
       }
 
@@ -171,7 +171,7 @@ class GuaranteeRejectedP5ControllerSpec extends SpecBase with AppWithDefaultMock
             val result = route(app, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value `mustBe` controllers.routes.ErrorController.technicalDifficulties().url
+            redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
         }
       }
     }
