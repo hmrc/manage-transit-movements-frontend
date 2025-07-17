@@ -574,7 +574,7 @@ trait MessagesModelGenerators {
         endorsement        <- arbitrary[EndorsementType02]
         transportEquipment <- arbitrary[Seq[TransportEquipmentType06]]
         containerIndicator <- arbitrary[Flag]
-        transhipment       <- Gen.option(arbitrary[TranshipmentType])
+        transhipment       <- arbitrary[TranshipmentType]
       } yield IncidentType02(
         sequenceNumber = sequenceNumber,
         code = code,
@@ -582,7 +582,7 @@ trait MessagesModelGenerators {
         Endorsement = Some(endorsement),
         Location = loc,
         TransportEquipment = transportEquipment,
-        Transhipment = transhipment
+        Transhipment = Some(transhipment)
       )
     }
 

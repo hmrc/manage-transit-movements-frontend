@@ -17,13 +17,14 @@
 package viewModels.P5.departure
 
 import base.SpecBase
-import generated.CC182CType
+import generated.{CC182CType, IncidentType02}
 import generators.Generators
 import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.Arbitrary
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -84,7 +85,7 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .futureValue
 
     "viewModel must have all sections when all defined in incident" in {
-      val updatedIncident = arbitraryIncidentType02.arbitrary.sample.value.copy(
+      val updatedIncident = arbitrary[IncidentType02].sample.value.copy(
         code = incident.code,
         text = "text"
       )
@@ -105,7 +106,7 @@ class IncidentP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks wit
     }
 
     "viewModel must not have transhipment section if incident doesn't have it" in {
-      val incident = arbitraryIncidentType02.arbitrary.sample.value.copy(Transhipment = None)
+      val incident = arbitrary[IncidentType02].sample.value.copy(Transhipment = None)
       val vewModel = viewModel(cc182Data.copy(Consignment = cc182Data.Consignment.copy(Incident = Seq(incident))))
 
       val sections = vewModel.sections
