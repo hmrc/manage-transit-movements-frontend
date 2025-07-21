@@ -16,9 +16,7 @@
 
 @import config.{FrontendAppConfig, MyBetaBanner}
 @import uk.gov.hmrc.govukfrontend.views.html.components.TwoThirdsMainContent
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.timeoutdialog.TimeoutDialog
-@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.footer.{Footer, FooterItem, Meta}
 @import resources._
 @import views.html.components.{FullWidthContent, UserResearchBanner}
 @import views.utils.ViewUtils._
@@ -32,16 +30,13 @@
 @this(
     appConfig: FrontendAppConfig,
     hmrcStandardPage: HmrcStandardPage,
-    hmrcInternalHead: HmrcInternalHead,
     hmrcTimeoutDialog: HmrcTimeoutDialog,
     betaBanner: MyBetaBanner,
     stylesheets: Stylesheets,
     javascripts: Javascripts,
-    govukBackLink: GovukBackLink,
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
     twoThirdsMainContent: TwoThirdsMainContent,
-    fullWidthContent: FullWidthContent,
-    userResearchBanner: UserResearchBanner
+    fullWidthContent: FullWidthContent
 )(implicit cfConfig: ContactFrontendConfig)
 
 @(

@@ -14,10 +14,8 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import models.referenceData.CustomsOffice
-@import viewModels.P5.departure.{CustomsOfficeContactViewModel, IntentionToControlP5ViewModel}
-@import viewModels.P5.departure.IntentionToControlP5ViewModel.*
+@import viewModels.P5.departure.IntentionToControlP5ViewModel
 @import views.html.components.{AnswerSections, Button, Heading}
 
 @this(
@@ -25,8 +23,7 @@ mainTemplate: MainTemplate,
 heading: Heading,
 answerSections: AnswerSections,
 button: Button,
-formHelper: FormWithCSRF,
-config: FrontendAppConfig
+formHelper: FormWithCSRF
 )
 
 @(intentionToControlP5ViewModel: IntentionToControlP5ViewModel, departureId: String, messageId: String)(implicit request: Request[?], messages: Messages)

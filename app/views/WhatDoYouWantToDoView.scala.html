@@ -21,11 +21,10 @@
     mainTemplate: MainTemplate,
     heading: Heading,
     config: FrontendAppConfig,
-    viewMovements: ViewMovements,
-    warning: Warning
+    viewMovements: ViewMovements
 )
 
-@(arrivalsFeature: Feature, departuresFeature: Feature, draftDepartureFeature: Feature)(implicit request: Request[_], messages: Messages)
+@(arrivalsFeature: Feature, departuresFeature: Feature, draftDepartureFeature: Feature)(implicit request: Request[?], messages: Messages)
 
 @mainTemplate(
     title = messages("whatDoYouWantToDo.title")
