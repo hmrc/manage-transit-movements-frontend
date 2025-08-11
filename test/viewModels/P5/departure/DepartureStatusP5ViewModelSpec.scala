@@ -16,7 +16,7 @@
 
 package viewModels.P5.departure
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import cats.data.NonEmptyList
 import config.FrontendAppConfig
 import generators.Generators
@@ -31,7 +31,7 @@ import viewModels.ViewMovementAction
 
 import java.time.LocalDateTime
 
-class DepartureStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
+class DepartureStatusP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with Generators with ScalaCheckPropertyChecks {
 
   "DepartureStatusP5ViewModel" - {
 

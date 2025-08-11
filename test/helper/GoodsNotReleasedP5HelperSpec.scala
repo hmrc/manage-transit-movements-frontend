@@ -16,7 +16,7 @@
 
 package helper
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generated.CC051CType
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
@@ -24,11 +24,11 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
 import scalaxb.XMLCalendar
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.*
 import utils.GoodsNotReleasedP5Helper
 import viewModels.sections.Section.StaticSection
 
-class GoodsNotReleasedP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class GoodsNotReleasedP5HelperSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super

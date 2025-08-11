@@ -16,7 +16,7 @@
 
 package helper
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import generated.*
 import generators.Generators
@@ -37,7 +37,7 @@ import utils.DepartureCancelledP5Helper
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DepartureCancelledP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class DepartureCancelledP5HelperSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 

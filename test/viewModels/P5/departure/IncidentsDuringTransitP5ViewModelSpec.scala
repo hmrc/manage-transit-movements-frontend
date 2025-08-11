@@ -16,7 +16,7 @@
 
 package viewModels.P5.departure
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generated.CC182CType
 import generators.Generators
 import models.departureP5.DepartureReferenceNumbers
@@ -33,7 +33,7 @@ import viewModels.P5.departure.IncidentsDuringTransitP5ViewModel.IncidentsDuring
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class IncidentsDuringTransitP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   private val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 

@@ -16,11 +16,11 @@
 
 package viewModels.P5.arrival
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class ViewAllArrivalMovementsP5ViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
+class ViewAllArrivalMovementsP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with Generators with ScalaCheckPropertyChecks {
 
   "Display correct title" - {
 

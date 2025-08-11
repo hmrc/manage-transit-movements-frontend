@@ -16,15 +16,14 @@
 
 package viewModels.P5.departure
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generated.CC051CType
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
 import viewModels.P5.departure.GoodsNotReleasedP5ViewModel.GoodsNotReleasedP5ViewModelProvider
 
-class GoodsNotReleasedP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class GoodsNotReleasedP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super.guiceApplicationBuilder()

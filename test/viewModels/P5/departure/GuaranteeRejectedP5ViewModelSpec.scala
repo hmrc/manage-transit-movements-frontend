@@ -16,7 +16,7 @@
 
 package viewModels.P5.departure
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import models.GuaranteeReference
 import models.departureP5.GuaranteeReferenceTable
@@ -25,7 +25,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.{Table, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import viewModels.P5.departure.GuaranteeRejectedP5ViewModel.GuaranteeRejectedP5ViewModelProvider
 
-class GuaranteeRejectedP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class GuaranteeRejectedP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   "GuaranteeRejectedP5ViewModel" - {
 

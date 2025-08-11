@@ -16,7 +16,7 @@
 
 package viewModels.pagination
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -24,7 +24,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers.GET
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{PaginationItem, PaginationLink}
 
-class PaginationViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class PaginationViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   private def intGen: Gen[Int] = Gen.choose(2, 10: Int)
 
