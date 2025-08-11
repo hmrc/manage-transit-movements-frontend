@@ -18,46 +18,40 @@ package models.referenceData
 
 import base.SpecBase
 import config.FrontendAppConfig
+import org.mockito.Mockito.when
 import play.api.libs.json.{JsSuccess, Json, Reads}
-import play.api.test.Helpers.running
 
 class CountrySpec extends SpecBase {
+
+  private val mockFrontendAppConfig = mock[FrontendAppConfig]
 
   "Country" - {
 
     "deserialize from JSON" - {
       "when phase 5" in {
-        running(_.configure("feature-flags.phase-6-enabled" -> false)) {
-          app =>
-            val config = app.injector.instanceOf[FrontendAppConfig]
+        when(mockFrontendAppConfig.phase6Enabled).thenReturn(false)
+        val json = Json.obj(
+          "code"        -> "UK",
+          "description" -> "United Kingdom"
+        )
 
-            val json = Json.obj(
-              "code"        -> "UK",
-              "description" -> "United Kingdom"
-            )
+        implicit val reads: Reads[Country] = Country.reads(mockFrontendAppConfig)
 
-            implicit val reads: Reads[Country] = Country.reads(config)
-
-            val expectedCountry = Country("UK", "United Kingdom")
-            json.validate[Country] mustEqual JsSuccess(expectedCountry)
-        }
+        val expectedCountry = Country("UK", "United Kingdom")
+        json.validate[Country] mustEqual JsSuccess(expectedCountry)
       }
 
       "when phase 6" in {
-        running(_.configure("feature-flags.phase-6-enabled" -> true)) {
-          app =>
-            val config = app.injector.instanceOf[FrontendAppConfig]
+        when(mockFrontendAppConfig.phase6Enabled).thenReturn(true)
+        val json = Json.obj(
+          "key"   -> "UK",
+          "value" -> "United Kingdom"
+        )
 
-            val json = Json.obj(
-              "key"   -> "UK",
-              "value" -> "United Kingdom"
-            )
+        implicit val reads: Reads[Country] = Country.reads(mockFrontendAppConfig)
 
-            implicit val reads: Reads[Country] = Country.reads(config)
-
-            val expectedCountry = Country("UK", "United Kingdom")
-            json.validate[Country] mustEqual JsSuccess(expectedCountry)
-        }
+        val expectedCountry = Country("UK", "United Kingdom")
+        json.validate[Country] mustEqual JsSuccess(expectedCountry)
       }
     }
 

@@ -20,11 +20,13 @@ import base.SpecBase
 import cats.data.NonEmptySet
 import config.FrontendAppConfig
 import generators.Generators
+import org.mockito.Mockito.when
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{Json, Reads}
-import play.api.test.Helpers.running
 
 class RequestedDocumentTypeSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+
+  private val mockFrontendAppConfig = mock[FrontendAppConfig]
 
   "RequestedDocumentType" - {
 
@@ -39,38 +41,32 @@ class RequestedDocumentTypeSpec extends SpecBase with ScalaCheckPropertyChecks w
 
     "must deserialise" - {
       "when there is a requested document type" - {
-        "when phase-6 enabled" in {
-          running(_.configure("feature-flags.phase-6-enabled" -> true)) {
-            app =>
-              val config = app.injector.instanceOf[FrontendAppConfig]
-              val json = Json.parse("""
+        "when phase-6 " in {
+          when(mockFrontendAppConfig.phase6Enabled).thenReturn(true)
+          val json = Json.parse("""
                   |    {
                   |        "key": "C620",
                   |        "value": "T2LF document"
                   |    }
                   |""".stripMargin)
 
-              implicit val reads: Reads[RequestedDocumentType] = RequestedDocumentType.reads(config)
+          implicit val reads: Reads[RequestedDocumentType] = RequestedDocumentType.reads(mockFrontendAppConfig)
 
-              json.as[RequestedDocumentType] mustEqual RequestedDocumentType("C620", "T2LF document")
-          }
+          json.as[RequestedDocumentType] mustEqual RequestedDocumentType("C620", "T2LF document")
 
         }
-        "when phase-6 disabled" in {
-          running(_.configure("feature-flags.phase-6-enabled" -> false)) {
-            app =>
-              val config = app.injector.instanceOf[FrontendAppConfig]
-              val json = Json.parse("""
+        "when phase 5 " in {
+          when(mockFrontendAppConfig.phase6Enabled).thenReturn(false)
+          val json = Json.parse("""
                   |    {
                   |        "code": "C620",
                   |        "description": "T2LF document"
                   |    }
                   |""".stripMargin)
 
-              implicit val reads: Reads[RequestedDocumentType] = RequestedDocumentType.reads(config)
+          implicit val reads: Reads[RequestedDocumentType] = RequestedDocumentType.reads(mockFrontendAppConfig)
 
-              json.as[RequestedDocumentType] mustEqual RequestedDocumentType("C620", "T2LF document")
-          }
+          json.as[RequestedDocumentType] mustEqual RequestedDocumentType("C620", "T2LF document")
 
         }
 

@@ -19,64 +19,58 @@ package models.referenceData
 import base.SpecBase
 import cats.data.NonEmptySet
 import config.FrontendAppConfig
+import org.mockito.Mockito.when
 import play.api.libs.json.{JsValue, Json, Reads}
-import play.api.test.Helpers.running
 
 class ControlTypeSpec extends SpecBase {
+
+  private val mockFrontendAppConfig = mock[FrontendAppConfig]
 
   "ControlType" - {
 
     "deserialize from JSON correctly" - {
-      "when phase 6 enabled" in {
-        running(_.configure("feature-flags.phase-6-enabled" -> true)) {
-          app =>
-            val config = app.injector.instanceOf[FrontendAppConfig]
-
-            val json: JsValue = Json.parse(
-              """
+      "when phase-6 " in {
+        when(mockFrontendAppConfig.phase6Enabled).thenReturn(true)
+        val json: JsValue = Json.parse(
+          """
                 |{
                 |  "key": "CT001",
                 |  "value": "Customs Check"
                 |}
                 |""".stripMargin
-            )
+        )
 
-            val expectedControlType = ControlType(
-              code = "CT001",
-              description = "Customs Check"
-            )
+        val expectedControlType = ControlType(
+          code = "CT001",
+          description = "Customs Check"
+        )
 
-            implicit val reads: Reads[ControlType] = ControlType.reads(config)
+        implicit val reads: Reads[ControlType] = ControlType.reads(mockFrontendAppConfig)
 
-            val result = json.as[ControlType]
-            result mustEqual expectedControlType
-        }
+        val result = json.as[ControlType]
+        result mustEqual expectedControlType
       }
 
-      "when phase 6 disabled" in {
-        running(_.configure("feature-flags.phase-6-enabled" -> false)) {
-          app =>
-            val config = app.injector.instanceOf[FrontendAppConfig]
-
-            val json: JsValue = Json.parse(
-              """
+      "when phase-5" in {
+        when(mockFrontendAppConfig.phase6Enabled).thenReturn(false)
+        val json: JsValue = Json.parse(
+          """
                 |{
                 |  "code": "CT001",
                 |  "description": "Customs Check"
                 |}
                 |""".stripMargin
-            )
+        )
 
-            val expectedControlType = ControlType(
-              code = "CT001",
-              description = "Customs Check"
-            )
+        val expectedControlType = ControlType(
+          code = "CT001",
+          description = "Customs Check"
+        )
 
-            implicit val reads: Reads[ControlType] = ControlType.reads(config)
+        implicit val reads: Reads[ControlType] = ControlType.reads(mockFrontendAppConfig)
 
-            val result = json.as[ControlType]
-            result mustEqual expectedControlType
-        }
+        val result = json.as[ControlType]
+        result mustEqual expectedControlType
       }
     }
 

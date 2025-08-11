@@ -19,65 +19,57 @@ package models.referenceData
 import base.SpecBase
 import cats.data.NonEmptySet
 import config.FrontendAppConfig
+import org.mockito.Mockito.when
 import play.api.libs.json.{JsValue, Json, Reads}
-import play.api.test.Helpers.running
 
 class IdentificationTypeSpec extends SpecBase {
 
+  private val mockFrontendAppConfig = mock[FrontendAppConfig]
+
   "IdentificationType" - {
     "deserialize from JSON correctly " - {
-      "when phase-6 enabled" in {
-        running(_.configure("feature-flags.phase-6-enabled" -> true)) {
-          app =>
-            val config = app.injector.instanceOf[FrontendAppConfig]
-
-            val json: JsValue = Json.parse(
-              """
+      "when phase-6 " in {
+        when(mockFrontendAppConfig.phase6Enabled).thenReturn(true)
+        val json: JsValue = Json.parse(
+          """
                 |{
                 |  "key": "ID001",
                 |  "value": "Id"
                 |}
                 |""".stripMargin
-            )
+        )
 
-            val expectedIdentificationType = IdentificationType(
-              `type` = "ID001",
-              description = "Id"
-            )
+        val expectedIdentificationType = IdentificationType(
+          `type` = "ID001",
+          description = "Id"
+        )
 
-            implicit val reads: Reads[IdentificationType] = IdentificationType.reads(config)
+        implicit val reads: Reads[IdentificationType] = IdentificationType.reads(mockFrontendAppConfig)
 
-            val result = json.as[IdentificationType]
-            result mustEqual expectedIdentificationType
-
-        }
+        val result = json.as[IdentificationType]
+        result mustEqual expectedIdentificationType
 
       }
-      "when phase-6 disabled" in {
-        running(_.configure("feature-flags.phase-6-enabled" -> false)) {
-          app =>
-            val config = app.injector.instanceOf[FrontendAppConfig]
-
-            val json: JsValue = Json.parse(
-              """
+      "when phase-5 " in {
+        when(mockFrontendAppConfig.phase6Enabled).thenReturn(false)
+        val json: JsValue = Json.parse(
+          """
                 |{
                 |  "type": "ID001",
                 |  "description": "Id"
                 |}
                 |""".stripMargin
-            )
+        )
 
-            val expectedIdentificationType = IdentificationType(
-              `type` = "ID001",
-              description = "Id"
-            )
+        val expectedIdentificationType = IdentificationType(
+          `type` = "ID001",
+          description = "Id"
+        )
 
-            implicit val reads: Reads[IdentificationType] = IdentificationType.reads(config)
+        implicit val reads: Reads[IdentificationType] = IdentificationType.reads(mockFrontendAppConfig)
 
-            val result = json.as[IdentificationType]
-            result mustEqual expectedIdentificationType
-
-        }
+        val result = json.as[IdentificationType]
+        result mustEqual expectedIdentificationType
 
       }
 
@@ -110,7 +102,7 @@ class IdentificationTypeSpec extends SpecBase {
         .toSortedSet
         .toList
 
-      result.mustBe(orderedIdentifications)
+      result.mustEqual(orderedIdentifications)
     }
   }
 }
