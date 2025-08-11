@@ -16,7 +16,7 @@
 
 package viewModels.P5.departure
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generated.{CC009CType, CustomsOfficeOfDepartureType05}
 import generators.Generators
 import models.referenceData.CustomsOffice
@@ -33,7 +33,7 @@ import viewModels.P5.departure.DepartureCancelledP5ViewModel.DepartureCancelledP
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DepartureCancelledP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class DepartureCancelledP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 

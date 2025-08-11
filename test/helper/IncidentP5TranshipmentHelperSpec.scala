@@ -16,7 +16,7 @@
 
 package helper
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import generators.Generators
 import models.referenceData.{IdentificationType, Nationality}
@@ -32,7 +32,7 @@ import viewModels.sections.Section.StaticSection
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class IncidentP5TranshipmentHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class IncidentP5TranshipmentHelperSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   private val refDataService: ReferenceDataService = mock[ReferenceDataService]
 

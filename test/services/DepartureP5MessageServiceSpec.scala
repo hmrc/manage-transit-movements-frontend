@@ -16,7 +16,7 @@
 
 package services
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import cats.data.NonEmptyList
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import generated.*
@@ -35,7 +35,7 @@ import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DepartureP5MessageServiceSpec extends SpecBase with Generators {
+class DepartureP5MessageServiceSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
 
   val mockMovementConnector: DepartureMovementP5Connector = mock[DepartureMovementP5Connector]
   val mockCacheConnector: DepartureCacheConnector         = mock[DepartureCacheConnector]

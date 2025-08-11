@@ -16,11 +16,10 @@
 
 package controllers.departureP5
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ManageDocumentsConnector
-import generators.Generators
 import org.apache.pekko.util.Timeout
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -28,12 +27,12 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Result
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.{Await, Future}
 
-class TransitAccompanyingDocumentControllerSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
+class TransitAccompanyingDocumentControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks {
 
   private val mockManageDocumentsConnector: ManageDocumentsConnector = mock[ManageDocumentsConnector]
 

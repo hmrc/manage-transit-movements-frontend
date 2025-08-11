@@ -16,7 +16,7 @@
 
 package helper
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import generated.{AddressType21, GNSSType}
 import generators.Generators
@@ -36,7 +36,7 @@ import viewModels.sections.Section.{AccordionSection, StaticSection}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class IncidentP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class IncidentP5HelperSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   private val refDataService: ReferenceDataService = mock[ReferenceDataService]
 

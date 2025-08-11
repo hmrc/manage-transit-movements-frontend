@@ -16,7 +16,7 @@
 
 package controllers.departureP5.drafts
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import forms.DeparturesSearchFormProvider
 import generators.Generators
 import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber}
@@ -33,7 +33,7 @@ import views.html.departureP5.drafts.DashboardView
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class DashboardControllerSpec extends SpecBase with Generators {
+class DashboardControllerSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
 
   private val mockDraftDepartureService = mock[DraftDepartureService]
 

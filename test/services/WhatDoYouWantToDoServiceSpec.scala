@@ -16,8 +16,8 @@
 
 package services
 
-import base.SpecBase
-import connectors._
+import base.{AppWithDefaultMockFixtures, SpecBase}
+import connectors.*
 import generators.Generators
 import models.{Availability, Feature}
 import org.mockito.ArgumentMatchers.any
@@ -28,7 +28,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class WhatDoYouWantToDoServiceSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class WhatDoYouWantToDoServiceSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
 
   val mockArrivalMovementsP5Connector: ArrivalMovementP5Connector = mock[ArrivalMovementP5Connector]
 
