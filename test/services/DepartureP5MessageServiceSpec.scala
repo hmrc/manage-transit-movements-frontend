@@ -16,18 +16,17 @@
 
 package services
 
-import base.{AppWithDefaultMockFixtures, SpecBase}
+import base.SpecBase
 import cats.data.NonEmptyList
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
 import generated.*
 import generators.Generators
-import models.departureP5.DepartureMessageType.*
 import models.departureP5.*
 import models.departureP5.BusinessRejectionType.*
-import models.IE015
-import models.{LocalReferenceNumber, MessageStatus, RichCC182Type}
+import models.departureP5.DepartureMessageType.*
+import models.{IE015, LocalReferenceNumber, MessageStatus, RichCC182Type}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.Mockito.{verify, when}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 
@@ -35,16 +34,11 @@ import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DepartureP5MessageServiceSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
+class DepartureP5MessageServiceSpec extends SpecBase with Generators {
 
   val mockMovementConnector: DepartureMovementP5Connector = mock[DepartureMovementP5Connector]
   val mockCacheConnector: DepartureCacheConnector         = mock[DepartureCacheConnector]
   val lrnLocal: LocalReferenceNumber                      = LocalReferenceNumber("lrn123")
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    reset(mockMovementConnector); reset(mockCacheConnector)
-  }
 
   val departureP5MessageService = new DepartureP5MessageService(mockMovementConnector, mockCacheConnector)
 

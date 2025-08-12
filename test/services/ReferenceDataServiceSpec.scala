@@ -16,24 +16,19 @@
 
 package services
 
-import base.{AppWithDefaultMockFixtures, SpecBase}
+import base.SpecBase
 import connectors.ReferenceDataConnector
 import models.referenceData.*
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.Mockito.{verify, when}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ReferenceDataServiceSpec extends SpecBase with AppWithDefaultMockFixtures {
+class ReferenceDataServiceSpec extends SpecBase {
 
   private val mockConnector: ReferenceDataConnector = mock[ReferenceDataConnector]
   private val service                               = ReferenceDataService(mockConnector)
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    reset(mockConnector)
-  }
 
   "ReferenceDataService" - {
 
