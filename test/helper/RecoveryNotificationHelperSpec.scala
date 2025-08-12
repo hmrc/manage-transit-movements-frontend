@@ -16,18 +16,18 @@
 
 package helper
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generated.CC035CType
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import scalaxb.XMLCalendar
-import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
+import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.*
 import utils.RecoveryNotificationHelper
 
-class RecoveryNotificationHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class RecoveryNotificationHelperSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   private val amountClaimed: BigDecimal = 1000
 

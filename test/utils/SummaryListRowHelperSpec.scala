@@ -16,14 +16,13 @@
 
 package utils
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.matchers.should.Matchers.*
 import play.api.mvc.Call
-import uk.gov.hmrc.govukfrontend.views.html.components.*
 import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
 
-class SummaryListRowHelperSpec extends SpecBase with Matchers {
+class SummaryListRowHelperSpec extends SpecBase with AppWithDefaultMockFixtures with Matchers {
 
   val helper = new SummaryListRowHelper
 

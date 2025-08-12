@@ -16,7 +16,7 @@
 
 package viewModels.P5.departure
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generated.{CC009CType, CustomsOfficeOfDepartureType05}
 import generators.Generators
 import org.mockito.ArgumentMatchers.any
@@ -32,7 +32,7 @@ import viewModels.P5.departure.DepartureNotCancelledP5ViewModel.DepartureNotCanc
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DepartureNotCancelledP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class DepartureNotCancelledP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 

@@ -16,7 +16,7 @@
 
 package helper
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import generated.*
 import generators.Generators
@@ -39,7 +39,7 @@ import viewModels.sections.Section.StaticSection
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class GoodsUnderControlP5MessageHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class GoodsUnderControlP5MessageHelperSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
   val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =

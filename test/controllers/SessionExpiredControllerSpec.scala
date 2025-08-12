@@ -16,11 +16,11 @@
 
 package controllers
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 
-class SessionExpiredControllerSpec extends SpecBase {
+class SessionExpiredControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
 
   "Session Expired Controller" - {
 

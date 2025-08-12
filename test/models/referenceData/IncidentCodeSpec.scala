@@ -19,64 +19,58 @@ package models.referenceData
 import base.SpecBase
 import cats.data.NonEmptySet
 import config.FrontendAppConfig
+import org.mockito.Mockito.when
 import play.api.libs.json.{Json, Reads}
-import play.api.test.Helpers.running
 
 class IncidentCodeSpec extends SpecBase {
+
+  private val mockFrontendAppConfig = mock[FrontendAppConfig]
 
   "IncidentCode" - {
 
     "deserialize from JSON correctly" - {
-      "when phase-6 enabled" in {
-        running(_.configure("feature-flags.phase-6-enabled" -> true)) {
-          app =>
-            val config = app.injector.instanceOf[FrontendAppConfig]
-
-            val json = Json.parse(
-              """
+      "when phase-6 " in {
+        when(mockFrontendAppConfig.phase6Enabled).thenReturn(true)
+        val json = Json.parse(
+          """
                 |{
                 |  "key": "IC001",
                 |  "value": "Accident"
                 |}
                 |""".stripMargin
-            )
+        )
 
-            val expectedIncidentCode = IncidentCode(
-              code = "IC001",
-              description = "Accident"
-            )
+        val expectedIncidentCode = IncidentCode(
+          code = "IC001",
+          description = "Accident"
+        )
 
-            implicit val reads: Reads[IncidentCode] = IncidentCode.reads(config)
+        implicit val reads: Reads[IncidentCode] = IncidentCode.reads(mockFrontendAppConfig)
 
-            val result = json.as[IncidentCode]
-            result mustEqual expectedIncidentCode
-        }
+        val result = json.as[IncidentCode]
+        result mustEqual expectedIncidentCode
 
       }
-      "when phase-6-disabled" in {
-        running(_.configure("feature-flags.phase-6-enabled" -> false)) {
-          app =>
-            val config = app.injector.instanceOf[FrontendAppConfig]
-
-            val json = Json.parse(
-              """
+      "when phase-5" in {
+        when(mockFrontendAppConfig.phase6Enabled).thenReturn(false)
+        val json = Json.parse(
+          """
                 |{
                 |  "code": "IC001",
                 |  "description": "Accident"
                 |}
                 |""".stripMargin
-            )
+        )
 
-            val expectedIncidentCode = IncidentCode(
-              code = "IC001",
-              description = "Accident"
-            )
+        val expectedIncidentCode = IncidentCode(
+          code = "IC001",
+          description = "Accident"
+        )
 
-            implicit val reads: Reads[IncidentCode] = IncidentCode.reads(config)
+        implicit val reads: Reads[IncidentCode] = IncidentCode.reads(mockFrontendAppConfig)
 
-            val result = json.as[IncidentCode]
-            result mustEqual expectedIncidentCode
-        }
+        val result = json.as[IncidentCode]
+        result mustEqual expectedIncidentCode
 
       }
 
@@ -109,7 +103,7 @@ class IncidentCodeSpec extends SpecBase {
         .toSortedSet
         .toList
 
-      result.mustBe(orderedIncidents)
+      result.mustEqual(orderedIncidents)
     }
   }
 }

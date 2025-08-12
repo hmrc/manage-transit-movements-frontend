@@ -16,7 +16,7 @@
 
 package helper
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generated.*
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
@@ -30,7 +30,7 @@ import uk.gov.hmrc.govukfrontend.views.html.components.implicits.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.*
 import utils.IntentionToControlP5MessageHelper
 
-class IntentionToControlP5MessageHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class IntentionToControlP5MessageHelperSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
   val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =

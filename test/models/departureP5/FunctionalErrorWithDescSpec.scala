@@ -21,47 +21,42 @@ import cats.data.NonEmptySet
 import config.FrontendAppConfig
 import generators.Generators
 import models.referenceData.FunctionalErrorWithDesc
+import org.mockito.Mockito.when
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{Json, Reads}
-import play.api.test.Helpers.running
 
 class FunctionalErrorWithDescSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+
+  private val mockFrontendAppConfig = mock[FrontendAppConfig]
 
   "FunctionalError" - {
 
     "must deserialise" - {
-      "when phase-6 enabled" in {
-        running(_.configure("feature-flags.phase-6-enabled" -> true)) {
-          app =>
-            val config = app.injector.instanceOf[FrontendAppConfig]
-            val json = Json.parse("""
+      "when phase-6 " in {
+        when(mockFrontendAppConfig.phase6Enabled).thenReturn(true)
+        val json = Json.parse("""
                 |    {
                 |        "key": "12",
                 |        "value": "Invalid MRN"
                 |    }
                 |""".stripMargin)
 
-            implicit val reads: Reads[FunctionalErrorWithDesc] = FunctionalErrorWithDesc.reads(config)
+        implicit val reads: Reads[FunctionalErrorWithDesc] = FunctionalErrorWithDesc.reads(mockFrontendAppConfig)
 
-            json.as[FunctionalErrorWithDesc] mustEqual FunctionalErrorWithDesc("12", "Invalid MRN")
-        }
-
+        json.as[FunctionalErrorWithDesc] mustEqual FunctionalErrorWithDesc("12", "Invalid MRN")
       }
-      "when phase-6-disabled" in {
-        running(_.configure("feature-flags.phase-6-enabled" -> false)) {
-          app =>
-            val config = app.injector.instanceOf[FrontendAppConfig]
-            val json = Json.parse("""
+      "when phase-5" in {
+        when(mockFrontendAppConfig.phase6Enabled).thenReturn(false)
+        val json = Json.parse("""
                 |    {
                 |        "code": "12",
                 |        "description": "Invalid MRN"
                 |    }
                 |""".stripMargin)
 
-            implicit val reads: Reads[FunctionalErrorWithDesc] = FunctionalErrorWithDesc.reads(config)
+        implicit val reads: Reads[FunctionalErrorWithDesc] = FunctionalErrorWithDesc.reads(mockFrontendAppConfig)
 
-            json.as[FunctionalErrorWithDesc] mustEqual FunctionalErrorWithDesc("12", "Invalid MRN")
-        }
+        json.as[FunctionalErrorWithDesc] mustEqual FunctionalErrorWithDesc("12", "Invalid MRN")
 
       }
 

@@ -16,7 +16,6 @@
 
 package base
 
-import config.{FrontendAppConfig, PaginationAppConfig}
 import models.departureP5.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
 import models.{DepartureId, Index, LocalReferenceNumber}
@@ -24,11 +23,7 @@ import org.scalatest.*
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.inject.Injector
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.mvc.AnyContent
-import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ActionItem, Content, Key, Value}
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpResponse}
 
@@ -42,8 +37,7 @@ trait SpecBase
     with EitherValues
     with TryValues
     with ScalaFutures
-    with IntegrationPatience
-    with AppWithDefaultMockFixtures {
+    with IntegrationPatience {
 
   val configKey                 = "config"
   val lrn: LocalReferenceNumber = LocalReferenceNumber("ABCD1234567890123")
@@ -62,16 +56,7 @@ trait SpecBase
 
   val departureReferenceNumbers: DepartureReferenceNumbers = DepartureReferenceNumbers(lrn.value, None)
 
-  def injector: Injector                   = app.injector
-  def fakeRequest: FakeRequest[AnyContent] = FakeRequest("", "")
-
-  def messagesApi: MessagesApi    = injector.instanceOf[MessagesApi]
-  implicit def messages: Messages = messagesApi.preferred(fakeRequest)
-
   implicit val hc: HeaderCarrier = HeaderCarrier(Some(Authorization("BearerToken")))
-
-  implicit def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
-  def paginationAppConfig: PaginationAppConfig      = injector.instanceOf[PaginationAppConfig]
 
   implicit val clock: Clock = Clock.systemDefaultZone()
 

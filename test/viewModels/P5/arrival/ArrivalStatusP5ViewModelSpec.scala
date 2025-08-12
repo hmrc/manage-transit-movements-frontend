@@ -16,7 +16,7 @@
 
 package viewModels.P5.arrival
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import cats.data.NonEmptyList
 import generators.Generators
 import models.MessageStatus
@@ -27,7 +27,7 @@ import viewModels.ViewMovementAction
 
 import java.time.LocalDateTime
 
-class ArrivalStatusP5ViewModelSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
+class ArrivalStatusP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with Generators with ScalaCheckPropertyChecks {
 
   private val dateTimeNow = LocalDateTime.now()
 

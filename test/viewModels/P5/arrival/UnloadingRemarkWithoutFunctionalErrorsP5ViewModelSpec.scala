@@ -16,13 +16,13 @@
 
 package viewModels.P5.arrival
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import models.referenceData.CustomsOffice
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import viewModels.P5.arrival.UnloadingRemarkWithoutFunctionalErrorsP5ViewModel.UnloadingRemarkWithoutFunctionalErrorsP5ViewModelProvider
 
-class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class UnloadingRemarkWithoutFunctionalErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   "UnloadingRemarkWithoutFunctionalErrorsP5ViewModel" - {
 

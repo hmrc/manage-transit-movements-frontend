@@ -16,7 +16,7 @@
 
 package helper
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generated.EndorsementType02
 import generators.Generators
 import models.referenceData.Country
@@ -34,7 +34,7 @@ import viewModels.sections.Section.StaticSection
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class IncidentEndorsementP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class IncidentEndorsementP5HelperSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   private val refDataService: ReferenceDataService = mock[ReferenceDataService]
 

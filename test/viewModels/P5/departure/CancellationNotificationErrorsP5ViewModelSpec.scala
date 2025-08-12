@@ -16,13 +16,13 @@
 
 package viewModels.P5.departure
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import models.referenceData.CustomsOffice
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import viewModels.P5.departure.CancellationNotificationErrorsP5ViewModel.CancellationNotificationErrorsP5ViewModelProvider
 
-class CancellationNotificationErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class CancellationNotificationErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   "CancellationNotificationErrorsP5ViewModel" - {
 

@@ -16,7 +16,7 @@
 
 package viewModels.P5.departure
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import models.FunctionalError.FunctionalErrorWithSection
 import models.FunctionalErrors.FunctionalErrorsWithSection
@@ -24,7 +24,7 @@ import models.InvalidDataItem
 import models.departureP5.BusinessRejectionType
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class RejectionMessageP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   private val lrnString = "LRNAB123"
 

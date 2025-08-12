@@ -16,11 +16,11 @@
 
 package viewModels
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class ViewMovementActionSpec extends SpecBase with ScalaCheckPropertyChecks {
+class ViewMovementActionSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks {
 
   "id" - {
     "must replace spaces with hyphens and append a reference number" in {

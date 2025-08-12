@@ -16,11 +16,11 @@
 
 package controllers
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 
-class KeepAliveControllerSpec extends SpecBase {
+class KeepAliveControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
 
   "KeepAliveController" - {
 

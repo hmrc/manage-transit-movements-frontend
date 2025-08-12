@@ -16,7 +16,7 @@
 
 package helper
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.ReferenceDataConnector.NoReferenceDataFoundException
 import generated.CC182CType
 import generators.Generators
@@ -37,7 +37,7 @@ import javax.xml.datatype.XMLGregorianCalendar
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class IncidentsDuringTransitP5HelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class IncidentsDuringTransitP5HelperSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   private val mockReferenceDataService: ReferenceDataService = mock[ReferenceDataService]
 

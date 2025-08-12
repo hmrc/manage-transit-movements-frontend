@@ -19,60 +19,56 @@ package models.referenceData
 import base.SpecBase
 import cats.data.NonEmptySet
 import config.FrontendAppConfig
+import org.mockito.Mockito.when
 import play.api.libs.json.{Json, Reads}
-import play.api.test.Helpers.running
 
 class NationalitySpec extends SpecBase {
 
+  private val mockFrontendAppConfig = mock[FrontendAppConfig]
+
   "Nationality" - {
     "deserialize from JSON correctly" - {
-      "when phase-6 enabled" in {
-        running(_.configure("feature-flags.phase-6-enabled" -> true)) {
-          app =>
-            val config = app.injector.instanceOf[FrontendAppConfig]
-            val json = Json.parse(
-              """
+      "when phase-6 " in {
+        when(mockFrontendAppConfig.phase6Enabled).thenReturn(true)
+        val json = Json.parse(
+          """
                 |{
                 |  "key": "UK",
                 |  "value": "United Kingdom"
                 |}
                 |""".stripMargin
-            )
+        )
 
-            val expectedNationality = Nationality(
-              code = "UK",
-              description = "United Kingdom"
-            )
+        val expectedNationality = Nationality(
+          code = "UK",
+          description = "United Kingdom"
+        )
 
-            implicit val reads: Reads[Nationality] = Nationality.reads(config)
+        implicit val reads: Reads[Nationality] = Nationality.reads(mockFrontendAppConfig)
 
-            val result = json.as[Nationality]
-            result mustEqual expectedNationality
-        }
+        val result = json.as[Nationality]
+        result mustEqual expectedNationality
       }
-      "when phase-6-disabled" in {
-        running(_.configure("feature-flags.phase-6-enabled" -> false)) {
-          app =>
-            val config = app.injector.instanceOf[FrontendAppConfig]
-            val json = Json.parse(
-              """
+      "when phase-5" in {
+        when(mockFrontendAppConfig.phase6Enabled).thenReturn(false)
+        val json = Json.parse(
+          """
                 |{
                 |  "code": "UK",
                 |  "description": "United Kingdom"
                 |}
                 |""".stripMargin
-            )
+        )
 
-            val expectedNationality = Nationality(
-              code = "UK",
-              description = "United Kingdom"
-            )
+        val expectedNationality = Nationality(
+          code = "UK",
+          description = "United Kingdom"
+        )
 
-            implicit val reads: Reads[Nationality] = Nationality.reads(config)
+        implicit val reads: Reads[Nationality] = Nationality.reads(mockFrontendAppConfig)
 
-            val result = json.as[Nationality]
-            result mustEqual expectedNationality
-        }
+        val result = json.as[Nationality]
+        result mustEqual expectedNationality
       }
 
     }
@@ -104,7 +100,7 @@ class NationalitySpec extends SpecBase {
         .toSortedSet
         .toList
 
-      result.mustBe(orderedNationalities)
+      result.mustEqual(orderedNationalities)
     }
   }
 }

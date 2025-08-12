@@ -16,7 +16,7 @@
 
 package helper
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generated.{GoodsReferenceType03, SealType01}
 import generators.Generators
 import org.scalacheck.Arbitrary.arbitrary
@@ -24,7 +24,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import utils.IncidentP5TransportEquipmentHelper
 import viewModels.sections.Section.AccordionSection
 
-class IncidentP5TransportEquipmentHelperSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class IncidentP5TransportEquipmentHelperSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   "IncidentP5TransportEquipmentHelper" - {
 

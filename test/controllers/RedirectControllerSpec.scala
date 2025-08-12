@@ -16,11 +16,11 @@
 
 package controllers
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 
-class RedirectControllerSpec extends SpecBase {
+class RedirectControllerSpec extends SpecBase with AppWithDefaultMockFixtures {
 
   "return OK and the correct view for a GET" in {
 

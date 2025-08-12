@@ -21,10 +21,10 @@ import connectors.ArrivalMovementP5Connector
 import generated.*
 import generators.Generators
 import models.MessageStatus
-import models.arrivalP5.ArrivalMessageType.{GoodsReleasedNotification, RejectionFromOfficeOfDestination}
 import models.arrivalP5.*
+import models.arrivalP5.ArrivalMessageType.{GoodsReleasedNotification, RejectionFromOfficeOfDestination}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 
@@ -35,11 +35,6 @@ import scala.concurrent.Future
 class ArrivalP5MessageServiceSpec extends SpecBase with Generators {
 
   val mockConnector: ArrivalMovementP5Connector = mock[ArrivalMovementP5Connector]
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    reset(mockConnector)
-  }
 
   val arrivalP5MessageService = new ArrivalP5MessageService(mockConnector)
 

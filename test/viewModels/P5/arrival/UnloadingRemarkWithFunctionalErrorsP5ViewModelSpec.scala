@@ -16,14 +16,14 @@
 
 package viewModels.P5.arrival
 
-import base.SpecBase
+import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
 import models.FunctionalError.FunctionalErrorWithoutSection
 import models.FunctionalErrors.FunctionalErrorsWithoutSection
 import models.InvalidDataItem
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   private val mrnString = "MRNAB123"
 

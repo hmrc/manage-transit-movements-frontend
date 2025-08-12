@@ -16,17 +16,33 @@
 
 package base
 
+import config.{FrontendAppConfig, PaginationAppConfig}
 import controllers.actions.*
 import org.scalatest.{BeforeAndAfterEach, TestSuite}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.cache.AsyncCacheApi
-import play.api.inject.bind
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.inject.{bind, Injector}
+import play.api.mvc.AnyContent
+import play.api.test.FakeRequest
 
 trait AppWithDefaultMockFixtures extends GuiceOneAppPerSuite with BeforeAndAfterEach with MockitoSugar {
   self: TestSuite =>
+
+  def injector: Injector = app.injector
+
+  def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
+
+  def fakeRequest: FakeRequest[AnyContent] = FakeRequest("", "")
+
+  implicit def messages: Messages = messagesApi.preferred(fakeRequest)
+
+  implicit def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
+
+  def paginationAppConfig: PaginationAppConfig = injector.instanceOf[PaginationAppConfig]
 
   override def fakeApplication(): Application =
     guiceApplicationBuilder()
