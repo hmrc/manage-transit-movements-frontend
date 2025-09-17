@@ -78,7 +78,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   val isTraderTest: Boolean = configuration.get[Boolean]("trader-test.enabled")
   val feedbackEmail: String = configuration.get[String]("trader-test.feedback.email")
-  val feedbackForm: String  = configuration.get[String]("trader-test.feedback.link")
 
   val apiResults: Long = configuration.get[Long]("microservice.services.common-transit-convention-traders.count")
 
