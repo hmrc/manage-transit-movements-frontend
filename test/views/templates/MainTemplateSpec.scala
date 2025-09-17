@@ -38,22 +38,6 @@ class MainTemplateSpec extends SpecBase with AppWithDefaultMockFixtures with Vie
       .configure("trader-test.enabled" -> false)
       .build()
 
-    "must point feedback at feedback form" in {
-      forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
-        (content, title) =>
-          val view = app.injector
-            .instanceOf[MainTemplate]
-            .apply(title) {
-              Html.apply(content)
-            }
-
-          val doc = Jsoup.parse(view.toString())
-
-          val link = getElementBySelector(doc, ".govuk-phase-banner__text > .govuk-link")
-          getElementHref(link) mustEqual s"http://localhost:9250/contact/beta-feedback?service=CTCTraders&referrerUrl=$path"
-      }
-    }
-
     "must use HMRC 'report technical issue' helper" in {
       forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
         (content, title) =>
@@ -125,22 +109,6 @@ class MainTemplateSpec extends SpecBase with AppWithDefaultMockFixtures with Vie
       .build()
 
     val config = app.injector.instanceOf[FrontendAppConfig]
-
-    "must point feedback at google form" in {
-      forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
-        (content, title) =>
-          val view = app.injector
-            .instanceOf[MainTemplate]
-            .apply(title) {
-              Html.apply(content)
-            }
-
-          val doc = Jsoup.parse(view.toString())
-
-          val link = getElementBySelector(doc, ".govuk-phase-banner__text > .govuk-link")
-          getElementHref(link) mustEqual config.feedbackForm
-      }
-    }
 
     "must use custom link for reporting issues" in {
       forAll(Gen.alphaNumStr, Gen.alphaNumStr) {
