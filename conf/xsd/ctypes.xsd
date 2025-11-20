@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://ncts.dgtaxud.ec" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://ncts.dgtaxud.ec" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="60.4.9" vc:minVersion="1.1">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://ncts.dgtaxud.ec" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" targetNamespace="http://ncts.dgtaxud.ec" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="60.4.16" vc:minVersion="1.1">
     <!--================================================================================-->
     <!--===== Complex Types                                                             -->
-    <!--===== DDNTA-6.4.0-v2.00                                                         -->
+    <!--===== DDNTA-6.4.1-v1.00                                                         -->
     <!--===== NCTS-P6 Phase Definition                                                  -->
-    <!--===== XSD version 60.4.9                                                        -->
-    <!--===== Aligned with DDNTA_RFC-List.42                                            -->
+    <!--===== XSD version 60.4.16                                                       -->
+    <!--===== Aligned with DDNTA_RFC-List.44                                            -->
     <!--================================================================================-->
     <!--================================================================================-->
     <!--===== Includes                                                                  -->
@@ -56,7 +56,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="ExportOperation" maxOccurs="99" type="ExportOperationType05">
+            <xs:element name="ExportOperation" maxOccurs="1999" type="ExportOperationType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="EXPORT OPERATION" />
@@ -565,14 +565,14 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="code" minOccurs="0" type="CodeContentType01">
+            <xs:element name="code" minOccurs="0" type="CodeContentType07">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="Code" />
                         <codeList code="CL752" type="business" name="AdditionalInformationCodeSubset" />
                         <format value="an..17" />
                         <optionality value="O" />
-                        <xsdBaseType value="RiskAnalysisResultCode" />
+                        <xsdBaseType value="Alphanumeric_Max17" />
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -6432,13 +6432,13 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="grossMass" minOccurs="0" type="GrossMassContentType01">
+            <xs:element name="grossMass" minOccurs="0" type="GrossMassContentType02">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="Gross mass" />
                         <format value="n..16,6" />
                         <optionality value="O" />
-                        <xsdBaseType value="DecimalWithoutZero_16_6" />
+                        <xsdBaseType value="DecimalWithZero_16_6" />
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -6663,7 +6663,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="HouseConsignment" type="HouseConsignmentType07">
+            <xs:element name="HouseConsignment" maxOccurs="1999" type="HouseConsignmentType07">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="HOUSE CONSIGNMENT" />
@@ -7001,7 +7001,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="Consignor" minOccurs="0" type="ConsignorType06">
+            <xs:element name="Consignor" minOccurs="0" type="ConsignorType13">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="CONSIGNOR" />
@@ -7363,13 +7363,13 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="grossMass" minOccurs="0" type="GrossMassContentType01">
+            <xs:element name="grossMass" minOccurs="0" type="GrossMassContentType02">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="Gross mass" />
                         <format value="n..16,6" />
                         <optionality value="O" />
-                        <xsdBaseType value="DecimalWithoutZero_16_6" />
+                        <xsdBaseType value="DecimalWithZero_16_6" />
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -7753,7 +7753,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="Consignor" minOccurs="0" type="ConsignorType06">
+            <xs:element name="Consignor" minOccurs="0" type="ConsignorType13">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="CONSIGNOR" />
@@ -7873,7 +7873,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="HouseConsignment" maxOccurs="1999" type="HouseConsignmentType11">
+            <xs:element name="HouseConsignment" maxOccurs="1999" type="HouseConsignmentType12">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="HOUSE CONSIGNMENT" />
@@ -9571,80 +9571,6 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="ConsignorType06">
-        <xs:annotation>
-            <xs:documentation>
-                <usedBy>Used by 2/124 messages: CD001C, CD050C</usedBy>
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="identificationNumber" minOccurs="0" type="IdentificationNumberContentType01">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="Identification number" />
-                        <format value="an..17" />
-                        <optionality value="O" />
-                        <xsdBaseType value="TINNewType" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="name" type="NameContentType">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="Name" />
-                        <format value="an..70" />
-                        <optionality value="R" />
-                        <xsdBaseType value="AlphaNumeric_MAX70_NoSpaces" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="Address" type="AddressType22">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="ADDRESS" />
-                        <optionality value="R" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="ConsignorType07">
-        <xs:annotation>
-            <xs:documentation>
-                <usedBy>Used by 2/124 messages: CD001C, CD050C</usedBy>
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="identificationNumber" minOccurs="0" type="IdentificationNumberContentType01">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="Identification number" />
-                        <format value="an..17" />
-                        <optionality value="O" />
-                        <xsdBaseType value="TINNewType" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="name" type="NameContentType">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="Name" />
-                        <format value="an..70" />
-                        <optionality value="R" />
-                        <xsdBaseType value="AlphaNumeric_MAX70_NoSpaces" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="Address" type="AddressType22">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="ADDRESS" />
-                        <optionality value="R" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
     <xs:complexType name="ConsignorType08">
         <xs:annotation>
             <xs:documentation>
@@ -9945,7 +9871,7 @@
     <xs:complexType name="ConsignorType13">
         <xs:annotation>
             <xs:documentation>
-                <usedBy>Used by 5/124 messages: CD003C, CD038C, CD115C, CD160C, CD165C</usedBy>
+                <usedBy>Used by 7/124 messages: CD001C, CD003C, CD038C, CD050C, CD115C, CD160C, CD165C</usedBy>
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
@@ -9982,7 +9908,7 @@
     <xs:complexType name="ConsignorType14">
         <xs:annotation>
             <xs:documentation>
-                <usedBy>Used by 5/124 messages: CD003C, CD038C, CD115C, CD160C, CD165C</usedBy>
+                <usedBy>Used by 7/124 messages: CD001C, CD003C, CD038C, CD050C, CD115C, CD160C, CD165C</usedBy>
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
@@ -10195,36 +10121,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="emailAddress" minOccurs="0" type="EmailAddressContentType02">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="E-mail address" />
-                        <format value="an..256" />
-                        <optionality value="O" />
-                        <xsdBaseType value="EmailAddressType256_NoSpaces" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="ContactPersonType05">
-        <xs:annotation>
-            <xs:documentation>
-                <usedBy>Used by 5/124 messages: CCA13D, CCA15D, CCA29D, CDA13D, CDA15D</usedBy>
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="phoneNumber" type="PhoneNumberContentType">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="Phone number" />
-                        <format value="an..35" />
-                        <optionality value="R" />
-                        <xsdBaseType value="AlphaNumeric_MAX35_NoSpaces" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="e-mailAddress" minOccurs="0" type="E-mailAddressContentType">
+            <xs:element name="eMailAddress" minOccurs="0" type="EMailAddressContentType01">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="E-mail address" />
@@ -13027,16 +12924,6 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="sequenceNumber" type="SequenceNumberContentType02">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="Sequence number" />
-                        <format value="n..5" />
-                        <optionality value="R" />
-                        <xsdBaseType value="NumericWithoutZero_5" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
             <xs:element name="MRN" type="MRNContentType03">
                 <xs:annotation>
                     <xs:documentation>
@@ -15453,7 +15340,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="LRN" minOccurs="0" type="LrnContentType02">
+            <xs:element name="LRN" minOccurs="0" type="LRNContentType02">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="LRN" />
@@ -15463,7 +15350,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="MRN" minOccurs="0" type="MrnContentType05">
+            <xs:element name="MRN" minOccurs="0" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -15510,7 +15397,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -15529,7 +15416,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -15558,7 +15445,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -17176,6 +17063,24 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
+            <xs:element name="sequenceNumber" type="SequenceNumberContentType02">
+                <xs:annotation>
+                    <xs:documentation>
+                        <description value="Sequence number" />
+                        <format value="n..5" />
+                        <optionality value="R" />
+                        <xsdBaseType value="NumericWithoutZero_5" />
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="ExportOperation" type="ExportOperationType02">
+                <xs:annotation>
+                    <xs:documentation>
+                        <description value="EXPORT OPERATION" />
+                        <optionality value="R" />
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
             <xs:element name="ConsignmentItem" maxOccurs="999" type="ConsignmentItemType06">
                 <xs:annotation>
                     <xs:documentation>
@@ -17462,7 +17367,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="Consignor" minOccurs="0" type="ConsignorType07">
+            <xs:element name="Consignor" minOccurs="0" type="ConsignorType14">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="CONSIGNOR" />
@@ -17631,169 +17536,10 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="HouseConsignmentType11">
-        <xs:annotation>
-            <xs:documentation>
-                <usedBy>Used by 1/124 messages: CD050C</usedBy>
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="sequenceNumber" type="SequenceNumberContentType02">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="Sequence number" />
-                        <format value="n..5" />
-                        <optionality value="R" />
-                        <xsdBaseType value="NumericWithoutZero_5" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="countryOfDispatch" minOccurs="0" type="CountryOfDispatchContentType">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="Country of dispatch" />
-                        <codeList code="CL008" type="business" name="CountryCodesFullList" />
-                        <format value="a2" />
-                        <optionality value="D" />
-                        <xsdBaseType value="CountryCodeType" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="countryOfDestination" minOccurs="0" type="CountryOfDestinationContentType">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="Country of destination" />
-                        <codeList code="CL008" type="business" name="CountryCodesFullList" />
-                        <format value="a2" />
-                        <optionality value="D" />
-                        <xsdBaseType value="CountryCodeType" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="grossMass" type="GrossMassContentType01">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="Gross mass" />
-                        <format value="n..16,6" />
-                        <optionality value="R" />
-                        <xsdBaseType value="DecimalWithoutZero_16_6" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="referenceNumberUCR" minOccurs="0" type="ReferenceNumberUCRContentType01">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="Reference number UCR" />
-                        <format value="an..35" />
-                        <optionality value="D" />
-                        <xsdBaseType value="UCRReferenceNumber35_NoSpaces" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="securityIndicatorFromExportDeclaration" minOccurs="0" type="SecurityIndicatorFromExportDeclarationContentType">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="Security indicator from export declaration" />
-                        <codeList code="CL217" type="business" name="DeclarationTypeSecurity" />
-                        <format value="n1" />
-                        <optionality value="O" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="Consignor" minOccurs="0" type="ConsignorType07">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="CONSIGNOR" />
-                        <optionality value="D" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="Consignee" minOccurs="0" type="ConsigneeType06">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="CONSIGNEE" />
-                        <optionality value="D" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="AdditionalSupplyChainActor" minOccurs="0" maxOccurs="99" type="AdditionalSupplyChainActorType01">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="ADDITIONAL SUPPLY CHAIN ACTOR" />
-                        <optionality value="O" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="DepartureTransportMeans" minOccurs="0" maxOccurs="999" type="DepartureTransportMeansType01">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="DEPARTURE TRANSPORT MEANS" />
-                        <optionality value="D" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="PreviousDocument" minOccurs="0" maxOccurs="99" type="PreviousDocumentType06">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="PREVIOUS DOCUMENT" />
-                        <optionality value="O" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="SupportingDocument" minOccurs="0" maxOccurs="99" type="SupportingDocumentType03">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="SUPPORTING DOCUMENT" />
-                        <optionality value="O" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="TransportDocument" minOccurs="0" maxOccurs="99" type="TransportDocumentType01">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="TRANSPORT DOCUMENT" />
-                        <optionality value="O" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="AdditionalReference" minOccurs="0" maxOccurs="99" type="AdditionalReferenceType02">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="ADDITIONAL REFERENCE" />
-                        <optionality value="O" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="AdditionalInformation" minOccurs="0" maxOccurs="99" type="AdditionalInformationType02">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="ADDITIONAL INFORMATION" />
-                        <optionality value="O" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="TransportCharges" minOccurs="0" type="TransportChargesType01">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="TRANSPORT CHARGES" />
-                        <optionality value="D" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="ConsignmentItem" maxOccurs="999" type="ConsignmentItemType13">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="CONSIGNMENT ITEM" />
-                        <optionality value="R" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
     <xs:complexType name="HouseConsignmentType12">
         <xs:annotation>
             <xs:documentation>
-                <usedBy>Used by 1/124 messages: CD160C</usedBy>
+                <usedBy>Used by 2/124 messages: CD050C, CD160C</usedBy>
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
@@ -21833,7 +21579,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="ContactPerson" minOccurs="0" type="ContactPersonType05">
+            <xs:element name="ContactPerson" minOccurs="0" type="ContactPersonType04">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="CONTACT PERSON" />
@@ -21888,7 +21634,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="ContactPerson" minOccurs="0" type="ContactPersonType05">
+            <xs:element name="ContactPerson" minOccurs="0" type="ContactPersonType04">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="CONTACT PERSON" />
@@ -21943,7 +21689,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="ContactPerson" minOccurs="0" type="ContactPersonType05">
+            <xs:element name="ContactPerson" minOccurs="0" type="ContactPersonType04">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="CONTACT PERSON" />
@@ -22500,7 +22246,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -22539,7 +22285,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="LRN" minOccurs="0" type="LrnContentType02">
+            <xs:element name="LRN" minOccurs="0" type="LRNContentType02">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="LRN" />
@@ -22549,7 +22295,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="MRN" minOccurs="0" type="MrnContentType05">
+            <xs:element name="MRN" minOccurs="0" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -22679,7 +22425,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="LRN" type="LrnContentType02">
+            <xs:element name="LRN" type="LRNContentType02">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="LRN" />
@@ -22799,7 +22545,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -22898,7 +22644,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -22937,7 +22683,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -22966,7 +22712,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -23005,7 +22751,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="LRN" type="LrnContentType02">
+            <xs:element name="LRN" type="LRNContentType02">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="LRN" />
@@ -23015,7 +22761,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -23164,7 +22910,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -23223,7 +22969,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -23252,7 +22998,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -23310,7 +23056,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -23359,7 +23105,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -23398,7 +23144,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="LRN" minOccurs="0" type="LrnContentType02">
+            <xs:element name="LRN" minOccurs="0" type="LRNContentType02">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="LRN" />
@@ -23408,7 +23154,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="MRN" minOccurs="0" type="MrnContentType05">
+            <xs:element name="MRN" minOccurs="0" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -23467,7 +23213,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="LRN" minOccurs="0" type="LrnContentType02">
+            <xs:element name="LRN" minOccurs="0" type="LRNContentType02">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="LRN" />
@@ -23477,7 +23223,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="MRN" minOccurs="0" type="MrnContentType05">
+            <xs:element name="MRN" minOccurs="0" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -23536,7 +23282,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -23550,7 +23296,7 @@
                 <xs:annotation>
                     <xs:documentation>
                         <description value="Business rejection type" />
-                        <codeList code="CL560" type="business" name="BusinessRejectionTypeDepExp" />
+                        <codeList code="CL570" type="business" name="BusinessRejectionTypeDesExt" />
                         <format value="an3" />
                         <optionality value="R" />
                     </xs:documentation>
@@ -23595,7 +23341,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -23654,7 +23400,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="LRN" minOccurs="0" type="LrnContentType02">
+            <xs:element name="LRN" minOccurs="0" type="LRNContentType02">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="LRN" />
@@ -23664,7 +23410,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="MRN" minOccurs="0" type="MrnContentType05">
+            <xs:element name="MRN" minOccurs="0" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -23703,7 +23449,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="LRN" minOccurs="0" type="LrnContentType02">
+            <xs:element name="LRN" minOccurs="0" type="LRNContentType02">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="LRN" />
@@ -23713,7 +23459,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="MRN" minOccurs="0" type="MrnContentType05">
+            <xs:element name="MRN" minOccurs="0" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -23761,7 +23507,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -23800,7 +23546,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="LRN" type="LrnContentType02">
+            <xs:element name="LRN" type="LRNContentType02">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="LRN" />
@@ -23829,7 +23575,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="LRN" minOccurs="0" type="LrnContentType02">
+            <xs:element name="LRN" minOccurs="0" type="LRNContentType02">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="LRN" />
@@ -23858,7 +23604,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="LRN" minOccurs="0" type="LrnContentType02">
+            <xs:element name="LRN" minOccurs="0" type="LRNContentType02">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="LRN" />
@@ -23868,7 +23614,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="MRN" minOccurs="0" type="MrnContentType05">
+            <xs:element name="MRN" minOccurs="0" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -24017,7 +23763,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="LRN" type="LrnContentType02">
+            <xs:element name="LRN" type="LRNContentType02">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="LRN" />
@@ -24137,7 +23883,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="LRN" type="LrnContentType02">
+            <xs:element name="LRN" type="LRNContentType02">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="LRN" />
@@ -24147,7 +23893,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -24267,7 +24013,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -24315,7 +24061,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -24414,7 +24160,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -24523,7 +24269,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -24552,7 +24298,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -24601,7 +24347,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -24720,7 +24466,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -24759,7 +24505,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -24848,7 +24594,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -24862,7 +24608,7 @@
                 <xs:annotation>
                     <xs:documentation>
                         <description value="Business rejection type" />
-                        <codeList code="CL561" type="business" name="BusinessRejectionTypeDepCommonDomain" />
+                        <codeList code="CL561" type="business" name="BusinessRejectionTypeTED2Dep" />
                         <format value="an3" />
                         <optionality value="R" />
                     </xs:documentation>
@@ -24887,7 +24633,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -24926,7 +24672,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -24955,7 +24701,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -24984,7 +24730,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -25013,7 +24759,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -25112,7 +24858,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -25122,12 +24868,32 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="movementStoppedDate" type="MovementStoppedDateContentType">
+            <xs:element name="passageRefusalDate" type="PassageRefusalDateContentType">
                 <xs:annotation>
                     <xs:documentation>
-                        <description value="Movement stopped date" />
+                        <description value="Passage refusal date" />
                         <format value="an10" />
                         <optionality value="R" />
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="passageRefusalReasonCode" type="PassageRefusalReasonCodeContentType">
+                <xs:annotation>
+                    <xs:documentation>
+                        <description value="Passage refusal reason code" />
+                        <codeList code="CL238" type="business" name="PassageRefusalReasonCode" />
+                        <format value="n..2" />
+                        <optionality value="R" />
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="text" minOccurs="0" type="TextContentType">
+                <xs:annotation>
+                    <xs:documentation>
+                        <description value="Text" />
+                        <format value="an..512" />
+                        <optionality value="D" />
+                        <xsdBaseType value="AlphaNumeric_MAX512_NoSpaces" />
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -25140,7 +24906,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -25229,7 +24995,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -25328,7 +25094,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -25367,7 +25133,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -25526,7 +25292,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="LRN" type="LrnContentType02">
+            <xs:element name="LRN" type="LRNContentType02">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="LRN" />
@@ -25536,7 +25302,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -25666,7 +25432,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -25695,7 +25461,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="LRN" minOccurs="0" type="LrnContentType02">
+            <xs:element name="LRN" minOccurs="0" type="LRNContentType02">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="LRN" />
@@ -25705,7 +25471,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="MRN" minOccurs="0" type="MrnContentType05">
+            <xs:element name="MRN" minOccurs="0" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -25744,7 +25510,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="LRN" type="LrnContentType02">
+            <xs:element name="LRN" type="LRNContentType02">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="LRN" />
@@ -25754,7 +25520,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -25802,7 +25568,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -25841,7 +25607,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -25879,7 +25645,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -25908,7 +25674,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -25927,7 +25693,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="LRN" minOccurs="0" type="LrnContentType02">
+            <xs:element name="LRN" minOccurs="0" type="LRNContentType02">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="LRN" />
@@ -25937,7 +25703,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="MRN" minOccurs="0" type="MrnContentType05">
+            <xs:element name="MRN" minOccurs="0" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -25956,7 +25722,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -25985,7 +25751,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="LRN" type="LrnContentType02">
+            <xs:element name="LRN" type="LRNContentType02">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="LRN" />
@@ -26004,7 +25770,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -26033,7 +25799,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -26072,7 +25838,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="LRN" minOccurs="0" type="LrnContentType02">
+            <xs:element name="LRN" minOccurs="0" type="LRNContentType02">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="LRN" />
@@ -26119,14 +25885,6 @@
                         <format value="an19" />
                         <optionality value="D" />
                         <xsdBaseType value="DateTimeType" />
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="ExportOperation" maxOccurs="99" type="ExportOperationType02">
-                <xs:annotation>
-                    <xs:documentation>
-                        <description value="EXPORT OPERATION" />
-                        <optionality value="R" />
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -26763,7 +26521,7 @@
         </xs:sequence>
     </xs:complexType>
     <!--================================================================================-->
-    <!--=====                                                                           -->
+    <!--===== TypeOfControls                                                            -->
     <!--================================================================================-->
     <xs:complexType name="TypeOfControlsType">
         <xs:annotation>
@@ -26977,7 +26735,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="MRN" type="MrnContentType05">
+            <xs:element name="MRN" type="MRNContentType05">
                 <xs:annotation>
                     <xs:documentation>
                         <description value="MRN" />
@@ -27097,6 +26855,7 @@
                         <description value="Error column number" />
                         <format value="n..9" />
                         <optionality value="R" />
+                        <xsdBaseType value="NumericWithZero_9" />
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
