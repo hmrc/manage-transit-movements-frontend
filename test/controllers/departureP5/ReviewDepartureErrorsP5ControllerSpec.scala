@@ -69,7 +69,7 @@ class ReviewDepartureErrorsP5ControllerSpec extends SpecBase with AppWithDefault
           when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(message))
 
-          when(mockFunctionalErrorsService.convertErrorsWithSection(any())(any(), any()))
+          when(mockFunctionalErrorsService.convertErrorsWithSectionAndSender(any(), any())(any(), any()))
             .thenReturn(Future.successful(functionalErrors))
 
           val viewModel = ReviewDepartureErrorsP5ViewModel(

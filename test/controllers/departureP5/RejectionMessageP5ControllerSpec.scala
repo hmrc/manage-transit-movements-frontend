@@ -78,7 +78,7 @@ class RejectionMessageP5ControllerSpec extends SpecBase with AppWithDefaultMockF
           when(mockAmendmentService.isRejectionAmendable(any(), any())(any(), any()))
             .thenReturn(Future.successful(true))
 
-          when(mockFunctionalErrorsService.convertErrorsWithSection(any())(any(), any()))
+          when(mockFunctionalErrorsService.convertErrorsWithSectionAndSender(any(), any())(any(), any()))
             .thenReturn(Future.successful(functionalErrors))
 
           val viewModel = RejectionMessageP5ViewModel(

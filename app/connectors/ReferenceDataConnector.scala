@@ -63,11 +63,16 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     getOrElseUpdate[CustomsOffice](url)
   }
 
-  def getCountry(
-    code: String
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[Country]] = {
+  def getCountry(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[Country]] = {
     val queryParams                    = Country.queryParams(code)(config)
     val url                            = url"${config.customsReferenceDataUrl}/lists/CountryCodesFullList?$queryParams"
+    implicit val reads: Reads[Country] = Country.reads(config)
+    getOrElseUpdate[Country](url)
+  }
+
+  def getCountryCodesOptOut(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[Country]] = {
+    val queryParams                    = Country.queryParams(code)(config)
+    val url                            = url"${config.customsReferenceDataUrl}/lists/CountryCodesOptOut?$queryParams"
     implicit val reads: Reads[Country] = Country.reads(config)
     getOrElseUpdate[Country](url)
   }
@@ -122,9 +127,16 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     getOrElseUpdate[RequestedDocumentType](url)
   }
 
-  def getFunctionalError(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[FunctionalErrorWithDesc]] = {
+  def getFunctionalErrorCodesIeCA(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[FunctionalErrorWithDesc]] = {
     val queryParams                                    = FunctionalErrorWithDesc.queryParams(code)(config)
     val url                                            = url"${config.customsReferenceDataUrl}/lists/FunctionalErrorCodesIeCA?$queryParams"
+    implicit val reads: Reads[FunctionalErrorWithDesc] = FunctionalErrorWithDesc.reads(config)
+    getOrElseUpdate[FunctionalErrorWithDesc](url)
+  }
+
+  def getFunctionErrorCodesTED(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[FunctionalErrorWithDesc]] = {
+    val queryParams                                    = FunctionalErrorWithDesc.queryParams(code)(config)
+    val url                                            = url"${config.customsReferenceDataUrl}/lists/FunctionErrorCodesTED?$queryParams"
     implicit val reads: Reads[FunctionalErrorWithDesc] = FunctionalErrorWithDesc.reads(config)
     getOrElseUpdate[FunctionalErrorWithDesc](url)
   }

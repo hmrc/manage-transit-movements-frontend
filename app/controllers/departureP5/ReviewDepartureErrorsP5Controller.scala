@@ -46,7 +46,9 @@ class ReviewDepartureErrorsP5Controller @Inject() (
   def onPageLoad(page: Option[Int], departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.identify() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
-        functionalErrorsService.convertErrorsWithSection(request.messageData.FunctionalError.map(FunctionalErrorType(_))).map {
+        val messageSender = request.messageData.messageSequence1.messageSender
+
+        functionalErrorsService.convertErrorsWithSectionAndSender(request.messageData.FunctionalError.map(FunctionalErrorType(_)), messageSender).map {
           functionalErrors =>
             val viewModel = ReviewDepartureErrorsP5ViewModel(
               functionalErrors = functionalErrors,

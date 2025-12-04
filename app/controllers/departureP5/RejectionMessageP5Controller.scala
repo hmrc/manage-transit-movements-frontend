@@ -49,12 +49,13 @@ class RejectionMessageP5Controller @Inject() (
   def onPageLoad(page: Option[Int], departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.identify() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
-        val lrn       = request.referenceNumbers.localReferenceNumber
-        val rejection = IE056Rejection(departureId, request.messageData)
+        val lrn           = request.referenceNumbers.localReferenceNumber
+        val rejection     = IE056Rejection(departureId, request.messageData)
+        val messageSender = request.messageData.messageSequence1.messageSender
 
         service.isRejectionAmendable(lrn, rejection).flatMap {
           case true =>
-            functionalErrorsService.convertErrorsWithSection(request.messageData.FunctionalError.map(FunctionalErrorType(_))).map {
+            functionalErrorsService.convertErrorsWithSectionAndSender(request.messageData.FunctionalError.map(FunctionalErrorType(_)), messageSender).map {
               functionalErrors =>
                 val viewModel = RejectionMessageP5ViewModel(
                   functionalErrors = functionalErrors,

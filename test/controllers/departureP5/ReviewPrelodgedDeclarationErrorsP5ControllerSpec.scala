@@ -73,7 +73,7 @@ class ReviewPrelodgedDeclarationErrorsP5ControllerSpec extends SpecBase with App
           when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(message))
 
-          when(mockFunctionalErrorsService.convertErrorsWithoutSection(any())(any(), any()))
+          when(mockFunctionalErrorsService.convertErrorsWithoutSectionAndWithSender(any(), any())(any(), any()))
             .thenReturn(Future.successful(functionalErrors))
 
           val viewModel = ReviewPrelodgedDeclarationErrorsP5ViewModel(

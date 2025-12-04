@@ -60,7 +60,21 @@ class ReferenceDataService @Inject() (connector: ReferenceDataConnector) {
     connector.getRequestedDocumentType(code).map(_.resolve())
 
   def getFunctionalError(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc] =
-    connector.getFunctionalError(code).map(_.resolve())
+    connector.getFunctionalErrorCodesIeCA(code).map(_.resolve())
+
+  def getFunctionalErrorForSender(code: String, messageSender: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[FunctionalErrorWithDesc] = {
+    val country = messageSender.takeRight(2)
+
+    for {
+      optOutCountriesResponse <- connector.getCountryCodesOptOut(country)
+
+      response <-
+        optOutCountriesResponse match {
+          case Right(_) => connector.getFunctionalErrorCodesIeCA(code)
+          case Left(_)  => connector.getFunctionErrorCodesTED(code)
+        }
+    } yield response.resolve()
+  }
 
   def getInvalidGuaranteeReason(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[InvalidGuaranteeReason] =
     connector.getInvalidGuaranteeReason(code).map(_.resolve())

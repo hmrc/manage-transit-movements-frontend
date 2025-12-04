@@ -68,7 +68,7 @@ class ReviewCancellationErrorsP5ControllerSpec extends SpecBase with AppWithDefa
           when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(message))
 
-          when(mockFunctionalErrorsService.convertErrorsWithoutSection(any())(any(), any()))
+          when(mockFunctionalErrorsService.convertErrorsWithoutSectionAndWithSender(any(), any())(any(), any()))
             .thenReturn(Future.successful(functionalErrors))
 
           val viewModel = ReviewCancellationErrorsP5ViewModel(
