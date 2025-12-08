@@ -27,6 +27,7 @@ import services.FunctionalErrorsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.ReviewDepartureErrorsP5ViewModel
 import views.html.departureP5.ReviewDepartureErrorsP5View
+import config.FrontendAppConfig
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -38,7 +39,8 @@ class ReviewDepartureErrorsP5Controller @Inject() (
   cc: MessagesControllerComponents,
   view: ReviewDepartureErrorsP5View,
   functionalErrorsService: FunctionalErrorsService,
-  paginationConfig: PaginationAppConfig
+  paginationConfig: PaginationAppConfig,
+  config: FrontendAppConfig
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
@@ -46,9 +48,17 @@ class ReviewDepartureErrorsP5Controller @Inject() (
   def onPageLoad(page: Option[Int], departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.identify() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
-        val messageSender = request.messageData.messageSequence1.messageSender
+        val messageSender       = request.messageData.messageSequence1.messageSender
+        val functionalErrorsSeq = request.messageData.FunctionalError.map(FunctionalErrorType(_))
 
-        functionalErrorsService.convertErrorsWithSectionAndSender(request.messageData.FunctionalError.map(FunctionalErrorType(_)), messageSender).map {
+        val functionalErrorsF =
+          if (config.phase6Enabled) {
+            functionalErrorsService.convertErrorsWithSectionAndSender(functionalErrorsSeq, messageSender)
+          } else {
+            functionalErrorsService.convertErrorsWithSection(functionalErrorsSeq)
+          }
+
+        functionalErrorsF.map {
           functionalErrors =>
             val viewModel = ReviewDepartureErrorsP5ViewModel(
               functionalErrors = functionalErrors,

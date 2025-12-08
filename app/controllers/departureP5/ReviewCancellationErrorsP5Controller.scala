@@ -26,6 +26,7 @@ import services.FunctionalErrorsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel
 import views.html.departureP5.ReviewCancellationErrorsP5View
+import config.FrontendAppConfig
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -36,7 +37,8 @@ class ReviewCancellationErrorsP5Controller @Inject() (
   messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
   view: ReviewCancellationErrorsP5View,
-  functionalErrorsService: FunctionalErrorsService
+  functionalErrorsService: FunctionalErrorsService,
+  config: FrontendAppConfig
 )(implicit val executionContext: ExecutionContext, paginationConfig: PaginationAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
@@ -44,9 +46,17 @@ class ReviewCancellationErrorsP5Controller @Inject() (
   def onPageLoad(page: Option[Int], departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.identify() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
-        val messageSender = request.messageData.messageSequence1.messageSender
+        val messageSender       = request.messageData.messageSequence1.messageSender
+        val functionalErrorsSeq = request.messageData.FunctionalError.map(FunctionalErrorType(_))
 
-        functionalErrorsService.convertErrorsWithoutSectionAndWithSender(request.messageData.FunctionalError.map(FunctionalErrorType(_)), messageSender).map {
+        val functionalErrorsF =
+          if (config.phase6Enabled) {
+            functionalErrorsService.convertErrorsWithoutSectionAndWithSender(functionalErrorsSeq, messageSender)
+          } else {
+            functionalErrorsService.convertErrorsWithoutSection(functionalErrorsSeq)
+          }
+
+        functionalErrorsF.map {
           functionalErrors =>
             val viewModel = ReviewCancellationErrorsP5ViewModel(
               functionalErrors = functionalErrors,

@@ -26,6 +26,7 @@ import services.FunctionalErrorsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.ReviewPrelodgedDeclarationErrorsP5ViewModel
 import views.html.departureP5.ReviewPrelodgedDeclarationErrorsP5View
+import config.FrontendAppConfig
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -36,7 +37,8 @@ class ReviewPrelodgedDeclarationErrorsP5Controller @Inject() (
   messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
   view: ReviewPrelodgedDeclarationErrorsP5View,
-  functionalErrorsService: FunctionalErrorsService
+  functionalErrorsService: FunctionalErrorsService,
+  config: FrontendAppConfig
 )(implicit val executionContext: ExecutionContext, paginationConfig: PaginationAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
@@ -44,9 +46,17 @@ class ReviewPrelodgedDeclarationErrorsP5Controller @Inject() (
   def onPageLoad(page: Option[Int], departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.identify() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
-        val messageSender = request.messageData.messageSequence1.messageSender
+        val messageSender      = request.messageData.messageSequence1.messageSender
+        val functionalErrorSeq = request.messageData.FunctionalError.map(FunctionalErrorType(_))
 
-        functionalErrorsService.convertErrorsWithoutSectionAndWithSender(request.messageData.FunctionalError.map(FunctionalErrorType(_)), messageSender).map {
+        val functionalErrorsF =
+          if (config.phase6Enabled) {
+            functionalErrorsService.convertErrorsWithoutSectionAndWithSender(functionalErrorSeq, messageSender)
+          } else {
+            functionalErrorsService.convertErrorsWithoutSection(functionalErrorSeq)
+          }
+
+        functionalErrorsF.map {
           functionalErrors =>
             val viewModel = ReviewPrelodgedDeclarationErrorsP5ViewModel(
               functionalErrors = functionalErrors,
