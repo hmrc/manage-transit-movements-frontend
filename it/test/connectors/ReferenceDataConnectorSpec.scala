@@ -1093,7 +1093,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
           running(phase5App) {
             app =>
               val connector = app.injector.instanceOf[ReferenceDataConnector]
-              checkErrorResponse(url, connector.getFunctionalError(functionalError))
+              checkErrorResponse(url, connector.getFunctionalErrorCodesIeCA(functionalError))
           }
         }
       }
@@ -1133,11 +1133,20 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should throw a NoReferenceDataFoundException for an empty response" in {
-          checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getFunctionalErrorCodesIeCA(functionalError))
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getFunctionalErrorCodesIeCA(functionalError))
+          }
         }
 
         "should handle client and server errors for functional errors" in {
-          checkErrorResponse(url, connector.getFunctionalErrorCodesIeCA(functionalError))
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkErrorResponse(url, connector.getFunctionalErrorCodesIeCA(functionalError))
+          }
+
         }
       }
 
@@ -1187,9 +1196,15 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
         }
 
         "should handle client and server errors for functional errors" in {
-          checkErrorResponse(url, connector.getFunctionErrorCodesTED(functionalError))
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkErrorResponse(url, connector.getFunctionErrorCodesTED(functionalError))
+          }
+
         }
       }
+
       "when phase-6-disabled" - {
 
         val url = s"$baseUrl/lists/FunctionErrorCodesTED?data.code=$functionalError"
@@ -1228,7 +1243,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
           running(phase5App) {
             app =>
               val connector = app.injector.instanceOf[ReferenceDataConnector]
-              checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getFunctionalError(functionalError))
+              checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getFunctionErrorCodesTED(functionalError))
           }
         }
 
@@ -1236,7 +1251,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
           running(phase5App) {
             app =>
               val connector = app.injector.instanceOf[ReferenceDataConnector]
-              checkErrorResponse(url, connector.getFunctionalError(functionalError))
+              checkErrorResponse(url, connector.getFunctionErrorCodesTED(functionalError))
           }
         }
       }
@@ -1366,5 +1381,5 @@ object ReferenceDataConnectorSpec {
     """
       |[]
       |""".stripMargin
-    
+
 }
