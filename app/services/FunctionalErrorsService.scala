@@ -50,6 +50,26 @@ class FunctionalErrorsService @Inject() (
             .map(FunctionalErrorsWithSection.apply)
       }
 
+  def convertErrorsWithSectionAndSender(
+    functionalErrors: Seq[FunctionalErrorType],
+    messageSender: String
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[FunctionalErrorsWithSection] =
+    departureCacheConnector
+      .convertErrors(functionalErrors)
+      .flatMap {
+        errors =>
+          Future
+            .sequence {
+              errors.value.map {
+                error =>
+                  referenceDataService.getFunctionalErrorForSender(error.error, messageSender).map {
+                    value => error.copy(error = value.toString)
+                  }
+              }
+            }
+            .map(FunctionalErrorsWithSection.apply)
+      }
+
   def convertErrorsWithoutSection(
     functionalErrors: Seq[FunctionalErrorType]
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[FunctionalErrorsWithoutSection] =
@@ -58,6 +78,21 @@ class FunctionalErrorsService @Inject() (
         functionalErrors.map(FunctionalErrorWithoutSection.apply).map {
           error =>
             referenceDataService.getFunctionalError(error.error).map {
+              value => error.copy(error = value.toString)
+            }
+        }
+      }
+      .map(FunctionalErrorsWithoutSection.apply)
+
+  def convertErrorsWithoutSectionAndWithSender(
+    functionalErrors: Seq[FunctionalErrorType],
+    messageSender: String
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[FunctionalErrorsWithoutSection] =
+    Future
+      .sequence {
+        functionalErrors.map(FunctionalErrorWithoutSection.apply).map {
+          error =>
+            referenceDataService.getFunctionalErrorForSender(error.error, messageSender).map {
               value => error.copy(error = value.toString)
             }
         }

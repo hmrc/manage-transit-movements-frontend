@@ -29,6 +29,7 @@ import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.RejectionMessageP5ViewModel
 import views.html.departureP5.RejectionMessageP5View
+import config.FrontendAppConfig
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,7 +41,8 @@ class RejectionMessageP5Controller @Inject() (
   cc: MessagesControllerComponents,
   service: AmendmentService,
   view: RejectionMessageP5View,
-  functionalErrorsService: FunctionalErrorsService
+  functionalErrorsService: FunctionalErrorsService,
+  config: FrontendAppConfig
 )(implicit val executionContext: ExecutionContext, paginationConfig: PaginationAppConfig)
     extends FrontendController(cc)
     with I18nSupport
@@ -49,12 +51,21 @@ class RejectionMessageP5Controller @Inject() (
   def onPageLoad(page: Option[Int], departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.identify() andThen messageRetrievalAction[CC056CType](departureId, messageId)).async {
       implicit request =>
-        val lrn       = request.referenceNumbers.localReferenceNumber
-        val rejection = IE056Rejection(departureId, request.messageData)
+        val lrn                 = request.referenceNumbers.localReferenceNumber
+        val rejection           = IE056Rejection(departureId, request.messageData)
+        val messageSender       = request.messageData.messageSequence1.messageSender
+        val functionalErrorsSeq = request.messageData.FunctionalError.map(FunctionalErrorType(_))
 
         service.isRejectionAmendable(lrn, rejection).flatMap {
           case true =>
-            functionalErrorsService.convertErrorsWithSection(request.messageData.FunctionalError.map(FunctionalErrorType(_))).map {
+            val functionalErrorsF =
+              if (config.phase6Enabled) {
+                functionalErrorsService.convertErrorsWithSectionAndSender(functionalErrorsSeq, messageSender)
+              } else {
+                functionalErrorsService.convertErrorsWithSection(functionalErrorsSeq)
+              }
+
+            functionalErrorsF.map {
               functionalErrors =>
                 val viewModel = RejectionMessageP5ViewModel(
                   functionalErrors = functionalErrors,

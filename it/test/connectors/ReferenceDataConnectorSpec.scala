@@ -295,6 +295,121 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
     }
 
+    "getCountryCodesOptOut" - {
+
+      val code = "GB"
+
+      "when phase-6 enabled" - {
+
+        val url = s"$baseUrl/lists/CountryCodesOptOut?keys=GB"
+
+        val countriesOptOutResponseJson: String =
+          s"""
+             |[
+             |  {
+             |    "key": "GB",
+             |    "value": "United Kingdom",
+             |    "properties": {
+             |      "state": "valid"
+             |     }
+             |  }
+             |]
+             |""".stripMargin
+
+        "should handle a 200 response for opt-out countries" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.2.0+json"))
+                  .willReturn(okJson(countriesOptOutResponseJson))
+              )
+
+              val expectedResult = Country("GB", "United Kingdom")
+
+              connector.getCountryCodesOptOut(code).futureValue.value mustEqual expectedResult
+          }
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getCountryCodesOptOut(code))
+          }
+        }
+
+        "should handle client and server errors for customs offices" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkErrorResponse(url, connector.getCountryCodesOptOut(code))
+          }
+        }
+      }
+
+      "when phase-6-disabled" - {
+
+        val url = s"$baseUrl/lists/CountryCodesOptOut?data.code=$code"
+
+        val countriesResponseJson: String =
+          s"""
+             |{
+             |  "_links": {
+             |    "self": {
+             |      "href": "/customs-reference-data/lists/CountryCodesOptOut"
+             |    }
+             |  },
+             |  "meta": {
+             |    "version": "fb16648c-ea06-431e-bbf6-483dc9ebed6e",
+             |    "snapshotDate": "2023-01-01"
+             |  },
+             |  "id": "CountryCodesOptOut",
+             |  "data": [
+             |    {
+             |      "activeFrom": "2023-01-23",
+             |      "code": "GB",
+             |      "state": "valid",
+             |      "description": "United Kingdom"
+             |    }
+             |  ]
+             |}
+             |""".stripMargin
+
+        "should handle a 200 response for countries" in {
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
+                  .willReturn(okJson(countriesResponseJson))
+              )
+              val expectedResult = Country(code, "United Kingdom")
+
+              connector.getCountryCodesOptOut(code).futureValue.value mustEqual expectedResult
+          }
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getCountryCodesOptOut(code))
+          }
+        }
+
+        "should handle client and server errors for customs offices" in {
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkErrorResponse(url, connector.getCountryCodesOptOut(code))
+          }
+        }
+      }
+    }
+
     "getQualifierOfIdentifications" - {
 
       val qualifier = "U"
@@ -931,7 +1046,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
 
     }
 
-    "getFunctionalError" - {
+    "getFunctionalErrorCodesIeCA" - {
 
       "when phase-6 enabled" - {
 
@@ -959,7 +1074,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
               )
               val expectedResult = FunctionalErrorWithDesc(functionalError, "Rule violation")
 
-              connector.getFunctionalError(functionalError).futureValue.value mustEqual expectedResult
+              connector.getFunctionalErrorCodesIeCA(functionalError).futureValue.value mustEqual expectedResult
 
           }
 
@@ -969,7 +1084,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
           running(phase6App) {
             app =>
               val connector = app.injector.instanceOf[ReferenceDataConnector]
-              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getFunctionalError(functionalError))
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getFunctionalErrorCodesIeCA(functionalError))
           }
 
         }
@@ -978,7 +1093,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
           running(phase5App) {
             app =>
               val connector = app.injector.instanceOf[ReferenceDataConnector]
-              checkErrorResponse(url, connector.getFunctionalError(functionalError))
+              checkErrorResponse(url, connector.getFunctionalErrorCodesIeCA(functionalError))
           }
         }
       }
@@ -1011,7 +1126,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
               )
               val expectedResult = FunctionalErrorWithDesc(functionalError, "Rule violation")
 
-              connector.getFunctionalError(functionalError).futureValue.value mustEqual expectedResult
+              connector.getFunctionalErrorCodesIeCA(functionalError).futureValue.value mustEqual expectedResult
 
           }
 
@@ -1021,7 +1136,7 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
           running(phase5App) {
             app =>
               val connector = app.injector.instanceOf[ReferenceDataConnector]
-              checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getFunctionalError(functionalError))
+              checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getFunctionalErrorCodesIeCA(functionalError))
           }
         }
 
@@ -1029,7 +1144,114 @@ class ReferenceDataConnectorSpec extends ItSpecBase with WireMockServerHandler w
           running(phase5App) {
             app =>
               val connector = app.injector.instanceOf[ReferenceDataConnector]
-              checkErrorResponse(url, connector.getFunctionalError(functionalError))
+              checkErrorResponse(url, connector.getFunctionalErrorCodesIeCA(functionalError))
+          }
+
+        }
+      }
+
+    }
+
+    "getFunctionErrorCodesTED" - {
+
+      "when phase-6 enabled" - {
+
+        val url = s"$baseUrl/lists/FunctionErrorCodesTED?keys=$functionalError"
+
+        val functionalErrorsResponseJson: String =
+          s"""
+             |[
+             |  {
+             |    "key": "$functionalError",
+             |    "value": "Rule violation"
+             |  }
+             |]
+             |""".stripMargin
+
+        "should handle a 200 response for functional errors" in {
+
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.2.0+json"))
+                  .willReturn(okJson(functionalErrorsResponseJson))
+              )
+              val expectedResult = FunctionalErrorWithDesc(functionalError, "Rule violation")
+
+              connector.getFunctionErrorCodesTED(functionalError).futureValue.value mustEqual expectedResult
+
+          }
+
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase6ResponseJson, connector.getFunctionErrorCodesTED(functionalError))
+          }
+
+        }
+
+        "should handle client and server errors for functional errors" in {
+          running(phase6App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkErrorResponse(url, connector.getFunctionErrorCodesTED(functionalError))
+          }
+
+        }
+      }
+
+      "when phase-6-disabled" - {
+
+        val url = s"$baseUrl/lists/FunctionErrorCodesTED?data.code=$functionalError"
+
+        val functionalErrorsResponseJson: String =
+          s"""
+             |{
+             |  "data": [
+             |    {
+             |      "code": "$functionalError",
+             |      "description": "Rule violation"
+             |    }
+             |  ]
+             |}
+             |""".stripMargin
+
+        "should handle a 200 response for functional errors" in {
+
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              server.stubFor(
+                get(urlEqualTo(url))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.1.0+json"))
+                  .willReturn(okJson(functionalErrorsResponseJson))
+              )
+              val expectedResult = FunctionalErrorWithDesc(functionalError, "Rule violation")
+
+              connector.getFunctionErrorCodesTED(functionalError).futureValue.value mustEqual expectedResult
+
+          }
+
+        }
+
+        "should throw a NoReferenceDataFoundException for an empty response" in {
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkNoReferenceDataFoundResponse(url, emptyPhase5ResponseJson, connector.getFunctionErrorCodesTED(functionalError))
+          }
+        }
+
+        "should handle client and server errors for functional errors" in {
+          running(phase5App) {
+            app =>
+              val connector = app.injector.instanceOf[ReferenceDataConnector]
+              checkErrorResponse(url, connector.getFunctionErrorCodesTED(functionalError))
           }
         }
       }
@@ -1159,4 +1381,5 @@ object ReferenceDataConnectorSpec {
     """
       |[]
       |""".stripMargin
+
 }

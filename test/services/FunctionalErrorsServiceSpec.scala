@@ -23,7 +23,7 @@ import models.FunctionalError.{FunctionalErrorWithSection, FunctionalErrorWithou
 import models.FunctionalErrors.{FunctionalErrorsWithSection, FunctionalErrorsWithoutSection}
 import models.referenceData.{FunctionalErrorWithDesc, InvalidGuaranteeReason}
 import models.{FunctionalErrorType, GuaranteeReference, InvalidDataItem}
-import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, when}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -52,6 +52,7 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
     reset(mockDepartureCacheConnector)
     reset(mockReferenceDataService)
   }
+  import scala.concurrent.ExecutionContext
 
   "FunctionalErrorsService" - {
     "convertErrorsWithSection" - {
@@ -124,6 +125,79 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
       }
     }
 
+    "convertErrorsWithSectionWithSender" - {
+      "must convert a series of FunctionalErrorType07 values to FunctionalErrorsWithSection (with sender)" in {
+
+        val messageSender = "GB"
+
+        val input = Seq(
+          FunctionalErrorType(
+            errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            errorCode = Number12.toString,
+            errorReason = "BR20004",
+            originalAttributeValue = Some("GB635733627000")
+          ),
+          FunctionalErrorType(
+            errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            errorCode = Number14.toString,
+            errorReason = "BR20005",
+            originalAttributeValue = None
+          )
+        )
+
+        val output = FunctionalErrorsWithSection(
+          Seq(
+            FunctionalErrorWithSection(
+              error = "12",
+              businessRuleId = "BR20004",
+              section = Some("Trader details"),
+              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              invalidAnswer = Some("GB635733627000")
+            ),
+            FunctionalErrorWithSection(
+              error = "14",
+              businessRuleId = "BR20005",
+              section = None,
+              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              invalidAnswer = None
+            )
+          )
+        )
+
+        val expectedResult = FunctionalErrorsWithSection(
+          Seq(
+            FunctionalErrorWithSection(
+              error = "12 - foo",
+              businessRuleId = "BR20004",
+              section = Some("Trader details"),
+              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              invalidAnswer = Some("GB635733627000")
+            ),
+            FunctionalErrorWithSection(
+              error = "14 - bar",
+              businessRuleId = "BR20005",
+              section = None,
+              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              invalidAnswer = None
+            )
+          )
+        )
+
+        when(mockDepartureCacheConnector.convertErrors(any())(any()))
+          .thenReturn(Future.successful(output))
+
+        when(mockReferenceDataService.getFunctionalErrorForSender(eqTo("12"), eqTo(messageSender))(any(), any()))
+          .thenReturn(Future.successful(FunctionalErrorWithDesc("12", "foo")))
+
+        when(mockReferenceDataService.getFunctionalErrorForSender(eqTo("14"), eqTo(messageSender))(any(), any()))
+          .thenReturn(Future.successful(FunctionalErrorWithDesc("14", "bar")))
+
+        val result = service.convertErrorsWithSectionAndSender(input, messageSender).futureValue
+
+        result mustEqual expectedResult
+      }
+    }
+
     "convertErrorsWithoutSection" - {
       "must convert a series of FunctionalErrorType07 values to FunctionalErrorsWithoutSection" in {
         val input = Seq(
@@ -165,6 +239,55 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
           .thenReturn(Future.successful(FunctionalErrorWithDesc("14", "bar")))
 
         val result = service.convertErrorsWithoutSection(input).futureValue
+
+        result mustEqual expectedResult
+      }
+    }
+
+    "convertErrorsWithoutSectionAndWithSender" - {
+      "must convert a series of FunctionalErrorType07 values to FunctionalErrorsWithoutSection (with sender)" in {
+
+        val messageSender = "GB"
+
+        val input = Seq(
+          FunctionalErrorType(
+            errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            errorCode = Number12.toString,
+            errorReason = "BR20004",
+            originalAttributeValue = Some("GB635733627000")
+          ),
+          FunctionalErrorType(
+            errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            errorCode = Number14.toString,
+            errorReason = "BR20005",
+            originalAttributeValue = None
+          )
+        )
+
+        val expectedResult = FunctionalErrorsWithoutSection(
+          Seq(
+            FunctionalErrorWithoutSection(
+              error = "12 - foo",
+              businessRuleId = "BR20004",
+              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              invalidAnswer = Some("GB635733627000")
+            ),
+            FunctionalErrorWithoutSection(
+              error = "14 - bar",
+              businessRuleId = "BR20005",
+              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              invalidAnswer = None
+            )
+          )
+        )
+
+        when(mockReferenceDataService.getFunctionalErrorForSender(eqTo("12"), eqTo(messageSender))(any(), any()))
+          .thenReturn(Future.successful(FunctionalErrorWithDesc("12", "foo")))
+
+        when(mockReferenceDataService.getFunctionalErrorForSender(eqTo("14"), eqTo(messageSender))(any(), any()))
+          .thenReturn(Future.successful(FunctionalErrorWithDesc("14", "bar")))
+
+        val result = service.convertErrorsWithoutSectionAndWithSender(input, messageSender).futureValue
 
         result mustEqual expectedResult
       }

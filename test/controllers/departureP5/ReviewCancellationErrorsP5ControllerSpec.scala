@@ -32,6 +32,7 @@ import play.api.test.Helpers.*
 import services.{DepartureP5MessageService, FunctionalErrorsService}
 import viewModels.P5.departure.ReviewCancellationErrorsP5ViewModel
 import views.html.departureP5.ReviewCancellationErrorsP5View
+import config.FrontendAppConfig
 
 import scala.concurrent.Future
 
@@ -39,6 +40,7 @@ class ReviewCancellationErrorsP5ControllerSpec extends SpecBase with AppWithDefa
 
   private val mockDepartureP5MessageService = mock[DepartureP5MessageService]
   private val mockFunctionalErrorsService   = mock[FunctionalErrorsService]
+  private val mockConfig                    = mock[FrontendAppConfig]
 
   lazy val rejectionMessageController: String =
     routes.ReviewCancellationErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url
@@ -54,12 +56,15 @@ class ReviewCancellationErrorsP5ControllerSpec extends SpecBase with AppWithDefa
       .guiceApplicationBuilder()
       .overrides(
         bind[DepartureP5MessageService].toInstance(mockDepartureP5MessageService),
-        bind[FunctionalErrorsService].toInstance(mockFunctionalErrorsService)
+        bind[FunctionalErrorsService].toInstance(mockFunctionalErrorsService),
+        bind[FrontendAppConfig].toInstance(mockConfig)
       )
 
   "ReviewCancellationErrorsP5Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET when phase-6-enabled = false" in {
+      when(mockConfig.phase6Enabled).thenReturn(false)
+
       forAll(arbitrary[CC056CType], arbitrary[FunctionalErrorsWithoutSection]) {
         (message, functionalErrors) =>
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
@@ -69,6 +74,42 @@ class ReviewCancellationErrorsP5ControllerSpec extends SpecBase with AppWithDefa
             .thenReturn(Future.successful(message))
 
           when(mockFunctionalErrorsService.convertErrorsWithoutSection(any())(any(), any()))
+            .thenReturn(Future.successful(functionalErrors))
+
+          val viewModel = ReviewCancellationErrorsP5ViewModel(
+            functionalErrors = functionalErrors,
+            lrn = lrn.value,
+            currentPage = None,
+            numberOfErrorsPerPage = paginationAppConfig.numberOfErrorsPerPage,
+            departureId = departureIdP5,
+            messageId = messageId
+          )
+
+          val request = FakeRequest(GET, rejectionMessageController)
+
+          val result = route(app, request).value
+
+          status(result) mustEqual OK
+
+          val view = injector.instanceOf[ReviewCancellationErrorsP5View]
+
+          contentAsString(result) mustEqual
+            view(viewModel, departureIdP5)(request, messages).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET when phase-6-enabled = true" in {
+      when(mockConfig.phase6Enabled).thenReturn(true)
+
+      forAll(arbitrary[CC056CType], arbitrary[FunctionalErrorsWithoutSection]) {
+        (message, functionalErrors) =>
+          when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
+            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
+
+          when(mockDepartureP5MessageService.getMessage[CC056CType](any(), any())(any(), any(), any()))
+            .thenReturn(Future.successful(message))
+
+          when(mockFunctionalErrorsService.convertErrorsWithoutSectionAndWithSender(any(), any())(any(), any()))
             .thenReturn(Future.successful(functionalErrors))
 
           val viewModel = ReviewCancellationErrorsP5ViewModel(
