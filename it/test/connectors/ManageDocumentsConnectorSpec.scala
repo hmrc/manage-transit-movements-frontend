@@ -38,8 +38,11 @@ class ManageDocumentsConnectorSpec extends ItSpecBase with WireMockServerHandler
 
   val errorResponses: Gen[Int] = Gen.chooseNum(400, 599)
 
-  private val phase5App: GuiceApplicationBuilder => GuiceApplicationBuilder = _ => guiceApplicationBuilder().configure("feature-flags.phase-6-enabled" -> false)
-  private val phase6App: GuiceApplicationBuilder => GuiceApplicationBuilder = _ => guiceApplicationBuilder().configure("feature-flags.phase-6-enabled" -> true)
+  private val phase5App: GuiceApplicationBuilder => GuiceApplicationBuilder = _ =>
+    guiceApplicationBuilder().configure("feature-flags.phase-6-api-enabled" -> false)
+
+  private val phase6App: GuiceApplicationBuilder => GuiceApplicationBuilder = _ =>
+    guiceApplicationBuilder().configure("feature-flags.phase-6-api-enabled" -> true)
 
   "ManageDocumentsConnectorSpec" - {
 

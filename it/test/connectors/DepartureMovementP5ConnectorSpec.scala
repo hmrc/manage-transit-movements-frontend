@@ -34,8 +34,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
 
-  private val phase5App: GuiceApplicationBuilder => GuiceApplicationBuilder = _ => guiceApplicationBuilder().configure("feature-flags.phase-6-enabled" -> false)
-  private val phase6App: GuiceApplicationBuilder => GuiceApplicationBuilder = _ => guiceApplicationBuilder().configure("feature-flags.phase-6-enabled" -> true)
+  private val phase5App: GuiceApplicationBuilder => GuiceApplicationBuilder = _ =>
+    guiceApplicationBuilder().configure("feature-flags.phase-6-api-enabled" -> false)
+
+  private val phase6App: GuiceApplicationBuilder => GuiceApplicationBuilder = _ =>
+    guiceApplicationBuilder().configure("feature-flags.phase-6-api-enabled" -> true)
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super

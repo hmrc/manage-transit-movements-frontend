@@ -27,7 +27,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   val asyncCacheApiExpiration: Int = configuration.get[Int]("async-cache-api.expiration")
 
-  val phase6Enabled: Boolean = configuration.get[Boolean]("feature-flags.phase-6-enabled")
+  val phase6Enabled: Boolean    = configuration.get[Boolean]("feature-flags.phase-6-enabled")
+  val phase6ApiEnabled: Boolean = configuration.get[Boolean]("feature-flags.phase-6-api-enabled")
 
   val isIE182Enabled: Boolean = configuration.get[Boolean]("microservice.services.features.isIE182Enabled")
 
