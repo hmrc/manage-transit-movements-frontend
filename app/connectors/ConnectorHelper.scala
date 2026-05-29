@@ -24,7 +24,7 @@ trait ConnectorHelper extends Logging {
 
   val config: FrontendAppConfig
 
-  final val version: String = if config.phase6Enabled then "3.0" else "2.1"
+  final val version: String = if config.phase6ApiEnabled then "3.0" else "2.1"
 
   private def acceptHeader(format: String): (String, String) =
     HeaderNames.Accept -> s"application/vnd.hmrc.$version+$format"
