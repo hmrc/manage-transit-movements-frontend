@@ -31,6 +31,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   val phase6ApiEnabled: Boolean = configuration.get[Boolean]("feature-flags.phase-6-api-enabled")
 
   val isIE182Enabled: Boolean = configuration.get[Boolean]("microservice.services.features.isIE182Enabled")
+  val isIE022Enabled: Boolean = configuration.get[Boolean]("microservice.services.features.isIE022Enabled")
 
   val userResearchUrl: String         = configuration.get[String]("urls.userResearch")
   val showUserResearchBanner: Boolean = configuration.get[Boolean]("banners.showUserResearch")
