@@ -40,6 +40,9 @@ object DepartureStatusP5ViewModel {
       case IncidentMovementAndMessages(departureId, _, _, messages, hasMultipleIncidents) =>
         incidentDuringTransit(departureId, messages.latestMessage.messageId, hasMultipleIncidents)
           .lift(messages.latestMessage)
+      case DeclarationAmendmentRejectedMovementAndMessages(departureId, _, _, messages, isRejectionAmendable, xPaths) =>
+        declarationAmendmentRejectedStatus(departureId, messages.latestMessage.messageId, isRejectionAmendable, xPaths)
+          .lift(messages.latestMessage)
       case OtherMovementAndMessages(departureId, localReferenceNumber, _, messages) =>
         currentStatus(departureId, messages.latestMessage.messageId, localReferenceNumber)
           .lift(messages.latestMessage)
@@ -76,6 +79,16 @@ object DepartureStatusP5ViewModel {
       declarationAmendmentAccepted(departureId, localReferenceNumber, isPrelodge),
       goodsUnderControl(departureId, messageId, localReferenceNumber, isPrelodge, messages),
       declarationSent(departureId, localReferenceNumber, isPrelodge)
+    ).reduce(_ orElse _)
+
+  private def declarationAmendmentRejectedStatus(
+    departureId: String,
+    messageId: String,
+    isDeclarationAmendable: Boolean,
+    xPaths: Seq[Option[String]]
+  )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
+    Seq(
+      declarationAmendmentRejected(departureId, messageId, isDeclarationAmendable, xPaths)
     ).reduce(_ orElse _)
 
   private def currentStatus(
@@ -367,6 +380,27 @@ object DepartureStatusP5ViewModel {
       )
   }
   // scalastyle:on cyclomatic.complexity
+
+  private def declarationAmendmentRejected(
+    departureId: String,
+    messageId: String,
+    isRejectionAmendable: Boolean,
+    xPaths: Seq[Option[String]]
+  )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+    case message if message.messageType == InvalidMRN =>
+      val (key, href) = if (isRejectionAmendable) {
+        ("amendErrors", "#")
+      } else {
+        (errorsActionText(xPaths.flatten), "#")
+      }
+
+      val keyFormatted = if (key.isEmpty) key else s"movement.status.P5.action.invalidMRN.$key"
+      val actions      = Seq(ViewMovementAction(href, keyFormatted))
+      DepartureStatusP5ViewModel(
+        "movement.status.P5.invalidMRN",
+        if (frontendAppConfig.isIE022Enabled) actions else Seq.empty
+      )
+  }
 
   private def prelodgeRejected(
     departureId: String,
