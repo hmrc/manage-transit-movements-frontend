@@ -202,7 +202,7 @@ trait MessagesModelGenerators {
     Arbitrary {
       for {
         messageSequence1            <- arbitrary[MESSAGESequence]
-        transitOperation            <- arbitrary[TransitOperationType09]
+        transitOperation            <- arbitrary[TransitOperationType06]
         customsOfficeOfDeparture    <- arbitrary[CustomsOfficeOfDepartureType03]
         holderOfTheTransitProcedure <- arbitrary[HolderOfTheTransitProcedureType15]
         functionalErrors            <- listWithMaxLength[FunctionalErrorType01]()
@@ -273,14 +273,14 @@ trait MessagesModelGenerators {
       )
     }
 
-  implicit lazy val arbitraryTransitOperationType09: Arbitrary[TransitOperationType09] =
+  implicit lazy val arbitraryTransitOperationType06: Arbitrary[TransitOperationType06] =
     Arbitrary {
       for {
-        mrn             <- nonEmptyString
-        declarationType <- nonEmptyString
-      } yield TransitOperationType09(
+        mrn                              <- nonEmptyString
+        amendmentNotificationDateAndTime <- arbitrary[XMLGregorianCalendar]
+      } yield TransitOperationType06(
         MRN = mrn,
-        declarationType = declarationType
+        amendmentNotificationDateAndTime = amendmentNotificationDateAndTime
       )
     }
 

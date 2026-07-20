@@ -21,7 +21,7 @@
   <xs:complexType name="CC022CType">
     <xs:sequence>
       <xs:group ref="MESSAGE" />
-      <xs:element name="TransitOperation" type="TransitOperationType09">
+      <xs:element name="TransitOperation" type="TransitOperationType06">
         <xs:annotation>
           <xs:documentation>
             <description value="TRANSIT OPERATION" />
