@@ -1001,7 +1001,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with AppWithDefaultMockFix
               Seq(
                 ViewMovementAction(
                   "#", // TODO Update with controller url when it is built
-                  "movement.status.P5.action.invalidMRN.amendErrors"
+                  "movement.status.P5.action.invalidMRN.amendDeclaration"
                 )
               )
             )

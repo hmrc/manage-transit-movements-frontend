@@ -389,7 +389,7 @@ object DepartureStatusP5ViewModel {
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
     case message if message.messageType == InvalidMRN =>
       val (key, href) = if (isRejectionAmendable) {
-        ("amendErrors", "#")
+        ("amendDeclaration", "#")
       } else {
         (errorsActionText(xPaths.flatten), "#")
       }
