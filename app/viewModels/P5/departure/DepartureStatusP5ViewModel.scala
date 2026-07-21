@@ -390,6 +390,8 @@ object DepartureStatusP5ViewModel {
     case message if message.messageType == InvalidMRN =>
       val (key, href) = if (isRejectionAmendable) {
         ("amendDeclaration", "#")
+      } else if (xPaths.flatten.isEmpty) {
+        (errorsActionText(xPaths.flatten), "#")
       } else {
         (errorsActionText(xPaths.flatten), "#")
       }

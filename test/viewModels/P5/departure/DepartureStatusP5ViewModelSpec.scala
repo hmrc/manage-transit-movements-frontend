@@ -1010,6 +1010,43 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with AppWithDefaultMockFix
           }
         }
 
+        "and declaration is not amendable with one FunctionalError" in {
+          running(app) {
+            val movementAndMessage = DeclarationAmendmentRejectedMovementAndMessages(
+              departureIdP5,
+              lrn.value,
+              LocalDateTime.now(),
+              DepartureMovementMessages(
+                NonEmptyList.one(
+                  DepartureMessage(
+                    messageId,
+                    LocalDateTime.now(),
+                    InvalidMRN,
+                    MessageStatus.Success
+                  )
+                ),
+                "ie015MessageId"
+              ),
+              isRejectionAmendable = false,
+              Seq(Some("body/path"))
+            )
+
+            val result = DepartureStatusP5ViewModel(movementAndMessage)(app.injector.instanceOf[FrontendAppConfig])
+
+            val expectedResult = DepartureStatusP5ViewModel(
+              "movement.status.P5.invalidMRN",
+              Seq(
+                ViewMovementAction(
+                  "#", // TODO Update with appropriate url when controller is built
+                  "movement.status.P5.action.invalidMRN.viewError"
+                )
+              )
+            )
+
+            result mustEqual expectedResult
+          }
+        }
+
         "and declaration is not amendable and no FunctionalErrors" in {
           running(app) {
             val movementAndMessage = DeclarationAmendmentRejectedMovementAndMessages(
