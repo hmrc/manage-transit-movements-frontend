@@ -966,6 +966,162 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with AppWithDefaultMockFix
       }
     }
 
+    "when given Message with head of invalidMRN" - {
+
+      "and IE022 is enabled" - {
+        val app = guiceApplicationBuilder()
+          .configure("microservice.services.features.isIE022Enabled" -> true)
+          .build()
+
+        "and declaration is amendable" in {
+          running(app) {
+            val movementAndMessage = DeclarationAmendmentRejectedMovementAndMessages(
+              departureIdP5,
+              lrn.value,
+              LocalDateTime.now(),
+              DepartureMovementMessages(
+                NonEmptyList.one(
+                  DepartureMessage(
+                    messageId,
+                    LocalDateTime.now(),
+                    InvalidMRN,
+                    MessageStatus.Success
+                  )
+                ),
+                "ie015MessageId"
+              ),
+              isRejectionAmendable = true,
+              xPaths = Seq(Some("body/path"))
+            )
+
+            val result = DepartureStatusP5ViewModel(movementAndMessage)(app.injector.instanceOf[FrontendAppConfig])
+
+            val expectedResult = DepartureStatusP5ViewModel(
+              "movement.status.P5.invalidMRN",
+              Seq(
+                ViewMovementAction(
+                  "#", // TODO Update with controller url when it is built
+                  "movement.status.P5.action.invalidMRN.amendDeclaration"
+                )
+              )
+            )
+
+            result mustEqual expectedResult
+          }
+        }
+
+        "and declaration is not amendable with one FunctionalError" in {
+          running(app) {
+            val movementAndMessage = DeclarationAmendmentRejectedMovementAndMessages(
+              departureIdP5,
+              lrn.value,
+              LocalDateTime.now(),
+              DepartureMovementMessages(
+                NonEmptyList.one(
+                  DepartureMessage(
+                    messageId,
+                    LocalDateTime.now(),
+                    InvalidMRN,
+                    MessageStatus.Success
+                  )
+                ),
+                "ie015MessageId"
+              ),
+              isRejectionAmendable = false,
+              Seq(Some("body/path"))
+            )
+
+            val result = DepartureStatusP5ViewModel(movementAndMessage)(app.injector.instanceOf[FrontendAppConfig])
+
+            val expectedResult = DepartureStatusP5ViewModel(
+              "movement.status.P5.invalidMRN",
+              Seq(
+                ViewMovementAction(
+                  "#", // TODO Update with appropriate url when controller is built
+                  "movement.status.P5.action.invalidMRN.viewError"
+                )
+              )
+            )
+
+            result mustEqual expectedResult
+          }
+        }
+
+        "and declaration is not amendable and no FunctionalErrors" in {
+          running(app) {
+            val movementAndMessage = DeclarationAmendmentRejectedMovementAndMessages(
+              departureIdP5,
+              lrn.value,
+              LocalDateTime.now(),
+              DepartureMovementMessages(
+                NonEmptyList.one(
+                  DepartureMessage(
+                    messageId,
+                    LocalDateTime.now(),
+                    InvalidMRN,
+                    MessageStatus.Success
+                  )
+                ),
+                "ie015MessageId"
+              ),
+              isRejectionAmendable = false,
+              Seq.empty
+            )
+
+            val result = DepartureStatusP5ViewModel(movementAndMessage)(app.injector.instanceOf[FrontendAppConfig])
+
+            val expectedResult = DepartureStatusP5ViewModel(
+              "movement.status.P5.invalidMRN",
+              Seq(
+                ViewMovementAction(
+                  "#", // TODO Update with appropriate url when controller is built
+                  "movement.status.P5.action.invalidMRN.viewErrors"
+                )
+              )
+            )
+
+            result mustEqual expectedResult
+          }
+        }
+      }
+
+      "and IE022 is disabled" in {
+        val app = guiceApplicationBuilder()
+          .configure("microservice.services.features.isIE022Enabled" -> false)
+          .build()
+
+        running(app) {
+          val movementAndMessage = DeclarationAmendmentRejectedMovementAndMessages(
+            departureIdP5,
+            lrn.value,
+            LocalDateTime.now(),
+            DepartureMovementMessages(
+              NonEmptyList.one(
+                DepartureMessage(
+                  messageId,
+                  LocalDateTime.now(),
+                  InvalidMRN,
+                  MessageStatus.Success
+                )
+              ),
+              "ie015MessageId"
+            ),
+            isRejectionAmendable = true,
+            xPaths = Seq(Some("body/path"))
+          )
+
+          val result = DepartureStatusP5ViewModel(movementAndMessage)(app.injector.instanceOf[FrontendAppConfig])
+
+          val expectedResult = DepartureStatusP5ViewModel(
+            "movement.status.P5.invalidMRN",
+            Seq.empty
+          )
+
+          result mustEqual expectedResult
+        }
+      }
+    }
+
     "when given Message with head of goodsUnderControl" - {
 
       "when prelodged" - {

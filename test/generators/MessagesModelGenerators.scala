@@ -198,6 +198,24 @@ trait MessagesModelGenerators {
       )
     }
 
+  implicit lazy val arbitraryCC022CType: Arbitrary[CC022CType] =
+    Arbitrary {
+      for {
+        messageSequence1            <- arbitrary[MESSAGESequence]
+        transitOperation            <- arbitrary[TransitOperationType06]
+        customsOfficeOfDeparture    <- arbitrary[CustomsOfficeOfDepartureType03]
+        holderOfTheTransitProcedure <- arbitrary[HolderOfTheTransitProcedureType15]
+        functionalErrors            <- listWithMaxLength[FunctionalErrorType01]()
+      } yield CC022CType(
+        messageSequence1 = messageSequence1,
+        TransitOperation = transitOperation,
+        CustomsOfficeOfDeparture = customsOfficeOfDeparture,
+        HolderOfTheTransitProcedure = holderOfTheTransitProcedure,
+        FunctionalError = functionalErrors,
+        attributes = Map.empty
+      )
+    }
+
   implicit lazy val arbitraryMESSAGESequence: Arbitrary[MESSAGESequence] =
     Arbitrary {
       for {
@@ -252,6 +270,17 @@ trait MessagesModelGenerators {
         MRN = mrn,
         releaseDate = releaseDate,
         releaseIndicator = releaseIndicator
+      )
+    }
+
+  implicit lazy val arbitraryTransitOperationType06: Arbitrary[TransitOperationType06] =
+    Arbitrary {
+      for {
+        mrn                              <- nonEmptyString
+        amendmentNotificationDateAndTime <- arbitrary[XMLGregorianCalendar]
+      } yield TransitOperationType06(
+        MRN = mrn,
+        amendmentNotificationDateAndTime = amendmentNotificationDateAndTime
       )
     }
 
@@ -348,6 +377,15 @@ trait MessagesModelGenerators {
       for {
         referenceNumber <- nonEmptyString
       } yield CustomsOfficeOfDestinationActualType03(
+        referenceNumber = referenceNumber
+      )
+    }
+
+  implicit lazy val arbitraryCustomsOfficeOfDepartureType03: Arbitrary[CustomsOfficeOfDepartureType03] =
+    Arbitrary {
+      for {
+        referenceNumber <- nonEmptyString
+      } yield CustomsOfficeOfDepartureType03(
         referenceNumber = referenceNumber
       )
     }
@@ -693,6 +731,23 @@ trait MessagesModelGenerators {
   implicit lazy val arbitraryFlag: Arbitrary[Flag] =
     Arbitrary {
       Gen.oneOf(Number0, Number1)
+    }
+
+  implicit lazy val arbitraryFunctionalErrorType01: Arbitrary[FunctionalErrorType01] =
+    Arbitrary {
+      for {
+        sequenceNumber         <- arbitrary[BigInt]
+        errorPointer           <- nonEmptyString
+        errorCode              <- Gen.oneOf(AesNctsP5FunctionalErrorCodes.values)
+        errorReason            <- nonEmptyString
+        originalAttributeValue <- Gen.option(nonEmptyString)
+      } yield FunctionalErrorType01(
+        sequenceNumber = sequenceNumber,
+        errorPointer = Some(errorPointer),
+        errorCode = errorCode,
+        errorReason = Some(errorReason),
+        originalAttributeValue = originalAttributeValue
+      )
     }
 
   implicit lazy val arbitraryFunctionalErrorType02: Arbitrary[FunctionalErrorType02] =

@@ -332,6 +332,63 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
         result mustEqual expectedResult
       }
 
+      "must return DeclarationAmendmentRejectedMovementAndMessages when InvalidMRN" in {
+        val isRejectionAmendable = arbitrary[Boolean].sample.value
+
+        val latestDepartureMessage = DepartureMovementMessages(
+          NonEmptyList.one(
+            DepartureMessage(
+              "messageId",
+              dateTimeNow,
+              InvalidMRN,
+              MessageStatus.Success
+            )
+          ),
+          "messageId"
+        )
+
+        val departureMovements = DepartureMovements(
+          departureMovements = Seq(
+            DepartureMovement(
+              "AB123",
+              Some("MRN"),
+              "LRN",
+              dateTimeNow
+            )
+          ),
+          totalCount = 1
+        )
+
+        val ie022 = arbitrary[CC022CType].sample.value
+
+        when(mockMovementConnector.getMessages(any())(any())).thenReturn(
+          Future.successful(latestDepartureMessage)
+        )
+
+        when(mockMovementConnector.getMessage[CC022CType](any(), any())(any(), any(), any())).thenReturn(
+          Future.successful(ie022)
+        )
+
+        when(mockCacheConnector.isRejectionAmendable(any(), any())(any(), any())).thenReturn(
+          Future.successful(isRejectionAmendable)
+        )
+
+        val result = departureP5MessageService.getLatestMessagesForMovements(departureMovements).futureValue
+
+        val expectedResult: Seq[MovementAndMessages] = Seq(
+          DeclarationAmendmentRejectedMovementAndMessages(
+            "AB123",
+            "LRN",
+            dateTimeNow,
+            latestDepartureMessage,
+            isRejectionAmendable,
+            xPaths = ie022.FunctionalError.map(_.errorPointer)
+          )
+        )
+
+        result mustEqual expectedResult
+      }
+
       "must return OtherMovementAndMessage for any other message" in {
 
         DepartureMessageType.values
@@ -341,7 +398,8 @@ class DepartureP5MessageServiceSpec extends SpecBase with Generators {
                 value == RejectedByOfficeOfDeparture ||
                 value == GoodsUnderControl ||
                 value == DeclarationSent ||
-                value == IncidentDuringTransit
+                value == IncidentDuringTransit ||
+                value == InvalidMRN
           )
           .map {
 
