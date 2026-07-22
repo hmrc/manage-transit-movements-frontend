@@ -19,7 +19,7 @@ Run accessibility linter tests:
 ### Running manually or for journey tests
 
 <pre>
-sm2 --start CTC_TRADERS_P5_ACCEPTANCE
+sm2 --start CTC_TRADERS_P6_ACCEPTANCE
 </pre>
 
 ### Sortable table
