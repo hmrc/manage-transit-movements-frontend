@@ -43,6 +43,15 @@ case class PrelodgeRejectedMovementAndMessages(
   xPaths: Seq[String]
 ) extends MovementAndMessages
 
+case class DeclarationAmendmentRejectedMovementAndMessages(
+  departureId: String,
+  localReferenceNumber: String,
+  updated: LocalDateTime,
+  messages: DepartureMovementMessages,
+  isRejectionAmendable: Boolean,
+  xPaths: Seq[Option[String]]
+) extends MovementAndMessages
+
 case class OtherMovementAndMessages(
   departureId: String,
   localReferenceNumber: String,

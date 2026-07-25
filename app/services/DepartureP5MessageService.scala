@@ -18,11 +18,11 @@ package services
 
 import cats.implicits.*
 import connectors.{DepartureCacheConnector, DepartureMovementP5Connector}
-import generated.{CC056CType, CC182CType, Generated_CC056CTypeFormat, Generated_CC182CTypeFormat}
+import generated.{CC022CType, CC056CType, CC182CType, Generated_CC022CTypeFormat, Generated_CC056CTypeFormat, Generated_CC182CTypeFormat}
 import models.departureP5.*
 import models.departureP5.BusinessRejectionType.*
 import models.departureP5.DepartureMessageType.*
-import models.departureP5.Rejection.IE056Rejection
+import models.departureP5.Rejection.{IE022Rejection, IE056Rejection}
 import models.{IE015, RichCC182Type}
 import scalaxb.XMLFormat
 import scalaxb.`package`.fromXML
@@ -120,6 +120,29 @@ class DepartureP5MessageService @Inject() (
     }
   }
 
+  private def handleDeclarationAmendmentRejectedMovementAndMessage(
+    movement: DepartureMovement,
+    message: DepartureMovementMessages
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MovementAndMessages] = {
+    val departureId = movement.departureId
+    getMessage[CC022CType](departureId, message.latestMessage.messageId).flatMap {
+      ie022 =>
+        val xPaths    = ie022.FunctionalError.map(_.errorPointer)
+        val rejection = IE022Rejection(departureId, ie022)
+        cacheConnector.isRejectionAmendable(movement.localReferenceNumber, rejection).map {
+          isRejectionAmendable =>
+            DeclarationAmendmentRejectedMovementAndMessages(
+              departureId,
+              movement.localReferenceNumber,
+              movement.updated,
+              message,
+              isRejectionAmendable,
+              xPaths
+            )
+        }
+    }
+  }
+
   private def handleOtherMovementAndMessage(
     movement: DepartureMovement,
     message: DepartureMovementMessages
@@ -147,6 +170,8 @@ class DepartureP5MessageService @Inject() (
                 handleDepartureMovementAndMessage(movement, message)
               case IncidentDuringTransit =>
                 handleIncidentMovementAndMessage(movement, message)
+              case InvalidMRN =>
+                handleDeclarationAmendmentRejectedMovementAndMessage(movement, message)
               case _ =>
                 handleOtherMovementAndMessage(movement, message)
             }

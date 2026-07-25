@@ -66,4 +66,27 @@ object Rejection {
         )
     }
   }
+
+  case class IE022Rejection(
+    departureId: String,
+    errorPointers: Seq[Option[String]]
+  ) extends Rejection
+
+  object IE022Rejection {
+
+    def apply(departureId: String, ie022: CC022CType): IE022Rejection =
+      new IE022Rejection(
+        departureId = departureId,
+        errorPointers = ie022.FunctionalError.map(_.errorPointer)
+      )
+
+    implicit val writes: Writes[IE022Rejection] = Writes {
+      rejection =>
+        Json.obj(
+          "type"          -> "IE022",
+          "departureId"   -> rejection.departureId,
+          "errorPointers" -> rejection.errorPointers
+        )
+    }
+  }
 }

@@ -40,6 +40,9 @@ object DepartureStatusP5ViewModel {
       case IncidentMovementAndMessages(departureId, _, _, messages, hasMultipleIncidents) =>
         incidentDuringTransit(departureId, messages.latestMessage.messageId, hasMultipleIncidents)
           .lift(messages.latestMessage)
+      case DeclarationAmendmentRejectedMovementAndMessages(departureId, _, _, messages, isDeclarationAmendable, xPaths) =>
+        declarationAmendmentRejectedStatus(departureId, messages.latestMessage.messageId, isDeclarationAmendable, xPaths)
+          .lift(messages.latestMessage)
       case OtherMovementAndMessages(departureId, localReferenceNumber, _, messages) =>
         currentStatus(departureId, messages.latestMessage.messageId, localReferenceNumber)
           .lift(messages.latestMessage)
@@ -54,6 +57,16 @@ object DepartureStatusP5ViewModel {
   ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
     Seq(
       rejectedByOfficeOfDeparture(departureId, messageId, rejectionType, isDeclarationAmendable, xPaths)
+    ).reduce(_ orElse _)
+
+  private def declarationAmendmentRejectedStatus(
+    departureId: String,
+    messageId: String,
+    isDeclarationAmendable: Boolean,
+    xPaths: Seq[Option[String]]
+  ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] =
+    Seq(
+      declarationAmendmentRejected(departureId, messageId, isDeclarationAmendable, xPaths)
     ).reduce(_ orElse _)
 
   private def prelodgeRejectedStatus(
@@ -367,6 +380,29 @@ object DepartureStatusP5ViewModel {
       )
   }
   // scalastyle:on cyclomatic.complexity
+
+  private def declarationAmendmentRejected(
+    departureId: String,
+    messageId: String,
+    isDeclarationAmendable: Boolean,
+    xPaths: Seq[Option[String]]
+  ): PartialFunction[DepartureMessage, DepartureStatusP5ViewModel] = {
+    case message if message.messageType == InvalidMRN =>
+      val (key, href) = if (isDeclarationAmendable) {
+        ("amendDeclaration", "")
+      } else if (xPaths.flatten.isEmpty) {
+        ("", "")
+      } else {
+        ("", "")
+      }
+
+      val keyFormatted = if (key.isEmpty) key else s"???"
+      val actions      = Seq(ViewMovementAction(href, keyFormatted))
+      DepartureStatusP5ViewModel(
+        "???",
+        actions
+      )
+  }
 
   private def prelodgeRejected(
     departureId: String,
