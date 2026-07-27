@@ -71,5 +71,32 @@ class RejectionSpec extends SpecBase {
         result.mustEqual(expectedResult)
       }
     }
+
+    "when IE022Rejection" - {
+      "must serialise" in {
+        val rejection = IE022Rejection(
+          departureId = departureIdP5,
+          errorPointers = Seq(
+            Some("foo"),
+            Some("bar")
+          )
+        )
+
+        val expectedResult = Json.parse(s"""
+             |{
+             |  "type" : "IE022",
+             |  "departureId" : "$departureIdP5",
+             |  "errorPointers" : [
+             |    "foo",
+             |    "bar"
+             |  ]
+             |}
+             |""".stripMargin)
+
+        val result = Json.toJson(rejection)
+
+        result.mustEqual(expectedResult)
+      }
+    }
   }
 }
