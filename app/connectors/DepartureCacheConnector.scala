@@ -17,9 +17,9 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.FunctionalErrorType
-import models.FunctionalErrors.FunctionalErrorsWithSection
+import models.FunctionalErrors.{AmendmentFunctionalErrorsWithSection, FunctionalErrorsWithSection}
 import models.departureP5.Rejection
+import models.{AmendmentFunctionalErrorType, FunctionalErrorType}
 import play.api.Logging
 import play.api.libs.json.{Json, Writes}
 import play.api.libs.ws.JsonBodyWritables.*
@@ -68,5 +68,13 @@ class DepartureCacheConnector @Inject() (
       .post(url)
       .withBody(Json.toJson(errors))
       .execute[FunctionalErrorsWithSection]
+  }
+
+  def convertAmendmentErrors(errors: Seq[AmendmentFunctionalErrorType])(implicit hc: HeaderCarrier): Future[AmendmentFunctionalErrorsWithSection] = {
+    val url = url"$baseUrl/messages/rejection/amendment"
+    http
+      .post(url)
+      .withBody(Json.toJson(errors))
+      .execute[AmendmentFunctionalErrorsWithSection]
   }
 }

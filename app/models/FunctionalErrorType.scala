@@ -27,6 +27,13 @@ case class FunctionalErrorType(
   originalAttributeValue: Option[String]
 )
 
+case class AmendmentFunctionalErrorType(
+  errorPointer: Option[String],
+  errorCode: String,
+  errorReason: Option[String],
+  originalAttributeValue: Option[String]
+)
+
 object FunctionalErrorType {
 
   def apply(value: FunctionalErrorType02): FunctionalErrorType =
@@ -53,4 +60,25 @@ object FunctionalErrorType {
   )(
     functionalError => (functionalError.errorPointer, functionalError.errorCode, functionalError.errorReason, functionalError.originalAttributeValue)
   )
+}
+
+object AmendmentFunctionalErrorType {
+
+  def apply(value: FunctionalErrorType01): AmendmentFunctionalErrorType =
+    AmendmentFunctionalErrorType(
+      errorPointer = value.errorPointer,
+      errorCode = value.errorCode.toString,
+      errorReason = value.errorReason,
+      originalAttributeValue = value.originalAttributeValue
+    )
+
+  implicit val writes: Writes[AmendmentFunctionalErrorType] = (
+    (__ \ "errorPointer").writeNullable[String] and
+      (__ \ "errorCode").write[String] and
+      (__ \ "errorReason").writeNullable[String] and
+      (__ \ "originalAttributeValue").writeNullable[String]
+  )(
+    functionalError => (functionalError.errorPointer, functionalError.errorCode, functionalError.errorReason, functionalError.originalAttributeValue)
+  )
+
 }

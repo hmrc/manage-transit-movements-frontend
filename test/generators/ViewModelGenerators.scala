@@ -16,7 +16,7 @@
 
 package generators
 
-import models.FunctionalErrors.{FunctionalErrorsWithSection, FunctionalErrorsWithoutSection}
+import models.FunctionalErrors.{AmendmentFunctionalErrorsWithSection, FunctionalErrorsWithSection, FunctionalErrorsWithoutSection}
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import models.{DeparturesSummary, GuaranteeReference}
 import org.scalacheck.Arbitrary.arbitrary
@@ -208,6 +208,27 @@ trait ViewModelGenerators {
         functionalErrors = functionalErrors,
         lrn = lrn,
         businessRejectionType = businessRejectionType,
+        currentPage = currentPage,
+        numberOfErrorsPerPage = numberOfErrorsPerPage,
+        departureId = departureId,
+        messageId = messageId
+      )
+    }
+
+  implicit def arbitraryReviewDepartureAmendmentErrorsP5ViewModel(implicit
+    messages: Messages
+  ): Arbitrary[ReviewDepartureAmendmentErrorsP5ViewModel] =
+    Arbitrary {
+      for {
+        functionalErrors      <- arbitrary[AmendmentFunctionalErrorsWithSection]
+        lrn                   <- nonEmptyString
+        currentPage           <- Gen.option(positiveInts)
+        numberOfErrorsPerPage <- positiveInts
+        departureId           <- nonEmptyString
+        messageId             <- nonEmptyString
+      } yield ReviewDepartureAmendmentErrorsP5ViewModel(
+        functionalErrors = functionalErrors,
+        lrn = lrn,
         currentPage = currentPage,
         numberOfErrorsPerPage = numberOfErrorsPerPage,
         departureId = departureId,

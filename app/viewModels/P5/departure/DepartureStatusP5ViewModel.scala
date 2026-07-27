@@ -393,7 +393,9 @@ object DepartureStatusP5ViewModel {
       } else if (xPaths.flatten.isEmpty) {
         (errorsActionText(xPaths.flatten), "#")
       } else {
-        (errorsActionText(xPaths.flatten), "#")
+        (errorsActionText(xPaths.flatten),
+         controllers.departureP5.routes.ReviewDepartureAmendmentErrorsP5Controller.onPageLoad(None, departureId, messageId).url
+        )
       }
 
       val keyFormatted = if (key.isEmpty) key else s"movement.status.P5.action.invalidMRN.$key"

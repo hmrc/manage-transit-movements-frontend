@@ -16,11 +16,11 @@
 
 package viewModels.pagination
 
-import models.{FunctionalError, FunctionalErrors}
+import models.{AmendmentFunctionalError, FunctionalError, FunctionalErrors}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 
-trait ErrorPaginationViewModel[A <: FunctionalError, B <: FunctionalErrors[A]] extends PaginationViewModel[A] {
+trait ErrorPaginationViewModel[A <: FunctionalError | AmendmentFunctionalError, B <: FunctionalErrors[A]] extends PaginationViewModel[A] {
 
   val functionalErrors: B
 

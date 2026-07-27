@@ -16,14 +16,15 @@
 
 package models
 
-import models.FunctionalError.*
+import models.AmendmentFunctionalError.AmendmentFunctionalErrorWithSection
+import models.FunctionalError.{FunctionalErrorWithSection, FunctionalErrorWithoutSection}
 import play.api.i18n.Messages
 import play.api.libs.json.*
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.html.components.Table
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.HeadCell
 
-sealed trait FunctionalErrors[T <: FunctionalError] {
+sealed trait FunctionalErrors[T <: FunctionalError | AmendmentFunctionalError] {
 
   val value: Seq[T]
 
@@ -65,6 +66,29 @@ object FunctionalErrors {
 
     implicit val reads: Reads[FunctionalErrorsWithSection] =
       __.read[Seq[FunctionalErrorWithSection]].map(FunctionalErrorsWithSection.apply)
+  }
+
+  case class AmendmentFunctionalErrorsWithSection(value: Seq[AmendmentFunctionalErrorWithSection])
+      extends FunctionalErrors[AmendmentFunctionalErrorWithSection] {
+
+    override def update(
+      f: Seq[AmendmentFunctionalErrorWithSection] => Seq[AmendmentFunctionalErrorWithSection]
+    ): FunctionalErrors[AmendmentFunctionalErrorWithSection] =
+      this.copy(value = f(value))
+
+    override def head(implicit messages: Messages): Seq[HeadCell] = Seq(
+      HeadCell(Text(messages("error.table.errorCode"))),
+      HeadCell(Text(messages("error.table.errorReason"))),
+      HeadCell(Text(messages("error.table.section"))),
+      HeadCell(Text(messages("error.table.pointer"))),
+      HeadCell(Text(messages("error.table.attributeValue")))
+    )
+  }
+
+  object AmendmentFunctionalErrorsWithSection {
+
+    implicit val reads: Reads[AmendmentFunctionalErrorsWithSection] =
+      __.read[Seq[AmendmentFunctionalErrorWithSection]].map(AmendmentFunctionalErrorsWithSection.apply)
   }
 
   case class FunctionalErrorsWithoutSection(value: Seq[FunctionalErrorWithoutSection]) extends FunctionalErrors[FunctionalErrorWithoutSection] {

@@ -17,8 +17,9 @@
 package generators
 
 import models.*
+import models.AmendmentFunctionalError.AmendmentFunctionalErrorWithSection
 import models.FunctionalError.{FunctionalErrorWithSection, FunctionalErrorWithoutSection}
-import models.FunctionalErrors.{FunctionalErrorsWithSection, FunctionalErrorsWithoutSection}
+import models.FunctionalErrors.{AmendmentFunctionalErrorsWithSection, FunctionalErrorsWithSection, FunctionalErrorsWithoutSection}
 import models.arrivalP5.{ArrivalMovement, ArrivalMovements}
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import models.departureP5.{BusinessRejectionType, DepartureMovement, DepartureMovements}
@@ -201,6 +202,17 @@ trait ModelGenerators {
       } yield FunctionalErrorWithSection(error, businessRuleId, section, invalidDataItem, invalidAnswer)
     }
 
+  implicit lazy val arbitraryAmendmentFunctionalErrorWithSection: Arbitrary[AmendmentFunctionalErrorWithSection] =
+    Arbitrary {
+      for {
+        error           <- nonEmptyString
+        businessRuleId  <- Gen.option(nonEmptyString)
+        section         <- Gen.option(nonEmptyString)
+        invalidDataItem <- Gen.option(arbitrary[InvalidDataItem])
+        invalidAnswer   <- Gen.option(nonEmptyString)
+      } yield AmendmentFunctionalErrorWithSection(error, businessRuleId, section, invalidDataItem, invalidAnswer)
+    }
+
   implicit lazy val arbitraryFunctionalErrorWithoutSection: Arbitrary[FunctionalErrorWithoutSection] =
     Arbitrary {
       for {
@@ -216,6 +228,13 @@ trait ModelGenerators {
       for {
         value <- listWithMaxLength[FunctionalErrorWithSection]()
       } yield FunctionalErrorsWithSection(value)
+    }
+
+  implicit lazy val arbitraryAmendmentFunctionalErrorsWithSection: Arbitrary[AmendmentFunctionalErrorsWithSection] =
+    Arbitrary {
+      for {
+        value <- listWithMaxLength[AmendmentFunctionalErrorWithSection]()
+      } yield AmendmentFunctionalErrorsWithSection(value)
     }
 
   implicit lazy val arbitraryFunctionalErrorsWithoutSection: Arbitrary[FunctionalErrorsWithoutSection] =
