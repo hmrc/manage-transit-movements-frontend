@@ -59,10 +59,16 @@ trait SearchViewBehaviours extends InputTextViewBehaviours[Option[String]] with 
         }
 
         "when there are multiple results" in {
-          forAll(Gen.choose(2, numberOfItemsPerPage)) {
+          forAll(Gen.choose(2, 1000)) {
             retrieved =>
-              val doc = parseView(viewWithSpecificSearchResults(retrieved, 1, numberOfItemsPerPage, Some(searchParam)))
-              val p   = doc.getElementById("results-count")
+              val doc = parseView(
+                viewWithSpecificSearchResults(numberOfSearchResults = retrieved,
+                                              currentPage = 1,
+                                              numberOfItemsPerPage = retrieved,
+                                              searchParam = Some(searchParam)
+                )
+              )
+              val p = doc.getElementById("results-count")
               p.text() mustEqual s"Showing $retrieved results matching $searchParam"
               boldWords(p) mustEqual Seq(retrieved.toString)
           }
