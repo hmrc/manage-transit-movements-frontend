@@ -391,7 +391,7 @@ object DepartureStatusP5ViewModel {
       val (key, href) = if (isRejectionAmendable) {
         ("amendDeclaration", "#")
       } else if (xPaths.flatten.isEmpty) {
-        (errorsActionText(xPaths.flatten), "#")
+        (errorsActionText(xPaths.flatten), controllers.departureP5.routes.AmendDeclarationErrorsController.onPageLoad(departureId, messageId).url)
       } else {
         (errorsActionText(xPaths.flatten), "#")
       }

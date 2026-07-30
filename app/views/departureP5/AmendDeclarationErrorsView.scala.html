@@ -1,0 +1,52 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components.{AnswerSections, Button, Heading, HelpdeskLink}
+@import controllers.routes._
+@import viewModels.P5.departure.AmendDeclarationErrorsViewModel
+@import viewModels.P5.departure.AmendDeclarationErrorsViewModel._
+@import config.FrontendAppConfig
+
+@this(
+    mainTemplate: MainTemplate,
+    heading: Heading,
+    helpdeskLink: HelpdeskLink
+)
+
+@(viewModel: AmendDeclarationErrorsViewModel)(implicit request: Request[?], messages: Messages, config: FrontendAppConfig)
+
+@mainTemplate(
+    title = viewModel.title,
+    showBackLink = true
+) {
+
+    @heading(
+        heading = viewModel.heading,
+        caption = Some(messages("departure.messages.caption", viewModel.lrn))
+    )
+
+    <p id="paragraph-1" class="govuk-body">@viewModel.paragraph1</p>
+
+    @viewModel.mrn.map { value =>
+        <p id="mrn" class="govuk-body govuk-label--s">MRN: @value</p>
+    }
+
+    @helpdeskLink(viewModel.paragraph3)
+
+    @viewModel.hyperlink.map { value =>
+        <p id="create-another-declaration" class="govuk-body"><a id="departure-link" class="govuk-link" href="@config.p5Departure">@value</a></p>
+    }
+}
