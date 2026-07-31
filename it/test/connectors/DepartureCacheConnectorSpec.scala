@@ -19,12 +19,11 @@ package connectors
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import generated.Number12
 import itbase.{ItSpecBase, WireMockServerHandler}
-import models.AmendmentFunctionalError.AmendmentFunctionalErrorWithSection
 import models.FunctionalError.FunctionalErrorWithSection
-import models.FunctionalErrors.{AmendmentFunctionalErrorsWithSection, FunctionalErrorsWithSection}
+import models.FunctionalErrors.FunctionalErrorsWithSection
 import models.departureP5.BusinessRejectionType.AmendmentRejection
 import models.departureP5.Rejection.{IE055Rejection, IE056Rejection}
-import models.{AmendmentFunctionalErrorType, FunctionalErrorType, InvalidDataItem}
+import models.{FunctionalErrorType, InvalidDataItem}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsArray, JsBoolean, Json}
 import play.api.test.Helpers.*
@@ -112,36 +111,36 @@ class DepartureCacheConnectorSpec extends ItSpecBase with WireMockServerHandler 
 
       val input = Seq(
         FunctionalErrorType(
-          errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+          errorPointer = Some("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
           errorCode = Number12.toString,
-          errorReason = "BR20004",
+          errorReason = Some("BR20004"),
           originalAttributeValue = Some("GB635733627000")
         ),
         FunctionalErrorType(
-          errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+          errorPointer = Some("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
           errorCode = Number12.toString,
-          errorReason = "BR20005",
+          errorReason = Some("BR20005"),
           originalAttributeValue = None
         )
       )
 
       val output = Json
         .parse("""
-          |[
-          |  {
-          |    "error" : "12",
-          |    "businessRuleId" : "BR20004",
-          |    "section" : "Trader details",
-          |    "invalidDataItem" : "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
-          |    "invalidAnswer" : "GB635733627000"
-          |  },
-          |  {
-          |    "error" : "12",
-          |    "businessRuleId" : "BR20005",
-          |    "invalidDataItem" : "/CC015C/HolderOfTheTransitProcedure/identificationNumber"
-          |  }
-          |]
-          |""".stripMargin)
+                 |[
+                 |  {
+                 |    "error" : "12",
+                 |    "businessRuleId" : "BR20004",
+                 |    "section" : "Trader details",
+                 |    "invalidDataItem" : "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+                 |    "invalidAnswer" : "GB635733627000"
+                 |  },
+                 |  {
+                 |    "error" : "12",
+                 |    "businessRuleId" : "BR20005",
+                 |    "invalidDataItem" : "/CC015C/HolderOfTheTransitProcedure/identificationNumber"
+                 |  }
+                 |]
+                 |""".stripMargin)
         .as[JsArray]
 
       "must return converted errors" in {
@@ -157,16 +156,16 @@ class DepartureCacheConnectorSpec extends ItSpecBase with WireMockServerHandler 
           Seq(
             FunctionalErrorWithSection(
               error = "12",
-              businessRuleId = "BR20004",
+              businessRuleId = Some("BR20004"),
               section = Some("Trader details"),
-              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              invalidDataItem = Some(InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber")),
               invalidAnswer = Some("GB635733627000")
             ),
             FunctionalErrorWithSection(
               error = "12",
-              businessRuleId = "BR20005",
+              businessRuleId = Some("BR20005"),
               section = None,
-              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              invalidDataItem = Some(InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber")),
               invalidAnswer = None
             )
           )
@@ -174,75 +173,6 @@ class DepartureCacheConnectorSpec extends ItSpecBase with WireMockServerHandler 
 
         result mustEqual expectedResult
       }
-    }
-  }
-
-  "convertAmendmentErrors" - {
-    val url = s"/manage-transit-movements-departure-cache/messages/rejection/amendment"
-
-    val input = Seq(
-      AmendmentFunctionalErrorType(
-        errorPointer = Some("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
-        errorCode = Number12.toString,
-        errorReason = Some("BR20004"),
-        originalAttributeValue = Some("GB635733627000")
-      ),
-      AmendmentFunctionalErrorType(
-        errorPointer = Some("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
-        errorCode = Number12.toString,
-        errorReason = Some("BR20005"),
-        originalAttributeValue = None
-      )
-    )
-
-    val output = Json
-      .parse("""
-          |[
-          |  {
-          |    "error" : "12",
-          |    "businessRuleId" : "BR20004",
-          |    "section" : "Trader details",
-          |    "invalidDataItem" : "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
-          |    "invalidAnswer" : "GB635733627000"
-          |  },
-          |  {
-          |    "error" : "12",
-          |    "businessRuleId" : "BR20005",
-          |    "invalidDataItem" : "/CC015C/HolderOfTheTransitProcedure/identificationNumber"
-          |  }
-          |]
-          |""".stripMargin)
-      .as[JsArray]
-
-    "must return converted errors" in {
-      server.stubFor(
-        post(urlEqualTo(url))
-          .withRequestBody(equalToJson(Json.stringify(Json.toJson(input))))
-          .willReturn(okJson(Json.stringify(output)))
-      )
-
-      val result: AmendmentFunctionalErrorsWithSection = await(connector.convertAmendmentErrors(input))
-
-      val expectedResult = AmendmentFunctionalErrorsWithSection(
-        Seq(
-          AmendmentFunctionalErrorWithSection(
-            error = "12",
-            businessRuleId = Some("BR20004"),
-            section = Some("Trader details"),
-            invalidDataItem = Some(InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber")),
-            invalidAnswer = Some("GB635733627000")
-          ),
-          AmendmentFunctionalErrorWithSection(
-            error = "12",
-            businessRuleId = Some("BR20005"),
-            section = None,
-            invalidDataItem = Some(InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber")),
-            invalidAnswer = None
-          )
-        )
-      )
-
-      result mustEqual expectedResult
     }
   }
 

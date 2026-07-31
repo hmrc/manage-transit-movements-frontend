@@ -17,9 +17,8 @@
 package generators
 
 import models.*
-import models.AmendmentFunctionalError.AmendmentFunctionalErrorWithSection
 import models.FunctionalError.{FunctionalErrorWithSection, FunctionalErrorWithoutSection}
-import models.FunctionalErrors.{AmendmentFunctionalErrorsWithSection, FunctionalErrorsWithSection, FunctionalErrorsWithoutSection}
+import models.FunctionalErrors.{FunctionalErrorsWithSection, FunctionalErrorsWithoutSection}
 import models.arrivalP5.{ArrivalMovement, ArrivalMovements}
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import models.departureP5.{BusinessRejectionType, DepartureMovement, DepartureMovements}
@@ -195,30 +194,19 @@ trait ModelGenerators {
     Arbitrary {
       for {
         error           <- nonEmptyString
-        businessRuleId  <- nonEmptyString
-        section         <- Gen.option(nonEmptyString)
-        invalidDataItem <- arbitrary[InvalidDataItem]
-        invalidAnswer   <- Gen.option(nonEmptyString)
-      } yield FunctionalErrorWithSection(error, businessRuleId, section, invalidDataItem, invalidAnswer)
-    }
-
-  implicit lazy val arbitraryAmendmentFunctionalErrorWithSection: Arbitrary[AmendmentFunctionalErrorWithSection] =
-    Arbitrary {
-      for {
-        error           <- nonEmptyString
         businessRuleId  <- Gen.option(nonEmptyString)
         section         <- Gen.option(nonEmptyString)
         invalidDataItem <- Gen.option(arbitrary[InvalidDataItem])
         invalidAnswer   <- Gen.option(nonEmptyString)
-      } yield AmendmentFunctionalErrorWithSection(error, businessRuleId, section, invalidDataItem, invalidAnswer)
+      } yield FunctionalErrorWithSection(error, businessRuleId, section, invalidDataItem, invalidAnswer)
     }
 
   implicit lazy val arbitraryFunctionalErrorWithoutSection: Arbitrary[FunctionalErrorWithoutSection] =
     Arbitrary {
       for {
         error           <- nonEmptyString
-        businessRuleId  <- nonEmptyString
-        invalidDataItem <- arbitrary[InvalidDataItem]
+        businessRuleId  <- Gen.option(nonEmptyString)
+        invalidDataItem <- Gen.option(arbitrary[InvalidDataItem])
         invalidAnswer   <- Gen.option(nonEmptyString)
       } yield FunctionalErrorWithoutSection(error, businessRuleId, invalidDataItem, invalidAnswer)
     }
@@ -228,13 +216,6 @@ trait ModelGenerators {
       for {
         value <- listWithMaxLength[FunctionalErrorWithSection]()
       } yield FunctionalErrorsWithSection(value)
-    }
-
-  implicit lazy val arbitraryAmendmentFunctionalErrorsWithSection: Arbitrary[AmendmentFunctionalErrorsWithSection] =
-    Arbitrary {
-      for {
-        value <- listWithMaxLength[AmendmentFunctionalErrorWithSection]()
-      } yield AmendmentFunctionalErrorsWithSection(value)
     }
 
   implicit lazy val arbitraryFunctionalErrorsWithoutSection: Arbitrary[FunctionalErrorsWithoutSection] =

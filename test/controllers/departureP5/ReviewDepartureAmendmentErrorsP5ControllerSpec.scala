@@ -19,7 +19,7 @@ package controllers.departureP5
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generated.CC022CType
 import generators.Generators
-import models.FunctionalErrors.AmendmentFunctionalErrorsWithSection
+import models.FunctionalErrors.FunctionalErrorsWithSection
 import models.departureP5.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -61,7 +61,7 @@ class ReviewDepartureAmendmentErrorsP5ControllerSpec extends SpecBase with AppWi
 
     "must return OK and the correct view " in {
 
-      forAll(arbitrary[CC022CType], arbitrary[AmendmentFunctionalErrorsWithSection]) {
+      forAll(arbitrary[CC022CType], arbitrary[FunctionalErrorsWithSection]) {
         (message, functionalErrors) =>
           when(mockDepartureP5MessageService.getDepartureReferenceNumbers(any())(any(), any()))
             .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
@@ -69,7 +69,7 @@ class ReviewDepartureAmendmentErrorsP5ControllerSpec extends SpecBase with AppWi
           when(mockDepartureP5MessageService.getMessage[CC022CType](any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(message))
 
-          when(mockFunctionalErrorsService.convertAmendmentErrorsWithSectionAndSender(any(), any())(any(), any()))
+          when(mockFunctionalErrorsService.convertErrorsWithSectionAndSender(any(), any())(any(), any()))
             .thenReturn(Future.successful(functionalErrors))
 
           val viewModel = ReviewDepartureAmendmentErrorsP5ViewModel(

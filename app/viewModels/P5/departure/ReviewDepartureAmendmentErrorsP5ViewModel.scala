@@ -17,9 +17,8 @@
 package viewModels.P5.departure
 
 import controllers.departureP5.routes
-import models.AmendmentFunctionalError.AmendmentFunctionalErrorWithSection
-import models.FunctionalErrors.AmendmentFunctionalErrorsWithSection
-import models.departureP5.BusinessRejectionType.*
+import models.FunctionalError.FunctionalErrorWithSection
+import models.FunctionalErrors.FunctionalErrorsWithSection
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import viewModels.pagination.ErrorPaginationViewModel
@@ -31,12 +30,12 @@ case class ReviewDepartureAmendmentErrorsP5ViewModel(
   paragraph1: String,
   paragraph2: String,
   hyperlink: Option[String],
-  functionalErrors: AmendmentFunctionalErrorsWithSection,
+  functionalErrors: FunctionalErrorsWithSection,
   currentPage: Int,
   numberOfItemsPerPage: Int,
   departureId: String,
   messageId: String
-) extends ErrorPaginationViewModel[AmendmentFunctionalErrorWithSection, AmendmentFunctionalErrorsWithSection] {
+) extends ErrorPaginationViewModel[FunctionalErrorWithSection, FunctionalErrorsWithSection] {
 
   override def href(page: Int): Call =
     routes.ReviewDepartureAmendmentErrorsP5Controller.onPageLoad(Some(page), departureId, messageId)
@@ -45,7 +44,7 @@ case class ReviewDepartureAmendmentErrorsP5ViewModel(
 object ReviewDepartureAmendmentErrorsP5ViewModel {
 
   def apply(
-    functionalErrors: AmendmentFunctionalErrorsWithSection,
+    functionalErrors: FunctionalErrorsWithSection,
     lrn: String,
     currentPage: Option[Int],
     numberOfErrorsPerPage: Int,

@@ -18,10 +18,9 @@ package services
 
 import connectors.DepartureCacheConnector
 import generated.*
-import models.AmendmentFunctionalError.AmendmentFunctionalErrorWithSection
 import models.FunctionalError.*
 import models.FunctionalErrors.*
-import models.{AmendmentFunctionalErrorType, FunctionalErrorType, GuaranteeReference, InvalidGuaranteeReason}
+import models.{FunctionalErrorType, GuaranteeReference, InvalidGuaranteeReason}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -69,26 +68,6 @@ class FunctionalErrorsService @Inject() (
               }
             }
             .map(FunctionalErrorsWithSection.apply)
-      }
-
-  def convertAmendmentErrorsWithSectionAndSender(
-    functionalErrors: Seq[AmendmentFunctionalErrorType],
-    messageSender: String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AmendmentFunctionalErrorsWithSection] =
-    departureCacheConnector
-      .convertAmendmentErrors(functionalErrors)
-      .flatMap {
-        errors =>
-          Future
-            .sequence {
-              errors.value.map {
-                error =>
-                  referenceDataService.getFunctionalErrorForSender(error.error, messageSender).map {
-                    value => error.copy(error = value.toString)
-                  }
-              }
-            }
-            .map(AmendmentFunctionalErrorsWithSection.apply)
       }
 
   def convertErrorsWithoutSection(

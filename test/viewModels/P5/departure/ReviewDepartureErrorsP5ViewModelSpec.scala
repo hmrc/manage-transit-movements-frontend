@@ -37,9 +37,9 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
           Seq(
             FunctionalErrorWithSection(
               error = "error",
-              businessRuleId = "business rule ID",
+              businessRuleId = Some("business rule ID"),
               section = Some("section"),
-              invalidDataItem = new InvalidDataItem("invalid data item"),
+              invalidDataItem = Some(new InvalidDataItem("invalid data item")),
               invalidAnswer = Some("invalid answer")
             )
           )
@@ -66,16 +66,16 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
           Seq(
             FunctionalErrorWithSection(
               error = "error 1",
-              businessRuleId = "business rule ID 1",
+              businessRuleId = Some("business rule ID 1"),
               section = Some("section 1"),
-              invalidDataItem = new InvalidDataItem("invalid data item 1"),
+              invalidDataItem = Some(new InvalidDataItem("invalid data item 1")),
               invalidAnswer = Some("invalid answer 1")
             ),
             FunctionalErrorWithSection(
               error = "error 2",
-              businessRuleId = "business rule ID 2",
+              businessRuleId = Some("business rule ID 2"),
               section = Some("section 2"),
-              invalidDataItem = new InvalidDataItem("invalid data item 2"),
+              invalidDataItem = Some(new InvalidDataItem("invalid data item 2")),
               invalidAnswer = Some("invalid answer 2")
             )
           )
@@ -105,9 +105,9 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
           Seq(
             FunctionalErrorWithSection(
               error = "error",
-              businessRuleId = "business rule ID",
+              businessRuleId = Some("business rule ID"),
               section = Some("section"),
-              invalidDataItem = new InvalidDataItem("invalid data item"),
+              invalidDataItem = Some(new InvalidDataItem("invalid data item")),
               invalidAnswer = Some("invalid answer")
             )
           )
@@ -128,16 +128,16 @@ class ReviewDepartureErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultM
           Seq(
             FunctionalErrorWithSection(
               error = "error 1",
-              businessRuleId = "business rule ID 1",
+              businessRuleId = Some("business rule ID 1"),
               section = Some("section 1"),
-              invalidDataItem = new InvalidDataItem("invalid data item 1"),
+              invalidDataItem = Some(new InvalidDataItem("invalid data item 1")),
               invalidAnswer = Some("invalid answer 1")
             ),
             FunctionalErrorWithSection(
               error = "error 2",
-              businessRuleId = "business rule ID 2",
+              businessRuleId = Some("business rule ID 2"),
               section = Some("section 2"),
-              invalidDataItem = new InvalidDataItem("invalid data item 2"),
+              invalidDataItem = Some(new InvalidDataItem("invalid data item 2")),
               invalidAnswer = Some("invalid answer 2")
             )
           )

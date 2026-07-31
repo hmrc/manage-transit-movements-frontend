@@ -20,39 +20,30 @@ import play.api.libs.json.*
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 
-trait HasTableRow {
-  def toTableRow: Seq[TableRow]
-}
-
-sealed trait FunctionalError extends HasTableRow {
-  val error: String
-  val businessRuleId: String
-  val invalidDataItem: InvalidDataItem
-  val invalidAnswer: Option[String]
-}
-
-sealed trait AmendmentFunctionalError extends HasTableRow {
+sealed trait FunctionalError {
   val error: String
   val businessRuleId: Option[String]
   val invalidDataItem: Option[InvalidDataItem]
   val invalidAnswer: Option[String]
+
+  def toTableRow: Seq[TableRow]
 }
 
 object FunctionalError {
 
   case class FunctionalErrorWithSection(
     error: String,
-    businessRuleId: String,
+    businessRuleId: Option[String],
     section: Option[String],
-    invalidDataItem: InvalidDataItem,
+    invalidDataItem: Option[InvalidDataItem],
     invalidAnswer: Option[String]
   ) extends FunctionalError {
 
     override def toTableRow: Seq[TableRow] = Seq(
       TableRow(Text(error)),
-      TableRow(Text(businessRuleId)),
+      TableRow(Text(businessRuleId.getOrElse("N/A"))),
       TableRow(Text(section.getOrElse("N/A"))),
-      TableRow(Text(invalidDataItem.value)),
+      TableRow(Text(invalidDataItem.map(_.value).getOrElse("N/A"))),
       TableRow(Text(invalidAnswer.getOrElse("N/A")))
     )
   }
@@ -64,15 +55,15 @@ object FunctionalError {
 
   case class FunctionalErrorWithoutSection(
     error: String,
-    businessRuleId: String,
-    invalidDataItem: InvalidDataItem,
+    businessRuleId: Option[String],
+    invalidDataItem: Option[InvalidDataItem],
     invalidAnswer: Option[String]
   ) extends FunctionalError {
 
     override def toTableRow: Seq[TableRow] = Seq(
       TableRow(Text(error)),
-      TableRow(Text(businessRuleId)),
-      TableRow(Text(invalidDataItem.value)),
+      TableRow(Text(businessRuleId.getOrElse("N/A"))),
+      TableRow(Text(invalidDataItem.map(_.value).getOrElse("N/A"))),
       TableRow(Text(invalidAnswer.getOrElse("N/A")))
     )
   }
@@ -83,33 +74,8 @@ object FunctionalError {
       new FunctionalErrorWithoutSection(
         error = error.errorCode,
         businessRuleId = error.errorReason,
-        invalidDataItem = InvalidDataItem(error.errorPointer),
+        invalidDataItem = error.errorPointer.map(InvalidDataItem.apply),
         invalidAnswer = error.originalAttributeValue
       )
-  }
-}
-
-object AmendmentFunctionalError {
-
-  case class AmendmentFunctionalErrorWithSection(
-    error: String,
-    businessRuleId: Option[String],
-    section: Option[String],
-    invalidDataItem: Option[InvalidDataItem],
-    invalidAnswer: Option[String]
-  ) extends AmendmentFunctionalError {
-
-    override def toTableRow: Seq[TableRow] = Seq(
-      TableRow(Text(error)),
-      TableRow(Text(businessRuleId.getOrElse("N/A"))),
-      TableRow(Text(section.getOrElse("N/A"))),
-      TableRow(Text(invalidDataItem.map(_.value).getOrElse("N/A"))),
-      TableRow(Text(invalidAnswer.getOrElse("N/A")))
-    )
-  }
-
-  object AmendmentFunctionalErrorWithSection {
-
-    implicit val reads: Reads[AmendmentFunctionalErrorWithSection] = Json.reads[AmendmentFunctionalErrorWithSection]
   }
 }

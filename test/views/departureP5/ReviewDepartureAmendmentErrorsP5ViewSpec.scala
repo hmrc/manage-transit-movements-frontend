@@ -17,8 +17,8 @@
 package views.departureP5
 
 import generators.Generators
-import models.AmendmentFunctionalError.AmendmentFunctionalErrorWithSection
-import models.FunctionalErrors.AmendmentFunctionalErrorsWithSection
+import models.FunctionalError.FunctionalErrorWithSection
+import models.FunctionalErrors.FunctionalErrorsWithSection
 import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
@@ -28,7 +28,7 @@ import views.behaviours.{PaginationViewBehaviours, TableViewBehaviours}
 import views.html.departureP5.ReviewDepartureAmendmentErrorsP5View
 
 class ReviewDepartureAmendmentErrorsP5ViewSpec
-    extends PaginationViewBehaviours[AmendmentFunctionalErrorWithSection, ReviewDepartureAmendmentErrorsP5ViewModel]
+    extends PaginationViewBehaviours[FunctionalErrorWithSection, ReviewDepartureAmendmentErrorsP5ViewModel]
     with TableViewBehaviours
     with Generators {
 
@@ -44,8 +44,8 @@ class ReviewDepartureAmendmentErrorsP5ViewSpec
   ): ReviewDepartureAmendmentErrorsP5ViewModel =
     viewModel.copy(
       functionalErrors = {
-        def error: AmendmentFunctionalErrorWithSection = arbitrary[AmendmentFunctionalErrorWithSection].sample.value
-        AmendmentFunctionalErrorsWithSection(Seq.fill(totalNumberOfItems)(error))
+        def error: FunctionalErrorWithSection = arbitrary[FunctionalErrorWithSection].sample.value
+        FunctionalErrorsWithSection(Seq.fill(totalNumberOfItems)(error))
       },
       currentPage = currentPage,
       numberOfItemsPerPage = numberOfItemsPerPage

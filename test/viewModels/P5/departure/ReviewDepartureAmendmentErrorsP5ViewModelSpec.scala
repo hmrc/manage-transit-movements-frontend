@@ -18,8 +18,8 @@ package viewModels.P5.departure
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
-import models.AmendmentFunctionalError.AmendmentFunctionalErrorWithSection
-import models.FunctionalErrors.AmendmentFunctionalErrorsWithSection
+import models.FunctionalError.FunctionalErrorWithSection
+import models.FunctionalErrors.FunctionalErrorsWithSection
 import models.InvalidDataItem
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
@@ -30,9 +30,9 @@ class ReviewDepartureAmendmentErrorsP5ViewModelSpec extends SpecBase with AppWit
   "ReviewDepartureAmendmentErrorsP5ViewModel" - {
 
     "when there is one error" - {
-      val errors = AmendmentFunctionalErrorsWithSection(
+      val errors = FunctionalErrorsWithSection(
         Seq(
-          AmendmentFunctionalErrorWithSection(
+          FunctionalErrorWithSection(
             error = "error",
             businessRuleId = Some("business rule ID"),
             section = Some("section"),
@@ -53,16 +53,16 @@ class ReviewDepartureAmendmentErrorsP5ViewModelSpec extends SpecBase with AppWit
     }
 
     "when there are multiple errors" - {
-      val errors = AmendmentFunctionalErrorsWithSection(
+      val errors = FunctionalErrorsWithSection(
         Seq(
-          AmendmentFunctionalErrorWithSection(
+          FunctionalErrorWithSection(
             error = "error 1",
             businessRuleId = Some("business rule ID 1"),
             section = Some("section 1"),
             invalidDataItem = Some(new InvalidDataItem("invalid data item 1")),
             invalidAnswer = Some("invalid answer 1")
           ),
-          AmendmentFunctionalErrorWithSection(
+          FunctionalErrorWithSection(
             error = "error 2",
             businessRuleId = Some("business rule ID 2"),
             section = Some("section 2"),

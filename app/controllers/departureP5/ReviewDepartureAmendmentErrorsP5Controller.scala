@@ -19,7 +19,7 @@ package controllers.departureP5
 import config.PaginationAppConfig
 import controllers.actions.*
 import generated.{CC022CType, Generated_CC022CTypeFormat}
-import models.AmendmentFunctionalErrorType
+import models.FunctionalErrorType
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.FunctionalErrorsService
@@ -46,10 +46,10 @@ class ReviewDepartureAmendmentErrorsP5Controller @Inject() (
     (Action andThen actions.identify() andThen messageRetrievalAction[CC022CType](departureId, messageId)).async {
       implicit request =>
         val messageSender       = request.messageData.messageSequence1.messageSender
-        val functionalErrorsSeq = request.messageData.FunctionalError.map(AmendmentFunctionalErrorType(_))
+        val functionalErrorsSeq = request.messageData.FunctionalError.map(FunctionalErrorType(_))
 
         val functionalErrorsF =
-          functionalErrorsService.convertAmendmentErrorsWithSectionAndSender(functionalErrorsSeq, messageSender)
+          functionalErrorsService.convertErrorsWithSectionAndSender(functionalErrorsSeq, messageSender)
         functionalErrorsF.map {
           functionalErrors =>
             val viewModel = ReviewDepartureAmendmentErrorsP5ViewModel(

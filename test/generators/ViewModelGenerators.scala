@@ -16,7 +16,7 @@
 
 package generators
 
-import models.FunctionalErrors.{AmendmentFunctionalErrorsWithSection, FunctionalErrorsWithSection, FunctionalErrorsWithoutSection}
+import models.FunctionalErrors.{FunctionalErrorsWithSection, FunctionalErrorsWithoutSection}
 import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
 import models.{DeparturesSummary, GuaranteeReference}
 import org.scalacheck.Arbitrary.arbitrary
@@ -220,7 +220,7 @@ trait ViewModelGenerators {
   ): Arbitrary[ReviewDepartureAmendmentErrorsP5ViewModel] =
     Arbitrary {
       for {
-        functionalErrors      <- arbitrary[AmendmentFunctionalErrorsWithSection]
+        functionalErrors      <- arbitrary[FunctionalErrorsWithSection]
         lrn                   <- nonEmptyString
         currentPage           <- Gen.option(positiveInts)
         numberOfErrorsPerPage <- positiveInts
