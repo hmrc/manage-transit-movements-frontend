@@ -59,15 +59,15 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
       "must convert a series of FunctionalErrorType07 values to FunctionalErrorsWithSection" in {
         val input = Seq(
           FunctionalErrorType(
-            errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            errorPointer = Some("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
             errorCode = Number12.toString,
-            errorReason = "BR20004",
+            errorReason = Some("BR20004"),
             originalAttributeValue = Some("GB635733627000")
           ),
           FunctionalErrorType(
-            errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            errorPointer = Some("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
             errorCode = Number14.toString,
-            errorReason = "BR20005",
+            errorReason = Some("BR20005"),
             originalAttributeValue = None
           )
         )
@@ -76,16 +76,16 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
           Seq(
             FunctionalErrorWithSection(
               error = "12",
-              businessRuleId = "BR20004",
+              businessRuleId = Some("BR20004"),
               section = Some("Trader details"),
-              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              invalidDataItem = Some(InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber")),
               invalidAnswer = Some("GB635733627000")
             ),
             FunctionalErrorWithSection(
               error = "14",
-              businessRuleId = "BR20005",
+              businessRuleId = Some("BR20005"),
               section = None,
-              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              invalidDataItem = Some(InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber")),
               invalidAnswer = None
             )
           )
@@ -95,16 +95,16 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
           Seq(
             FunctionalErrorWithSection(
               error = "12 - foo",
-              businessRuleId = "BR20004",
+              businessRuleId = Some("BR20004"),
               section = Some("Trader details"),
-              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              invalidDataItem = Some(InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber")),
               invalidAnswer = Some("GB635733627000")
             ),
             FunctionalErrorWithSection(
               error = "14 - bar",
-              businessRuleId = "BR20005",
+              businessRuleId = Some("BR20005"),
               section = None,
-              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              invalidDataItem = Some(InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber")),
               invalidAnswer = None
             )
           )
@@ -132,15 +132,15 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
 
         val input = Seq(
           FunctionalErrorType(
-            errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            errorPointer = Some("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
             errorCode = Number12.toString,
-            errorReason = "BR20004",
+            errorReason = Some("BR20004"),
             originalAttributeValue = Some("GB635733627000")
           ),
           FunctionalErrorType(
-            errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            errorPointer = Some("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
             errorCode = Number14.toString,
-            errorReason = "BR20005",
+            errorReason = Some("BR20005"),
             originalAttributeValue = None
           )
         )
@@ -149,16 +149,16 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
           Seq(
             FunctionalErrorWithSection(
               error = "12",
-              businessRuleId = "BR20004",
+              businessRuleId = Some("BR20004"),
               section = Some("Trader details"),
-              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              invalidDataItem = Some(InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber")),
               invalidAnswer = Some("GB635733627000")
             ),
             FunctionalErrorWithSection(
               error = "14",
-              businessRuleId = "BR20005",
+              businessRuleId = Some("BR20005"),
               section = None,
-              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              invalidDataItem = Some(InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber")),
               invalidAnswer = None
             )
           )
@@ -168,16 +168,16 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
           Seq(
             FunctionalErrorWithSection(
               error = "12 - foo",
-              businessRuleId = "BR20004",
+              businessRuleId = Some("BR20004"),
               section = Some("Trader details"),
-              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              invalidDataItem = Some(InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber")),
               invalidAnswer = Some("GB635733627000")
             ),
             FunctionalErrorWithSection(
               error = "14 - bar",
-              businessRuleId = "BR20005",
+              businessRuleId = Some("BR20005"),
               section = None,
-              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              invalidDataItem = Some(InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber")),
               invalidAnswer = None
             )
           )
@@ -202,15 +202,15 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
       "must convert a series of FunctionalErrorType07 values to FunctionalErrorsWithoutSection" in {
         val input = Seq(
           FunctionalErrorType(
-            errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            errorPointer = Some("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
             errorCode = Number12.toString,
-            errorReason = "BR20004",
+            errorReason = Some("BR20004"),
             originalAttributeValue = Some("GB635733627000")
           ),
           FunctionalErrorType(
-            errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            errorPointer = Some("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
             errorCode = Number14.toString,
-            errorReason = "BR20005",
+            errorReason = Some("BR20005"),
             originalAttributeValue = None
           )
         )
@@ -219,14 +219,14 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
           Seq(
             FunctionalErrorWithoutSection(
               error = "12 - foo",
-              businessRuleId = "BR20004",
-              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              businessRuleId = Some("BR20004"),
+              invalidDataItem = Some(InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber")),
               invalidAnswer = Some("GB635733627000")
             ),
             FunctionalErrorWithoutSection(
               error = "14 - bar",
-              businessRuleId = "BR20005",
-              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              businessRuleId = Some("BR20005"),
+              invalidDataItem = Some(InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber")),
               invalidAnswer = None
             )
           )
@@ -251,15 +251,15 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
 
         val input = Seq(
           FunctionalErrorType(
-            errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            errorPointer = Some("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
             errorCode = Number12.toString,
-            errorReason = "BR20004",
+            errorReason = Some("BR20004"),
             originalAttributeValue = Some("GB635733627000")
           ),
           FunctionalErrorType(
-            errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            errorPointer = Some("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
             errorCode = Number14.toString,
-            errorReason = "BR20005",
+            errorReason = Some("BR20005"),
             originalAttributeValue = None
           )
         )
@@ -268,14 +268,14 @@ class FunctionalErrorsServiceSpec extends SpecBase with AppWithDefaultMockFixtur
           Seq(
             FunctionalErrorWithoutSection(
               error = "12 - foo",
-              businessRuleId = "BR20004",
-              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              businessRuleId = Some("BR20004"),
+              invalidDataItem = Some(InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber")),
               invalidAnswer = Some("GB635733627000")
             ),
             FunctionalErrorWithoutSection(
               error = "14 - bar",
-              businessRuleId = "BR20005",
-              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              businessRuleId = Some("BR20005"),
+              invalidDataItem = Some(InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber")),
               invalidAnswer = None
             )
           )

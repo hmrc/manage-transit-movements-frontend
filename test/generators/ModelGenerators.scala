@@ -194,9 +194,9 @@ trait ModelGenerators {
     Arbitrary {
       for {
         error           <- nonEmptyString
-        businessRuleId  <- nonEmptyString
+        businessRuleId  <- Gen.option(nonEmptyString)
         section         <- Gen.option(nonEmptyString)
-        invalidDataItem <- arbitrary[InvalidDataItem]
+        invalidDataItem <- Gen.option(arbitrary[InvalidDataItem])
         invalidAnswer   <- Gen.option(nonEmptyString)
       } yield FunctionalErrorWithSection(error, businessRuleId, section, invalidDataItem, invalidAnswer)
     }
@@ -205,8 +205,8 @@ trait ModelGenerators {
     Arbitrary {
       for {
         error           <- nonEmptyString
-        businessRuleId  <- nonEmptyString
-        invalidDataItem <- arbitrary[InvalidDataItem]
+        businessRuleId  <- Gen.option(nonEmptyString)
+        invalidDataItem <- Gen.option(arbitrary[InvalidDataItem])
         invalidAnswer   <- Gen.option(nonEmptyString)
       } yield FunctionalErrorWithoutSection(error, businessRuleId, invalidDataItem, invalidAnswer)
     }

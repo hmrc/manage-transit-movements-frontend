@@ -16,6 +16,9 @@ POST        /:departureId/intention-to-control-complete-prelodged-declaration/:m
 GET        /:departureId/amend-departure-declaration-errors/:messageId               controllers.departureP5.RejectionMessageP5Controller.onPageLoad(page: Option[Int], departureId: String, messageId: String)
 POST       /:departureId/amend-departure-declaration-errors/:messageId               controllers.departureP5.RejectionMessageP5Controller.onSubmit(departureId: String, messageId: String)
 
+GET        /:departureId/departure-declaration-amendment-errors/:messageId               controllers.departureP5.DeclarationAmendmentRejectionMessageController.onPageLoad(page: Option[Int], departureId: String, messageId: String)
+POST       /:departureId/departure-declaration-amendment-errors/:messageId               controllers.departureP5.DeclarationAmendmentRejectionMessageController.onSubmit(departureId: String, messageId: String)
+
 GET        /:departureId/departure-declaration-errors/:messageId                     controllers.departureP5.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId: String, messageId: String)
 
 GET        /:departureId/cancellation-errors/:messageId                              controllers.departureP5.CancellationNotificationErrorsP5Controller.onPageLoad(departureId: String, messageId: String)

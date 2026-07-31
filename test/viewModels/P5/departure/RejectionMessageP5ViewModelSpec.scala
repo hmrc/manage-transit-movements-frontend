@@ -35,9 +35,9 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
         Seq(
           FunctionalErrorWithSection(
             error = "error",
-            businessRuleId = "business rule ID",
+            businessRuleId = Some("business rule ID"),
             section = Some("Trader details"),
-            invalidDataItem = new InvalidDataItem("invalid data item"),
+            invalidDataItem = Some(new InvalidDataItem("invalid data item")),
             invalidAnswer = Some("invalid answer")
           )
         )
@@ -96,16 +96,16 @@ class RejectionMessageP5ViewModelSpec extends SpecBase with AppWithDefaultMockFi
         Seq(
           FunctionalErrorWithSection(
             error = "error 1",
-            businessRuleId = "business rule ID 1",
+            businessRuleId = Some("business rule ID 1"),
             section = Some("Trader details"),
-            invalidDataItem = new InvalidDataItem("invalid data item 1"),
+            invalidDataItem = Some(new InvalidDataItem("invalid data item 1")),
             invalidAnswer = Some("invalid answer 1")
           ),
           FunctionalErrorWithSection(
             error = "error 2",
-            businessRuleId = "business rule ID 2",
+            businessRuleId = Some("business rule ID 2"),
             section = Some("Trader details"),
-            invalidDataItem = new InvalidDataItem("invalid data item 2"),
+            invalidDataItem = Some(new InvalidDataItem("invalid data item 2")),
             invalidAnswer = Some("invalid answer 2")
           )
         )

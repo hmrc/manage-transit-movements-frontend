@@ -111,15 +111,15 @@ class DepartureCacheConnectorSpec extends ItSpecBase with WireMockServerHandler 
 
       val input = Seq(
         FunctionalErrorType(
-          errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+          errorPointer = Some("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
           errorCode = Number12.toString,
-          errorReason = "BR20004",
+          errorReason = Some("BR20004"),
           originalAttributeValue = Some("GB635733627000")
         ),
         FunctionalErrorType(
-          errorPointer = "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+          errorPointer = Some("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
           errorCode = Number12.toString,
-          errorReason = "BR20005",
+          errorReason = Some("BR20005"),
           originalAttributeValue = None
         )
       )
@@ -156,16 +156,16 @@ class DepartureCacheConnectorSpec extends ItSpecBase with WireMockServerHandler 
           Seq(
             FunctionalErrorWithSection(
               error = "12",
-              businessRuleId = "BR20004",
+              businessRuleId = Some("BR20004"),
               section = Some("Trader details"),
-              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              invalidDataItem = Some(InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber")),
               invalidAnswer = Some("GB635733627000")
             ),
             FunctionalErrorWithSection(
               error = "12",
-              businessRuleId = "BR20005",
+              businessRuleId = Some("BR20005"),
               section = None,
-              invalidDataItem = InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber"),
+              invalidDataItem = Some(InvalidDataItem("/CC015C/HolderOfTheTransitProcedure/identificationNumber")),
               invalidAnswer = None
             )
           )

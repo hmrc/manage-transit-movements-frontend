@@ -21,9 +21,9 @@ import play.api.libs.functional.syntax.*
 import play.api.libs.json.{__, Writes}
 
 case class FunctionalErrorType(
-  errorPointer: String,
+  errorPointer: Option[String],
   errorCode: String,
-  errorReason: String,
+  errorReason: Option[String],
   originalAttributeValue: Option[String]
 )
 
@@ -31,13 +31,21 @@ object FunctionalErrorType {
 
   def apply(value: FunctionalErrorType02): FunctionalErrorType =
     new FunctionalErrorType(
-      errorPointer = value.errorPointer,
+      errorPointer = Some(value.errorPointer),
       errorCode = value.errorCode,
-      errorReason = value.errorReason,
+      errorReason = Some(value.errorReason),
       originalAttributeValue = value.originalAttributeValue
     )
 
   def apply(value: FunctionalErrorType07): FunctionalErrorType =
+    new FunctionalErrorType(
+      errorPointer = Some(value.errorPointer),
+      errorCode = value.errorCode.toString,
+      errorReason = Some(value.errorReason),
+      originalAttributeValue = value.originalAttributeValue
+    )
+
+  def apply(value: FunctionalErrorType01): FunctionalErrorType =
     new FunctionalErrorType(
       errorPointer = value.errorPointer,
       errorCode = value.errorCode.toString,
@@ -46,9 +54,9 @@ object FunctionalErrorType {
     )
 
   implicit val writes: Writes[FunctionalErrorType] = (
-    (__ \ "errorPointer").write[String] and
+    (__ \ "errorPointer").writeNullable[String] and
       (__ \ "errorCode").write[String] and
-      (__ \ "errorReason").write[String] and
+      (__ \ "errorReason").writeNullable[String] and
       (__ \ "originalAttributeValue").writeNullable[String]
   )(
     functionalError => (functionalError.errorPointer, functionalError.errorCode, functionalError.errorReason, functionalError.originalAttributeValue)

@@ -34,8 +34,8 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
         Seq(
           FunctionalErrorWithoutSection(
             error = "error",
-            businessRuleId = "business rule ID",
-            invalidDataItem = new InvalidDataItem("invalid data item"),
+            businessRuleId = Some("business rule ID"),
+            invalidDataItem = Some(new InvalidDataItem("invalid data item")),
             invalidAnswer = Some("invalid answer")
           )
         )
@@ -66,14 +66,14 @@ class UnloadingRemarkWithFunctionalErrorsP5ViewModelSpec extends SpecBase with A
         Seq(
           FunctionalErrorWithoutSection(
             error = "error 1",
-            businessRuleId = "business rule ID 1",
-            invalidDataItem = new InvalidDataItem("invalid data item 1"),
+            businessRuleId = Some("business rule ID 1"),
+            invalidDataItem = Some(new InvalidDataItem("invalid data item 1")),
             invalidAnswer = Some("invalid answer 1")
           ),
           FunctionalErrorWithoutSection(
             error = "error 2",
-            businessRuleId = "business rule ID 2",
-            invalidDataItem = new InvalidDataItem("invalid data item 2"),
+            businessRuleId = Some("business rule ID 2"),
+            invalidDataItem = Some(new InvalidDataItem("invalid data item 2")),
             invalidAnswer = Some("invalid answer 2")
           )
         )
