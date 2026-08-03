@@ -44,8 +44,8 @@ class AmendDeclarationErrorsViewModelSpec extends SpecBase with AppWithDefaultMo
       result.paragraph1 mustEqual "There are one or more errors in this declaration that cannot be amended. Make a new declaration with the right information."
     }
 
-    "must return correct paragraph3" in {
-      result.paragraph3 mustEqual "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)"
+    "must return correct paragraph2" in {
+      result.paragraph2 mustEqual "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)"
     }
 
     "must return correct hyperlink text" in {

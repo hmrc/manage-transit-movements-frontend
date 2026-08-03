@@ -26,7 +26,7 @@ case class AmendDeclarationErrorsViewModel(lrn: String, mrn: Option[String]) {
   def paragraph1(implicit messages: Messages): String =
     messages("amend.declaration.errors.message.paragraph1")
 
-  def paragraph3(implicit messages: Messages): String = messages("amend.declaration.errors.message.paragraph3")
+  def paragraph2(implicit messages: Messages): String = messages("amend.declaration.errors.message.paragraph2")
 
   def hyperlink(implicit messages: Messages): Option[String] =
     Some(messages("amend.declaration.errors.message.hyperlink.text"))

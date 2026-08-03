@@ -94,7 +94,7 @@ class AmendDeclarationErrorsControllerSpec extends SpecBase with AppWithDefaultM
       }
     }
 
-    "must redirect to technical difficulties page when functionalErrors is between 1 to 10" in {
+    "must redirect to technical difficulties page when functionalErrors present is between 1 to 10" in {
       forAll(listWithMaxLength[FunctionalErrorType01](), Gen.option(nonEmptyString)) {
         (functionalErrors, mrn) =>
           forAll(arbitrary[CC022CType].map(_.copy(FunctionalError = functionalErrors))) {
