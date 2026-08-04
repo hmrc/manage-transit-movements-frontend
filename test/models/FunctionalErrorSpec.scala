@@ -30,14 +30,14 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
     "must deserialise" - {
       "when options are defined" in {
         val json = Json.parse("""
-                                |{
-                                |  "error": "12",
-                                |  "businessRuleId": "BR20004",
-                                |  "section": "Trader details",
-                                |  "invalidDataItem": "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
-                                |  "invalidAnswer": "GB635733627000"
-                                |}
-                                |""".stripMargin)
+            |{
+            |  "error": "12",
+            |  "businessRuleId": "BR20004",
+            |  "section": "Trader details",
+            |  "invalidDataItem": "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            |  "invalidAnswer": "GB635733627000"
+            |}
+            |""".stripMargin)
 
         val result = json.validate[FunctionalErrorWithSection]
 
@@ -54,12 +54,12 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
 
       "invalidDataItem undefined" in {
         val json = Json.parse("""
-                                |{
-                                |  "error": "12",
-                                |  "businessRuleId": "BR20004",
-                                |  "invalidAnswer": "GB635733627000"
-                                |}
-                                |""".stripMargin)
+            |{
+            |  "error": "12",
+            |  "businessRuleId": "BR20004",
+            |  "invalidAnswer": "GB635733627000"
+            |}
+            |""".stripMargin)
 
         val result = json.validate[FunctionalErrorWithSection]
 
@@ -76,12 +76,12 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
 
       "businessRuleId undefined" in {
         val json = Json.parse("""
-                                |{
-                                |  "error": "12",
-                                |  "invalidDataItem": "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
-                                |  "invalidAnswer": "GB635733627000"
-                                |}
-                                |""".stripMargin)
+            |{
+            |  "error": "12",
+            |  "invalidDataItem": "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            |  "invalidAnswer": "GB635733627000"
+            |}
+            |""".stripMargin)
 
         val result = json.validate[FunctionalErrorWithSection]
 
@@ -98,12 +98,12 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
 
       "invalidAnswer undefined" in {
         val json = Json.parse("""
-                                |{
-                                |  "error": "12",
-                                |  "businessRuleId": "BR20004",
-                                |  "invalidDataItem": "/CC015C/HolderOfTheTransitProcedure/identificationNumber"
-                                |}
-                                |""".stripMargin)
+            |{
+            |  "error": "12",
+            |  "businessRuleId": "BR20004",
+            |  "invalidDataItem": "/CC015C/HolderOfTheTransitProcedure/identificationNumber"
+            |}
+            |""".stripMargin)
 
         val result = json.validate[FunctionalErrorWithSection]
 
@@ -134,13 +134,13 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
         )
 
         val expectedResult = Json.parse("""
-                                          |{
-                                          |  "errorPointer": "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
-                                          |  "errorCode": "12",
-                                          |  "errorReason": "BR20004",
-                                          |  "originalAttributeValue": "GB635733627000"
-                                          |}
-                                          |""".stripMargin)
+            |{
+            |  "errorPointer": "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            |  "errorCode": "12",
+            |  "errorReason": "BR20004",
+            |  "originalAttributeValue": "GB635733627000"
+            |}
+            |""".stripMargin)
 
         val result = Json.toJson(functionalError)
         result.mustEqual(expectedResult)
@@ -158,12 +158,12 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
         )
 
         val expectedResult = Json.parse("""
-                                          |{
-                                          |  "errorCode": "12",
-                                          |  "errorReason": "BR20005",
-                                          |  "originalAttributeValue": "GB635733627000"
-                                          |}
-                                          |""".stripMargin)
+            |{
+            |  "errorCode": "12",
+            |  "errorReason": "BR20005",
+            |  "originalAttributeValue": "GB635733627000"
+            |}
+            |""".stripMargin)
 
         val result = Json.toJson(functionalError)
         result.mustEqual(expectedResult)
@@ -181,12 +181,12 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
         )
 
         val expectedResult = Json.parse("""
-                                          |{
-                                          |  "errorPointer": "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
-                                          |  "errorCode": "12",
-                                          |  "originalAttributeValue": "GB635733627000"
-                                          |}
-                                          |""".stripMargin)
+            |{
+            |  "errorPointer": "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            |  "errorCode": "12",
+            |  "originalAttributeValue": "GB635733627000"
+            |}
+            |""".stripMargin)
 
         val result = Json.toJson(functionalError)
         result.mustEqual(expectedResult)
@@ -203,12 +203,12 @@ class FunctionalErrorSpec extends SpecBase with ScalaCheckPropertyChecks with Ge
         )
 
         val expectedResult = Json.parse("""
-                                          |{
-                                          |  "errorPointer": "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
-                                          |  "errorCode": "12",
-                                          |  "errorReason": "BR20005"
-                                          |}
-                                          |""".stripMargin)
+            |{
+            |  "errorPointer": "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+            |  "errorCode": "12",
+            |  "errorReason": "BR20005"
+            |}
+            |""".stripMargin)
 
         val result = Json.toJson(functionalError)
         result.mustEqual(expectedResult)
