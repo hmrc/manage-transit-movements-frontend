@@ -336,6 +336,15 @@ departure.ie056.message.paragraph2.singular = Contact the New Computerised Trans
 departure.ie056.message.paragraph2.plural = Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)
 departure.ie056.message.hyperlink = Make another departure declaration
 
+departure.ie022.message.title = Amend declaration errors
+departure.ie022.message.heading = Amend declaration errors
+
+departure.ie022.message.paragraph1.prefix = There is a problem with departure declaration {0}.
+departure.ie022.message.paragraph1.singular = There is a problem with this declaration. Amend the error and resend the declaration.
+departure.ie022.message.paragraph1.plural = There is a problem with this declaration. Amend the errors and resend the declaration.
+departure.ie022.message.paragraph2.singular = Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)
+departure.ie022.message.paragraph2.plural = Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)
+
 departure.ie056.review.message.title = Review declaration errors
 departure.ie022.review.message.title = Review declaration errors
 departure.ie056.review.message.heading = Review declaration errors
