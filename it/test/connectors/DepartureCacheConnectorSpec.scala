@@ -126,21 +126,21 @@ class DepartureCacheConnectorSpec extends ItSpecBase with WireMockServerHandler 
 
       val output = Json
         .parse("""
-                 |[
-                 |  {
-                 |    "error" : "12",
-                 |    "businessRuleId" : "BR20004",
-                 |    "section" : "Trader details",
-                 |    "invalidDataItem" : "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
-                 |    "invalidAnswer" : "GB635733627000"
-                 |  },
-                 |  {
-                 |    "error" : "12",
-                 |    "businessRuleId" : "BR20005",
-                 |    "invalidDataItem" : "/CC015C/HolderOfTheTransitProcedure/identificationNumber"
-                 |  }
-                 |]
-                 |""".stripMargin)
+          |[
+          |  {
+          |    "error" : "12",
+          |    "businessRuleId" : "BR20004",
+          |    "section" : "Trader details",
+          |    "invalidDataItem" : "/CC015C/HolderOfTheTransitProcedure/identificationNumber",
+          |    "invalidAnswer" : "GB635733627000"
+          |  },
+          |  {
+          |    "error" : "12",
+          |    "businessRuleId" : "BR20005",
+          |    "invalidDataItem" : "/CC015C/HolderOfTheTransitProcedure/identificationNumber"
+          |  }
+          |]
+          |""".stripMargin)
         .as[JsArray]
 
       "must return converted errors" in {
