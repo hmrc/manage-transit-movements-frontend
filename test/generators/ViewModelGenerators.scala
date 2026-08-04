@@ -361,6 +361,27 @@ trait ViewModelGenerators {
       )
     }
 
+  implicit def arbitraryDeclarationAmendmentRejectionMessageViewModel(implicit
+    messages: Messages
+  ): Arbitrary[DeclarationAmendmentRejectionMessageViewModel] =
+    Arbitrary {
+      for {
+        functionalErrors      <- arbitrary[FunctionalErrorsWithSection]
+        lrn                   <- nonEmptyString
+        currentPage           <- Gen.option(positiveInts)
+        numberOfErrorsPerPage <- positiveInts
+        departureId           <- nonEmptyString
+        messageId             <- nonEmptyString
+      } yield DeclarationAmendmentRejectionMessageViewModel(
+        functionalErrors = functionalErrors,
+        lrn = lrn,
+        currentPage = currentPage,
+        numberOfErrorsPerPage = numberOfErrorsPerPage,
+        departureId = departureId,
+        messageId = messageId
+      )
+    }
+
   implicit lazy val arbitraryText: Arbitrary[Text] = Arbitrary {
     for {
       content <- nonEmptyString

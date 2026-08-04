@@ -22,8 +22,8 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
 
 sealed trait FunctionalError {
   val error: String
-  val businessRuleId: String
-  val invalidDataItem: InvalidDataItem
+  val businessRuleId: Option[String]
+  val invalidDataItem: Option[InvalidDataItem]
   val invalidAnswer: Option[String]
 
   def toTableRow: Seq[TableRow]
@@ -33,17 +33,17 @@ object FunctionalError {
 
   case class FunctionalErrorWithSection(
     error: String,
-    businessRuleId: String,
+    businessRuleId: Option[String],
     section: Option[String],
-    invalidDataItem: InvalidDataItem,
+    invalidDataItem: Option[InvalidDataItem],
     invalidAnswer: Option[String]
   ) extends FunctionalError {
 
     override def toTableRow: Seq[TableRow] = Seq(
       TableRow(Text(error)),
-      TableRow(Text(businessRuleId)),
+      TableRow(Text(businessRuleId.getOrElse("N/A"))),
       TableRow(Text(section.getOrElse("N/A"))),
-      TableRow(Text(invalidDataItem.value)),
+      TableRow(Text(invalidDataItem.map(_.value).getOrElse("N/A"))),
       TableRow(Text(invalidAnswer.getOrElse("N/A")))
     )
   }
@@ -55,15 +55,15 @@ object FunctionalError {
 
   case class FunctionalErrorWithoutSection(
     error: String,
-    businessRuleId: String,
-    invalidDataItem: InvalidDataItem,
+    businessRuleId: Option[String],
+    invalidDataItem: Option[InvalidDataItem],
     invalidAnswer: Option[String]
   ) extends FunctionalError {
 
     override def toTableRow: Seq[TableRow] = Seq(
       TableRow(Text(error)),
-      TableRow(Text(businessRuleId)),
-      TableRow(Text(invalidDataItem.value)),
+      TableRow(Text(businessRuleId.getOrElse("N/A"))),
+      TableRow(Text(invalidDataItem.map(_.value).getOrElse("N/A"))),
       TableRow(Text(invalidAnswer.getOrElse("N/A")))
     )
   }
@@ -74,7 +74,7 @@ object FunctionalError {
       new FunctionalErrorWithoutSection(
         error = error.errorCode,
         businessRuleId = error.errorReason,
-        invalidDataItem = InvalidDataItem(error.errorPointer),
+        invalidDataItem = error.errorPointer.map(InvalidDataItem.apply),
         invalidAnswer = error.originalAttributeValue
       )
   }

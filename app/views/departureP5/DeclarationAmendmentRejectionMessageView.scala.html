@@ -1,0 +1,58 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import controllers.departureP5.routes
+@import viewModels.P5.departure.DeclarationAmendmentRejectionMessageViewModel
+@import views.html.components.{Button, Heading, HelpdeskLink, Pagination}
+
+@this(
+    mainTemplate: MainTemplate,
+    heading: Heading,
+    table: GovukTable,
+    button: Button,
+    formHelper: FormWithCSRF,
+    pagination: Pagination,
+    helpdeskLink: HelpdeskLink
+)
+@(viewModel: DeclarationAmendmentRejectionMessageViewModel, departureId: String, messageId: String, mrn: Option[String])(implicit request: Request[?], messages: Messages)
+
+@mainTemplate(
+    title = viewModel.title,
+    showBackLink = true
+) {
+
+    @heading(
+        heading = viewModel.heading,
+        caption = Some(viewModel.caption)
+    )
+
+    <p id="paragraph-1" class="govuk-body">@viewModel.paragraph1</p>
+
+    @mrn.map { mrn => <p id="mrn" class="govuk-body govuk-label--s">MRN: @mrn</p> }
+
+    @pagination(viewModel)
+
+    @table(viewModel.table)
+
+    @helpdeskLink(viewModel.paragraph2)
+
+    @formHelper(action = routes.DeclarationAmendmentRejectionMessageController.onSubmit(departureId, messageId), Symbol("autoComplete") -> "off") {
+        @button(
+            attributes = Map("id" -> "submit"),
+            messageKey = messages("site.amendErrors")
+        )
+    }
+}

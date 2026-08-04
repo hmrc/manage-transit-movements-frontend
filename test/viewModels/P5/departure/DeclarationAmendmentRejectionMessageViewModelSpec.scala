@@ -18,89 +18,89 @@ package viewModels.P5.departure
 
 import base.{AppWithDefaultMockFixtures, SpecBase}
 import generators.Generators
-import models.FunctionalError.FunctionalErrorWithoutSection
-import models.FunctionalErrors.FunctionalErrorsWithoutSection
+import models.FunctionalError.FunctionalErrorWithSection
+import models.FunctionalErrors.FunctionalErrorsWithSection
 import models.InvalidDataItem
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class ReviewPrelodgedDeclarationErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
+class DeclarationAmendmentRejectionMessageViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   private val lrnString = "LRNAB123"
 
-  "ReviewPrelodgeDepartureErrorsP5ViewModel" - {
+  "DeclarationAmendmentRejectionMessageViewModel" - {
 
     "when there is one error" - {
-
-      val errors = FunctionalErrorsWithoutSection(
+      val errors = FunctionalErrorsWithSection(
         Seq(
-          FunctionalErrorWithoutSection(
+          FunctionalErrorWithSection(
             error = "error",
             businessRuleId = Some("business rule ID"),
+            section = Some("Documents"),
             invalidDataItem = Some(new InvalidDataItem("invalid data item")),
             invalidAnswer = Some("invalid answer")
           )
         )
       )
 
-      val result = ReviewPrelodgedDeclarationErrorsP5ViewModel(errors, lrnString, None, 20, departureIdP5, messageId)
+      val result = DeclarationAmendmentRejectionMessageViewModel(errors, lrnString, None, 20, departureIdP5, messageId)
 
       "must return correct title" in {
-        result.title mustEqual "Review pre-lodged declaration errors"
+        result.title mustEqual "Amend declaration errors"
       }
       "must return correct heading" in {
-        result.heading mustEqual "Review pre-lodged declaration errors"
+        result.heading mustEqual "Amend declaration errors"
       }
-      "must return correct caption" in {
-        result.caption mustEqual s"LRN: $lrnString"
+      "must return correct paragraph 1 prefix" in {
+        result.paragraph1Prefix mustEqual s"There is a problem with departure declaration $lrnString."
       }
       "must return correct paragraph 1" in {
-        result.paragraph1 mustEqual s"There is a problem with this declaration. Review the error and complete your pre-lodged declaration with the right information."
+        result.paragraph1 mustEqual s"There is a problem with this declaration. Amend the error and resend the declaration."
       }
       "must return correct paragraph 2" in {
         result.paragraph2 mustEqual "Contact the New Computerised Transit System helpdesk for help understanding the error (opens in a new tab)"
       }
-      "must return correct hyperlink text" in {
-        result.hyperlink mustEqual "Complete pre-lodged declaration"
-      }
+
     }
 
     "when there are multiple errors" - {
-      val errors = FunctionalErrorsWithoutSection(
+
+      val errors = FunctionalErrorsWithSection(
         Seq(
-          FunctionalErrorWithoutSection(
+          FunctionalErrorWithSection(
             error = "error 1",
             businessRuleId = Some("business rule ID 1"),
+            section = Some("Documents"),
             invalidDataItem = Some(new InvalidDataItem("invalid data item 1")),
             invalidAnswer = Some("invalid answer 1")
           ),
-          FunctionalErrorWithoutSection(
+          FunctionalErrorWithSection(
             error = "error 2",
             businessRuleId = Some("business rule ID 2"),
+            section = Some("Documents"),
             invalidDataItem = Some(new InvalidDataItem("invalid data item 2")),
             invalidAnswer = Some("invalid answer 2")
           )
         )
       )
 
-      val result = ReviewPrelodgedDeclarationErrorsP5ViewModel(errors, lrnString, None, 20, departureIdP5, messageId)
+      val result = DeclarationAmendmentRejectionMessageViewModel(errors, lrnString, None, 20, departureIdP5, messageId)
 
       "must return correct title" in {
-        result.title mustEqual "Review pre-lodged declaration errors"
+        result.title mustEqual "Amend declaration errors"
       }
       "must return correct heading" in {
-        result.heading mustEqual "Review pre-lodged declaration errors"
+        result.heading mustEqual "Amend declaration errors"
       }
-      "must return correct caption" in {
-        result.caption mustEqual s"LRN: $lrnString"
+      "must return correct paragraph 1 prefix" in {
+        result.paragraph1Prefix mustEqual s"There is a problem with departure declaration $lrnString."
       }
       "must return correct paragraph 1" in {
-        result.paragraph1 mustEqual s"There is a problem with this declaration. Review the errors and complete your pre-lodged declaration with the right information."
+        result.paragraph1 mustEqual s"There is a problem with this declaration. Amend the errors and resend the declaration."
       }
       "must return correct paragraph 2" in {
         result.paragraph2 mustEqual "Contact the New Computerised Transit System helpdesk for help understanding the errors (opens in a new tab)"
       }
-      "must return correct hyperlink text" in {
-        result.hyperlink mustEqual "Complete pre-lodged declaration"
-      }
+
     }
   }
 }
