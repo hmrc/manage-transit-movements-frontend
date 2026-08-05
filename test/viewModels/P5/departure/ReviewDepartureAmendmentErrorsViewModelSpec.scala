@@ -23,11 +23,11 @@ import models.FunctionalErrors.FunctionalErrorsWithSection
 import models.InvalidDataItem
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class ReviewDepartureAmendmentErrorsP5ViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
+class ReviewDepartureAmendmentErrorsViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   private val lrnString = "LRNAB123"
 
-  "ReviewDepartureAmendmentErrorsP5ViewModel" - {
+  "ReviewDepartureAmendmentErrorsViewModel" - {
 
     "when there is one error" - {
       val errors = FunctionalErrorsWithSection(
@@ -42,7 +42,7 @@ class ReviewDepartureAmendmentErrorsP5ViewModelSpec extends SpecBase with AppWit
         )
       )
 
-      val result = ReviewDepartureAmendmentErrorsP5ViewModel(errors, lrnString, None, 20, departureIdP5, messageId)
+      val result = ReviewDepartureAmendmentErrorsViewModel(errors, lrnString, None, 20, departureIdP5, messageId)
 
       "must return correct paragraph 1" in {
         result.paragraph1 mustEqual "There is a problem with this declaration. Review the error and contact the helpdesk to discuss further."
@@ -72,7 +72,7 @@ class ReviewDepartureAmendmentErrorsP5ViewModelSpec extends SpecBase with AppWit
         )
       )
 
-      val result = ReviewDepartureAmendmentErrorsP5ViewModel(errors, lrnString, None, 20, departureIdP5, messageId)
+      val result = ReviewDepartureAmendmentErrorsViewModel(errors, lrnString, None, 20, departureIdP5, messageId)
 
       "must return correct paragraph 1" in {
         result.paragraph1 mustEqual "There is a problem with this declaration. Review the errors and contact the helpdesk to discuss further."

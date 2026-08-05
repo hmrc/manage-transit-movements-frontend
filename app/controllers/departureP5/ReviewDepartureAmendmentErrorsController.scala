@@ -24,18 +24,18 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.FunctionalErrorsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewModels.P5.departure.ReviewDepartureAmendmentErrorsP5ViewModel
-import views.html.departureP5.ReviewDepartureAmendmentErrorsP5View
+import viewModels.P5.departure.ReviewDepartureAmendmentErrorsViewModel
+import views.html.departureP5.ReviewDepartureAmendmentErrorsView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class ReviewDepartureAmendmentErrorsP5Controller @Inject() (
+class ReviewDepartureAmendmentErrorsController @Inject() (
   override val messagesApi: MessagesApi,
   actions: Actions,
   messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
-  view: ReviewDepartureAmendmentErrorsP5View,
+  view: ReviewDepartureAmendmentErrorsView,
   functionalErrorsService: FunctionalErrorsService,
   paginationConfig: PaginationAppConfig
 )(implicit val executionContext: ExecutionContext)
@@ -52,7 +52,7 @@ class ReviewDepartureAmendmentErrorsP5Controller @Inject() (
           functionalErrorsService.convertErrorsWithSectionAndSender(functionalErrorsSeq, messageSender)
         functionalErrorsF.map {
           functionalErrors =>
-            val viewModel = ReviewDepartureAmendmentErrorsP5ViewModel(
+            val viewModel = ReviewDepartureAmendmentErrorsViewModel(
               functionalErrors = functionalErrors,
               lrn = request.referenceNumbers.localReferenceNumber,
               currentPage = page,

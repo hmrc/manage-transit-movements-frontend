@@ -1037,7 +1037,7 @@ class DepartureStatusP5ViewModelSpec extends SpecBase with AppWithDefaultMockFix
               "movement.status.P5.invalidMRN",
               Seq(
                 ViewMovementAction(
-                  controllers.departureP5.routes.ReviewDepartureAmendmentErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url,
+                  controllers.departureP5.routes.ReviewDepartureAmendmentErrorsController.onPageLoad(None, departureIdP5, messageId).url,
                   "movement.status.P5.action.invalidMRN.viewError"
                 )
               )

@@ -30,18 +30,18 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import services.{DepartureP5MessageService, FunctionalErrorsService}
-import viewModels.P5.departure.ReviewDepartureAmendmentErrorsP5ViewModel
-import views.html.departureP5.ReviewDepartureAmendmentErrorsP5View
+import viewModels.P5.departure.ReviewDepartureAmendmentErrorsViewModel
+import views.html.departureP5.ReviewDepartureAmendmentErrorsView
 
 import scala.concurrent.Future
 
-class ReviewDepartureAmendmentErrorsP5ControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
+class ReviewDepartureAmendmentErrorsControllerSpec extends SpecBase with AppWithDefaultMockFixtures with ScalaCheckPropertyChecks with Generators {
 
   private val mockDepartureP5MessageService = mock[DepartureP5MessageService]
   private val mockFunctionalErrorsService   = mock[FunctionalErrorsService]
 
   lazy val rejectionMessageController: String =
-    routes.ReviewDepartureAmendmentErrorsP5Controller.onPageLoad(None, departureIdP5, messageId).url
+    routes.ReviewDepartureAmendmentErrorsController.onPageLoad(None, departureIdP5, messageId).url
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -57,7 +57,7 @@ class ReviewDepartureAmendmentErrorsP5ControllerSpec extends SpecBase with AppWi
         bind[FunctionalErrorsService].toInstance(mockFunctionalErrorsService)
       )
 
-  "ReviewDepartureErrorsP5Controller" - {
+  "ReviewDepartureErrorsController" - {
 
     "must return OK and the correct view " in {
 
@@ -72,7 +72,7 @@ class ReviewDepartureAmendmentErrorsP5ControllerSpec extends SpecBase with AppWi
           when(mockFunctionalErrorsService.convertErrorsWithSectionAndSender(any(), any())(any(), any()))
             .thenReturn(Future.successful(functionalErrors))
 
-          val viewModel = ReviewDepartureAmendmentErrorsP5ViewModel(
+          val viewModel = ReviewDepartureAmendmentErrorsViewModel(
             functionalErrors = functionalErrors,
             lrn = lrn.value,
             currentPage = None,
@@ -87,7 +87,7 @@ class ReviewDepartureAmendmentErrorsP5ControllerSpec extends SpecBase with AppWi
 
           status(result) mustEqual OK
 
-          val view = injector.instanceOf[ReviewDepartureAmendmentErrorsP5View]
+          val view = injector.instanceOf[ReviewDepartureAmendmentErrorsView]
 
           contentAsString(result) mustEqual
             view(viewModel, departureIdP5, None)(request, messages).toString

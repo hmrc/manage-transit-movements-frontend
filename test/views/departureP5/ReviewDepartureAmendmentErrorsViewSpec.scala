@@ -23,17 +23,17 @@ import org.jsoup.nodes.Document
 import org.scalacheck.Arbitrary.arbitrary
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
-import viewModels.P5.departure.ReviewDepartureAmendmentErrorsP5ViewModel
+import viewModels.P5.departure.ReviewDepartureAmendmentErrorsViewModel
 import views.behaviours.{PaginationViewBehaviours, TableViewBehaviours}
-import views.html.departureP5.ReviewDepartureAmendmentErrorsP5View
+import views.html.departureP5.ReviewDepartureAmendmentErrorsView
 
-class ReviewDepartureAmendmentErrorsP5ViewSpec
-    extends PaginationViewBehaviours[FunctionalErrorWithSection, ReviewDepartureAmendmentErrorsP5ViewModel]
+class ReviewDepartureAmendmentErrorsViewSpec
+    extends PaginationViewBehaviours[FunctionalErrorWithSection, ReviewDepartureAmendmentErrorsViewModel]
     with TableViewBehaviours
     with Generators {
 
-  override val viewModel: ReviewDepartureAmendmentErrorsP5ViewModel =
-    arbitraryReviewDepartureAmendmentErrorsP5ViewModel.arbitrary.sample.value
+  override val viewModel: ReviewDepartureAmendmentErrorsViewModel =
+    arbitraryReviewDepartureAmendmentErrorsViewModel.arbitrary.sample.value
 
   override val tables: Seq[Table] = Seq(viewModel.table)
 
@@ -41,7 +41,7 @@ class ReviewDepartureAmendmentErrorsP5ViewSpec
     totalNumberOfItems: Int,
     currentPage: Int,
     numberOfItemsPerPage: Int
-  ): ReviewDepartureAmendmentErrorsP5ViewModel =
+  ): ReviewDepartureAmendmentErrorsViewModel =
     viewModel.copy(
       functionalErrors = {
         def error: FunctionalErrorWithSection = arbitrary[FunctionalErrorWithSection].sample.value
@@ -56,15 +56,15 @@ class ReviewDepartureAmendmentErrorsP5ViewSpec
 
   override def view: HtmlFormat.Appendable = applyView(viewModel, None)
 
-  override def viewWithSpecificPagination(viewModel: ReviewDepartureAmendmentErrorsP5ViewModel): HtmlFormat.Appendable =
+  override def viewWithSpecificPagination(viewModel: ReviewDepartureAmendmentErrorsViewModel): HtmlFormat.Appendable =
     applyView(viewModel, None)
 
   private def applyView(
-    viewModel: ReviewDepartureAmendmentErrorsP5ViewModel,
+    viewModel: ReviewDepartureAmendmentErrorsViewModel,
     mrn: Option[String]
   ): HtmlFormat.Appendable =
     injector
-      .instanceOf[ReviewDepartureAmendmentErrorsP5View]
+      .instanceOf[ReviewDepartureAmendmentErrorsView]
       .apply(viewModel, departureId.toString, mrn)(fakeRequest, messages)
 
   behave like pageWithTitle()

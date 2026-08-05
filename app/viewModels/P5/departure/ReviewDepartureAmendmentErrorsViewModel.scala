@@ -23,7 +23,7 @@ import play.api.i18n.Messages
 import play.api.mvc.Call
 import viewModels.pagination.ErrorPaginationViewModel
 
-case class ReviewDepartureAmendmentErrorsP5ViewModel(
+case class ReviewDepartureAmendmentErrorsViewModel(
   title: String,
   heading: String,
   caption: String,
@@ -38,10 +38,10 @@ case class ReviewDepartureAmendmentErrorsP5ViewModel(
 ) extends ErrorPaginationViewModel[FunctionalErrorWithSection, FunctionalErrorsWithSection] {
 
   override def href(page: Int): Call =
-    routes.ReviewDepartureAmendmentErrorsP5Controller.onPageLoad(Some(page), departureId, messageId)
+    routes.ReviewDepartureAmendmentErrorsController.onPageLoad(Some(page), departureId, messageId)
 }
 
-object ReviewDepartureAmendmentErrorsP5ViewModel {
+object ReviewDepartureAmendmentErrorsViewModel {
 
   def apply(
     functionalErrors: FunctionalErrorsWithSection,
@@ -50,7 +50,7 @@ object ReviewDepartureAmendmentErrorsP5ViewModel {
     numberOfErrorsPerPage: Int,
     departureId: String,
     messageId: String
-  )(implicit messages: Messages): ReviewDepartureAmendmentErrorsP5ViewModel = {
+  )(implicit messages: Messages): ReviewDepartureAmendmentErrorsViewModel = {
 
     val multipleErrors: Boolean = functionalErrors.multipleErrors
 
@@ -69,7 +69,7 @@ object ReviewDepartureAmendmentErrorsP5ViewModel {
       messages("departure.ie022.review.message.paragraph2.singular")
     }
 
-    new ReviewDepartureAmendmentErrorsP5ViewModel(
+    new ReviewDepartureAmendmentErrorsViewModel(
       title = messages("departure.ie022.review.message.title"),
       heading = heading,
       caption = messages("departure.messages.caption", lrn),
