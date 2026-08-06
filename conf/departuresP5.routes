@@ -21,6 +21,8 @@ POST       /:departureId/departure-declaration-amendment-errors/:messageId      
 
 GET        /:departureId/departure-declaration-errors/:messageId                     controllers.departureP5.DepartureDeclarationErrorsP5Controller.onPageLoad(departureId: String, messageId: String)
 
+GET        /:departureId/amend-declaration-errors/:messageId                         controllers.departureP5.AmendDeclarationErrorsController.onPageLoad(departureId: String, messageId: String)
+
 GET        /:departureId/cancellation-errors/:messageId                              controllers.departureP5.CancellationNotificationErrorsP5Controller.onPageLoad(departureId: String, messageId: String)
 
 GET        /:departureId/goods-being-recovered/:messageId                            controllers.departureP5.RecoveryNotificationController.onPageLoad(departureId: String, messageId: String)

@@ -340,6 +340,14 @@ trait ViewModelGenerators {
       } yield DepartureDeclarationErrorsP5ViewModel(lrn, mrn, businessRejectionType)
     }
 
+  implicit val arbitraryAmendDeclarationErrorsViewModel: Arbitrary[AmendDeclarationErrorsViewModel] =
+    Arbitrary {
+      for {
+        lrn <- nonEmptyString
+        mrn <- Gen.option(nonEmptyString)
+      } yield AmendDeclarationErrorsViewModel(lrn, mrn)
+    }
+
   implicit val arbitraryGuaranteeRejectedP5ViewModel: Arbitrary[GuaranteeRejectedP5ViewModel] =
     Arbitrary {
       for {
