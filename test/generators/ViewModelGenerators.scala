@@ -215,6 +215,27 @@ trait ViewModelGenerators {
       )
     }
 
+  implicit def arbitraryReviewDepartureAmendmentErrorsViewModel(implicit
+    messages: Messages
+  ): Arbitrary[ReviewDepartureAmendmentErrorsViewModel] =
+    Arbitrary {
+      for {
+        functionalErrors      <- arbitrary[FunctionalErrorsWithSection]
+        lrn                   <- nonEmptyString
+        currentPage           <- Gen.option(positiveInts)
+        numberOfErrorsPerPage <- positiveInts
+        departureId           <- nonEmptyString
+        messageId             <- nonEmptyString
+      } yield ReviewDepartureAmendmentErrorsViewModel(
+        functionalErrors = functionalErrors,
+        lrn = lrn,
+        currentPage = currentPage,
+        numberOfErrorsPerPage = numberOfErrorsPerPage,
+        departureId = departureId,
+        messageId = messageId
+      )
+    }
+
   implicit def arbitraryReviewCancellationErrorsP5ViewModel(implicit
     messages: Messages
   ): Arbitrary[ReviewCancellationErrorsP5ViewModel] =

@@ -27,6 +27,8 @@ GET        /:departureId/goods-being-recovered/:messageId                       
 
 GET        /:departureId/review-departure-declaration-errors/:messageId              controllers.departureP5.ReviewDepartureErrorsP5Controller.onPageLoad(page: Option[Int], departureId: String, messageId: String)
 
+GET        /:departureId/review-departure-amendment-errors/:messageId                controllers.departureP5.ReviewDepartureAmendmentErrorsController.onPageLoad(page: Option[Int], departureId: String, messageId: String)
+
 GET        /:departureId/review-cancellation-errors/:messageId                       controllers.departureP5.ReviewCancellationErrorsP5Controller.onPageLoad(page: Option[Int], departureId: String, messageId: String)
 
 GET        /:departureId/prepare-for-amendment                                       controllers.departureP5.AmendmentController.prepareForAmendment(departureId: String)
