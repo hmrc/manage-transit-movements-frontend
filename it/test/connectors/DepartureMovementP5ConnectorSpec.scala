@@ -26,19 +26,12 @@ import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
-import play.api.test.Helpers.running
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
-
-  private val phase5App: GuiceApplicationBuilder => GuiceApplicationBuilder = _ =>
-    guiceApplicationBuilder().configure("feature-flags.phase-6-api-enabled" -> false)
-
-  private val phase6App: GuiceApplicationBuilder => GuiceApplicationBuilder = _ =>
-    guiceApplicationBuilder().configure("feature-flags.phase-6-api-enabled" -> true)
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -47,7 +40,9 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
 
   private val genError = Gen.chooseNum(400: Int, 599: Int).suchThat(_ != 404)
 
-  val ie056 = Json.parse(
+  private lazy val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
+
+  val ie056: JsValue = Json.parse(
     """
       |{
       |  "n1:CC056C": {
@@ -147,136 +142,55 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
           """
       )
 
-      "when phase 5" - {
-        "must return DepartureMovements" in {
-          running(phase5App) {
-            app =>
-              val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
+      "must return DepartureMovements" in {
 
-              server.stubFor(
-                get(urlEqualTo(s"/movements/departures"))
-                  .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
-                  .willReturn(okJson(responseJson.toString()))
-              )
+        server.stubFor(
+          get(urlEqualTo(s"/movements/departures"))
+            .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
+            .willReturn(okJson(responseJson.toString()))
+        )
 
-              val expectedResult = DepartureMovements(
-                departureMovements = Seq(
-                  DepartureMovement(
-                    "63651574c3447b12",
-                    Some("27WF9X1FQ9RCKN0TM3"),
-                    "AB123",
-                    LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
-                  ),
-                  DepartureMovement(
-                    "6365135ba5e821ee",
-                    Some("27WF9X1FQ9RCKN0TM3"),
-                    "CD123",
-                    LocalDateTime.parse("2022-11-04T13:27:55.522Z", DateTimeFormatter.ISO_DATE_TIME)
-                  )
-                ),
-                totalCount = 2
-              )
+        val expectedResult = DepartureMovements(
+          departureMovements = Seq(
+            DepartureMovement(
+              "63651574c3447b12",
+              Some("27WF9X1FQ9RCKN0TM3"),
+              "AB123",
+              LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
+            ),
+            DepartureMovement(
+              "6365135ba5e821ee",
+              Some("27WF9X1FQ9RCKN0TM3"),
+              "CD123",
+              LocalDateTime.parse("2022-11-04T13:27:55.522Z", DateTimeFormatter.ISO_DATE_TIME)
+            )
+          ),
+          totalCount = 2
+        )
 
-              connector.getAllMovements().futureValue.value mustEqual expectedResult
-          }
-        }
-
-        "must return empty DepartureMovements when 404 is returned" in {
-
-          running(phase5App) {
-            app =>
-              val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
-              server.stubFor(
-                get(urlEqualTo(s"/movements/departures"))
-                  .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
-                  .willReturn(aResponse().withStatus(404))
-              )
-
-              connector.getAllMovements().futureValue.value mustEqual DepartureMovements(Seq.empty, 0)
-          }
-        }
-
-        "must return None when an error is returned" in {
-          running(phase5App) {
-            app =>
-              val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
-              forAll(genError) {
-                error =>
-                  server.stubFor(
-                    get(urlEqualTo(s"/movements/departures"))
-                      .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
-                      .willReturn(aResponse().withStatus(error))
-                  )
-
-                  connector.getAllMovements().futureValue must not be defined
-              }
-          }
-        }
+        connector.getAllMovements().futureValue.value mustEqual expectedResult
       }
 
-      "when phase 6" - {
-        "must return DepartureMovements" in {
-          running(phase6App) {
-            app =>
-              val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
+      "must return empty DepartureMovements when 404 is returned" in {
+        server.stubFor(
+          get(urlEqualTo(s"/movements/departures"))
+            .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
+            .willReturn(aResponse().withStatus(404))
+        )
 
-              server.stubFor(
-                get(urlEqualTo(s"/movements/departures"))
-                  .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
-                  .willReturn(okJson(responseJson.toString()))
-              )
+        connector.getAllMovements().futureValue.value mustEqual DepartureMovements(Seq.empty, 0)
+      }
 
-              val expectedResult = DepartureMovements(
-                departureMovements = Seq(
-                  DepartureMovement(
-                    "63651574c3447b12",
-                    Some("27WF9X1FQ9RCKN0TM3"),
-                    "AB123",
-                    LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
-                  ),
-                  DepartureMovement(
-                    "6365135ba5e821ee",
-                    Some("27WF9X1FQ9RCKN0TM3"),
-                    "CD123",
-                    LocalDateTime.parse("2022-11-04T13:27:55.522Z", DateTimeFormatter.ISO_DATE_TIME)
-                  )
-                ),
-                totalCount = 2
-              )
+      "must return None when an error is returned" in {
+        forAll(genError) {
+          error =>
+            server.stubFor(
+              get(urlEqualTo(s"/movements/departures"))
+                .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
+                .willReturn(aResponse().withStatus(error))
+            )
 
-              connector.getAllMovements().futureValue.value mustEqual expectedResult
-          }
-        }
-
-        "must return empty DepartureMovements when 404 is returned" in {
-          running(phase6App) {
-            app =>
-              val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
-              server.stubFor(
-                get(urlEqualTo(s"/movements/departures"))
-                  .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
-                  .willReturn(aResponse().withStatus(404))
-              )
-
-              connector.getAllMovements().futureValue.value mustEqual DepartureMovements(Seq.empty, 0)
-          }
-        }
-
-        "must return None when an error is returned" in {
-          running(phase6App) {
-            app =>
-              val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
-              forAll(genError) {
-                error =>
-                  server.stubFor(
-                    get(urlEqualTo(s"/movements/departures"))
-                      .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
-                      .willReturn(aResponse().withStatus(error))
-                  )
-
-                  connector.getAllMovements().futureValue must not be defined
-              }
-          }
+            connector.getAllMovements().futureValue must not be defined
         }
       }
     }
@@ -312,134 +226,62 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
           |}
           |""".stripMargin)
 
-      "when phase 5" - {
-        "when search param provided" - {
-          "must add values to request url" in {
-            running(phase5App) {
-              app =>
-                val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
-                val searchParam                             = "LRN123"
-                server.stubFor(
-                  get(urlEqualTo(s"/movements/departures?page=1&count=20&localReferenceNumber=$searchParam"))
-                    .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
-                    .willReturn(okJson(responseJson.toString()))
-                )
+      "when search param provided" - {
+        "must add values to request url" in {
+          val searchParam = "LRN123"
+          server.stubFor(
+            get(urlEqualTo(s"/movements/departures?page=1&count=20&localReferenceNumber=$searchParam"))
+              .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
+              .willReturn(okJson(responseJson.toString()))
+          )
 
-                val expectedResult = DepartureMovements(
-                  departureMovements = Seq(
-                    DepartureMovement(
-                      "63651574c3447b12",
-                      None,
-                      "LRN12345",
-                      LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
-                    )
-                  ),
-                  totalCount = 1
-                )
+          val expectedResult = DepartureMovements(
+            departureMovements = Seq(
+              DepartureMovement(
+                "63651574c3447b12",
+                None,
+                "LRN12345",
+                LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
+              )
+            ),
+            totalCount = 1
+          )
 
-                connector.getAllMovementsForSearchQuery(1, 20, Some(searchParam)).futureValue.value mustEqual expectedResult
-            }
-          }
-        }
-
-        "when search param not provided" - {
-          "must add values to request url" in {
-            running(phase5App) {
-              app =>
-                val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
-                server.stubFor(
-                  get(urlEqualTo("/movements/departures?page=1&count=20"))
-                    .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
-                    .willReturn(okJson(responseJson.toString()))
-                )
-
-                val expectedResult = DepartureMovements(
-                  departureMovements = Seq(
-                    DepartureMovement(
-                      "63651574c3447b12",
-                      None,
-                      "LRN12345",
-                      LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
-                    )
-                  ),
-                  totalCount = 1
-                )
-
-                connector.getAllMovementsForSearchQuery(1, 20, None).futureValue.value mustEqual expectedResult
-            }
-          }
+          connector.getAllMovementsForSearchQuery(1, 20, Some(searchParam)).futureValue.value mustEqual expectedResult
         }
       }
 
-      "when phase 6" - {
-        "when search param provided" - {
-          "must add values to request url" in {
-            running(phase6App) {
-              app =>
-                val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
-                val searchParam                             = "LRN123"
-                server.stubFor(
-                  get(urlEqualTo(s"/movements/departures?page=1&count=20&localReferenceNumber=$searchParam"))
-                    .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
-                    .willReturn(okJson(responseJson.toString()))
-                )
+      "when search param not provided" - {
+        "must add values to request url" in {
+          server.stubFor(
+            get(urlEqualTo("/movements/departures?page=1&count=20"))
+              .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
+              .willReturn(okJson(responseJson.toString()))
+          )
 
-                val expectedResult = DepartureMovements(
-                  departureMovements = Seq(
-                    DepartureMovement(
-                      "63651574c3447b12",
-                      None,
-                      "LRN12345",
-                      LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
-                    )
-                  ),
-                  totalCount = 1
-                )
+          val expectedResult = DepartureMovements(
+            departureMovements = Seq(
+              DepartureMovement(
+                "63651574c3447b12",
+                None,
+                "LRN12345",
+                LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
+              )
+            ),
+            totalCount = 1
+          )
 
-                connector.getAllMovementsForSearchQuery(1, 20, Some(searchParam)).futureValue.value mustEqual expectedResult
-            }
-          }
-        }
-
-        "when search param not provided" - {
-          "must add values to request url" in {
-            running(phase6App) {
-              app =>
-                val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
-                server.stubFor(
-                  get(urlEqualTo("/movements/departures?page=1&count=20"))
-                    .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
-                    .willReturn(okJson(responseJson.toString()))
-                )
-
-                val expectedResult = DepartureMovements(
-                  departureMovements = Seq(
-                    DepartureMovement(
-                      "63651574c3447b12",
-                      None,
-                      "LRN12345",
-                      LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
-                    )
-                  ),
-                  totalCount = 1
-                )
-
-                connector.getAllMovementsForSearchQuery(1, 20, None).futureValue.value mustEqual expectedResult
-            }
-          }
+          connector.getAllMovementsForSearchQuery(1, 20, None).futureValue.value mustEqual expectedResult
         }
       }
     }
 
     "getAvailability" - {
-      "when phase 5" - {
-        "must return NonEmpty" - {
-          "when departure returned" in {
-            running(phase5App) {
-              app =>
-                val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
 
-                val responseJson = Json.parse("""
+      "must return NonEmpty" - {
+        "when departure returned" in {
+
+          val responseJson = Json.parse("""
                     |{
                     |  "_links": {
                     |    "self": {
@@ -469,24 +311,19 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
                     |}
                     |""".stripMargin)
 
-                server.stubFor(
-                  get(urlEqualTo("/movements/departures?count=1"))
-                    .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
-                    .willReturn(okJson(responseJson.toString()))
-                )
+          server.stubFor(
+            get(urlEqualTo("/movements/departures?count=1"))
+              .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
+              .willReturn(okJson(responseJson.toString()))
+          )
 
-                connector.getAvailability().futureValue mustEqual Availability.NonEmpty
-            }
-          }
+          connector.getAvailability().futureValue mustEqual Availability.NonEmpty
         }
+      }
 
-        "must return Empty" - {
-          "when no departures returned" in {
-            running(phase5App) {
-              app =>
-                val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
-
-                val responseJson = Json.parse("""
+      "must return Empty" - {
+        "when no departures returned" in {
+          val responseJson = Json.parse("""
                     |{
                     |  "_links": {
                     |    "self": {
@@ -498,148 +335,39 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
                     |}
                     |""".stripMargin)
 
-                server.stubFor(
-                  get(urlEqualTo("/movements/departures?count=1"))
-                    .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
-                    .willReturn(okJson(responseJson.toString()))
-                )
+          server.stubFor(
+            get(urlEqualTo("/movements/departures?count=1"))
+              .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
+              .willReturn(okJson(responseJson.toString()))
+          )
 
-                connector.getAvailability().futureValue mustEqual Availability.Empty
-            }
-          }
-        }
-
-        "must return Unavailable" - {
-          "when there is an error" in {
-            running(phase5App) {
-              app =>
-                val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
-
-                forAll(genError) {
-                  error =>
-                    server.stubFor(
-                      get(urlEqualTo("/movements/departures?count=1"))
-                        .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
-                        .willReturn(aResponse().withStatus(error))
-                    )
-
-                    connector.getAvailability().futureValue mustEqual Availability.Unavailable
-                }
-            }
-          }
+          connector.getAvailability().futureValue mustEqual Availability.Empty
         }
       }
 
-      "when phase 6" - {
-        "must return NonEmpty" - {
-          "when departure returned" in {
-            running(phase6App) {
-              app =>
-                val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
+      "must return Unavailable" - {
+        "when there is an error" in {
 
-                val responseJson = Json.parse("""
-                    |{
-                    |  "_links": {
-                    |    "self": {
-                    |      "href": "/customs/transits/movements/departures"
-                    |    }
-                    |  },
-                    |  "totalCount": 1,
-                    |  "departures": [
-                    |    {
-                    |      "_links": {
-                    |        "self": {
-                    |          "href": "/customs/transits/movements/departures/63651574c3447b12"
-                    |        },
-                    |        "messages": {
-                    |          "href": "/customs/transits/movements/departures/63651574c3447b12/messages"
-                    |        }
-                    |      },
-                    |      "id": "63651574c3447b12",
-                    |      "movementReferenceNumber": "27WF9X1FQ9RCKN0TM3",
-                    |      "localReferenceNumber": "AB123",
-                    |      "created": "2022-11-04T13:36:52.332Z",
-                    |      "updated": "2022-11-04T13:36:52.332Z",
-                    |      "enrollmentEORINumber": "9999912345",
-                    |      "movementEORINumber": "GB1234567890"
-                    |    }
-                    |  ]
-                    |}
-                    |""".stripMargin)
+          forAll(genError) {
+            error =>
+              server.stubFor(
+                get(urlEqualTo("/movements/departures?count=1"))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
+                  .willReturn(aResponse().withStatus(error))
+              )
 
-                server.stubFor(
-                  get(urlEqualTo("/movements/departures?count=1"))
-                    .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
-                    .willReturn(okJson(responseJson.toString()))
-                )
-
-                connector.getAvailability().futureValue mustEqual Availability.NonEmpty
-            }
-          }
-        }
-
-        "must return Empty" - {
-          "when no departures returned" in {
-            running(phase6App) {
-              app =>
-                val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
-
-                val responseJson = Json.parse("""
-                    |{
-                    |  "_links": {
-                    |    "self": {
-                    |      "href": "/customs/transits/movements/departures"
-                    |    }
-                    |  },
-                    |  "totalCount": 0,
-                    |  "departures": []
-                    |}
-                    |""".stripMargin)
-
-                server.stubFor(
-                  get(urlEqualTo("/movements/departures?count=1"))
-                    .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
-                    .willReturn(okJson(responseJson.toString()))
-                )
-
-                connector.getAvailability().futureValue mustEqual Availability.Empty
-            }
-          }
-        }
-
-        "must return Unavailable" - {
-          "when there is an error" in {
-            running(phase6App) {
-              app =>
-                val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
-
-                forAll(genError) {
-                  error =>
-                    server.stubFor(
-                      get(urlEqualTo("/movements/departures?count=1"))
-                        .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
-                        .willReturn(aResponse().withStatus(error))
-                    )
-
-                    connector.getAvailability().futureValue mustEqual Availability.Unavailable
-                }
-            }
+              connector.getAvailability().futureValue mustEqual Availability.Unavailable
           }
         }
       }
-
     }
 
     "getDepartureReferenceNumbers" - {
 
-      "when phase 5" - {
-        "must return departure reference numbers when MRN is defined" in {
-          running(phase5App) {
-            app =>
-              val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
+      "must return departure reference numbers when MRN is defined" in {
 
-              val responseJson = Json.parse(
-                """
+        val responseJson = Json.parse(
+          """
                   |{
                   |   "id": "6365135ba5e821ee",
                   |   "movementReferenceNumber": "ABC123",
@@ -650,90 +378,23 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
                   |   "movementEORINumber": "GB1234567890"
                   |}
                   |""".stripMargin
-              )
+        )
 
-              server.stubFor(
-                get(urlEqualTo(s"/movements/departures/$departureIdP5"))
-                  .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
-                  .willReturn(okJson(responseJson.toString()))
-              )
+        server.stubFor(
+          get(urlEqualTo(s"/movements/departures/$departureIdP5"))
+            .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
+            .willReturn(okJson(responseJson.toString()))
+        )
 
-              val expectedResult = DepartureReferenceNumbers("DEF456", Some("ABC123"))
+        val expectedResult = DepartureReferenceNumbers("DEF456", Some("ABC123"))
 
-              connector.getDepartureReferenceNumbers(departureIdP5).futureValue mustEqual expectedResult
-          }
-        }
-
-        "must return departure reference numbers when MRN is not defined" in {
-          running(phase5App) {
-            app =>
-              val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
-
-              val responseJson = Json.parse(
-                """
-                  |{
-                  |   "id": "6365135ba5e821ee",
-                  |   "localReferenceNumber": "DEF456",
-                  |   "created": "2022-11-10T15:32:51.459Z",
-                  |   "updated": "2022-11-10T15:32:51.459Z",
-                  |   "enrollmentEORINumber": "GB1234567890",
-                  |   "movementEORINumber": "GB1234567890"
-                  |}
-                  |""".stripMargin
-              )
-
-              server.stubFor(
-                get(urlEqualTo(s"/movements/departures/$departureIdP5"))
-                  .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
-                  .willReturn(okJson(responseJson.toString()))
-              )
-
-              val expectedResult = DepartureReferenceNumbers("DEF456", None)
-
-              connector.getDepartureReferenceNumbers(departureIdP5).futureValue mustEqual expectedResult
-          }
-        }
+        connector.getDepartureReferenceNumbers(departureIdP5).futureValue mustEqual expectedResult
       }
 
-      "when phase 6" - {
-        "must return departure reference numbers when MRN is defined" in {
-          running(phase6App) {
-            app =>
-              val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
+      "must return departure reference numbers when MRN is not defined" in {
 
-              val responseJson = Json.parse(
-                """
-                  |{
-                  |   "id": "6365135ba5e821ee",
-                  |   "movementReferenceNumber": "ABC123",
-                  |   "localReferenceNumber": "DEF456",
-                  |   "created": "2022-11-10T15:32:51.459Z",
-                  |   "updated": "2022-11-10T15:32:51.459Z",
-                  |   "enrollmentEORINumber": "GB1234567890",
-                  |   "movementEORINumber": "GB1234567890"
-                  |}
-                  |""".stripMargin
-              )
-
-              server.stubFor(
-                get(urlEqualTo(s"/movements/departures/$departureIdP5"))
-                  .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
-                  .willReturn(okJson(responseJson.toString()))
-              )
-
-              val expectedResult = DepartureReferenceNumbers("DEF456", Some("ABC123"))
-
-              connector.getDepartureReferenceNumbers(departureIdP5).futureValue mustEqual expectedResult
-          }
-        }
-
-        "must return departure reference numbers when MRN is not defined" in {
-          running(phase6App) {
-            app =>
-              val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
-
-              val responseJson = Json.parse(
-                """
+        val responseJson = Json.parse(
+          """
                   |{
                   |   "id": "6365135ba5e821ee",
                   |   "localReferenceNumber": "DEF456",
@@ -743,32 +404,26 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
                   |   "movementEORINumber": "GB1234567890"
                   |}
                   |""".stripMargin
-              )
+        )
 
-              server.stubFor(
-                get(urlEqualTo(s"/movements/departures/$departureIdP5"))
-                  .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
-                  .willReturn(okJson(responseJson.toString()))
-              )
+        server.stubFor(
+          get(urlEqualTo(s"/movements/departures/$departureIdP5"))
+            .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
+            .willReturn(okJson(responseJson.toString()))
+        )
 
-              val expectedResult = DepartureReferenceNumbers("DEF456", None)
+        val expectedResult = DepartureReferenceNumbers("DEF456", None)
 
-              connector.getDepartureReferenceNumbers(departureIdP5).futureValue mustEqual expectedResult
-          }
-        }
+        connector.getDepartureReferenceNumbers(departureIdP5).futureValue mustEqual expectedResult
       }
     }
 
     "getLatestMessageForMovement" - {
       val messageId = "634982098f02f00a"
 
-      "when phase 5" - {
-        "must return latest message" - {
-          "when arrival returned" in {
-            running(phase5App) {
-              app =>
-                val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
-                val responseJson: JsValue = Json.parse(s"""
+      "must return latest message" - {
+        "when arrival returned" in {
+          val responseJson: JsValue = Json.parse(s"""
                      |{
                      |  "_links": {
                      |    "self": {
@@ -799,86 +454,24 @@ class DepartureMovementP5ConnectorSpec extends ItSpecBase with WireMockServerHan
                      |}
                      |""".stripMargin)
 
-                server.stubFor(
-                  get(urlEqualTo(s"/movements/departures/$departureIdP5/messages?count=500"))
-                    .withHeader("Accept", equalTo("application/vnd.hmrc.2.1+json"))
-                    .willReturn(okJson(responseJson.toString()))
+          server.stubFor(
+            get(urlEqualTo(s"/movements/departures/$departureIdP5/messages?count=500"))
+              .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
+              .willReturn(okJson(responseJson.toString()))
+          )
+
+          connector.getMessages(departureIdP5).futureValue mustEqual
+            DepartureMovementMessages(
+              messages = NonEmptyList.one(
+                DepartureMessage(
+                  messageId = messageId,
+                  received = LocalDateTime.of(2022, 11, 10, 15, 32, 51, 459000000),
+                  messageType = DepartureMessageType.DepartureNotification,
+                  status = MessageStatus.Success
                 )
-
-                connector.getMessages(departureIdP5).futureValue mustEqual
-                  DepartureMovementMessages(
-                    messages = NonEmptyList.one(
-                      DepartureMessage(
-                        messageId = messageId,
-                        received = LocalDateTime.of(2022, 11, 10, 15, 32, 51, 459000000),
-                        messageType = DepartureMessageType.DepartureNotification,
-                        status = MessageStatus.Success
-                      )
-                    ),
-                    ie015MessageId = messageId
-                  )
-            }
-          }
-        }
-      }
-
-      "when phase 6" - {
-        "must return latest message" - {
-          "when arrival returned" in {
-            running(phase6App) {
-              app =>
-                val connector: DepartureMovementP5Connector = app.injector.instanceOf[DepartureMovementP5Connector]
-                val responseJson: JsValue = Json.parse(s"""
-                     |{
-                     |  "_links": {
-                     |    "self": {
-                     |      "href": "/customs/transits/movements/departures/$departureIdP5/messages"
-                     |    },
-                     |    "departure": {
-                     |      "href": "/customs/transits/movements/departures/$departureIdP5"
-                     |    }
-                     |  },
-                     |  "totalCount": 1,
-                     |  "messages": [
-                     |    {
-                     |      "_links": {
-                     |        "self": {
-                     |          "href": "/customs/transits/movements/departures/$departureIdP5/messages/$messageId"
-                     |        },
-                     |        "arrival": {
-                     |          "href": "/customs/transits/movements/departures/$departureIdP5"
-                     |        }
-                     |      },
-                     |      "id": "$messageId",
-                     |      "departureId": "$departureIdP5",
-                     |      "received": "2022-11-10T15:32:51.459Z",
-                     |      "type": "IE015",
-                     |      "status": "Success"
-                     |    }
-                     |  ]
-                     |}
-                     |""".stripMargin)
-
-                server.stubFor(
-                  get(urlEqualTo(s"/movements/departures/$departureIdP5/messages?count=500"))
-                    .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
-                    .willReturn(okJson(responseJson.toString()))
-                )
-
-                connector.getMessages(departureIdP5).futureValue mustEqual
-                  DepartureMovementMessages(
-                    messages = NonEmptyList.one(
-                      DepartureMessage(
-                        messageId = messageId,
-                        received = LocalDateTime.of(2022, 11, 10, 15, 32, 51, 459000000),
-                        messageType = DepartureMessageType.DepartureNotification,
-                        status = MessageStatus.Success
-                      )
-                    ),
-                    ie015MessageId = messageId
-                  )
-            }
-          }
+              ),
+              ie015MessageId = messageId
+            )
         }
       }
     }

@@ -18,61 +18,31 @@ package models.referenceData
 
 import base.SpecBase
 import cats.data.NonEmptySet
-import config.FrontendAppConfig
-import org.mockito.Mockito.when
 import play.api.libs.json.{JsValue, Json, Reads}
 
 class QualifierOfIdentificationSpec extends SpecBase {
 
-  private val mockFrontendAppConfig = mock[FrontendAppConfig]
-
   "QualifierOfIdentification" - {
 
-    "deserialize from JSON correctly" - {
-
-      "when phase-6 " in {
-        when(mockFrontendAppConfig.phase6Enabled).thenReturn(true)
-        val json: JsValue = Json.parse(
-          """
+    "deserialize from JSON correctly" in {
+      val json: JsValue = Json.parse(
+        """
                 |{
                 |  "key": "Q1",
                 |  "value": "Primary Qualifier"
                 |}
                 |""".stripMargin
-        )
+      )
 
-        val expectedQualifier = QualifierOfIdentification(
-          qualifier = "Q1",
-          description = "Primary Qualifier"
-        )
+      val expectedQualifier = QualifierOfIdentification(
+        qualifier = "Q1",
+        description = "Primary Qualifier"
+      )
 
-        implicit val reads: Reads[QualifierOfIdentification] = QualifierOfIdentification.reads(mockFrontendAppConfig)
+      implicit val reads: Reads[QualifierOfIdentification] = QualifierOfIdentification.reads
 
-        val result = json.as[QualifierOfIdentification]
-        result mustEqual expectedQualifier
-      }
-      "when phase-5 " in {
-        when(mockFrontendAppConfig.phase6Enabled).thenReturn(false)
-        val json: JsValue = Json.parse(
-          """
-                |{
-                |  "qualifier": "Q1",
-                |  "description": "Primary Qualifier"
-                |}
-                |""".stripMargin
-        )
-
-        val expectedQualifier = QualifierOfIdentification(
-          qualifier = "Q1",
-          description = "Primary Qualifier"
-        )
-
-        implicit val reads: Reads[QualifierOfIdentification] = QualifierOfIdentification.reads(mockFrontendAppConfig)
-
-        val result = json.as[QualifierOfIdentification]
-        result mustEqual expectedQualifier
-      }
-
+      val result = json.as[QualifierOfIdentification]
+      result mustEqual expectedQualifier
     }
 
     "correctly apply custom toString" in {

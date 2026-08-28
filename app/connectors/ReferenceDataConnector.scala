@@ -37,15 +37,10 @@ import scala.reflect.ClassTag
 
 class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpClientV2, cache: AsyncCacheApi) extends Logging {
 
-  private val versionHeader = config.phase6Enabled match {
-    case true  => "application/vnd.hmrc.2.0+json"
-    case false => "application/vnd.hmrc.1.0+json"
-  }
-
   private def get[T](url: URL)(implicit ec: ExecutionContext, hc: HeaderCarrier, reads: HttpReads[Responses[T]]): Future[Responses[T]] =
     http
       .get(url)
-      .setHeader(HeaderNames.Accept -> versionHeader)
+      .setHeader(HeaderNames.Accept -> "application/vnd.hmrc.2.0+json")
       .execute[Responses[T]]
 
   // https://www.playframework.com/documentation/2.6.x/ScalaCache#Accessing-the-Cache-API
@@ -57,94 +52,94 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
   def getCustomsOffice(
     customsOfficeId: String
   )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[CustomsOffice]] = {
-    val queryParams                                = CustomsOffice.queryParameters(customsOfficeId)(config)
+    val queryParams                                = CustomsOffice.queryParameters(customsOfficeId)
     val url                                        = url"${config.customsReferenceDataUrl}/lists/CustomsOffices?$queryParams"
-    implicit val reads: Reads[List[CustomsOffice]] = CustomsOffice.listReads(config)
+    implicit val reads: Reads[List[CustomsOffice]] = CustomsOffice.listReads
     getOrElseUpdate[CustomsOffice](url)
   }
 
   def getCountry(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[Country]] = {
-    val queryParams                    = Country.queryParams(code)(config)
+    val queryParams                    = Country.queryParams(code)
     val url                            = url"${config.customsReferenceDataUrl}/lists/CountryCodesFullList?$queryParams"
-    implicit val reads: Reads[Country] = Country.reads(config)
+    implicit val reads: Reads[Country] = Country.reads
     getOrElseUpdate[Country](url)
   }
 
   def getCountryCodesOptOut(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[Country]] = {
-    val queryParams                    = Country.queryParams(code)(config)
+    val queryParams                    = Country.queryParams(code)
     val url                            = url"${config.customsReferenceDataUrl}/lists/CountryCodesOptOut?$queryParams"
-    implicit val reads: Reads[Country] = Country.reads(config)
+    implicit val reads: Reads[Country] = Country.reads
     getOrElseUpdate[Country](url)
   }
 
   def getQualifierOfIdentification(
     qualifier: String
   )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[QualifierOfIdentification]] = {
-    val queryParams                                      = QualifierOfIdentification.queryParams(qualifier)(config)
+    val queryParams                                      = QualifierOfIdentification.queryParams(qualifier)
     val url                                              = url"${config.customsReferenceDataUrl}/lists/QualifierOfTheIdentification?$queryParams"
-    implicit val reads: Reads[QualifierOfIdentification] = QualifierOfIdentification.reads(config)
+    implicit val reads: Reads[QualifierOfIdentification] = QualifierOfIdentification.reads
     getOrElseUpdate[QualifierOfIdentification](url)
   }
 
   def getIdentificationType(
     `type`: String
   )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[IdentificationType]] = {
-    val queryParams                               = IdentificationType.queryParams(`type`)(config)
+    val queryParams                               = IdentificationType.queryParams(`type`)
     val url                                       = url"${config.customsReferenceDataUrl}/lists/TypeOfIdentificationOfMeansOfTransport?$queryParams"
-    implicit val reads: Reads[IdentificationType] = IdentificationType.reads(config)
+    implicit val reads: Reads[IdentificationType] = IdentificationType.reads
     getOrElseUpdate[IdentificationType](url)
   }
 
   def getNationality(
     code: String
   )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[Nationality]] = {
-    val queryParams                        = Nationality.queryParams(code)(config)
+    val queryParams                        = Nationality.queryParams(code)
     val url                                = url"${config.customsReferenceDataUrl}/lists/Nationality?$queryParams"
-    implicit val reads: Reads[Nationality] = Nationality.reads(config)
+    implicit val reads: Reads[Nationality] = Nationality.reads
     getOrElseUpdate[Nationality](url)
   }
 
   def getIncidentCode(
     code: String
   )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[IncidentCode]] = {
-    val queryParams                         = IncidentCode.queryParams(code)(config)
+    val queryParams                         = IncidentCode.queryParams(code)
     val url                                 = url"${config.customsReferenceDataUrl}/lists/IncidentCode?$queryParams"
-    implicit val reads: Reads[IncidentCode] = IncidentCode.reads(config)
+    implicit val reads: Reads[IncidentCode] = IncidentCode.reads
     getOrElseUpdate[IncidentCode](url)
   }
 
   def getControlType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[ControlType]] = {
-    val queryParams                        = ControlType.queryParams(code)(config)
+    val queryParams                        = ControlType.queryParams(code)
     val url                                = url"${config.customsReferenceDataUrl}/lists/ControlType?$queryParams"
-    implicit val reads: Reads[ControlType] = ControlType.reads(config)
+    implicit val reads: Reads[ControlType] = ControlType.reads
     getOrElseUpdate[ControlType](url)
   }
 
   def getRequestedDocumentType(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[RequestedDocumentType]] = {
-    val queryParams                                  = RequestedDocumentType.queryParams(code)(config)
+    val queryParams                                  = RequestedDocumentType.queryParams(code)
     val url                                          = url"${config.customsReferenceDataUrl}/lists/RequestedDocumentType?$queryParams"
-    implicit val reads: Reads[RequestedDocumentType] = RequestedDocumentType.reads(config)
+    implicit val reads: Reads[RequestedDocumentType] = RequestedDocumentType.reads
     getOrElseUpdate[RequestedDocumentType](url)
   }
 
   def getFunctionalErrorCodesIeCA(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[FunctionalErrorWithDesc]] = {
-    val queryParams                                    = FunctionalErrorWithDesc.queryParams(code)(config)
+    val queryParams                                    = FunctionalErrorWithDesc.queryParams(code)
     val url                                            = url"${config.customsReferenceDataUrl}/lists/FunctionalErrorCodesIeCA?$queryParams"
-    implicit val reads: Reads[FunctionalErrorWithDesc] = FunctionalErrorWithDesc.reads(config)
+    implicit val reads: Reads[FunctionalErrorWithDesc] = FunctionalErrorWithDesc.reads
     getOrElseUpdate[FunctionalErrorWithDesc](url)
   }
 
   def getFunctionErrorCodesTED(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[FunctionalErrorWithDesc]] = {
-    val queryParams                                    = FunctionalErrorWithDesc.queryParams(code)(config)
+    val queryParams                                    = FunctionalErrorWithDesc.queryParams(code)
     val url                                            = url"${config.customsReferenceDataUrl}/lists/FunctionErrorCodesTED?$queryParams"
-    implicit val reads: Reads[FunctionalErrorWithDesc] = FunctionalErrorWithDesc.reads(config)
+    implicit val reads: Reads[FunctionalErrorWithDesc] = FunctionalErrorWithDesc.reads
     getOrElseUpdate[FunctionalErrorWithDesc](url)
   }
 
   def getInvalidGuaranteeReason(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Response[InvalidGuaranteeReason]] = {
-    val queryParams                                   = InvalidGuaranteeReason.queryParams(code)(config)
+    val queryParams                                   = InvalidGuaranteeReason.queryParams(code)
     val url                                           = url"${config.customsReferenceDataUrl}/lists/InvalidGuaranteeReason?$queryParams"
-    implicit val reads: Reads[InvalidGuaranteeReason] = InvalidGuaranteeReason.reads(config)
+    implicit val reads: Reads[InvalidGuaranteeReason] = InvalidGuaranteeReason.reads
     getOrElseUpdate[InvalidGuaranteeReason](url)
   }
 
@@ -152,8 +147,7 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
     (_: String, url: String, response: HttpResponse) =>
       response.status match {
         case OK =>
-          val json = if (config.phase6Enabled) response.json else response.json \ "data"
-          json.validate[List[A]] match {
+          response.json.validate[List[A]] match {
             case JsSuccess(Nil, _) =>
               Left(NoReferenceDataFoundException(url))
             case JsSuccess(head :: tail, _) =>
@@ -170,8 +164,8 @@ class ReferenceDataConnector @Inject() (config: FrontendAppConfig, http: HttpCli
 
 object ReferenceDataConnector {
 
-  type Responses[T] = Either[Exception, NonEmptySet[T]]
-  type Response[T]  = Either[Exception, T]
+  private type Responses[T] = Either[Exception, NonEmptySet[T]]
+  type Response[T]          = Either[Exception, T]
 
   class NoReferenceDataFoundException(url: String) extends Exception(s"The reference data call was successful but the response body is empty: $url")
 }

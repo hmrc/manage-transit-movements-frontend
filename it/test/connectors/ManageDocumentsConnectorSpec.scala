@@ -22,7 +22,6 @@ import itbase.{ItSpecBase, WireMockServerHandler}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.Helpers.running
 import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
@@ -36,13 +35,8 @@ class ManageDocumentsConnectorSpec extends ItSpecBase with WireMockServerHandler
       .guiceApplicationBuilder()
       .configure(conf = "microservice.services.transit-movements-trader-manage-documents.port" -> server.port())
 
-  val errorResponses: Gen[Int] = Gen.chooseNum(400, 599)
-
-  private val phase5App: GuiceApplicationBuilder => GuiceApplicationBuilder = _ =>
-    guiceApplicationBuilder().configure("feature-flags.phase-6-api-enabled" -> false)
-
-  private val phase6App: GuiceApplicationBuilder => GuiceApplicationBuilder = _ =>
-    guiceApplicationBuilder().configure("feature-flags.phase-6-api-enabled" -> true)
+  val errorResponses: Gen[Int]                         = Gen.chooseNum(400, 599)
+  private lazy val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
 
   "ManageDocumentsConnectorSpec" - {
 
@@ -51,170 +45,68 @@ class ManageDocumentsConnectorSpec extends ItSpecBase with WireMockServerHandler
       val departureId = "ABC123"
       val messageId   = "DFG456"
 
-      "when phase 5" - {
-        "must return status Ok" in {
-          running(phase5App) {
-            app =>
-              val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
-              server.stubFor(
-                get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
-                  .withHeader("API-Version", equalTo("2.1"))
-                  .willReturn(ok())
-              )
+      "must return status Ok" in {
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
+            .withHeader("API-Version", equalTo("3.0"))
+            .willReturn(ok())
+        )
 
-              val result: Future[HttpResponse] = connector.getTAD(departureId, messageId)
+        val result: Future[HttpResponse] = connector.getTAD(departureId, messageId)
 
-              result.futureValue.status mustEqual 200
+        result.futureValue.status mustEqual 200
 
-          }
-        }
-
-        "must return other error status codes without exceptions" in {
-          running(phase5App) {
-            app =>
-              val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
-              val genErrorResponse                    = Gen.oneOf(300, 500).sample.value
-
-              server.stubFor(
-                get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
-                  .withHeader("API-Version", equalTo("2.1"))
-                  .willReturn(
-                    aResponse()
-                      .withStatus(genErrorResponse)
-                  )
-              )
-
-              val result: Future[HttpResponse] = connector.getTAD(departureId, messageId)
-
-              result.futureValue.status mustEqual genErrorResponse
-          }
-        }
-
-        "getUnloadingPermission" - {
-
-          val arrivalId = "ABC123"
-          val messageId = "DFG456"
-
-          "must return status Ok" in {
-            running(phase5App) {
-              app =>
-                val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
-                server.stubFor(
-                  get(urlEqualTo(s"/$startUrl/$arrivalId/unloading-permission-document/$messageId"))
-                    .withHeader("API-Version", equalTo("2.1"))
-                    .willReturn(ok())
-                )
-
-                val result: Future[HttpResponse] = connector.getUnloadingPermission(arrivalId, messageId)
-
-                result.futureValue.status mustEqual 200
-            }
-          }
-
-          "must return other error status codes without exceptions" in {
-            running(phase5App) {
-              app =>
-                val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
-                val genErrorResponse                    = Gen.oneOf(300, 500).sample.value
-
-                server.stubFor(
-                  get(urlEqualTo(s"/$startUrl/$arrivalId/unloading-permission-document/$messageId"))
-                    .withHeader("API-Version", equalTo("2.1"))
-                    .willReturn(
-                      aResponse()
-                        .withStatus(genErrorResponse)
-                    )
-                )
-
-                val result: Future[HttpResponse] = connector.getUnloadingPermission(arrivalId, messageId)
-
-                result.futureValue.status mustEqual genErrorResponse
-            }
-          }
-        }
       }
 
-      "when phase 6" - {
-        "must return status Ok" in {
-          running(phase6App) {
-            app =>
-              val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
-              server.stubFor(
-                get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
-                  .withHeader("API-Version", equalTo("3.0"))
-                  .willReturn(ok())
-              )
+      "must return other error status codes without exceptions" in {
+        val genErrorResponse = Gen.oneOf(300, 500).sample.value
 
-              val result: Future[HttpResponse] = connector.getTAD(departureId, messageId)
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
+            .withHeader("API-Version", equalTo("3.0"))
+            .willReturn(
+              aResponse()
+                .withStatus(genErrorResponse)
+            )
+        )
 
-              result.futureValue.status mustEqual 200
+        val result: Future[HttpResponse] = connector.getTAD(departureId, messageId)
 
-          }
-        }
+        result.futureValue.status mustEqual genErrorResponse
+      }
+    }
 
-        "must return other error status codes without exceptions" in {
-          running(phase6App) {
-            app =>
-              val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
-              val genErrorResponse                    = Gen.oneOf(300, 500).sample.value
+    "getUnloadingPermission" - {
 
-              server.stubFor(
-                get(urlEqualTo(s"/$startUrl/$departureId/transit-accompanying-document/$messageId"))
-                  .withHeader("API-Version", equalTo("3.0"))
-                  .willReturn(
-                    aResponse()
-                      .withStatus(genErrorResponse)
-                  )
-              )
+      val arrivalId = "ABC123"
+      val messageId = "DFG456"
 
-              val result: Future[HttpResponse] = connector.getTAD(departureId, messageId)
+      "must return status Ok" in {
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/$arrivalId/unloading-permission-document/$messageId"))
+            .withHeader("API-Version", equalTo("3.0"))
+            .willReturn(ok())
+        )
 
-              result.futureValue.status mustEqual genErrorResponse
-          }
-        }
+        val result: Future[HttpResponse] = connector.getUnloadingPermission(arrivalId, messageId)
 
-        "getUnloadingPermission" - {
+        result.futureValue.status mustEqual 200
+      }
 
-          val arrivalId = "ABC123"
-          val messageId = "DFG456"
+      "must return other error status codes without exceptions" in {
+        val genErrorResponse = Gen.oneOf(300, 500).sample.value
+        server.stubFor(
+          get(urlEqualTo(s"/$startUrl/$arrivalId/unloading-permission-document/$messageId"))
+            .withHeader("API-Version", equalTo("3.0"))
+            .willReturn(
+              aResponse()
+                .withStatus(genErrorResponse)
+            )
+        )
 
-          "must return status Ok" in {
-            running(phase6App) {
-              app =>
-                val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
-                server.stubFor(
-                  get(urlEqualTo(s"/$startUrl/$arrivalId/unloading-permission-document/$messageId"))
-                    .withHeader("API-Version", equalTo("3.0"))
-                    .willReturn(ok())
-                )
+        val result: Future[HttpResponse] = connector.getUnloadingPermission(arrivalId, messageId)
 
-                val result: Future[HttpResponse] = connector.getUnloadingPermission(arrivalId, messageId)
-
-                result.futureValue.status mustEqual 200
-            }
-          }
-
-          "must return other error status codes without exceptions" in {
-            running(phase6App) {
-              app =>
-                val connector: ManageDocumentsConnector = app.injector.instanceOf[ManageDocumentsConnector]
-                val genErrorResponse                    = Gen.oneOf(300, 500).sample.value
-
-                server.stubFor(
-                  get(urlEqualTo(s"/$startUrl/$arrivalId/unloading-permission-document/$messageId"))
-                    .withHeader("API-Version", equalTo("3.0"))
-                    .willReturn(
-                      aResponse()
-                        .withStatus(genErrorResponse)
-                    )
-                )
-
-                val result: Future[HttpResponse] = connector.getUnloadingPermission(arrivalId, messageId)
-
-                result.futureValue.status mustEqual genErrorResponse
-            }
-          }
-        }
+        result.futureValue.status mustEqual genErrorResponse
       }
     }
   }

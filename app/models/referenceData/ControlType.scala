@@ -17,9 +17,8 @@
 package models.referenceData
 
 import cats.Order
-import config.FrontendAppConfig
 import play.api.libs.functional.syntax.*
-import play.api.libs.json.{__, Json, Reads}
+import play.api.libs.json.{__, Reads}
 
 case class ControlType(code: String, description: String) {
 
@@ -33,21 +32,15 @@ case class ControlType(code: String, description: String) {
 
 object ControlType {
 
-  def reads(config: FrontendAppConfig): Reads[ControlType] =
-    if (config.phase6Enabled) {
-      (
-        (__ \ "key").read[String] and
-          (__ \ "value").read[String]
-      )(ControlType.apply)
-    } else {
-      Json.reads[ControlType]
-    }
+  val reads: Reads[ControlType] =
+    (
+      (__ \ "key").read[String] and
+        (__ \ "value").read[String]
+    )(ControlType.apply)
 
   implicit val order: Order[ControlType] = (x: ControlType, y: ControlType) => (x, y).compareBy(_.code)
 
-  def queryParams(code: String)(config: FrontendAppConfig): Seq[(String, String)] = {
-    val key = if (config.phase6Enabled) "keys" else "data.code"
-    Seq(key -> code)
-  }
+  def queryParams(code: String): Seq[(String, String)] =
+    Seq("keys" -> code)
 
 }

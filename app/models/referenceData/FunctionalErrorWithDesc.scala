@@ -17,9 +17,8 @@
 package models.referenceData
 
 import cats.Order
-import config.FrontendAppConfig
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import play.api.libs.json.{__, Json, Reads}
+import play.api.libs.json.{__, Reads}
 
 case class FunctionalErrorWithDesc(code: String, description: String) {
 
@@ -33,21 +32,15 @@ case class FunctionalErrorWithDesc(code: String, description: String) {
 
 object FunctionalErrorWithDesc {
 
-  def reads(config: FrontendAppConfig): Reads[FunctionalErrorWithDesc] =
-    if (config.phase6Enabled) {
-      (
-        (__ \ "key").read[String] and
-          (__ \ "value").read[String]
-      )(FunctionalErrorWithDesc.apply)
-    } else {
-      Json.reads[FunctionalErrorWithDesc]
-    }
+  val reads: Reads[FunctionalErrorWithDesc] =
+    (
+      (__ \ "key").read[String] and
+        (__ \ "value").read[String]
+    )(FunctionalErrorWithDesc.apply)
 
   implicit val order: Order[FunctionalErrorWithDesc] = (x: FunctionalErrorWithDesc, y: FunctionalErrorWithDesc) => (x, y).compareBy(_.code)
 
-  def queryParams(code: String)(config: FrontendAppConfig): Seq[(String, String)] = {
-    val key = if (config.phase6Enabled) "keys" else "data.code"
-    Seq(key -> code)
-  }
+  def queryParams(code: String): Seq[(String, String)] =
+    Seq("keys" -> code)
 
 }

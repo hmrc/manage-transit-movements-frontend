@@ -18,60 +18,30 @@ package models.referenceData
 
 import base.SpecBase
 import cats.data.NonEmptySet
-import config.FrontendAppConfig
-import org.mockito.Mockito.when
 import play.api.libs.json.{JsValue, Json, Reads}
 
 class IdentificationTypeSpec extends SpecBase {
 
-  private val mockFrontendAppConfig = mock[FrontendAppConfig]
-
   "IdentificationType" - {
-    "deserialize from JSON correctly " - {
-      "when phase-6 " in {
-        when(mockFrontendAppConfig.phase6Enabled).thenReturn(true)
-        val json: JsValue = Json.parse(
-          """
+    "deserialize from JSON correctly " in {
+      val json: JsValue = Json.parse(
+        """
                 |{
                 |  "key": "ID001",
                 |  "value": "Id"
                 |}
                 |""".stripMargin
-        )
+      )
 
-        val expectedIdentificationType = IdentificationType(
-          `type` = "ID001",
-          description = "Id"
-        )
+      val expectedIdentificationType = IdentificationType(
+        `type` = "ID001",
+        description = "Id"
+      )
 
-        implicit val reads: Reads[IdentificationType] = IdentificationType.reads(mockFrontendAppConfig)
+      implicit val reads: Reads[IdentificationType] = IdentificationType.reads
 
-        val result = json.as[IdentificationType]
-        result mustEqual expectedIdentificationType
-
-      }
-      "when phase-5 " in {
-        when(mockFrontendAppConfig.phase6Enabled).thenReturn(false)
-        val json: JsValue = Json.parse(
-          """
-                |{
-                |  "type": "ID001",
-                |  "description": "Id"
-                |}
-                |""".stripMargin
-        )
-
-        val expectedIdentificationType = IdentificationType(
-          `type` = "ID001",
-          description = "Id"
-        )
-
-        implicit val reads: Reads[IdentificationType] = IdentificationType.reads(mockFrontendAppConfig)
-
-        val result = json.as[IdentificationType]
-        result mustEqual expectedIdentificationType
-
-      }
+      val result = json.as[IdentificationType]
+      result mustEqual expectedIdentificationType
 
     }
 

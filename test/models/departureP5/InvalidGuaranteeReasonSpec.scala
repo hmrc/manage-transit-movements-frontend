@@ -18,48 +18,26 @@ package models.departureP5
 
 import base.SpecBase
 import cats.data.NonEmptySet
-import config.FrontendAppConfig
 import generators.Generators
 import models.referenceData.InvalidGuaranteeReason
-import org.mockito.Mockito.when
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{Json, Reads}
 
 class InvalidGuaranteeReasonSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  private val mockFrontendAppConfig = mock[FrontendAppConfig]
-
   "InvalidGuaranteeReason" - {
 
-    "must deserialise" - {
-      "when phase-6 " in {
-        when(mockFrontendAppConfig.phase6Enabled).thenReturn(true)
-        val json = Json.parse("""
+    "must deserialise" in {
+      val json = Json.parse("""
                 |    {
                 |        "key": "G02",
                 |        "value": "Guarantee exists, but not valid"
                 |    }
                 |""".stripMargin)
 
-        implicit val reads: Reads[InvalidGuaranteeReason] = InvalidGuaranteeReason.reads(mockFrontendAppConfig)
+      implicit val reads: Reads[InvalidGuaranteeReason] = InvalidGuaranteeReason.reads
 
-        json.as[InvalidGuaranteeReason] mustEqual InvalidGuaranteeReason("G02", "Guarantee exists, but not valid")
-
-      }
-      "when phase-5" in {
-        when(mockFrontendAppConfig.phase6Enabled).thenReturn(false)
-        val json = Json.parse("""
-                |    {
-                |        "code": "G02",
-                |        "description": "Guarantee exists, but not valid"
-                |    }
-                |""".stripMargin)
-
-        implicit val reads: Reads[InvalidGuaranteeReason] = InvalidGuaranteeReason.reads(mockFrontendAppConfig)
-
-        json.as[InvalidGuaranteeReason] mustEqual InvalidGuaranteeReason("G02", "Guarantee exists, but not valid")
-
-      }
+      json.as[InvalidGuaranteeReason] mustEqual InvalidGuaranteeReason("G02", "Guarantee exists, but not valid")
     }
 
     "correctly apply custom toString when description is non-empty" in {
