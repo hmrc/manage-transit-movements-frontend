@@ -29,7 +29,6 @@ import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.RejectionMessageP5ViewModel
 import views.html.departureP5.RejectionMessageP5View
-import config.FrontendAppConfig
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,8 +40,7 @@ class RejectionMessageP5Controller @Inject() (
   cc: MessagesControllerComponents,
   service: AmendmentService,
   view: RejectionMessageP5View,
-  functionalErrorsService: FunctionalErrorsService,
-  config: FrontendAppConfig
+  functionalErrorsService: FunctionalErrorsService
 )(implicit val executionContext: ExecutionContext, paginationConfig: PaginationAppConfig)
     extends FrontendController(cc)
     with I18nSupport
@@ -59,11 +57,7 @@ class RejectionMessageP5Controller @Inject() (
         service.isRejectionAmendable(lrn, rejection).flatMap {
           case true =>
             val functionalErrorsF =
-              if (config.phase6Enabled) {
-                functionalErrorsService.convertErrorsWithSectionAndSender(functionalErrorsSeq, messageSender)
-              } else {
-                functionalErrorsService.convertErrorsWithSection(functionalErrorsSeq)
-              }
+              functionalErrorsService.convertErrorsWithSectionAndSender(functionalErrorsSeq, messageSender)
 
             functionalErrorsF.map {
               functionalErrors =>

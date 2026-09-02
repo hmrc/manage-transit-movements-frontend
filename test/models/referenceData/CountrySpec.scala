@@ -17,42 +17,22 @@
 package models.referenceData
 
 import base.SpecBase
-import config.FrontendAppConfig
-import org.mockito.Mockito.when
 import play.api.libs.json.{JsSuccess, Json, Reads}
 
 class CountrySpec extends SpecBase {
 
-  private val mockFrontendAppConfig = mock[FrontendAppConfig]
-
   "Country" - {
 
-    "deserialize from JSON" - {
-      "when phase 5" in {
-        when(mockFrontendAppConfig.phase6Enabled).thenReturn(false)
-        val json = Json.obj(
-          "code"        -> "UK",
-          "description" -> "United Kingdom"
-        )
+    "deserialize from JSON" in {
+      val json = Json.obj(
+        "key"   -> "UK",
+        "value" -> "United Kingdom"
+      )
 
-        implicit val reads: Reads[Country] = Country.reads(mockFrontendAppConfig)
+      implicit val reads: Reads[Country] = Country.reads
 
-        val expectedCountry = Country("UK", "United Kingdom")
-        json.validate[Country] mustEqual JsSuccess(expectedCountry)
-      }
-
-      "when phase 6" in {
-        when(mockFrontendAppConfig.phase6Enabled).thenReturn(true)
-        val json = Json.obj(
-          "key"   -> "UK",
-          "value" -> "United Kingdom"
-        )
-
-        implicit val reads: Reads[Country] = Country.reads(mockFrontendAppConfig)
-
-        val expectedCountry = Country("UK", "United Kingdom")
-        json.validate[Country] mustEqual JsSuccess(expectedCountry)
-      }
+      val expectedCountry = Country("UK", "United Kingdom")
+      json.validate[Country] mustEqual JsSuccess(expectedCountry)
     }
 
     "return the correct string representation" in {

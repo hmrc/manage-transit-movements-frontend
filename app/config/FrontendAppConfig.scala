@@ -27,9 +27,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   val asyncCacheApiExpiration: Int = configuration.get[Int]("async-cache-api.expiration")
 
-  val phase6Enabled: Boolean    = configuration.get[Boolean]("feature-flags.phase-6-enabled")
-  val phase6ApiEnabled: Boolean = configuration.get[Boolean]("feature-flags.phase-6-api-enabled")
-
   val isIE182Enabled: Boolean = configuration.get[Boolean]("microservice.services.features.isIE182Enabled")
   val isIE022Enabled: Boolean = configuration.get[Boolean]("microservice.services.features.isIE022Enabled")
 
@@ -70,7 +67,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val timeoutSeconds: Int      = configuration.get[Int]("session.timeoutSeconds")
   lazy val countdownSeconds: Int    = configuration.get[Int]("session.countdownSeconds")
 
-  val presentationNotificationFrontend: String = configuration.get[String]("urls.presentationNotificationFrontend")
+  private val presentationNotificationFrontend: String = configuration.get[String]("urls.presentationNotificationFrontend")
 
   lazy val manageDocumentsUrl: String = configuration.get[Service]("microservice.services.transit-movements-trader-manage-documents").fullServiceUrl
 

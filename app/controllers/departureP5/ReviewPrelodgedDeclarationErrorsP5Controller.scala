@@ -26,7 +26,6 @@ import services.FunctionalErrorsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewModels.P5.departure.ReviewPrelodgedDeclarationErrorsP5ViewModel
 import views.html.departureP5.ReviewPrelodgedDeclarationErrorsP5View
-import config.FrontendAppConfig
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -37,8 +36,7 @@ class ReviewPrelodgedDeclarationErrorsP5Controller @Inject() (
   messageRetrievalAction: DepartureMessageRetrievalActionProvider,
   cc: MessagesControllerComponents,
   view: ReviewPrelodgedDeclarationErrorsP5View,
-  functionalErrorsService: FunctionalErrorsService,
-  config: FrontendAppConfig
+  functionalErrorsService: FunctionalErrorsService
 )(implicit val executionContext: ExecutionContext, paginationConfig: PaginationAppConfig)
     extends FrontendController(cc)
     with I18nSupport {
@@ -50,11 +48,7 @@ class ReviewPrelodgedDeclarationErrorsP5Controller @Inject() (
         val functionalErrorSeq = request.messageData.FunctionalError.map(FunctionalErrorType(_))
 
         val functionalErrorsF =
-          if (config.phase6Enabled) {
-            functionalErrorsService.convertErrorsWithoutSectionAndWithSender(functionalErrorSeq, messageSender)
-          } else {
-            functionalErrorsService.convertErrorsWithoutSection(functionalErrorSeq)
-          }
+          functionalErrorsService.convertErrorsWithoutSectionAndWithSender(functionalErrorSeq, messageSender)
 
         functionalErrorsF.map {
           functionalErrors =>

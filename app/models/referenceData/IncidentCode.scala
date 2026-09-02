@@ -17,10 +17,9 @@
 package models.referenceData
 
 import cats.Order
-import config.FrontendAppConfig
 import models.referenceData.RichComparison
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import play.api.libs.json.{__, Json, Reads}
+import play.api.libs.json.{__, Reads}
 
 case class IncidentCode(code: String, description: String) {
 
@@ -30,21 +29,14 @@ case class IncidentCode(code: String, description: String) {
 
 object IncidentCode {
 
-  def reads(config: FrontendAppConfig): Reads[IncidentCode] =
-    if (config.phase6Enabled) {
-      (
-        (__ \ "key").read[String] and
-          (__ \ "value").read[String]
-      )(IncidentCode.apply)
-    } else {
-      Json.reads[IncidentCode]
-    }
-
+  val reads: Reads[IncidentCode] =
+    (
+      (__ \ "key").read[String] and
+        (__ \ "value").read[String]
+    )(IncidentCode.apply)
   implicit val order: Order[IncidentCode] = (x: IncidentCode, y: IncidentCode) => (x, y).compareBy(_.code)
 
-  def queryParams(code: String)(config: FrontendAppConfig): Seq[(String, String)] = {
-    val key = if (config.phase6Enabled) "keys" else "data.code"
-    Seq(key -> code)
-  }
+  def queryParams(code: String): Seq[(String, String)] =
+    Seq("keys" -> code)
 
 }

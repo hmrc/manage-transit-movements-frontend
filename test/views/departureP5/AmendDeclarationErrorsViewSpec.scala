@@ -18,7 +18,6 @@ package views.departureP5
 
 import generators.Generators
 import org.jsoup.nodes.Document
-import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.twirl.api.HtmlFormat
 import viewModels.P5.departure.AmendDeclarationErrorsViewModel

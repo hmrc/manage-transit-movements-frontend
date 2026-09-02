@@ -18,61 +18,31 @@ package models.referenceData
 
 import base.SpecBase
 import cats.data.NonEmptySet
-import config.FrontendAppConfig
-import org.mockito.Mockito.when
 import play.api.libs.json.{Json, Reads}
 
 class IncidentCodeSpec extends SpecBase {
 
-  private val mockFrontendAppConfig = mock[FrontendAppConfig]
-
   "IncidentCode" - {
 
-    "deserialize from JSON correctly" - {
-      "when phase-6 " in {
-        when(mockFrontendAppConfig.phase6Enabled).thenReturn(true)
-        val json = Json.parse(
-          """
+    "deserialize from JSON correctly" in {
+      val json = Json.parse(
+        """
                 |{
                 |  "key": "IC001",
                 |  "value": "Accident"
                 |}
                 |""".stripMargin
-        )
+      )
 
-        val expectedIncidentCode = IncidentCode(
-          code = "IC001",
-          description = "Accident"
-        )
+      val expectedIncidentCode = IncidentCode(
+        code = "IC001",
+        description = "Accident"
+      )
 
-        implicit val reads: Reads[IncidentCode] = IncidentCode.reads(mockFrontendAppConfig)
+      implicit val reads: Reads[IncidentCode] = IncidentCode.reads
 
-        val result = json.as[IncidentCode]
-        result mustEqual expectedIncidentCode
-
-      }
-      "when phase-5" in {
-        when(mockFrontendAppConfig.phase6Enabled).thenReturn(false)
-        val json = Json.parse(
-          """
-                |{
-                |  "code": "IC001",
-                |  "description": "Accident"
-                |}
-                |""".stripMargin
-        )
-
-        val expectedIncidentCode = IncidentCode(
-          code = "IC001",
-          description = "Accident"
-        )
-
-        implicit val reads: Reads[IncidentCode] = IncidentCode.reads(mockFrontendAppConfig)
-
-        val result = json.as[IncidentCode]
-        result mustEqual expectedIncidentCode
-
-      }
+      val result = json.as[IncidentCode]
+      result mustEqual expectedIncidentCode
 
     }
 

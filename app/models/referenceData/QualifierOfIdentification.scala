@@ -17,10 +17,9 @@
 package models.referenceData
 
 import cats.Order
-import config.FrontendAppConfig
 import models.referenceData.RichComparison
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import play.api.libs.json.{__, Json, Reads}
+import play.api.libs.json.{__, Reads}
 
 case class QualifierOfIdentification(qualifier: String, description: String) {
   override def toString: String = s"$description"
@@ -29,20 +28,14 @@ case class QualifierOfIdentification(qualifier: String, description: String) {
 
 object QualifierOfIdentification {
 
-  def reads(config: FrontendAppConfig): Reads[QualifierOfIdentification] =
-    if (config.phase6Enabled) {
-      (
-        (__ \ "key").read[String] and
-          (__ \ "value").read[String]
-      )(QualifierOfIdentification.apply)
-    } else {
-      Json.reads[QualifierOfIdentification]
-    }
+  val reads: Reads[QualifierOfIdentification] =
+    (
+      (__ \ "key").read[String] and
+        (__ \ "value").read[String]
+    )(QualifierOfIdentification.apply)
 
   implicit val order: Order[QualifierOfIdentification] = (x: QualifierOfIdentification, y: QualifierOfIdentification) => (x, y).compareBy(_.qualifier)
 
-  def queryParams(code: String)(config: FrontendAppConfig): Seq[(String, String)] = {
-    val key = if (config.phase6Enabled) "keys" else "data.qualifier"
-    Seq(key -> code)
-  }
+  def queryParams(code: String): Seq[(String, String)] =
+    Seq("keys" -> code)
 }
