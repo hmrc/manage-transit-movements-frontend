@@ -20,9 +20,9 @@ import base.{AppWithDefaultMockFixtures, SpecBase}
 import connectors.DepartureCacheConnector
 import generators.Generators
 import models.LocalReferenceNumber
-import models.departureP5.BusinessRejectionType.*
-import models.departureP5.Rejection
-import models.departureP5.Rejection.IE055Rejection
+import models.departure.Rejection
+import models.departure.BusinessRejectionType.*
+import Rejection.IE055Rejection
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalacheck.Arbitrary.arbitrary

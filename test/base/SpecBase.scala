@@ -16,7 +16,7 @@
 
 package base
 
-import models.departureP5.DepartureReferenceNumbers
+import models.departure.DepartureReferenceNumbers
 import models.referenceData.CustomsOffice
 import models.{DepartureId, Index, LocalReferenceNumber}
 import org.scalatest.*

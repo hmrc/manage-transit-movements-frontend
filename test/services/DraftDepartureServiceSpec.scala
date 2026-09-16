@@ -17,7 +17,7 @@
 package services
 
 import base.SpecBase
-import connectors.DeparturesDraftsP5Connector
+import connectors.DeparturesDraftsConnector
 import models.departure.drafts.Limit
 import models.{DeparturesSummary, LockCheck}
 import org.mockito.ArgumentMatchers.any
@@ -28,8 +28,8 @@ import scala.concurrent.Future
 
 class DraftDepartureServiceSpec extends SpecBase {
 
-  val mockConnector: DeparturesDraftsP5Connector = mock[DeparturesDraftsP5Connector]
-  val service                                    = new DraftDepartureService(mockConnector)
+  val mockConnector: DeparturesDraftsConnector = mock[DeparturesDraftsConnector]
+  val service                                  = new DraftDepartureService(mockConnector)
 
   "MongoDraftDepartureService" - {
 

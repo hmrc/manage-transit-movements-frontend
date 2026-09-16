@@ -1,0 +1,16 @@
+# Arrival live routes
+
+GET        /view-arrival-notifications                                               controllers.arrival.ViewAllArrivalsController.onPageLoad(page: Option[Int], mrn: Option[String])
+POST       /view-arrival-notifications                                               controllers.arrival.ViewAllArrivalsController.onSubmit(page: Option[Int])
+
+GET        /:arrivalId/notification-errors/:messageId                                controllers.arrival.ArrivalNotificationWithoutFunctionalErrorsController.onPageLoad(arrivalId: String, messageId: String)
+
+GET        /:arrivalId/unloading-remarks-errors/:messageId                           controllers.arrival.UnloadingRemarkWithoutFunctionalErrorsController.onPageLoad(arrivalId: String, messageId: String)
+POST       /:arrivalId/unloading-remarks-errors/:messageId                           controllers.arrival.UnloadingRemarkWithoutFunctionalErrorsController.onSubmit(arrivalId: String, messageId: String)
+
+GET        /:arrivalId/review-unloading-remarks-errors/:messageId                    controllers.arrival.UnloadingRemarkWithFunctionalErrorsController.onPageLoad(page: Option[Int], arrivalId: String, messageId: String)
+POST       /:arrivalId/review-unloading-remarks-errors/:messageId                    controllers.arrival.UnloadingRemarkWithFunctionalErrorsController.onSubmit(arrivalId: String, messageId: String)
+
+GET        /:arrivalId/review-arrival-notification-errors/:messageId                 controllers.arrival.ArrivalNotificationWithFunctionalErrorsController.onPageLoad(page: Option[Int], arrivalId: String, messageId: String)
+
+GET        /:arrivalId/unloading-permission-document/:messageId                      controllers.arrival.UnloadingPermissionController.getUnloadingPermissionDocument(arrivalId: String, messageId: String)

@@ -1,0 +1,78 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import controllers.departure.routes
+@import viewModels.departure.ViewAllDepartureMovementsViewModel
+@import views.html.components.{Heading, InsetText, MovementsTable, Pagination, Search, Status}
+@import controllers.routes.{WhatDoYouWantToDoController => WDYWTDController}
+
+@this(
+    mainTemplate: MainTemplate,
+    heading: Heading,
+    pagination: Pagination,
+    movementsTable: MovementsTable,
+    search: Search,
+    config: FrontendAppConfig,
+    inset: InsetText
+)
+
+@(
+    form: Form[Option[String]],
+    viewModel: ViewAllDepartureMovementsViewModel
+)(implicit request: Request[?], messages: Messages)
+
+@mainTemplate(
+    title = viewModel.title,
+    showBackLink = true,
+    fullWidth = true
+) {
+
+    @heading(viewModel.heading)
+
+    <p class="govuk-body">
+        <a id="make-departure-declaration" class="govuk-link" href=@config.departure>
+            @messages("viewDepartureDeclarations.link.create")
+        </a>
+    </p>
+
+    @search(
+        form = form,
+        action = routes.ViewAllDeparturesController.onSubmit(Some(viewModel.currentPage)),
+        label = "viewDepartureDeclarations.search.title"
+    )
+
+    @inset(messages("viewDepartureDeclarations.search.inset"))
+
+    @pagination(viewModel)
+
+    @if(viewModel.items.nonEmpty) {
+        @movementsTable(
+            movements = viewModel.items,
+            visuallyHiddenHeader = messages("viewDepartureDeclarations.heading.hidden"),
+            rowHeadingUpdated = messages("viewDepartureDeclarations.table.updated"),
+            rowHeadingReferenceNumber = messages("viewDepartureDeclarations.table.lrn"),
+            rowHeadingStatus = messages("viewDepartureDeclarations.table.status"),
+            rowHeadingAction = messages("viewDepartureDeclarations.table.action")
+        )
+    }
+
+    <p class="govuk-body govuk-!-margin-top-3">
+        <a id="go-to-manage-transit-movements" class="govuk-link" href=@WDYWTDController.onPageLoad()>
+            @messages("viewDepartureDeclarations.link.manage")
+        </a>
+    </p>
+}

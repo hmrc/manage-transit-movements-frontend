@@ -1,0 +1,376 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package connectors
+
+import com.github.tomakehurst.wiremock.client.WireMock.*
+import generators.Generators
+import itbase.{ItSpecBase, WireMockServerHandler}
+import models.arrival.*
+import models.{Availability, MessageStatus}
+import org.scalacheck.Gen
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.{JsValue, Json}
+
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
+class ArrivalMovementConnectorSpec extends ItSpecBase with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .configure(conf = "microservice.services.common-transit-convention-traders.port" -> server.port())
+
+  private val genError                                 = Gen.chooseNum(400: Int, 599: Int).suchThat(_ != 404)
+  private lazy val connector: ArrivalMovementConnector = app.injector.instanceOf[ArrivalMovementConnector]
+
+  "ArrivalMovementConnector" - {
+
+    "getAllMovements" - {
+
+      val responseJson: JsValue = Json.parse(
+        """
+          |{
+          |  "_links": {
+          |    "self": {
+          |      "href": "/customs/transits/movements/arrivals"
+          |    }
+          |  },
+          |  "totalCount": 2,
+          |  "arrivals": [
+          |    {
+          |      "_links": {
+          |        "self": {
+          |          "href": "/customs/transits/movements/arrivals/63651574c3447b12"
+          |        },
+          |        "messages": {
+          |          "href": "/customs/transits/movements/arrivals/63651574c3447b12/messages"
+          |        }
+          |      },
+          |      "id": "63651574c3447b12",
+          |      "movementReferenceNumber": "27WF9X1FQ9RCKN0TM3",
+          |      "created": "2022-11-04T13:36:52.332Z",
+          |      "updated": "2022-11-04T13:36:52.332Z",
+          |      "enrollmentEORINumber": "9999912345",
+          |      "movementEORINumber": "GB1234567890"
+          |    },
+          |    {
+          |      "_links": {
+          |        "self": {
+          |          "href": "/customs/transits/movements/arrivals/6365135ba5e821ee"
+          |        },
+          |        "messages": {
+          |          "href": "/customs/transits/movements/arrivals/6365135ba5e821ee/messages"
+          |        }
+          |      },
+          |      "id": "6365135ba5e821ee",
+          |      "movementReferenceNumber": "27WF9X1FQ9RCKN0TM3",
+          |      "created": "2022-11-04T13:27:55.522Z",
+          |      "updated": "2022-11-04T13:27:55.522Z",
+          |      "enrollmentEORINumber": "9999912345",
+          |      "movementEORINumber": "GB1234567890"
+          |    }
+          |  ]
+          |}
+          |""".stripMargin
+      )
+
+      "must return ArrivalMovements" in {
+        server.stubFor(
+          get(urlEqualTo(s"/movements/arrivals"))
+            .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
+            .willReturn(okJson(responseJson.toString()))
+        )
+
+        val expectedResult = ArrivalMovements(
+          arrivalMovements = Seq(
+            ArrivalMovement(
+              "63651574c3447b12",
+              "27WF9X1FQ9RCKN0TM3",
+              LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
+            ),
+            ArrivalMovement(
+              "6365135ba5e821ee",
+              "27WF9X1FQ9RCKN0TM3",
+              LocalDateTime.parse("2022-11-04T13:27:55.522Z", DateTimeFormatter.ISO_DATE_TIME)
+            )
+          ),
+          totalCount = 2
+        )
+
+        connector.getAllMovements().futureValue.value mustEqual expectedResult
+      }
+
+      "must return empty ArrivalMovements when 404 is returned" in {
+
+        server.stubFor(
+          get(urlEqualTo(s"/movements/arrivals"))
+            .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
+            .willReturn(aResponse().withStatus(404))
+        )
+
+        connector.getAllMovements().futureValue.value mustEqual ArrivalMovements(Seq.empty, 0)
+      }
+
+      "must return None when an error is returned" in {
+        forAll(genError) {
+          error =>
+            server.stubFor(
+              get(urlEqualTo(s"/movements/arrivals"))
+                .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
+                .willReturn(aResponse().withStatus(error))
+            )
+
+            connector.getAllMovements().futureValue must not be defined
+        }
+      }
+    }
+
+    "getAllMovementsForSearchQuery" - {
+      val responseJson = Json.parse("""
+          |{
+          |  "_links": {
+          |    "self": {
+          |      "href": "/customs/transits/movements/arrivals"
+          |    }
+          |  },
+          |  "totalCount": 1,
+          |  "arrivals": [
+          |    {
+          |      "_links": {
+          |        "self": {
+          |          "href": "/customs/transits/movements/arrivals/63651574c3447b12"
+          |        },
+          |        "messages": {
+          |          "href": "/customs/transits/movements/arrivals/63651574c3447b12/messages"
+          |        }
+          |      },
+          |      "id": "63651574c3447b12",
+          |      "movementReferenceNumber": "MRN12345",
+          |      "created": "2022-11-04T13:36:52.332Z",
+          |      "updated": "2022-11-04T13:36:52.332Z",
+          |      "enrollmentEORINumber": "9999912345",
+          |      "movementEORINumber": "GB1234567890"
+          |    }
+          |  ]
+          |}
+          |""".stripMargin)
+
+      "when search param provided" - {
+        "must add values to request url" in {
+          val searchParam = "MRN123"
+          server.stubFor(
+            get(urlEqualTo(s"/movements/arrivals?page=1&count=20&movementReferenceNumber=$searchParam"))
+              .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
+              .willReturn(okJson(responseJson.toString()))
+          )
+
+          val expectedResult = ArrivalMovements(
+            arrivalMovements = Seq(
+              ArrivalMovement(
+                "63651574c3447b12",
+                "MRN12345",
+                LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
+              )
+            ),
+            totalCount = 1
+          )
+
+          connector.getAllMovementsForSearchQuery(1, 20, Some(searchParam)).futureValue.value mustEqual expectedResult
+        }
+      }
+
+      "when search param not provided" - {
+        "must add values to request url" in {
+          server.stubFor(
+            get(urlEqualTo("/movements/arrivals?page=1&count=20"))
+              .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
+              .willReturn(okJson(responseJson.toString()))
+          )
+
+          val expectedResult = ArrivalMovements(
+            arrivalMovements = Seq(
+              ArrivalMovement(
+                "63651574c3447b12",
+                "MRN12345",
+                LocalDateTime.parse("2022-11-04T13:36:52.332Z", DateTimeFormatter.ISO_DATE_TIME)
+              )
+            ),
+            totalCount = 1
+          )
+          connector.getAllMovementsForSearchQuery(1, 20, None).futureValue.value mustEqual expectedResult
+        }
+      }
+    }
+
+    "getAvailability" - {
+      "must return NonEmpty" - {
+        "when arrival returned" in {
+          val responseJson: JsValue = Json.parse("""
+                |{
+                |  "_links": {
+                |    "self": {
+                |      "href": "/customs/transits/movements/arrivals"
+                |    }
+                |  },
+                |  "totalCount": 2,
+                |  "arrivals": [
+                |    {
+                |      "_links": {
+                |        "self": {
+                |          "href": "/customs/transits/movements/arrivals/63651574c3447b12"
+                |        },
+                |        "messages": {
+                |          "href": "/customs/transits/movements/arrivals/63651574c3447b12/messages"
+                |        }
+                |      },
+                |      "id": "63651574c3447b12",
+                |      "movementReferenceNumber": "27WF9X1FQ9RCKN0TM3",
+                |      "created": "2022-11-04T13:36:52.332Z",
+                |      "updated": "2022-11-04T13:36:52.332Z",
+                |      "enrollmentEORINumber": "9999912345",
+                |      "movementEORINumber": "GB1234567890"
+                |    },
+                |    {
+                |      "_links": {
+                |        "self": {
+                |          "href": "/customs/transits/movements/arrivals/6365135ba5e821ee"
+                |        },
+                |        "messages": {
+                |          "href": "/customs/transits/movements/arrivals/6365135ba5e821ee/messages"
+                |        }
+                |      },
+                |      "id": "6365135ba5e821ee",
+                |      "movementReferenceNumber": "27WF9X1FQ9RCKN0TM3",
+                |      "created": "2022-11-04T13:27:55.522Z",
+                |      "updated": "2022-11-04T13:27:55.522Z",
+                |      "enrollmentEORINumber": "9999912345",
+                |      "movementEORINumber": "GB1234567890"
+                |    }
+                |  ]
+                |}
+                |""".stripMargin)
+          server.stubFor(
+            get(urlEqualTo("/movements/arrivals?count=1"))
+              .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
+              .willReturn(okJson(responseJson.toString()))
+          )
+
+          connector.getAvailability().futureValue mustEqual Availability.NonEmpty
+        }
+      }
+
+      "must return Empty" - {
+        "when no arrivals returned" in {
+          val responseJson = Json.parse("""
+                |{
+                |  "_links": {
+                |    "self": {
+                |      "href": "/customs/transits/movements/arrivals"
+                |    }
+                |  },
+                |  "totalCount": 0,
+                |  "arrivals": []
+                |}
+                |""".stripMargin)
+
+          server.stubFor(
+            get(urlEqualTo("/movements/arrivals?count=1"))
+              .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
+              .willReturn(okJson(responseJson.toString()))
+          )
+
+          connector.getAvailability().futureValue mustEqual Availability.Empty
+        }
+      }
+
+      "must return Unavailable" - {
+        "when there is an error" in {
+          forAll(genError) {
+            error =>
+              server.stubFor(
+                get(urlEqualTo("/movements/arrivals?count=1"))
+                  .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
+                  .willReturn(aResponse().withStatus(error))
+              )
+
+              connector.getAvailability().futureValue mustEqual Availability.Unavailable
+          }
+        }
+      }
+
+    }
+
+    "getLatestMessageForMovement" - {
+      val messageId = "634982098f02f00a"
+
+      val responseJson: JsValue = Json.parse(s"""
+           |{
+           |  "_links": {
+           |    "self": {
+           |      "href": "/customs/transits/movements/arrivals/$arrivalIdP5/messages"
+           |    },
+           |    "arrival": {
+           |      "href": "/customs/transits/movements/arrivals/$arrivalIdP5"
+           |    }
+           |  },
+           |  "totalCount": 1,
+           |  "messages": [
+           |    {
+           |      "_links": {
+           |        "self": {
+           |          "href": "/customs/transits/movements/arrivals/$arrivalIdP5/messages/$messageId"
+           |        },
+           |        "arrival": {
+           |          "href": "/customs/transits/movements/arrivals/$arrivalIdP5"
+           |        }
+           |      },
+           |      "id": "$messageId",
+           |      "arrivalId": "$arrivalIdP5",
+           |      "received": "2022-11-10T15:32:51.459Z",
+           |      "type": "IE007",
+           |      "status": "Success"
+           |    }
+           |  ]
+           |}
+           |""".stripMargin)
+
+      "must return latest message" - {
+        "when arrival returned" in {
+
+          server.stubFor(
+            get(urlEqualTo(s"/movements/arrivals/$arrivalIdP5/messages?count=500"))
+              .withHeader("Accept", equalTo("application/vnd.hmrc.3.0+json"))
+              .willReturn(okJson(responseJson.toString()))
+          )
+
+          connector.getLatestMessageForMovement(arrivalIdP5).futureValue mustEqual
+            LatestArrivalMessage(
+              latestMessage = ArrivalMessage(
+                messageId = messageId,
+                received = LocalDateTime.of(2022, 11, 10, 15, 32, 51, 459000000),
+                messageType = ArrivalMessageType.ArrivalNotification,
+                status = MessageStatus.Success
+              ),
+              ie007Id = messageId
+            )
+        }
+      }
+    }
+  }
+}

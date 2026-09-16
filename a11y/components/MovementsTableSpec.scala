@@ -17,8 +17,8 @@
 package components
 
 import a11ySpecBase.A11ySpecBase
-import viewModels.P5.arrival.ViewArrivalP5
-import viewModels.P5.departure.ViewDepartureP5
+import viewModels.arrival.ViewArrival
+import viewModels.departure.ViewDeparture
 import views.html.components.MovementsTable
 import views.html.templates.MainTemplate
 
@@ -38,7 +38,7 @@ class MovementsTableSpec extends A11ySpecBase {
     "pass accessibility checks" when {
 
       "departure movements" in {
-        val departures = listWithMaxLength[ViewDepartureP5]().sample.value
+        val departures = listWithMaxLength[ViewDeparture]().sample.value
         val content = template.apply(title) {
           component.apply(departures, visuallyHiddenHeader, rowHeadingUpdated, rowHeadingReferenceNumber, rowHeadingStatus, rowHeadingAction).withHeading(title)
         }
@@ -46,7 +46,7 @@ class MovementsTableSpec extends A11ySpecBase {
       }
 
       "arrival movements" in {
-        val arrivals = listWithMaxLength[ViewArrivalP5]().sample.value
+        val arrivals = listWithMaxLength[ViewArrival]().sample.value
         val content = template.apply(title) {
           component.apply(arrivals, visuallyHiddenHeader, rowHeadingUpdated, rowHeadingReferenceNumber, rowHeadingStatus, rowHeadingAction).withHeading(title)
         }

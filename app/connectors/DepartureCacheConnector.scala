@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import models.FunctionalErrorType
 import models.FunctionalErrors.FunctionalErrorsWithSection
-import models.departureP5.Rejection
+import models.departure.Rejection
 import play.api.Logging
 import play.api.libs.json.{Json, Writes}
 import play.api.libs.ws.JsonBodyWritables.*

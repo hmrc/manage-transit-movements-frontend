@@ -18,7 +18,7 @@ package controllers.actions
 
 import models.requests.{DepartureRetrievalRequest, IdentifierRequest}
 import play.api.mvc.ActionTransformer
-import services.DepartureP5MessageService
+import services.DepartureMessageService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -26,22 +26,22 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DepartureRetrievalActionProvider @Inject() (
-  departureP5MessageService: DepartureP5MessageService
+  departureMessageService: DepartureMessageService
 )(implicit ec: ExecutionContext) {
 
   def apply(departureId: String): ActionTransformer[IdentifierRequest, DepartureRetrievalRequest] =
-    new DepartureRetrievalAction(departureId, departureP5MessageService)
+    new DepartureRetrievalAction(departureId, departureMessageService)
 
 }
 
-class DepartureRetrievalAction(departureId: String, departureP5MessageService: DepartureP5MessageService)(implicit
+class DepartureRetrievalAction(departureId: String, departureMessageService: DepartureMessageService)(implicit
   protected val executionContext: ExecutionContext
 ) extends ActionTransformer[IdentifierRequest, DepartureRetrievalRequest] {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[DepartureRetrievalRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    departureP5MessageService
+    departureMessageService
       .getDepartureReferenceNumbers(departureId)
       .map(DepartureRetrievalRequest(request, request.eoriNumber, _))
   }

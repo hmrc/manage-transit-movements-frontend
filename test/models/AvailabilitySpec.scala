@@ -18,8 +18,8 @@ package models
 
 import base.SpecBase
 import generators.Generators
-import models.arrivalP5.ArrivalMovement
-import models.departureP5.DepartureMovement
+import models.arrival.ArrivalMovement
+import models.departure.DepartureMovement
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 class AvailabilitySpec extends SpecBase with ScalaCheckPropertyChecks with Generators {

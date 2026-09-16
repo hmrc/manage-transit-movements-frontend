@@ -267,14 +267,14 @@ class IncidentsDuringTransitP5HelperSpec extends SpecBase with AppWithDefaultMoc
               result.children.head.viewLinks.head mustEqual Link(
                 id = s"more-details-incident-${1}",
                 text = "More details",
-                href = controllers.departureP5.routes.IncidentP5Controller.onPageLoad(departureIdP5, Index(0), messageId).url,
+                href = controllers.departure.routes.IncidentController.onPageLoad(departureIdP5, Index(0), messageId).url,
                 visuallyHidden = Some("more details on incident 1")
               )
 
               result.children(1).viewLinks.head mustEqual Link(
                 id = s"more-details-incident-${2}",
                 text = "More details",
-                href = controllers.departureP5.routes.IncidentP5Controller.onPageLoad(departureIdP5, Index(1), messageId).url,
+                href = controllers.departure.routes.IncidentController.onPageLoad(departureIdP5, Index(1), messageId).url,
                 visuallyHidden = Some("more details on incident 2")
               )
           }

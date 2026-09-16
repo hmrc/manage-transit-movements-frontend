@@ -1,0 +1,60 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package viewModels.departure
+
+import base.{AppWithDefaultMockFixtures, SpecBase}
+import generated.CC051CType
+import generators.Generators
+import org.scalacheck.Arbitrary.arbitrary
+import play.api.inject.guice.GuiceApplicationBuilder
+import viewModels.departure.GoodsNotReleasedViewModel.GoodsNotReleasedViewModelProvider
+
+class GoodsNotReleasedViewModelSpec extends SpecBase with AppWithDefaultMockFixtures with Generators {
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super.guiceApplicationBuilder()
+
+  "GoodsNotReleasedViewModelSpec" - {
+
+    val lrn = "AB123"
+
+    val message = arbitrary[CC051CType].sample.value
+
+    val viewModelProvider = new GoodsNotReleasedViewModelProvider()
+
+    def viewModel: GoodsNotReleasedViewModel =
+      viewModelProvider.apply(message, lrn)
+
+    "must return correct section" in {
+      viewModel.sections.head.sectionTitle must not be defined
+      viewModel.sections.head.rows.size mustEqual 4
+    }
+
+    "title and heading" - {
+      "must return correct message" in {
+        viewModel.title mustEqual "Goods not released"
+        viewModel.heading mustEqual "Goods not released"
+      }
+    }
+
+    "paragraph" in {
+      viewModel.paragraph mustEqual
+        "Customs have reviewed this declaration and decided not to release the goods for transit. This means the movement has now ended."
+    }
+  }
+
+}

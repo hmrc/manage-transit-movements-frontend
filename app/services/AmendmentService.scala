@@ -18,8 +18,8 @@ package services
 
 import config.FrontendAppConfig
 import connectors.DepartureCacheConnector
-import models.departureP5.BusinessRejectionType.*
-import models.departureP5.Rejection
+import models.departure.Rejection
+import models.departure.BusinessRejectionType.*
 import play.api.libs.json.Writes
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
