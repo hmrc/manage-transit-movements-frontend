@@ -16,7 +16,7 @@
 
 package models.requests
 
-import models.departureP5.DepartureReferenceNumbers
+import models.departure.DepartureReferenceNumbers
 import play.api.mvc.{Request, WrappedRequest}
 
 class MessageRetrievalRequestProvider[B] {

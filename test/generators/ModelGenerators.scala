@@ -19,9 +19,9 @@ package generators
 import models.*
 import models.FunctionalError.{FunctionalErrorWithSection, FunctionalErrorWithoutSection}
 import models.FunctionalErrors.{FunctionalErrorsWithSection, FunctionalErrorsWithoutSection}
-import models.arrivalP5.{ArrivalMovement, ArrivalMovements}
-import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
-import models.departureP5.{BusinessRejectionType, DepartureMovement, DepartureMovements}
+import models.arrival.{ArrivalMovement, ArrivalMovements}
+import models.departure.BusinessRejectionType.DepartureBusinessRejectionType
+import models.departure.{BusinessRejectionType, DepartureMovement, DepartureMovements}
 import models.referenceData.CustomsOffice
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.{choose, listOfN, numChar, posNum}
@@ -225,19 +225,19 @@ trait ModelGenerators {
       } yield FunctionalErrorsWithoutSection(value)
     }
 
-  implicit lazy val arbitraryDepartureMessageType: Arbitrary[models.departureP5.DepartureMessageType] =
+  implicit lazy val arbitraryDepartureMessageType: Arbitrary[models.departure.DepartureMessageType] =
     Arbitrary {
-      Gen.oneOf(models.departureP5.DepartureMessageType.values)
+      Gen.oneOf(models.departure.DepartureMessageType.values)
     }
 
-  implicit lazy val arbitraryDepartureMessage: Arbitrary[models.departureP5.DepartureMessage] =
+  implicit lazy val arbitraryDepartureMessage: Arbitrary[models.departure.DepartureMessage] =
     Arbitrary {
       for {
         messageId   <- nonEmptyString
         received    <- arbitrary[LocalDateTime]
-        messageType <- arbitrary[models.departureP5.DepartureMessageType]
+        messageType <- arbitrary[models.departure.DepartureMessageType]
         status      <- arbitrary[MessageStatus]
-      } yield models.departureP5.DepartureMessage(messageId, received, messageType, status)
+      } yield models.departure.DepartureMessage(messageId, received, messageType, status)
     }
 
   implicit lazy val arbitraryMessageStatus: Arbitrary[MessageStatus] =
@@ -252,7 +252,7 @@ trait ModelGenerators {
     }
 
   implicit lazy val arbitraryBusinessRejectionType: Arbitrary[BusinessRejectionType] = {
-    import models.departureP5.BusinessRejectionType.*
+    import models.departure.BusinessRejectionType.*
     Arbitrary {
       for {
         value <- nonEmptyString
@@ -267,7 +267,7 @@ trait ModelGenerators {
   }
 
   implicit lazy val arbitraryDepartureBusinessRejectionType: Arbitrary[DepartureBusinessRejectionType] = {
-    import models.departureP5.BusinessRejectionType.*
+    import models.departure.BusinessRejectionType.*
     Arbitrary {
       Gen.oneOf(
         AmendmentRejection,

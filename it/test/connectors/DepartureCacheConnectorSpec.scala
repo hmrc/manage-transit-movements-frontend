@@ -21,8 +21,8 @@ import generated.Number12
 import itbase.{ItSpecBase, WireMockServerHandler}
 import models.FunctionalError.FunctionalErrorWithSection
 import models.FunctionalErrors.FunctionalErrorsWithSection
-import models.departureP5.BusinessRejectionType.AmendmentRejection
-import models.departureP5.Rejection.{IE055Rejection, IE056Rejection}
+import models.departure.BusinessRejectionType.AmendmentRejection
+import models.departure.Rejection.{IE055Rejection, IE056Rejection}
 import models.{FunctionalErrorType, InvalidDataItem}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsArray, JsBoolean, Json}

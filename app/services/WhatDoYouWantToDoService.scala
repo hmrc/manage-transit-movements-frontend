@@ -24,24 +24,24 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatDoYouWantToDoService @Inject() (
-  departuresMovementP5Connector: DepartureMovementP5Connector,
-  departureDraftsP5Connector: DeparturesDraftsP5Connector,
-  arrivalMovementsP5Connector: ArrivalMovementP5Connector
+  departuresMovementConnector: DepartureMovementConnector,
+  departureDraftsConnector: DeparturesDraftsConnector,
+  arrivalMovementsConnector: ArrivalMovementConnector
 ) {
 
   def fetchArrivalsFeature()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Feature] =
     for {
-      availability <- arrivalMovementsP5Connector.getAvailability()
-    } yield Feature(availability, controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url)
+      availability <- arrivalMovementsConnector.getAvailability()
+    } yield Feature(availability, controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None, None).url)
 
   def fetchDeparturesFeature()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Feature] =
     for {
-      availability <- departuresMovementP5Connector.getAvailability()
-    } yield Feature(availability, controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url)
+      availability <- departuresMovementConnector.getAvailability()
+    } yield Feature(availability, controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None, None).url)
 
   def fetchDraftDepartureFeature()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Feature] =
     for {
-      draftsAvailability <- departureDraftsP5Connector.getDraftDeparturesAvailability()
-    } yield Feature(draftsAvailability, controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None).url)
+      draftsAvailability <- departureDraftsConnector.getDraftDeparturesAvailability()
+    } yield Feature(draftsAvailability, controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None).url)
 
 }

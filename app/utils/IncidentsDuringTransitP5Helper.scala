@@ -119,7 +119,7 @@ class IncidentsDuringTransitP5Helper(
             Link(
               id = s"more-details-incident-${incidentIndex.display}",
               text = messages("departure.notification.incidents.link"),
-              href = controllers.departureP5.routes.IncidentP5Controller.onPageLoad(departureId, incidentIndex, messageId).url,
+              href = controllers.departure.routes.IncidentController.onPageLoad(departureId, incidentIndex, messageId).url,
               visuallyHidden = Some(messages("departure.notification.incidents.link.hidden", incidentIndex.display))
             )
           )

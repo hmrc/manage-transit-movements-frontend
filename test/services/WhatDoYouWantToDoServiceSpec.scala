@@ -31,23 +31,23 @@ import scala.concurrent.Future
 
 class WhatDoYouWantToDoServiceSpec extends SpecBase with BeforeAndAfterEach with Generators {
 
-  val mockArrivalMovementsP5Connector: ArrivalMovementP5Connector = mock[ArrivalMovementP5Connector]
+  val mockArrivalMovementsConnector: ArrivalMovementConnector = mock[ArrivalMovementConnector]
 
-  val mockDepartureMovementsP5Connector: DepartureMovementP5Connector = mock[DepartureMovementP5Connector]
-  val mockDepartureDraftsP5Connector: DeparturesDraftsP5Connector     = mock[DeparturesDraftsP5Connector]
+  val mockDepartureMovementsConnector: DepartureMovementConnector = mock[DepartureMovementConnector]
+  val mockDepartureDraftsConnector: DeparturesDraftsConnector     = mock[DeparturesDraftsConnector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockArrivalMovementsP5Connector)
-    reset(mockDepartureMovementsP5Connector)
-    reset(mockDepartureDraftsP5Connector)
+    reset(mockArrivalMovementsConnector)
+    reset(mockDepartureMovementsConnector)
+    reset(mockDepartureDraftsConnector)
   }
 
   val whatDoYouWantToDoService =
     new WhatDoYouWantToDoService(
-      mockDepartureMovementsP5Connector,
-      mockDepartureDraftsP5Connector,
-      mockArrivalMovementsP5Connector
+      mockDepartureMovementsConnector,
+      mockDepartureDraftsConnector,
+      mockArrivalMovementsConnector
     )
 
   "WhatDoYouWantToDoService" - {
@@ -58,12 +58,12 @@ class WhatDoYouWantToDoServiceSpec extends SpecBase with BeforeAndAfterEach with
           availability =>
             beforeEach()
 
-            when(mockArrivalMovementsP5Connector.getAvailability()(any())).thenReturn(Future.successful(availability))
+            when(mockArrivalMovementsConnector.getAvailability()(any())).thenReturn(Future.successful(availability))
 
             whatDoYouWantToDoService.fetchArrivalsFeature().futureValue mustEqual
-              Feature(availability, controllers.arrivalP5.routes.ViewAllArrivalsP5Controller.onPageLoad(None, None).url)
+              Feature(availability, controllers.arrival.routes.ViewAllArrivalsController.onPageLoad(None, None).url)
 
-            verify(mockArrivalMovementsP5Connector).getAvailability()
+            verify(mockArrivalMovementsConnector).getAvailability()
         }
       }
     }
@@ -74,12 +74,12 @@ class WhatDoYouWantToDoServiceSpec extends SpecBase with BeforeAndAfterEach with
           availability =>
             beforeEach()
 
-            when(mockDepartureMovementsP5Connector.getAvailability()(any())).thenReturn(Future.successful(availability))
+            when(mockDepartureMovementsConnector.getAvailability()(any())).thenReturn(Future.successful(availability))
 
             whatDoYouWantToDoService.fetchDeparturesFeature().futureValue mustEqual
-              Feature(availability, controllers.departureP5.routes.ViewAllDeparturesP5Controller.onPageLoad(None, None).url)
+              Feature(availability, controllers.departure.routes.ViewAllDeparturesController.onPageLoad(None, None).url)
 
-            verify(mockDepartureMovementsP5Connector).getAvailability()
+            verify(mockDepartureMovementsConnector).getAvailability()
         }
       }
     }
@@ -90,12 +90,12 @@ class WhatDoYouWantToDoServiceSpec extends SpecBase with BeforeAndAfterEach with
           availability =>
             beforeEach()
 
-            when(mockDepartureDraftsP5Connector.getDraftDeparturesAvailability()(any())).thenReturn(Future.successful(availability))
+            when(mockDepartureDraftsConnector.getDraftDeparturesAvailability()(any())).thenReturn(Future.successful(availability))
 
             whatDoYouWantToDoService.fetchDraftDepartureFeature().futureValue mustEqual
-              Feature(availability, controllers.departureP5.drafts.routes.DashboardController.onPageLoad(None, None).url)
+              Feature(availability, controllers.departure.drafts.routes.DashboardController.onPageLoad(None, None).url)
 
-            verify(mockDepartureDraftsP5Connector).getDraftDeparturesAvailability()(any())
+            verify(mockDepartureDraftsConnector).getDraftDeparturesAvailability()(any())
         }
       }
     }

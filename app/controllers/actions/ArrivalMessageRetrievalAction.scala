@@ -19,25 +19,25 @@ package controllers.actions
 import models.requests.{IdentifierRequest, MessageRetrievalRequestProvider}
 import play.api.mvc.ActionTransformer
 import scalaxb.XMLFormat
-import services.ArrivalP5MessageService
+import services.ArrivalMessageService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ArrivalMessageRetrievalActionProvider @Inject() (arrivalP5MessageService: ArrivalP5MessageService)(implicit
+class ArrivalMessageRetrievalActionProvider @Inject() (arrivalMessageService: ArrivalMessageService)(implicit
   ec: ExecutionContext
 ) {
 
   def apply[B](arrivalId: String, messageId: String)(implicit
     format: XMLFormat[B]
   ): ActionTransformer[IdentifierRequest, MessageRetrievalRequestProvider[B]#ArrivalMessageRetrievalRequest] =
-    new ArrivalMessageRetrievalAction(arrivalId, messageId, arrivalP5MessageService)
+    new ArrivalMessageRetrievalAction(arrivalId, messageId, arrivalMessageService)
 
 }
 
-class ArrivalMessageRetrievalAction[B](arrivalId: String, messageId: String, arrivalP5MessageService: ArrivalP5MessageService)(implicit
+class ArrivalMessageRetrievalAction[B](arrivalId: String, messageId: String, arrivalMessageService: ArrivalMessageService)(implicit
   protected val executionContext: ExecutionContext,
   protected val format: XMLFormat[B]
 ) extends ActionTransformer[IdentifierRequest, MessageRetrievalRequestProvider[B]#ArrivalMessageRetrievalRequest] {
@@ -46,7 +46,7 @@ class ArrivalMessageRetrievalAction[B](arrivalId: String, messageId: String, arr
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    arrivalP5MessageService.getMessage[B](arrivalId, messageId).map {
+    arrivalMessageService.getMessage[B](arrivalId, messageId).map {
       data =>
         new MessageRetrievalRequestProvider[B].ArrivalMessageRetrievalRequest(
           request,

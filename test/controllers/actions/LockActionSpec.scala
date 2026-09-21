@@ -76,7 +76,7 @@ class LockActionSpec extends SpecBase with AppWithDefaultMockFixtures {
       val result     = controller.onPageLoad()(fakeRequest)
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.departureP5.drafts.routes.DraftLockedController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.departure.drafts.routes.DraftLockedController.onPageLoad().url
     }
 
     "must redirect to technical difficulties when lock check fails" in {

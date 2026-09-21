@@ -19,25 +19,25 @@ package controllers.actions
 import models.requests.{IdentifierRequest, MessageRetrievalRequestProvider}
 import play.api.mvc.ActionTransformer
 import scalaxb.XMLFormat
-import services.DepartureP5MessageService
+import services.DepartureMessageService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DepartureMessageRetrievalActionProvider @Inject() (departureP5MessageService: DepartureP5MessageService)(implicit
+class DepartureMessageRetrievalActionProvider @Inject() (departureMessageService: DepartureMessageService)(implicit
   ec: ExecutionContext
 ) {
 
   def apply[B](departureId: String, messageId: String)(implicit
     format: XMLFormat[B]
   ): ActionTransformer[IdentifierRequest, MessageRetrievalRequestProvider[B]#DepartureMessageRetrievalRequest] =
-    new DepartureMessageRetrievalAction(departureId, messageId, departureP5MessageService)
+    new DepartureMessageRetrievalAction(departureId, messageId, departureMessageService)
 
 }
 
-class DepartureMessageRetrievalAction[B](departureId: String, messageId: String, departureP5MessageService: DepartureP5MessageService)(implicit
+class DepartureMessageRetrievalAction[B](departureId: String, messageId: String, departureMessageService: DepartureMessageService)(implicit
   protected val executionContext: ExecutionContext,
   protected val format: XMLFormat[B]
 ) extends ActionTransformer[IdentifierRequest, MessageRetrievalRequestProvider[B]#DepartureMessageRetrievalRequest] {
@@ -47,8 +47,8 @@ class DepartureMessageRetrievalAction[B](departureId: String, messageId: String,
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     for {
-      data       <- departureP5MessageService.getMessage[B](departureId, messageId)
-      refNumbers <- departureP5MessageService.getDepartureReferenceNumbers(departureId)
+      data       <- departureMessageService.getMessage[B](departureId, messageId)
+      refNumbers <- departureMessageService.getDepartureReferenceNumbers(departureId)
     } yield new MessageRetrievalRequestProvider[B].DepartureMessageRetrievalRequest(
       request,
       request.eoriNumber,

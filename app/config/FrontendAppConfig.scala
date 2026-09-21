@@ -37,16 +37,16 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   val signOutUrl: String = configuration.get[String]("urls.logoutContinue") + configuration.get[String]("urls.feedback")
 
-  val p5Arrival: String = configuration.get[String]("urls.manageTransitMovementsArrivalFrontend")
+  val arrival: String = configuration.get[String]("urls.manageTransitMovementsArrivalFrontend")
 
-  val p5Departure: String                   = configuration.get[String]("urls.manageTransitMovementsDepartureFrontend")
-  def p5DepartureDraft(lrn: String): String = s"$p5Departure/drafts/$lrn"
+  val departure: String                   = configuration.get[String]("urls.manageTransitMovementsDepartureFrontend")
+  def departureDraft(lrn: String): String = s"$departure/drafts/$lrn"
 
-  val p5Cancellation: String                                        = configuration.get[String]("urls.manageTransitMovementsCancellationFrontend")
-  def p5CancellationStart(departureId: String, lrn: String): String = s"$p5Cancellation/$departureId/index/$lrn"
+  val cancellation: String                                        = configuration.get[String]("urls.manageTransitMovementsCancellationFrontend")
+  def cancellationStart(departureId: String, lrn: String): String = s"$cancellation/$departureId/index/$lrn"
 
-  private val p5Unloading: String                                    = configuration.get[String]("urls.manageTransitMovementsUnloadingFrontend")
-  def p5UnloadingStart(arrivalId: String, messageId: String): String = s"$p5Unloading/$arrivalId/unloading-remarks/$messageId"
+  private val unloading: String                                    = configuration.get[String]("urls.manageTransitMovementsUnloadingFrontend")
+  def unloadingStart(arrivalId: String, messageId: String): String = s"$unloading/$arrivalId/unloading-remarks/$messageId"
 
   private val guaranteeBalanceUrlBase    = configuration.get[String]("urls.guaranteeBalanceFrontend")
   def checkGuaranteeBalanceUrl           = s"$guaranteeBalanceUrlBase/start?referral=ncts"
@@ -71,8 +71,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   lazy val manageDocumentsUrl: String = configuration.get[Service]("microservice.services.transit-movements-trader-manage-documents").fullServiceUrl
 
-  def departureFrontendTaskListUrl(lrn: String)                = s"$p5Departure/$lrn/declaration-summary"
-  def departureNewLocalReferenceNumberUrl(lrn: String)         = s"$p5Departure/$lrn/new-local-reference-number"
+  def departureFrontendTaskListUrl(lrn: String)                = s"$departure/$lrn/declaration-summary"
+  def departureNewLocalReferenceNumberUrl(lrn: String)         = s"$departure/$lrn/new-local-reference-number"
   def presentationNotificationFrontendUrl(departureId: String) = s"$presentationNotificationFrontend/$departureId"
 
   val isTraderTest: Boolean = configuration.get[Boolean]("trader-test.enabled")

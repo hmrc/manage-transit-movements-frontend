@@ -1,0 +1,60 @@
+# Departure live routes
+
+GET         /view-departure-declarations                                             controllers.departure.ViewAllDeparturesController.onPageLoad(page: Option[Int], lrn: Option[String])
+POST        /view-departure-declarations                                             controllers.departure.ViewAllDeparturesController.onSubmit(page: Option[Int])
+
+GET         /:departureId/goods-under-control-index/:messageId                       controllers.departure.GoodsUnderControlIndexController.onPageLoad(departureId: String, messageId: String)
+
+GET         /:departureId/goods-under-control/:messageId                             controllers.departure.GoodsUnderControlController.noRequestedDocuments(departureId: String, messageId: String)
+
+GET         /:departureId/goods-under-control-document-requested/:messageId          controllers.departure.GoodsUnderControlController.requestedDocuments(departureId: String, messageId: String)
+
+GET         /:departureId/intention-to-control-complete-prelodged-declaration/:messageId      controllers.departure.IntentionToControlController.onPageLoad(departureId: String, messageId: String)
+
+POST        /:departureId/intention-to-control-complete-prelodged-declaration/:messageId      controllers.departure.IntentionToControlController.onSubmit(departureId: String, messageId: String)
+
+GET        /:departureId/amend-departure-declaration-errors/:messageId               controllers.departure.RejectionMessageController.onPageLoad(page: Option[Int], departureId: String, messageId: String)
+POST       /:departureId/amend-departure-declaration-errors/:messageId               controllers.departure.RejectionMessageController.onSubmit(departureId: String, messageId: String)
+
+GET        /:departureId/departure-declaration-amendment-errors/:messageId               controllers.departure.DeclarationAmendmentRejectionMessageController.onPageLoad(page: Option[Int], departureId: String, messageId: String)
+POST       /:departureId/departure-declaration-amendment-errors/:messageId               controllers.departure.DeclarationAmendmentRejectionMessageController.onSubmit(departureId: String, messageId: String)
+
+GET        /:departureId/departure-declaration-errors/:messageId                     controllers.departure.DepartureDeclarationErrorsController.onPageLoad(departureId: String, messageId: String)
+
+GET        /:departureId/amend-declaration-errors/:messageId                         controllers.departure.AmendDeclarationErrorsController.onPageLoad(departureId: String, messageId: String)
+
+GET        /:departureId/cancellation-errors/:messageId                              controllers.departure.CancellationNotificationErrorsController.onPageLoad(departureId: String, messageId: String)
+
+GET        /:departureId/goods-being-recovered/:messageId                            controllers.departure.RecoveryNotificationController.onPageLoad(departureId: String, messageId: String)
+
+GET        /:departureId/review-departure-declaration-errors/:messageId              controllers.departure.ReviewDepartureErrorsController.onPageLoad(page: Option[Int], departureId: String, messageId: String)
+
+GET        /:departureId/review-departure-amendment-errors/:messageId                controllers.departure.ReviewDepartureAmendmentErrorsController.onPageLoad(page: Option[Int], departureId: String, messageId: String)
+
+GET        /:departureId/review-cancellation-errors/:messageId                       controllers.departure.ReviewCancellationErrorsController.onPageLoad(page: Option[Int], departureId: String, messageId: String)
+
+GET        /:departureId/prepare-for-amendment                                       controllers.departure.AmendmentController.prepareForAmendment(departureId: String)
+
+GET        /:departureId/is-declaration-cancelled/:messageId                         controllers.departure.IsDepartureCancelledController.isDeclarationCancelled(departureId: String, messageId: String)
+
+GET        /:departureId/declaration-cancelled/:messageId                            controllers.departure.DepartureCancelledController.onPageLoad(departureId: String, messageId: String)
+
+GET        /:departureId/declaration-not-cancelled/:messageId                        controllers.departure.DepartureNotCancelledController.onPageLoad(departureId: String, messageId: String)
+
+GET        /:departureId/transit-accompanying-document/:messageId                    controllers.departure.TransitAccompanyingDocumentController.getTAD(departureId: String, messageId: String)
+
+GET        /:departureId/goods-not-released/:messageId                               controllers.departure.GoodsNotReleasedController.goodsNotReleased(departureId: String, messageId: String)
+
+GET        /:departureId/:messageId/amend-guarantee-errors                           controllers.departure.GuaranteeRejectedController.onPageLoad(departureId: String, messageId: String)
+POST       /:departureId/:messageId/amend-guarantee-errors                           controllers.departure.GuaranteeRejectedController.onSubmit(departureId: String, messageId: String)
+
+GET        /:departureId/:messageId/review-guarantee-errors                          controllers.departure.GuaranteeRejectedNotAmendableController.onPageLoad(departureId: String, messageId: String)
+
+GET        /:departureId/incident-during-transit/:messageId                          controllers.departure.IncidentsDuringTransitController.onPageLoad(departureId: String, messageId: String)
+
+GET        /:departureId/incident/:incidentIndex/:messageId                          controllers.departure.IncidentController.onPageLoad(departureId: String, incidentIndex: Index, messageId: String)
+POST       /:departureId/incident/:incidentIndex/:messageId                          controllers.departure.IncidentController.onSubmit(departureId: String, incidentIndex: Index, messageId: String)
+
+GET        /:departureId/pre-lodged-departure-declaration-errors/:messageId          controllers.departure.PreLodgedDeclarationErrorsController.onPageLoad(departureId: String, messageId: String)
+
+GET        /:departureId/review-pre-lodged-departure-declaration-errors/:messageId   controllers.departure.ReviewPrelodgedDeclarationErrorsController.onPageLoad(page: Option[Int], departureId: String, messageId: String)

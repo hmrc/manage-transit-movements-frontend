@@ -16,7 +16,7 @@
 
 package viewModels.drafts
 
-import controllers.departureP5.drafts.routes
+import controllers.departure.drafts.routes
 import models.{DepartureUserAnswerSummary, DeparturesSummary, LocalReferenceNumber}
 import play.api.i18n.Messages
 import play.api.mvc.Call

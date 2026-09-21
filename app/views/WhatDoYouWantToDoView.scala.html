@@ -32,11 +32,11 @@
     @heading(messages("whatDoYouWantToDo.heading"))
 
     <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.subHeading.arrival")</h2>
-    <p class="govuk-body"><a href=@config.p5Arrival class="govuk-link" id="make-arrival-notification">@messages("whatDoYouWantToDo.link.arrival.make")</a></p>
+    <p class="govuk-body"><a href=@config.arrival class="govuk-link" id="make-arrival-notification">@messages("whatDoYouWantToDo.link.arrival.make")</a></p>
     @viewMovements(arrivalsFeature, "arrival", "view-arrival-notifications")
 
     <h2 class="govuk-heading-m">@messages("whatDoYouWantToDo.subHeading.departure")</h2>
-    <p class="govuk-body"><a href=@config.p5Departure class="govuk-link" id="make-departure-declaration">@messages("whatDoYouWantToDo.link.departure.make")</a></p>
+    <p class="govuk-body"><a href=@config.departure class="govuk-link" id="make-departure-declaration">@messages("whatDoYouWantToDo.link.departure.make")</a></p>
     @viewMovements(departuresFeature, "departure", "view-departure-declarations")
     @viewMovements(draftDepartureFeature, "departure.drafts", "view-draft-departures")
 

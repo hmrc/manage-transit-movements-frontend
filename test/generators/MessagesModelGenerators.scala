@@ -17,7 +17,7 @@
 package generators
 
 import generated.*
-import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
+import models.departure.BusinessRejectionType.DepartureBusinessRejectionType
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import scalaxb.XMLCalendar

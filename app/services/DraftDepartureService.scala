@@ -16,7 +16,7 @@
 
 package services
 
-import connectors.DeparturesDraftsP5Connector
+import connectors.DeparturesDraftsConnector
 import models.departure.drafts.{Limit, Skip}
 import models.{DeparturesSummary, LockCheck}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -24,7 +24,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class DraftDepartureService @Inject() (connector: DeparturesDraftsP5Connector) {
+class DraftDepartureService @Inject() (connector: DeparturesDraftsConnector) {
 
   def getLRNs(lrn: String, limit: Limit)(implicit hc: HeaderCarrier): Future[Option[DeparturesSummary]] =
     connector.lrnFuzzySearch(lrn, limit)

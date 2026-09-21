@@ -17,7 +17,7 @@
 package generators
 
 import models.FunctionalErrors.{FunctionalErrorsWithSection, FunctionalErrorsWithoutSection}
-import models.departureP5.BusinessRejectionType.DepartureBusinessRejectionType
+import models.departure.BusinessRejectionType.DepartureBusinessRejectionType
 import models.{DeparturesSummary, GuaranteeReference}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -30,8 +30,8 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.content.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, TableRow}
 import viewModels.*
-import viewModels.P5.arrival.*
-import viewModels.P5.departure.*
+import viewModels.arrival.*
+import viewModels.departure.*
 import viewModels.drafts.AllDraftDeparturesViewModel
 import viewModels.pagination.MetaData
 import viewModels.sections.Section
@@ -107,29 +107,29 @@ trait ViewModelGenerators {
       } yield ViewMovementAction(href, key)
     }
 
-  implicit val arbitraryViewArrivalP5: Arbitrary[ViewArrivalP5] =
+  implicit val arbitraryViewArrival: Arbitrary[ViewArrival] =
     Arbitrary {
       for {
         dateTime <- arbitrary[LocalDateTime]
         mrn      <- stringsWithMaxLength(17: Int)
         status   <- nonEmptyString
         actions  <- listWithMaxLength[ViewMovementAction]()
-      } yield ViewArrivalP5(dateTime, mrn, status, actions)
+      } yield ViewArrival(dateTime, mrn, status, actions)
     }
 
-  implicit val arbitraryViewDepartureP5: Arbitrary[ViewDepartureP5] =
+  implicit val arbitraryViewDeparture: Arbitrary[ViewDeparture] =
     Arbitrary {
       for {
         dateTime <- arbitrary[LocalDateTime]
         lrn      <- stringsWithMaxLength(17: Int)
         status   <- nonEmptyString
         actions  <- listWithMaxLength[ViewMovementAction]()
-      } yield ViewDepartureP5(dateTime, lrn, status, actions)
+      } yield ViewDeparture(dateTime, lrn, status, actions)
     }
 
-  implicit def arbitraryArrivalNotificationWithFunctionalErrorsP5ViewModel(implicit
+  implicit def arbitraryArrivalNotificationWithFunctionalErrorsViewModel(implicit
     messages: Messages
-  ): Arbitrary[ArrivalNotificationWithFunctionalErrorsP5ViewModel] =
+  ): Arbitrary[ArrivalNotificationWithFunctionalErrorsViewModel] =
     Arbitrary {
       for {
         functionalErrors      <- arbitrary[FunctionalErrorsWithoutSection]
@@ -138,7 +138,7 @@ trait ViewModelGenerators {
         numberOfErrorsPerPage <- positiveInts
         arrivalId             <- nonEmptyString
         messageId             <- nonEmptyString
-      } yield ArrivalNotificationWithFunctionalErrorsP5ViewModel(
+      } yield ArrivalNotificationWithFunctionalErrorsViewModel(
         functionalErrors = functionalErrors,
         mrn = mrn,
         currentPage = currentPage,
@@ -148,9 +148,9 @@ trait ViewModelGenerators {
       )
     }
 
-  implicit def arbitraryUnloadingRemarkWithFunctionalErrorsP5ViewModel(implicit
+  implicit def arbitraryUnloadingRemarkWithFunctionalErrorsViewModel(implicit
     messages: Messages
-  ): Arbitrary[UnloadingRemarkWithFunctionalErrorsP5ViewModel] =
+  ): Arbitrary[UnloadingRemarkWithFunctionalErrorsViewModel] =
     Arbitrary {
       for {
         functionalErrors      <- arbitrary[FunctionalErrorsWithoutSection]
@@ -159,7 +159,7 @@ trait ViewModelGenerators {
         numberOfErrorsPerPage <- positiveInts
         arrivalId             <- nonEmptyString
         messageId             <- nonEmptyString
-      } yield UnloadingRemarkWithFunctionalErrorsP5ViewModel(
+      } yield UnloadingRemarkWithFunctionalErrorsViewModel(
         functionalErrors = functionalErrors,
         mrn = mrn,
         currentPage = currentPage,
@@ -169,9 +169,9 @@ trait ViewModelGenerators {
       )
     }
 
-  implicit def arbitraryRejectionMessageP5ViewModel(implicit
+  implicit def arbitraryRejectionMessageViewModel(implicit
     messages: Messages
-  ): Arbitrary[RejectionMessageP5ViewModel] =
+  ): Arbitrary[RejectionMessageViewModel] =
     Arbitrary {
       for {
         functionalErrors      <- arbitrary[FunctionalErrorsWithSection]
@@ -181,7 +181,7 @@ trait ViewModelGenerators {
         numberOfErrorsPerPage <- positiveInts
         departureId           <- nonEmptyString
         messageId             <- nonEmptyString
-      } yield RejectionMessageP5ViewModel(
+      } yield RejectionMessageViewModel(
         functionalErrors = functionalErrors,
         lrn = lrn,
         businessRejectionType = businessRejectionType,
@@ -192,9 +192,9 @@ trait ViewModelGenerators {
       )
     }
 
-  implicit def arbitraryReviewDepartureErrorsP5ViewModel(implicit
+  implicit def arbitraryReviewDepartureErrorsViewModel(implicit
     messages: Messages
-  ): Arbitrary[ReviewDepartureErrorsP5ViewModel] =
+  ): Arbitrary[ReviewDepartureErrorsViewModel] =
     Arbitrary {
       for {
         functionalErrors      <- arbitrary[FunctionalErrorsWithSection]
@@ -204,7 +204,7 @@ trait ViewModelGenerators {
         numberOfErrorsPerPage <- positiveInts
         departureId           <- nonEmptyString
         messageId             <- nonEmptyString
-      } yield ReviewDepartureErrorsP5ViewModel(
+      } yield ReviewDepartureErrorsViewModel(
         functionalErrors = functionalErrors,
         lrn = lrn,
         businessRejectionType = businessRejectionType,
@@ -236,9 +236,9 @@ trait ViewModelGenerators {
       )
     }
 
-  implicit def arbitraryReviewCancellationErrorsP5ViewModel(implicit
+  implicit def arbitraryReviewCancellationErrorsViewModel(implicit
     messages: Messages
-  ): Arbitrary[ReviewCancellationErrorsP5ViewModel] =
+  ): Arbitrary[ReviewCancellationErrorsViewModel] =
     Arbitrary {
       for {
         functionalErrors      <- arbitrary[FunctionalErrorsWithoutSection]
@@ -247,7 +247,7 @@ trait ViewModelGenerators {
         numberOfErrorsPerPage <- positiveInts
         departureId           <- nonEmptyString
         messageId             <- nonEmptyString
-      } yield ReviewCancellationErrorsP5ViewModel(
+      } yield ReviewCancellationErrorsViewModel(
         functionalErrors = functionalErrors,
         lrn = lrn,
         currentPage = currentPage,
@@ -257,9 +257,9 @@ trait ViewModelGenerators {
       )
     }
 
-  implicit def arbitraryReviewPrelodgedDeclarationErrorsP5ViewModel(implicit
+  implicit def arbitraryReviewPrelodgedDeclarationErrorsViewModel(implicit
     messages: Messages
-  ): Arbitrary[ReviewPrelodgedDeclarationErrorsP5ViewModel] =
+  ): Arbitrary[ReviewPrelodgedDeclarationErrorsViewModel] =
     Arbitrary {
       for {
         functionalErrors      <- arbitrary[FunctionalErrorsWithoutSection]
@@ -268,7 +268,7 @@ trait ViewModelGenerators {
         numberOfErrorsPerPage <- positiveInts
         departureId           <- nonEmptyString
         messageId             <- nonEmptyString
-      } yield ReviewPrelodgedDeclarationErrorsP5ViewModel(
+      } yield ReviewPrelodgedDeclarationErrorsViewModel(
         functionalErrors = functionalErrors,
         lrn = lrn,
         currentPage = currentPage,
@@ -278,17 +278,17 @@ trait ViewModelGenerators {
       )
     }
 
-  implicit def arbitraryViewAllDepartureMovementsP5ViewModel(implicit
+  implicit def arbitraryViewAllDepartureMovementsViewModel(implicit
     messages: Messages
-  ): Arbitrary[ViewAllDepartureMovementsP5ViewModel] =
+  ): Arbitrary[ViewAllDepartureMovementsViewModel] =
     Arbitrary {
       for {
-        movementsAndMessages   <- listWithMaxLength[ViewDepartureP5]()
+        movementsAndMessages   <- listWithMaxLength[ViewDeparture]()
         searchParam            <- Gen.option(nonEmptyString)
         currentPage            <- positiveInts
         numberOfItemsPerPage   <- positiveInts
         totalNumberOfMovements <- Gen.choose(1, (currentPage - 1) * numberOfItemsPerPage)
-      } yield ViewAllDepartureMovementsP5ViewModel(
+      } yield ViewAllDepartureMovementsViewModel(
         movementsAndMessages = movementsAndMessages,
         searchParam = searchParam,
         currentPage = currentPage,
@@ -297,17 +297,17 @@ trait ViewModelGenerators {
       )
     }
 
-  implicit def arbitraryViewAllArrivalMovementsP5ViewModel(implicit
+  implicit def arbitraryViewAllArrivalMovementsViewModel(implicit
     messages: Messages
-  ): Arbitrary[ViewAllArrivalMovementsP5ViewModel] =
+  ): Arbitrary[ViewAllArrivalMovementsViewModel] =
     Arbitrary {
       for {
-        movementsAndMessages   <- listWithMaxLength[ViewArrivalP5]()
+        movementsAndMessages   <- listWithMaxLength[ViewArrival]()
         searchParam            <- Gen.option(nonEmptyString)
         currentPage            <- positiveInts
         numberOfItemsPerPage   <- positiveInts
         totalNumberOfMovements <- Gen.choose(1, (currentPage - 1) * numberOfItemsPerPage)
-      } yield ViewAllArrivalMovementsP5ViewModel(
+      } yield ViewAllArrivalMovementsViewModel(
         movementsAndMessages = movementsAndMessages,
         searchParam = searchParam,
         currentPage = currentPage,
@@ -331,13 +331,13 @@ trait ViewModelGenerators {
       )
     }
 
-  implicit val arbitraryDepartureDeclarationErrorsP5ViewModel: Arbitrary[DepartureDeclarationErrorsP5ViewModel] =
+  implicit val arbitraryDepartureDeclarationErrorsViewModel: Arbitrary[DepartureDeclarationErrorsViewModel] =
     Arbitrary {
       for {
         lrn                   <- nonEmptyString
         mrn                   <- Gen.option(nonEmptyString)
         businessRejectionType <- arbitrary[DepartureBusinessRejectionType]
-      } yield DepartureDeclarationErrorsP5ViewModel(lrn, mrn, businessRejectionType)
+      } yield DepartureDeclarationErrorsViewModel(lrn, mrn, businessRejectionType)
     }
 
   implicit val arbitraryAmendDeclarationErrorsViewModel: Arbitrary[AmendDeclarationErrorsViewModel] =
@@ -348,7 +348,7 @@ trait ViewModelGenerators {
       } yield AmendDeclarationErrorsViewModel(lrn, mrn)
     }
 
-  implicit val arbitraryGuaranteeRejectedP5ViewModel: Arbitrary[GuaranteeRejectedP5ViewModel] =
+  implicit val arbitraryGuaranteeRejectedViewModel: Arbitrary[GuaranteeRejectedViewModel] =
     Arbitrary {
       for {
         guaranteeReferences       <- listWithMaxLength[GuaranteeReference]()
@@ -358,7 +358,7 @@ trait ViewModelGenerators {
         paragraph1                <- nonEmptyString
         paragraph2                <- nonEmptyString
         link                      <- nonEmptyString
-      } yield GuaranteeRejectedP5ViewModel(
+      } yield GuaranteeRejectedViewModel(
         guaranteeReferences,
         lrn,
         mrn,
@@ -369,7 +369,7 @@ trait ViewModelGenerators {
       )
     }
 
-  implicit val arbitraryGuaranteeRejectedNotAmendableP5ViewModel: Arbitrary[GuaranteeRejectedNotAmendableP5ViewModel] =
+  implicit val arbitraryGuaranteeRejectedNotAmendableViewModel: Arbitrary[GuaranteeRejectedNotAmendableViewModel] =
     Arbitrary {
       for {
         guaranteeReferences       <- listWithMaxLength[GuaranteeReference]()
@@ -379,7 +379,7 @@ trait ViewModelGenerators {
         paragraph1                <- nonEmptyString
         paragraph2                <- nonEmptyString
         link                      <- nonEmptyString
-      } yield GuaranteeRejectedNotAmendableP5ViewModel(
+      } yield GuaranteeRejectedNotAmendableViewModel(
         guaranteeReferences,
         lrn,
         mrn,
