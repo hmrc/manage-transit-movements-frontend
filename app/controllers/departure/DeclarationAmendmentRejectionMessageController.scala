@@ -55,26 +55,20 @@ class DeclarationAmendmentRejectionMessageController @Inject() (
         val messageSender       = request.messageData.messageSequence1.messageSender
         val functionalErrorsSeq = request.messageData.FunctionalError.map(FunctionalErrorType(_))
 
-        service.isRejectionAmendable(lrn, rejection).flatMap {
-          case true =>
-            val functionalErrorsF = functionalErrorsService.convertErrorsWithSectionAndSender(functionalErrorsSeq, messageSender)
+        val functionalErrorsF = functionalErrorsService.convertErrorsWithSectionAndSender(functionalErrorsSeq, messageSender)
 
-            functionalErrorsF.map {
-              functionalErrors =>
-                val viewModel = DeclarationAmendmentRejectionMessageViewModel(
-                  functionalErrors = functionalErrors,
-                  lrn = request.referenceNumbers.localReferenceNumber,
-                  currentPage = page,
-                  numberOfErrorsPerPage = paginationConfig.numberOfErrorsPerPage,
-                  departureId = departureId,
-                  messageId = messageId
-                )
+        functionalErrorsF.map {
+          functionalErrors =>
+            val viewModel = DeclarationAmendmentRejectionMessageViewModel(
+              functionalErrors = functionalErrors,
+              lrn = request.referenceNumbers.localReferenceNumber,
+              currentPage = page,
+              numberOfErrorsPerPage = paginationConfig.numberOfErrorsPerPage,
+              departureId = departureId,
+              messageId = messageId
+            )
 
-                Ok(view(viewModel, departureId, messageId, request.referenceNumbers.movementReferenceNumber))
-            }
-          case _ =>
-            logger.warn(s"[DeclarationAmendmentRejectionMessageController] Could not proceed with amending $departureId")
-            Future.successful(Redirect(controllers.routes.ErrorController.technicalDifficulties()))
+            Ok(view(viewModel, departureId, messageId, request.referenceNumbers.movementReferenceNumber))
         }
     }
 

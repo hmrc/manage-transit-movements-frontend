@@ -40,8 +40,8 @@ object DepartureStatusViewModel {
       case IncidentMovementAndMessages(departureId, _, _, messages, hasMultipleIncidents) =>
         incidentDuringTransit(departureId, messages.latestMessage.messageId, hasMultipleIncidents)
           .lift(messages.latestMessage)
-      case DeclarationAmendmentRejectedMovementAndMessages(departureId, _, _, messages, isRejectionAmendable, xPaths) =>
-        declarationAmendmentRejectedStatus(departureId, messages.latestMessage.messageId, isRejectionAmendable, xPaths)
+      case DeclarationAmendmentRejectedMovementAndMessages(departureId, _, _, messages, xPaths) =>
+        declarationAmendmentRejectedStatus(departureId, messages.latestMessage.messageId, xPaths)
           .lift(messages.latestMessage)
       case OtherMovementAndMessages(departureId, localReferenceNumber, _, messages) =>
         currentStatus(departureId, messages.latestMessage.messageId, localReferenceNumber)
@@ -84,11 +84,10 @@ object DepartureStatusViewModel {
   private def declarationAmendmentRejectedStatus(
     departureId: String,
     messageId: String,
-    isDeclarationAmendable: Boolean,
     xPaths: Seq[Option[String]]
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusViewModel] =
     Seq(
-      declarationAmendmentRejected(departureId, messageId, isDeclarationAmendable, xPaths)
+      declarationAmendmentRejected(departureId, messageId, xPaths)
     ).reduce(_ orElse _)
 
   private def currentStatus(
@@ -384,20 +383,13 @@ object DepartureStatusViewModel {
   private def declarationAmendmentRejected(
     departureId: String,
     messageId: String,
-    isRejectionAmendable: Boolean,
     xPaths: Seq[Option[String]]
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusViewModel] = {
     case message if message.messageType == InvalidMRN =>
-      val (key, href) = if (isRejectionAmendable) {
-        ("amendDeclaration", controllers.departure.routes.DeclarationAmendmentRejectionMessageController.onPageLoad(None, departureId, messageId).url)
-      } else if (xPaths.flatten.isEmpty) {
-        (errorsActionText(xPaths.flatten), controllers.departure.routes.AmendDeclarationErrorsController.onPageLoad(departureId, messageId).url)
-      } else {
-        (errorsActionText(xPaths.flatten), controllers.departure.routes.ReviewDepartureAmendmentErrorsController.onPageLoad(None, departureId, messageId).url)
-      }
+      val key  = "Amend declaration"
+      val href = controllers.departure.routes.DeclarationAmendmentRejectionMessageController.onPageLoad(None, departureId, messageId).url
 
-      val keyFormatted = if (key.isEmpty) key else s"movement.status.action.invalidMRN.$key"
-      val actions      = Seq(ViewMovementAction(href, keyFormatted))
+      val actions = Seq(ViewMovementAction(href, key))
       DepartureStatusViewModel(
         "movement.status.invalidMRN",
         if (frontendAppConfig.isIE022Enabled) actions else Seq.empty

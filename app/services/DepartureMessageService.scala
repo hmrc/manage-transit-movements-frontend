@@ -125,21 +125,17 @@ class DepartureMessageService @Inject() (
     message: DepartureMovementMessages
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MovementAndMessages] = {
     val departureId = movement.departureId
-    getMessage[CC022CType](departureId, message.latestMessage.messageId).flatMap {
+    getMessage[CC022CType](departureId, message.latestMessage.messageId).map {
       ie022 =>
         val xPaths    = ie022.FunctionalError.map(_.errorPointer)
         val rejection = IE022Rejection(departureId, ie022)
-        cacheConnector.isRejectionAmendable(movement.localReferenceNumber, rejection).map {
-          isRejectionAmendable =>
-            DeclarationAmendmentRejectedMovementAndMessages(
-              departureId,
-              movement.localReferenceNumber,
-              movement.updated,
-              message,
-              isRejectionAmendable,
-              xPaths
-            )
-        }
+        DeclarationAmendmentRejectedMovementAndMessages(
+          departureId,
+          movement.localReferenceNumber,
+          movement.updated,
+          message,
+          xPaths
+        )
     }
   }
 
