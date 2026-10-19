@@ -106,27 +106,6 @@ class DeclarationAmendmentRejectionMessageControllerSpec extends SpecBase with A
       }
     }
 
-    "must redirect to tech difficulties when user cannot proceed" in {
-      forAll(arbitrary[CC022CType]) {
-        message =>
-          when(mockDepartureMessageService.getMessage[CC022CType](any(), any())(any(), any(), any()))
-            .thenReturn(Future.successful(message))
-
-          when(mockDepartureMessageService.getDepartureReferenceNumbers(any())(any(), any()))
-            .thenReturn(Future.successful(DepartureReferenceNumbers(lrn.value, None)))
-
-          when(mockAmendmentService.isRejectionAmendable(any(), any())(any(), any()))
-            .thenReturn(Future.successful(false))
-
-          val request = FakeRequest(GET, declarationAmendmentRejectionMessageOnPageLoadRoute)
-
-          val result = route(app, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ErrorController.technicalDifficulties().url
-      }
-    }
-
     "onSubmit" - {
 
       "must redirect to declaration summary page on success of handleErrors" in {

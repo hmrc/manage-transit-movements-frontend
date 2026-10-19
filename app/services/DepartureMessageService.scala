@@ -22,7 +22,7 @@ import generated.{CC022CType, CC056CType, CC182CType, Generated_CC022CTypeFormat
 import models.departure.*
 import models.departure.BusinessRejectionType.*
 import models.departure.DepartureMessageType.*
-import models.departure.Rejection.{IE022Rejection, IE056Rejection}
+import models.departure.Rejection.IE056Rejection
 import models.{IE015, RichCC182Type}
 import scalaxb.XMLFormat
 import scalaxb.`package`.fromXML
@@ -127,8 +127,7 @@ class DepartureMessageService @Inject() (
     val departureId = movement.departureId
     getMessage[CC022CType](departureId, message.latestMessage.messageId).map {
       ie022 =>
-        val xPaths    = ie022.FunctionalError.map(_.errorPointer)
-        val rejection = IE022Rejection(departureId, ie022)
+        val xPaths = ie022.FunctionalError.map(_.errorPointer)
         DeclarationAmendmentRejectedMovementAndMessages(
           departureId,
           movement.localReferenceNumber,

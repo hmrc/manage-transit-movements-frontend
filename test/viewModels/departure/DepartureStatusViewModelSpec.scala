@@ -990,7 +990,6 @@ class DepartureStatusViewModelSpec extends SpecBase with AppWithDefaultMockFixtu
                 ),
                 "ie015MessageId"
               ),
-              isRejectionAmendable = true,
               xPaths = Seq(Some("body/path"))
             )
 
@@ -1002,80 +1001,6 @@ class DepartureStatusViewModelSpec extends SpecBase with AppWithDefaultMockFixtu
                 ViewMovementAction(
                   controllers.departure.routes.DeclarationAmendmentRejectionMessageController.onPageLoad(None, departureIdP5, messageId).url,
                   "movement.status.action.invalidMRN.amendDeclaration"
-                )
-              )
-            )
-
-            result mustEqual expectedResult
-          }
-        }
-
-        "and declaration is not amendable with one FunctionalError" in {
-          running(app) {
-            val movementAndMessage = DeclarationAmendmentRejectedMovementAndMessages(
-              departureIdP5,
-              lrn.value,
-              LocalDateTime.now(),
-              DepartureMovementMessages(
-                NonEmptyList.one(
-                  DepartureMessage(
-                    messageId,
-                    LocalDateTime.now(),
-                    InvalidMRN,
-                    MessageStatus.Success
-                  )
-                ),
-                "ie015MessageId"
-              ),
-              isRejectionAmendable = false,
-              Seq(Some("body/path"))
-            )
-
-            val result = DepartureStatusViewModel(movementAndMessage)(app.injector.instanceOf[FrontendAppConfig])
-
-            val expectedResult = DepartureStatusViewModel(
-              "movement.status.invalidMRN",
-              Seq(
-                ViewMovementAction(
-                  controllers.departure.routes.ReviewDepartureAmendmentErrorsController.onPageLoad(None, departureIdP5, messageId).url,
-                  "movement.status.action.invalidMRN.viewError"
-                )
-              )
-            )
-
-            result mustEqual expectedResult
-          }
-        }
-
-        "and declaration is not amendable and no FunctionalErrors" in {
-          running(app) {
-            val movementAndMessage = DeclarationAmendmentRejectedMovementAndMessages(
-              departureIdP5,
-              lrn.value,
-              LocalDateTime.now(),
-              DepartureMovementMessages(
-                NonEmptyList.one(
-                  DepartureMessage(
-                    messageId,
-                    LocalDateTime.now(),
-                    InvalidMRN,
-                    MessageStatus.Success
-                  )
-                ),
-                "ie015MessageId"
-              ),
-              isRejectionAmendable = false,
-              Seq.empty
-            )
-
-            val result = DepartureStatusViewModel(movementAndMessage)(app.injector.instanceOf[FrontendAppConfig])
-
-            val expectedResult = DepartureStatusViewModel(
-              "movement.status.invalidMRN",
-              Seq(
-                ViewMovementAction(
-                  controllers.departure.routes.AmendDeclarationErrorsController.onPageLoad(departureIdP5, messageId).url,
-                  "movement.status.action.invalidMRN.viewErrors"
                 )
               )
             )
@@ -1106,7 +1031,6 @@ class DepartureStatusViewModelSpec extends SpecBase with AppWithDefaultMockFixtu
               ),
               "ie015MessageId"
             ),
-            isRejectionAmendable = true,
             xPaths = Seq(Some("body/path"))
           )
 

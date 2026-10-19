@@ -31,7 +31,7 @@ import viewModels.departure.DeclarationAmendmentRejectionMessageViewModel
 import views.html.departure.DeclarationAmendmentRejectionMessageView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class DeclarationAmendmentRejectionMessageController @Inject() (
   override val messagesApi: MessagesApi,
@@ -50,8 +50,6 @@ class DeclarationAmendmentRejectionMessageController @Inject() (
   def onPageLoad(page: Option[Int], departureId: String, messageId: String): Action[AnyContent] =
     (Action andThen actions.identify() andThen messageRetrievalAction[CC022CType](departureId, messageId)).async {
       implicit request =>
-        val lrn                 = request.referenceNumbers.localReferenceNumber
-        val rejection           = IE022Rejection(departureId, request.messageData)
         val messageSender       = request.messageData.messageSequence1.messageSender
         val functionalErrorsSeq = request.messageData.FunctionalError.map(FunctionalErrorType(_))
 

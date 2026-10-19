@@ -386,7 +386,7 @@ object DepartureStatusViewModel {
     xPaths: Seq[Option[String]]
   )(implicit frontendAppConfig: FrontendAppConfig): PartialFunction[DepartureMessage, DepartureStatusViewModel] = {
     case message if message.messageType == InvalidMRN =>
-      val key  = "Amend declaration"
+      val key  = "movement.status.action.invalidMRN.amendDeclaration"
       val href = controllers.departure.routes.DeclarationAmendmentRejectionMessageController.onPageLoad(None, departureId, messageId).url
 
       val actions = Seq(ViewMovementAction(href, key))
