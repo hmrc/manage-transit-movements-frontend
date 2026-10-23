@@ -333,7 +333,6 @@ class DepartureMessageServiceSpec extends SpecBase with Generators {
       }
 
       "must return DeclarationAmendmentRejectedMovementAndMessages when InvalidMRN" in {
-        val isRejectionAmendable = arbitrary[Boolean].sample.value
 
         val latestDepartureMessage = DepartureMovementMessages(
           NonEmptyList.one(
@@ -369,10 +368,6 @@ class DepartureMessageServiceSpec extends SpecBase with Generators {
           Future.successful(ie022)
         )
 
-        when(mockCacheConnector.isRejectionAmendable(any(), any())(any(), any())).thenReturn(
-          Future.successful(isRejectionAmendable)
-        )
-
         val result = departureMessageService.getLatestMessagesForMovements(departureMovements).futureValue
 
         val expectedResult: Seq[MovementAndMessages] = Seq(
@@ -381,7 +376,6 @@ class DepartureMessageServiceSpec extends SpecBase with Generators {
             "LRN",
             dateTimeNow,
             latestDepartureMessage,
-            isRejectionAmendable,
             xPaths = ie022.FunctionalError.map(_.errorPointer)
           )
         )

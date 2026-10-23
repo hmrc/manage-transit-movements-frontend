@@ -22,7 +22,7 @@ import generated.{CC022CType, CC056CType, CC182CType, Generated_CC022CTypeFormat
 import models.departure.*
 import models.departure.BusinessRejectionType.*
 import models.departure.DepartureMessageType.*
-import models.departure.Rejection.{IE022Rejection, IE056Rejection}
+import models.departure.Rejection.IE056Rejection
 import models.{IE015, RichCC182Type}
 import scalaxb.XMLFormat
 import scalaxb.`package`.fromXML
@@ -125,21 +125,16 @@ class DepartureMessageService @Inject() (
     message: DepartureMovementMessages
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MovementAndMessages] = {
     val departureId = movement.departureId
-    getMessage[CC022CType](departureId, message.latestMessage.messageId).flatMap {
+    getMessage[CC022CType](departureId, message.latestMessage.messageId).map {
       ie022 =>
-        val xPaths    = ie022.FunctionalError.map(_.errorPointer)
-        val rejection = IE022Rejection(departureId, ie022)
-        cacheConnector.isRejectionAmendable(movement.localReferenceNumber, rejection).map {
-          isRejectionAmendable =>
-            DeclarationAmendmentRejectedMovementAndMessages(
-              departureId,
-              movement.localReferenceNumber,
-              movement.updated,
-              message,
-              isRejectionAmendable,
-              xPaths
-            )
-        }
+        val xPaths = ie022.FunctionalError.map(_.errorPointer)
+        DeclarationAmendmentRejectedMovementAndMessages(
+          departureId,
+          movement.localReferenceNumber,
+          movement.updated,
+          message,
+          xPaths
+        )
     }
   }
 

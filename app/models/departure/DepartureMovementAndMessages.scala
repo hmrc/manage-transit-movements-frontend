@@ -48,7 +48,6 @@ case class DeclarationAmendmentRejectedMovementAndMessages(
   localReferenceNumber: String,
   updated: LocalDateTime,
   messages: DepartureMovementMessages,
-  isRejectionAmendable: Boolean,
   xPaths: Seq[Option[String]]
 ) extends MovementAndMessages
 
