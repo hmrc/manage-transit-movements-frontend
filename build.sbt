@@ -15,10 +15,6 @@ ThisBuild / scalafmtOnCompile := true
 lazy val microservice = (project in file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin, ScalaxbPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
-  .configs(A11yTest)
-  .settings(inConfig(A11yTest)(org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings) *)
-  .settings(headerSettings(A11yTest) *)
-  .settings(automateHeaderSettings(A11yTest))
   .settings(
     Compile / scalaxb / scalaxbXsdSource       := new File("./conf/xsd"),
     Compile / scalaxb / scalaxbDispatchVersion := "1.1.3",
